@@ -1,0 +1,254 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+/*
+  Designsystem – alla färg-, typografi- och spacingvärden definieras här.
+  Komponenter använder enbart Tailwind-klasser som pekar på dessa tokens
+  (t.ex. bg-surface, text-fg, text-muted, border-line, bg-accent).
+*/
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  /* Färg – ljust läge */
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #eeece6;
+  --fg: #1d1c19;
+  --muted: #676259;
+  --line: #dedbd3;
+  --line-strong: #c4c0b6;
+  --accent: #2f5d62;
+  --accent-hover: #25494d;
+  --accent-fg: #ffffff;
+  --accent-soft: #e3eded;
+  --danger: #a13d3d;
+  --danger-soft: #f6e6e6;
+  --focus: #2f5d62;
+
+  /* Skattningsskala 1–5, dämpade toner */
+  --rate-1: #b0523f;
+  --rate-2: #b9773a;
+  --rate-3: #a3953a;
+  --rate-4: #6d9a4a;
+  --rate-5: #3f8b5c;
+
+  /* Typografi */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text-card: clamp(1.2rem, 1rem + 1.1vw, 1.55rem);
+  --leading-card: 1.5;
+
+  /* Spacing och form */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+  --content-width: 44rem;
+  --card-min-height: 18rem;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #151514;
+  --surface: #1f1e1c;
+  --surface-2: #2a2926;
+  --fg: #ebe8e1;
+  --muted: #a5a097;
+  --line: #34322e;
+  --line-strong: #4a4741;
+  --accent: #8dbdc2;
+  --accent-hover: #a6cfd3;
+  --accent-fg: #101b1c;
+  --accent-soft: #223638;
+  --danger: #d98080;
+  --danger-soft: #3a2323;
+  --focus: #8dbdc2;
+  --rate-1: #c9705d;
+  --rate-2: #cf9455;
+  --rate-3: #bfb15a;
+  --rate-4: #8ab56b;
+  --rate-5: #62a97c;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-focus: var(--focus);
+  --color-rate-1: var(--rate-1);
+  --color-rate-2: var(--rate-2);
+  --color-rate-3: var(--rate-3);
+  --color-rate-4: var(--rate-4);
+  --color-rate-5: var(--rate-5);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --shadow-card: var(--shadow-card);
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100dvh;
+  line-height: 1.55;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Kortets flip-animation */
+.flip-scene {
+  perspective: 1600px;
+}
+.flip-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.flip-inner[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+}
+
+/* Markdown i kort */
+.prose-card {
+  font-size: var(--text-card);
+  line-height: var(--leading-card);
+  overflow-wrap: anywhere;
+}
+.prose-card > * + * {
+  margin-top: 0.75em;
+}
+.prose-card ul {
+  list-style: disc;
+  padding-left: 1.25em;
+}
+.prose-card ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.prose-card li + li {
+  margin-top: 0.25em;
+}
+.prose-card li > ul,
+.prose-card li > ol {
+  margin-top: 0.25em;
+  font-size: 0.95em;
+}
+.prose-card strong {
+  font-weight: 600;
+}
+.prose-card code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+}
+.prose-card pre {
+  background: var(--surface-2);
+  padding: 0.75em 1em;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-size: 0.85em;
+}
+.prose-card pre code {
+  background: none;
+  padding: 0;
+}
+.prose-card table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.prose-card th,
+.prose-card td {
+  border: 1px solid var(--line);
+  padding: 0.3em 0.6em;
+}
+.prose-card .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25em 0;
+}
+.prose-card a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Markdown i löptext (om-sida, policy) */
+.prose-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.prose-body > * + * {
+  margin-top: 0.75em;
+}
+.prose-body ul {
+  list-style: disc;
+  padding-left: 1.25em;
+}
+.prose-body ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.prose-body h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5em;
+}
+.prose-body h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.25em;
+}
+.prose-body a {
+  color: var(--accent);
+  text-decoration: underline;
+}

@@ -23,8 +23,9 @@ export function AccountPanel({ userId, email, displayName }: Props) {
     setBusy(true);
     try {
       if (confirm === "delete") {
+        // Vid lyckad radering svarar servern med en redirect; då finns inget resultat att läsa.
         const result = await deleteAccountAction();
-        if (!result.ok) setNotice(result.error);
+        if (result && !result.ok) setNotice(result.error);
       } else if (confirm === "resetAll" && store) {
         await store.resetAll();
         setNotice(sv.deck.resetDone);

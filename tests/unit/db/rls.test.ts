@@ -408,6 +408,30 @@ describe("funktioner", () => {
     expect(await db.query(`select 1 from auth.users where id = $1`, [bob])).toHaveLength(1);
   });
 
+  it("reorder_cards/reorder_categories påverkar inga rader för vanlig användare men fungerar för admin", async () => {
+    const created = await db.query<{ id: string }>(
+      `insert into public.cards (deck_id, front, back, sort_order) values ($1, 'O1', 'x', 0), ($1, 'O2', 'x', 1), ($1, 'O3', 'x', 2) returning id`,
+      [publishedDeck],
+    );
+    const ids = created.map((c) => c.id);
+    const reversed = [...ids].reverse();
+
+    const [asUser] = await user(db, alice).query<{ n: number }>(`select public.reorder_cards($1, $2::uuid[]) as n`, [publishedDeck, reversed]);
+    expect(asUser?.n).toBe(0);
+    const unchanged = await db.query<{ id: string; sort_order: number }>(`select id, sort_order from public.cards where id = any($1::uuid[]) order by sort_order`, [ids]);
+    expect(unchanged.map((c) => c.id)).toEqual(ids);
+
+    const [asAdmin] = await user(db, admin).query<{ n: number }>(`select public.reorder_cards($1, $2::uuid[]) as n`, [publishedDeck, reversed]);
+    expect(asAdmin?.n).toBe(3);
+    const changed = await db.query<{ id: string }>(`select id from public.cards where id = any($1::uuid[]) order by sort_order`, [ids]);
+    expect(changed.map((c) => c.id)).toEqual(reversed);
+
+    await expectDenied(anon(db).query(`select public.reorder_categories($1, $2::uuid[])`, [publishedDeck, [publishedCategory]]));
+    const [catUser] = await user(db, alice).query<{ n: number }>(`select public.reorder_categories($1, $2::uuid[]) as n`, [publishedDeck, [publishedCategory]]);
+    expect(catUser?.n).toBe(0);
+    await db.query(`delete from public.cards where id = any($1::uuid[])`, [ids]);
+  });
+
   it("service_role går förbi RLS (används aldrig i appen, bara som referens)", async () => {
     const rows = await as(db, { role: "service_role" }).query("select id from public.decks");
     expect(rows.length).toBeGreaterThanOrEqual(2);

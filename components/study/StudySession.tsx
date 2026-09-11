@@ -18,7 +18,7 @@ import {
 } from "@/lib/fsrs/session";
 import type { ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
-import { selectCardIds, type Selection } from "@/lib/study/selection";
+import { selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
 import { endOfDay } from "@/lib/time/format";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Flashcard } from "./Flashcard";
@@ -67,26 +67,33 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
     [categories],
   );
 
-  // Ladda progress och bygg kön.
+  // Ladda progress och bygg kön en gång per lager/läge/urval. Kortlistan läses
+  // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
+  const cardsRef = useRef(cards);
+  cardsRef.current = cards;
+  const selectionKey = `${mode}|${serializeSelection(selection)}`;
   useEffect(() => {
     if (!store) return;
     let cancelled = false;
     (async () => {
+      const ids = cardsRef.current.map((c) => c.id);
       let loaded: ProgressMap = {};
       try {
-        loaded = await store.load(cardIds);
+        loaded = await store.load(ids);
       } catch {
         loaded = {};
       }
       if (cancelled) return;
       setProgress(loaded);
-      const order = selectCardIds({ cards, progress: loaded, mode, selection });
+      const order = selectCardIds({ cards: cardsRef.current, progress: loaded, mode, selection });
       setSession(createSession(order, mode));
     })();
     return () => {
       cancelled = true;
     };
-  }, [store, cards, cardIds, mode, selection]);
+    // selection ingår via selectionKey.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store, mode, selectionKey]);
 
   const currentId = session ? currentCardId(session) : null;
   const card = currentId ? (cardsById.get(currentId) ?? null) : null;
@@ -239,6 +246,9 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
 
   return (
     <div className="grid gap-4">
+      <h1 className="sr-only">
+        {deck.title} – {sv.study.position(position + 1, total)}
+      </h1>
       <div className="flex items-center justify-between gap-3 text-sm text-muted">
         <Link href={`/d/${deck.slug}`} className="truncate hover:text-fg">
           ← {deck.title}

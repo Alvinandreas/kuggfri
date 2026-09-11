@@ -160,11 +160,8 @@ export async function deleteCategoryAction(id: string, deckId: string): Promise<
 export async function reorderCategoriesAction(deckId: string, orderedIds: string[]): Promise<ActionResult> {
   try {
     const { supabase } = await requireAdmin();
-    for (let i = 0; i < orderedIds.length; i++) {
-      const id = orderedIds[i]!;
-      const { error } = await supabase.from("categories").update({ sort_order: i }).eq("id", id).eq("deck_id", deckId);
-      if (error) return fail(error);
-    }
+    const { error } = await supabase.rpc("reorder_categories", { p_deck_id: deckId, p_ids: orderedIds });
+    if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
   } catch (e) {
@@ -235,11 +232,8 @@ export async function deleteCardAction(id: string, deckId: string): Promise<Acti
 export async function reorderCardsAction(deckId: string, orderedIds: string[]): Promise<ActionResult> {
   try {
     const { supabase } = await requireAdmin();
-    for (let i = 0; i < orderedIds.length; i++) {
-      const id = orderedIds[i]!;
-      const { error } = await supabase.from("cards").update({ sort_order: i }).eq("id", id).eq("deck_id", deckId);
-      if (error) return fail(error);
-    }
+    const { error } = await supabase.rpc("reorder_cards", { p_deck_id: deckId, p_ids: orderedIds });
+    if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
   } catch (e) {

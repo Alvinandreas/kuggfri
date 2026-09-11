@@ -129,27 +129,27 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
         ) : seen === 0 ? (
           <p className="mt-2 text-muted">{sv.deck.noProgress}</p>
         ) : (
-          <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="text-muted">{sv.deck.progressTitle}</dt>
-              <dd data-testid="seen-count" className="text-base font-medium">
-                {sv.deck.seen(seen, cards.length)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-muted">{sv.deck.averageRating}</dt>
-              <dd className="text-base font-medium">{avgRating === null ? "–" : avgRating.toFixed(1)}</dd>
-            </div>
-            <div className="sm:col-span-2">
-              <dd data-testid="due-info" className="text-base font-medium">
-                {stats && stats.due + stats.new > 0
-                  ? `${sv.deck.dueNow(stats.due)}, ${sv.deck.newCards(stats.new)}`
-                  : nextDue
-                    ? `${sv.deck.nothingDue} ${sv.deck.nextDue(formatRelative(nextDue))}`
-                    : sv.deck.nothingDue}
-              </dd>
-            </div>
-          </dl>
+          <>
+            <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-muted">{sv.deck.progressTitle}</dt>
+                <dd data-testid="seen-count" className="text-base font-medium">
+                  {sv.deck.seen(seen, cards.length)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted">{sv.deck.averageRating}</dt>
+                <dd className="text-base font-medium">{avgRating === null ? "–" : avgRating.toFixed(1)}</dd>
+              </div>
+            </dl>
+            <p data-testid="due-info" className="mt-3 text-base font-medium">
+              {stats && stats.due + stats.new > 0
+                ? `${sv.deck.dueNow(stats.due)}, ${sv.deck.newCards(stats.new)}`
+                : nextDue
+                  ? `${sv.deck.nothingDue} ${sv.deck.nextDue(formatRelative(nextDue))}`
+                  : sv.deck.nothingDue}
+            </p>
+          </>
         )}
         {notice ? (
           <p role="status" className="mt-3 text-sm text-accent">

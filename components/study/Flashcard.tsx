@@ -86,6 +86,7 @@ export function Flashcard({
         <section
           aria-label={sv.study.front}
           aria-hidden={flipped}
+          inert={flipped}
           className="flip-face flip-front col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg border border-line bg-surface p-5 shadow-card sm:p-7"
         >
           <FaceHeader label={sv.study.front} categoryTitle={categoryTitle} />
@@ -112,6 +113,7 @@ export function Flashcard({
         <section
           aria-label={sv.study.back}
           aria-hidden={!flipped}
+          inert={!flipped}
           className="flip-face flip-back col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg border border-accent/40 bg-surface p-5 shadow-card sm:p-7"
         >
           <FaceHeader label={sv.study.back} categoryTitle={categoryTitle} />

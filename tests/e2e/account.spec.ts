@@ -107,7 +107,7 @@ test.describe("konto", () => {
     // Kontot finns inte längre: inloggning misslyckas.
     await page.goto("/logga-in");
     await page.getByLabel("E-postadress").fill(email);
-    await page.getByLabel("Lösenord", { exact: true }).fill(PASSWORD);
+    await page.locator('input[name="password"]').fill(PASSWORD);
     await page.getByTestId("login-submit").click();
     await expect(page.getByRole("alert")).toContainText("Fel e-post eller lösenord.");
   });

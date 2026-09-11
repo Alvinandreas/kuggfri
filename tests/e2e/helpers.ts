@@ -62,7 +62,7 @@ export async function readLocalProgress(page: Page): Promise<Record<string, unkn
 export async function register(page: Page, email: string, password: string, next = "/") {
   await page.goto(`/registrera?next=${encodeURIComponent(next)}`);
   await page.getByLabel("E-postadress").fill(email);
-  await page.getByLabel("Lösenord", { exact: true }).fill(password);
+  await page.locator('input[name="password"]').fill(password);
   await page.getByTestId("register-submit").click();
   await page.waitForURL((url) => !url.pathname.startsWith("/registrera"), { timeout: 20_000 });
 }
@@ -70,7 +70,7 @@ export async function register(page: Page, email: string, password: string, next
 export async function login(page: Page, email: string, password: string, next = "/") {
   await page.goto(`/logga-in?next=${encodeURIComponent(next)}`);
   await page.getByLabel("E-postadress").fill(email);
-  await page.getByLabel("Lösenord", { exact: true }).fill(password);
+  await page.locator('input[name="password"]').fill(password);
   await page.getByTestId("login-submit").click();
   await page.waitForURL((url) => !url.pathname.startsWith("/logga-in"), { timeout: 20_000 });
 }

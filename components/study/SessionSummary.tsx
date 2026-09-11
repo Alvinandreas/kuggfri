@@ -5,6 +5,7 @@ import type { SessionSummary as Summary } from "@/lib/fsrs/session";
 import { SELF_RATINGS, type StudyMode } from "@/lib/progress/types";
 import { formatRelative } from "@/lib/time/format";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { ratingClass } from "./RatingButtons";
 import type { StudyCard } from "./StudySession";
 
 type Props = {
@@ -73,7 +74,7 @@ export function SessionSummary({ summary, cardsById, mode, nextDue, deckSlug, on
           <ul className="mt-3 grid gap-2">
             {summary.needsWork.slice(0, 10).map(({ cardId, rating }) => (
               <li key={cardId} className="flex items-start gap-3 text-sm">
-                <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-semibold text-white ${barClass[rating]}`}>
+                <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-semibold text-fg ${ratingClass[rating]}`}>
                   {rating}
                 </span>
                 <span>{firstLine(cardsById.get(cardId)?.front ?? "")}</span>

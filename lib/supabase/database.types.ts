@@ -165,6 +165,8 @@ export type Database = {
         Returns: { unique_users: number; total_reviews: number; avg_rating: number | null }[];
       };
       deck_stats_cards: { Args: { p_deck_id: string }; Returns: DeckStatsCardRow[] };
+      reorder_cards: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
+      reorder_categories: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

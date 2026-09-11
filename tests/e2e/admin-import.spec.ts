@@ -37,14 +37,15 @@ test.describe("admin", () => {
     await expect(page.getByTestId("import-result")).toContainText("2 kort importerade.", { timeout: 20_000 });
 
     // Korten syns i admin-listan.
-    await page.getByRole("link", { name: "Tillbaka" }).click();
+    const deckAdminUrl = page.url().replace(/\/import$/, "");
+    await page.goto(deckAdminUrl);
     await expect(page.getByTestId("admin-card-list").getByText(unique, { exact: true })).toBeVisible();
 
     // Och i det publika decket.
     await page.goto(`/d/${DECK_SLUG}`);
     const totalAfter = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
     expect(totalAfter).toBe(totalBefore + 2);
-    await expect(page.getByText("E2E-kategori")).toBeVisible();
+    await expect(page.locator("li", { hasText: "E2E-kategori" }).first()).toBeVisible();
 
     // Kortet kan pluggas: fri repetition i den nya kategorin.
     const select = page.getByLabel("Urval");

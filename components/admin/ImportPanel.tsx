@@ -198,6 +198,14 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
           {result.text}
         </p>
       ) : null}
+
+      {!diff ? (
+        <div>
+          <LinkButton href={`/admin/deck/${deckId}`} variant="secondary" size="sm">
+            {sv.common.back}
+          </LinkButton>
+        </div>
+      ) : null}
     </div>
   );
 }

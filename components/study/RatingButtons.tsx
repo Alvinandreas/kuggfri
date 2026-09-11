@@ -8,12 +8,13 @@ type Props = {
   onRate: (rating: SelfRating) => void;
 };
 
-const colorClass: Record<SelfRating, string> = {
-  1: "bg-rate-1",
-  2: "bg-rate-2",
-  3: "bg-rate-3",
-  4: "bg-rate-4",
-  5: "bg-rate-5",
+/** Tonad bakgrund + färgad kant och mörk/ljus text (från tokens) ger AA-kontrast i båda temana. */
+export const ratingClass: Record<SelfRating, string> = {
+  1: "bg-rate-1/20 border-rate-1",
+  2: "bg-rate-2/20 border-rate-2",
+  3: "bg-rate-3/20 border-rate-3",
+  4: "bg-rate-4/20 border-rate-4",
+  5: "bg-rate-5/20 border-rate-5",
 };
 
 export function RatingButtons({ disabled, onRate }: Props) {
@@ -29,12 +30,12 @@ export function RatingButtons({ disabled, onRate }: Props) {
             onClick={() => onRate(r)}
             aria-label={`${r} – ${sv.study.rate[r]}`}
             data-testid={`rate-${r}`}
-            className={`flex h-14 flex-col items-center justify-center rounded-md text-white transition-opacity disabled:opacity-35 ${colorClass[r]} ${
-              disabled ? "" : "hover:opacity-90"
+            className={`flex h-14 flex-col items-center justify-center rounded-md border-2 text-fg transition-opacity disabled:opacity-35 ${ratingClass[r]} ${
+              disabled ? "" : "hover:opacity-85"
             }`}
           >
             <span className="text-lg font-semibold leading-none">{r}</span>
-            <span className="mt-1 text-[0.65rem] leading-none opacity-90">{sv.study.rate[r]}</span>
+            <span className="mt-1 text-[0.65rem] leading-none">{sv.study.rate[r]}</span>
           </button>
         ))}
       </div>

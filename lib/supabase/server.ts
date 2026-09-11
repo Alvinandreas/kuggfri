@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "./database.types";
@@ -31,8 +32,12 @@ export async function createSupabaseServerClient() {
   });
 }
 
-/** Returnerar inloggad användare eller null. Sväljer konfigurationsfel så att sidor kan renderas som gäst. */
-export async function getCurrentUser() {
+/**
+ * Inloggad användare eller null. Memoiserad per request (layout, header och
+ * sida delar ett enda anrop). Sväljer konfigurationsfel så att sidor kan
+ * renderas som gäst.
+ */
+export const getCurrentUser = cache(async () => {
   try {
     const supabase = await createSupabaseServerClient();
     const {
@@ -42,23 +47,17 @@ export async function getCurrentUser() {
   } catch {
     return null;
   }
-}
+});
 
-/** Returnerar användaren och profilen, eller null om utloggad. */
-export async function getCurrentProfile() {
+/** Användaren och profilen, eller null om utloggad. Memoiserad per request. */
+export const getCurrentProfile = cache(async () => {
   try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) return null;
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
+    const supabase = await createSupabaseServerClient();
+    const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
     return { user, profile };
   } catch {
     return null;
   }
-}
+});

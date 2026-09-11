@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -27,6 +27,8 @@ type Props<T extends { id: string }> = {
  */
 export function SortableList<T extends { id: string }>({ items, label, onReorder, renderItem }: Props<T>) {
   const [order, setOrder] = useState(items);
+  // Stabilt id så att dnd-kits aria-describedby blir lika på server och klient.
+  const dndId = useId();
   useEffect(() => setOrder(items), [items]);
 
   const sensors = useSensors(
@@ -55,7 +57,7 @@ export function SortableList<T extends { id: string }>({ items, label, onReorder
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+    <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       <SortableContext items={order.map((i) => i.id)} strategy={verticalListSortingStrategy}>
         <ul aria-label={label} className="grid gap-2">
           {order.map((item, index) => (

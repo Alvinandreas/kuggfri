@@ -1,0 +1,43 @@
+"use client";
+
+import { sv } from "@/lib/i18n/sv";
+import { SELF_RATINGS, type SelfRating } from "@/lib/progress/types";
+
+type Props = {
+  disabled: boolean;
+  onRate: (rating: SelfRating) => void;
+};
+
+const colorClass: Record<SelfRating, string> = {
+  1: "bg-rate-1",
+  2: "bg-rate-2",
+  3: "bg-rate-3",
+  4: "bg-rate-4",
+  5: "bg-rate-5",
+};
+
+export function RatingButtons({ disabled, onRate }: Props) {
+  return (
+    <fieldset className="grid gap-2" aria-label={sv.study.rateLabel}>
+      <legend className="text-center text-sm text-muted">{sv.study.rateLabel}</legend>
+      <div className="grid grid-cols-5 gap-2">
+        {SELF_RATINGS.map((r) => (
+          <button
+            key={r}
+            type="button"
+            disabled={disabled}
+            onClick={() => onRate(r)}
+            aria-label={`${r} – ${sv.study.rate[r]}`}
+            data-testid={`rate-${r}`}
+            className={`flex h-14 flex-col items-center justify-center rounded-md text-white transition-opacity disabled:opacity-35 ${colorClass[r]} ${
+              disabled ? "" : "hover:opacity-90"
+            }`}
+          >
+            <span className="text-lg font-semibold leading-none">{r}</span>
+            <span className="mt-1 text-[0.65rem] leading-none opacity-90">{sv.study.rate[r]}</span>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}

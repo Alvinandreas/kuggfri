@@ -22,12 +22,13 @@ export interface ProgressStore {
   /** Progress för angivna kort. Kort utan progress saknas i svaret. */
   load(cardIds: readonly string[]): Promise<ProgressMap>;
   save(progress: CardProgress): Promise<void>;
-  /** Tar bort progress för angivna kort (ett deck). */
-  resetCards(cardIds: readonly string[]): Promise<void>;
+  /** Tar bort all progress för ett deck. */
+  resetDeck(deckId: string, cardIds: readonly string[]): Promise<void>;
+  /** Tar bort all progress i alla deck. */
   resetAll(): Promise<void>;
-  /** Nollställer schemat men behåller self_rating. null = alla kort. */
-  resetSchedule(cardIds: readonly string[] | null): Promise<void>;
-  /** Loggar en session. Gäster loggar ingenting. */
+  /** Nollställer schemat men behåller self_rating. deckId null = alla deck. */
+  resetSchedule(deckId: string | null, cardIds: readonly string[] | null): Promise<void>;
+  /** Loggar en avslutad session. Gäster loggar ingenting. */
   logSession(input: { deckId: string; mode: StudyMode; startedAt: Date; cardsReviewed: number }): Promise<void>;
 }
 
@@ -49,7 +50,7 @@ export class LocalProgressStore implements ProgressStore {
     writeLocalProgress(this.storage, all);
   }
 
-  async resetCards(cardIds: readonly string[]): Promise<void> {
+  async resetDeck(_deckId: string, cardIds: readonly string[]): Promise<void> {
     const all = readLocalProgress(this.storage);
     for (const id of cardIds) delete all[id];
     writeLocalProgress(this.storage, all);
@@ -59,7 +60,7 @@ export class LocalProgressStore implements ProgressStore {
     clearLocalProgress(this.storage);
   }
 
-  async resetSchedule(cardIds: readonly string[] | null): Promise<void> {
+  async resetSchedule(_deckId: string | null, cardIds: readonly string[] | null): Promise<void> {
     const all = readLocalProgress(this.storage);
     const now = new Date();
     const ids = cardIds ?? Object.keys(all);
@@ -115,16 +116,6 @@ export class SupabaseProgressStore implements ProgressStore {
     if (error) throw error;
   }
 
-  async resetCards(cardIds: readonly string[]): Promise<void> {
-    if (cardIds.length === 0) return;
-    const { error } = await this.supabase
-      .from("card_progress")
-      .delete()
-      .eq("user_id", this.userId)
-      .in("card_id", [...cardIds]);
-    if (error) throw error;
-  }
-
   async resetDeck(deckId: string): Promise<void> {
     const { error } = await this.supabase.rpc("reset_deck_progress", { p_deck_id: deckId });
     if (error) throw error;
@@ -135,18 +126,7 @@ export class SupabaseProgressStore implements ProgressStore {
     if (error) throw error;
   }
 
-  async resetSchedule(cardIds: readonly string[] | null): Promise<void> {
-    if (cardIds === null) {
-      const { error } = await this.supabase.rpc("reset_schedule_keep_ratings", { p_deck_id: null });
-      if (error) throw error;
-      return;
-    }
-    const existing = await this.load(cardIds);
-    const now = new Date();
-    await this.saveMany(Object.values(existing).map((p) => resetScheduleKeepRating(p, now)));
-  }
-
-  async resetScheduleForDeck(deckId: string): Promise<void> {
+  async resetSchedule(deckId: string | null): Promise<void> {
     const { error } = await this.supabase.rpc("reset_schedule_keep_ratings", { p_deck_id: deckId });
     if (error) throw error;
   }

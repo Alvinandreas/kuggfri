@@ -90,12 +90,12 @@ describe("LocalProgressStore", () => {
 
     expect(Object.keys(await store.load(["a", "b"])).sort()).toEqual(["a", "b"]);
 
-    await store.resetSchedule(["a"]);
+    await store.resetSchedule("deck", ["a"]);
     const afterSchedule = await store.load(["a"]);
     expect(afterSchedule.a?.state).toBe(0);
     expect(afterSchedule.a?.self_rating).toBe(2);
 
-    await store.resetCards(["a", "b"]);
+    await store.resetDeck("deck", ["a", "b"]);
     expect(Object.keys(await store.load(["a", "b", "c"]))).toEqual(["c"]);
 
     await store.resetAll();

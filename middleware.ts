@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
+import { decideAdminAccess } from "@/lib/auth/admin-gate";
 
 /**
  * 1. Håller Supabase-sessionen färsk på varje request.
@@ -11,17 +12,18 @@ export async function middleware(request: NextRequest) {
   const { supabase, response, user } = await updateSession(request);
 
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    if (!user) {
+    let profile: { is_admin: boolean } | null = null;
+    if (user) {
+      const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
+      profile = data;
+    }
+    const decision = decideAdminAccess(user, profile);
+    if (decision.kind === "redirect-login") {
       const loginUrl = new URL("/logga-in", request.url);
       loginUrl.searchParams.set("next", request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
     }
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("is_admin")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (!profile?.is_admin) {
+    if (decision.kind === "forbidden") {
       return new NextResponse(forbiddenHtml(), {
         status: 403,
         headers: { "content-type": "text/html; charset=utf-8" },

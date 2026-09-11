@@ -5,15 +5,9 @@ import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/supabase/env";
 import { sv } from "@/lib/i18n/sv";
+import { safeNext } from "./safe-next";
 
 export type AuthResult = { ok: true; message?: string } | { ok: false; error: string };
-
-function safeNext(next: unknown): string {
-  if (typeof next !== "string") return "/";
-  // Endast interna sökvägar.
-  if (!next.startsWith("/") || next.startsWith("//")) return "/";
-  return next;
-}
 
 export async function signOutAction(): Promise<void> {
   const supabase = await createSupabaseServerClient();

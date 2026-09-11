@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { sv } from "@/lib/i18n/sv";
+import { getCurrentUser } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ProgressMigrator } from "@/components/auth/ProgressMigrator";
 
 export const metadata: Metadata = {
   title: {
@@ -33,7 +35,8 @@ export const viewport: Viewport = {
 /** Sätter temat innan första målningen så att sidan inte blinkar. */
 const themeScript = `(function(){try{var t=localStorage.getItem('plugget:theme');var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const user = await getCurrentUser();
   return (
     <html lang="sv" suppressHydrationWarning>
       <head>
@@ -48,6 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </a>
         <Header />
         <main id="innehall" className="mx-auto w-full max-w-[var(--content-width)] flex-1 px-4 pb-16 pt-6 sm:px-6">
+          <ProgressMigrator userId={user?.id ?? null} />
           {children}
         </main>
         <Footer />

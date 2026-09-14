@@ -26,7 +26,10 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Adminflödet mot riktig databas: deck, kategori, kort, import, export (E2E) samt ombeställning och statistik (manuellt som admin@kuggfri.test). Hittade och rättade: seedens sort_order räknades per kategori så att kategorierna blandades i deckets ordning; nu global numrering
 - [ ] Gör Alvin till admin (SQL enligt README) när e-post finns
 
-### Deploy (om Alvin säger ja)
+### Deploy (Alvin vill ha kuggfri.com uppe till torsdag)
+- [x] Konton skapade på Supabase och Vercel (mån 16:30)
+- [x] `docs/DEPLOY.md` med exakta steg för Alvin; `supabase/deploy/full.sql` (alla migrationer + seed) för SQL-editorn; `npm run deploy:sql` bygger om den
+- [?] Alvin: GitHub-repo + `git push` (kräver hans inloggning i fönstret som öppnas), `npx supabase login` + `link`, Vercel-import med miljövariabler. Se docs/DEPLOY.md
 - [ ] `supabase link` + `supabase db push` mot Alvins projekt
 - [ ] Kör seed mot molnprojektet (SQL-editorn eller admin-import)
 - [ ] Miljövariabler i Vercel, deploy, kontrollera magic link och registrering på riktig domän

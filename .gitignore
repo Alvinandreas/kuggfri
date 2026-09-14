@@ -52,3 +52,6 @@ supabase/.env
 
 # lokal testdatabas
 /.pglite
+
+# stabil produktionskopia för lokal testning (NEXT_DIST_DIR)
+/.next-prod/

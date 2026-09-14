@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Låter en produktionsbyggd kopia köra bredvid dev-servern utan att de skriver
+  // över varandras .next-katalog: NEXT_DIST_DIR=.next-prod npx next build && npx next start -p 3001
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   experimental: {
     authInterrupts: true,
   },

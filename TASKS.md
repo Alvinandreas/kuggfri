@@ -36,7 +36,10 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 ### Innehållsgranskning, steg 1
 - [x] `scripts/content-review.ts` listar kort med formateringsanmärkningar (körs med `npx tsx scripts/content-review.ts`)
 - [x] Alvin godkände alla fyra åtgärderna + borttagning av dubbletter (mån 11:30). Gjort: pilar →, nedsänkta kemiska formler, unicode-matte som KaTeX, sju dubbletter bort. Decket har nu 144 kort. Kvar i `docs/INNEHALL-GRANSKNING.md`: 10 ofarliga radbrytningsanmärkningar
-- [?] Innehållsfråga: brottseghetskortet anger `K1c = EGc`; korrekt är K_Ic = √(E·G_c). Ska Claude rätta? (innehållsändring, kräver ja)
+- [x] Brottseghetskortet rättat till $K_{1c} = \sqrt{E\,G_c}$ (Alvin sa ja mån 11:55; ändrat i CSV, seed och direkt i lokala databasen utan omladdning)
+- [x] Alvin är admin lokalt (alvinandreas.cth@gmail.com, is_admin = true, mån 11:55)
+- [x] Stabil testkopia: produktionsbygge i `.next-prod` på **http://localhost:3001** så att Alvins test inte störs av dev-serverns omkompileringar. Byggs om med `NEXT_DIST_DIR=.next-prod npx next build` när nya ändringar ska testas
+- **Regel från och med nu:** ingen `supabase db reset` medan Alvin har konto och progress lokalt. Seedändringar appliceras med riktade SQL-uppdateringar
 
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 

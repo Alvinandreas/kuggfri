@@ -77,7 +77,7 @@ Vad är brottseghet?,"Ett mått på ett materials naturliga motstånd mot propag
 * Brott när K1c> K1
 * Tar hänsyn till last och spricklängd
 * Beror på energin som krävs för att driva sprickan
-* (𝐾1𝑐 = 𝐸𝐺𝑐)"
+* ($K_{1c} = \sqrt{E\,G_c}$)"
 Varför är spröda material extra känsliga för defekter?,Största förekommande defekten i en komponent ger störst spänning vilket innebär att brottet börjar där. Brottstyrkan blir då beroende av sannolikheten för att det finns en defekt i det belastade området och ju större komponenten är desto högre blir sannolikheten att det förekommer defekter. Eftersom sprickor uppträder lättare i spröda material blir de mer defektkänsliga.
 Vad har temperatur för inverkan på ett materials brottseghet?,"När temperaturen sjunker blir materialen sprödare, och sannolikheten för sprickbildning ökar."
 Vad är skillnaden mellan ett segt- respektive sprött brott?,"Ett segt material deformeras plastiskt under en längre tid innan brott uppstår, till skillnad från ett sprött material som deformeras betydligt mindre innan brott sker."

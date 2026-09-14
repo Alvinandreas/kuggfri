@@ -42,7 +42,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [ ] Rätta allt från Alvins måndagslista
 - [ ] Formatera om kort enligt den godkända granskningslistan (bara markdown, inte innehåll); uppdatera seed och kör `npm run seed:build`
 - [ ] Konvertera uppenbar unicode-matte till KaTeX där det ger bättre läsbarhet (t.ex. `$\sigma = E\varepsilon$`)
-- [ ] Skriv `docs/PRESENTATION.md`: talarpunkter, demo-manus i tre steg, de tre frågorna ur mejlet, förslag på hur Johan kan granska innehållet (adminkonto eller export)
+- [x] `docs/PRESENTATION.md` utkast skrivet redan mån 11:10 (talarpunkter, demo i tre steg, erbjudande till Johan, frågor och svar, packlista). Alvin redigerar ons kväll
 - [ ] Mobilpolish: testa iOS Safari-specifika saker (100dvh, svep vs. tillbaka-gest), långa baksidor, KaTeX-bredd
 - [ ] Rapport i chatten 12:00 och 17:00
 

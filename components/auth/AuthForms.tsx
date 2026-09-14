@@ -51,6 +51,7 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
       {useLink ? (
         <form action={linkAction} className="grid gap-4">
           <input type="hidden" name="next" value={next} />
+          <p className="text-sm text-muted">{sv.auth.magicLinkHelp}</p>
           <label className="grid gap-1 text-sm">
             <span>{sv.auth.email}</span>
             <input name="email" type="email" required autoComplete="email" className={inputClass} />
@@ -81,6 +82,7 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
           <button type="button" onClick={() => setUseLink(true)} className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.magicLink}
           </button>
+          <p className="text-xs text-muted">{sv.auth.forgotHint}</p>
         </form>
       )}
 

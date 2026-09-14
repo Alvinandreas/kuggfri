@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
-import { deleteAccountAction, updateDisplayNameAction, type AuthResult } from "@/lib/auth/actions";
+import { deleteAccountAction, updateDisplayNameAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -14,6 +14,10 @@ type Pending = { kind: "delete" } | { kind: "resetAll" } | { kind: "resetSchedul
 export function AccountPanel({ userId, email, displayName, decks }: Props) {
   const [nameState, nameAction, namePending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateDisplayNameAction(fd),
+    null,
+  );
+  const [passwordState, passwordAction, passwordPending] = useActionState(
+    async (_prev: AuthResult | null, fd: FormData) => updatePasswordAction(fd),
     null,
   );
   const store = useProgressStore(userId);
@@ -86,6 +90,39 @@ export function AccountPanel({ userId, email, displayName, decks }: Props) {
           {nameState ? (
             <p role="status" className={`text-sm ${nameState.ok ? "text-accent" : "text-danger"}`}>
               {nameState.ok ? nameState.message : nameState.error}
+            </p>
+          ) : null}
+        </form>
+      </section>
+
+      <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-labelledby="losenord-rubrik">
+        <h2 id="losenord-rubrik" className="text-lg font-semibold">
+          {sv.account.passwordTitle}
+        </h2>
+        <p className="text-sm text-muted">{sv.account.passwordHelp}</p>
+        {/* Nyckeln byts vid lyckad ändring så att fältet töms. */}
+        <form action={passwordAction} className="grid gap-2" key={passwordState?.ok ? "saved" : "edit"}>
+          <label htmlFor="new_password" className="text-sm">
+            {sv.account.newPassword}
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="new_password"
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              className="h-11 w-full rounded-md border border-line-strong bg-bg px-3 text-fg"
+            />
+            <Button type="submit" variant="secondary" disabled={passwordPending} data-testid="save-password">
+              {sv.account.savePassword}
+            </Button>
+          </div>
+          <span className="text-xs text-muted">{sv.auth.passwordHelp}</span>
+          {passwordState ? (
+            <p role="status" className={`text-sm ${passwordState.ok ? "text-accent" : "text-danger"}`}>
+              {passwordState.ok ? passwordState.message : passwordState.error}
             </p>
           ) : null}
         </form>

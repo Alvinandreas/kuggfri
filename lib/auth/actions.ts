@@ -20,6 +20,7 @@ function authErrorMessage(error: { message: string; code?: string }, fallback: s
   if (code === "validation_failed" || code === "email_address_invalid" || msg.includes("invalid email") || msg.includes("unable to validate email")) {
     return sv.auth.invalidEmail;
   }
+  if (msg.includes("different from the old")) return sv.auth.passwordSame;
   if (code === "weak_password" || msg.includes("password")) return sv.auth.weakPassword;
   return fallback;
 }
@@ -92,6 +93,19 @@ export async function sendMagicLinkAction(formData: FormData): Promise<AuthResul
   });
   if (error) return { ok: false, error: authErrorMessage(error, sv.auth.error) };
   return { ok: true, message: sv.auth.magicLinkSent };
+}
+
+export async function updatePasswordAction(formData: FormData): Promise<AuthResult> {
+  const password = String(formData.get("password") ?? "");
+  if (password.length < 8) return { ok: false, error: sv.auth.weakPassword };
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: sv.auth.error };
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) return { ok: false, error: authErrorMessage(error, sv.errors.generic) };
+  return { ok: true, message: sv.account.passwordSaved };
 }
 
 export async function updateDisplayNameAction(formData: FormData): Promise<AuthResult> {

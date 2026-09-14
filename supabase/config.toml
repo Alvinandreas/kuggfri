@@ -247,6 +247,17 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# Kuggfris mallar använder token_hash i stället för Supabase standardlänk, så att länken
+# fungerar i vilken webbläsare/enhet som helst (PKCE-koden kräver annars samma webbläsare).
+# Samma innehåll ska klistras in i Supabase-dashboarden (Authentication → Emails) för molnprojektet.
+[auth.email.template.magic_link]
+subject = "Din inloggningslänk till Kuggfri"
+content_path = "./supabase/templates/magic-link.html"
+
+[auth.email.template.confirmation]
+subject = "Bekräfta ditt konto på Kuggfri"
+content_path = "./supabase/templates/confirmation.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true

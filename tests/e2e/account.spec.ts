@@ -126,6 +126,20 @@ test.describe("konto", () => {
     await expect(page.getByRole("alert").filter({ hasText: "Fel e-post eller lösenord." })).toBeVisible();
   });
 
+  test("byter lösenord under Konto och loggar in med det nya", async ({ page }) => {
+    const email = uniqueEmail("byt");
+    const newPassword = "nytt-losenord-456";
+    await register(page, email, PASSWORD, "/konto");
+    await page.locator('input[name="password"]').fill(newPassword);
+    await page.getByTestId("save-password").click();
+    await expect(page.getByRole("status").filter({ hasText: "Lösenordet är bytt." })).toBeVisible();
+
+    await page.getByRole("button", { name: "Logga ut" }).click();
+    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+    await login(page, email, newPassword, "/konto");
+    await expect(page.getByRole("heading", { name: "Ditt konto" })).toBeVisible();
+  });
+
   test("inloggning med lösenord fungerar för befintligt konto", async ({ page }) => {
     const email = uniqueEmail("login");
     await register(page, email, PASSWORD, "/");

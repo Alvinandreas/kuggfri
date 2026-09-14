@@ -123,3 +123,19 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   dataviz-skillens validator i både ljust och mörkt läge. Två serier har legend och direkt etikett;
   varje diagram har tabellvy.
 - **Kontrastfärgen är grön** (`#1f7a4d` / `#3aa868`), samma som diagrammens huvudfärg.
+
+## Beslut 2026-09-15, produktion
+
+- **Inloggningslänkar använder `token_hash`, inte Supabase standardlänk.** Standardmallen går via
+  Supabase verify-sida och lämnar en PKCE-kod som bara kan lösas in i webbläsaren som beställde
+  länken. Studenter öppnar mejl i mobilens mejlapp eller på en annan enhet, så det flödet håller inte.
+  Egna mallar i `supabase/templates/` länkar till `{{ .SiteURL }}/auth/confirm?token_hash=…`, som
+  verifieras server-side utan cookies. `/auth/confirm` och middleware stöder fortfarande `?code=`
+  som reserv. Mallarna klistras in i molnprojektets dashboard (docs/DEPLOY.md 3b); `config push`
+  används inte eftersom den skulle skriva över molnets Site URL och redirect-lista med lokala värden.
+- **Byt lösenord under Konto** i stället för ett separat "glömt lösenord"-flöde. Inloggningslänken
+  är återställningsvägen: logga in med länk, välj nytt lösenord. Färre mejl, färre sidor, samma
+  resultat. Kräver ingen ominloggning (`secure_password_change` är av).
+- **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
+  mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
+  till före lansering till studenter, se docs/DEPLOY.md 3c.

@@ -71,11 +71,53 @@ och laddar innehållet.
 npx vercel login
 ```
 
+## 3b. E-postmallar i Supabase (krävs för inloggningslänkar)
+
+Supabase standardmall skickar användaren via Supabase egen verify-sida med en PKCE-kod som bara
+kan lösas in i **samma webbläsare** som beställde länken. Öppnas mejlet i mobilens mejlapp, en annan
+webbläsare eller en annan enhet misslyckas inloggningen ("Länken är ogiltig"). Kuggfris mallar
+använder i stället `token_hash`, som `/auth/confirm` verifierar direkt. Då fungerar länken överallt
+och landar alltid på Site URL (kuggfri.com). Lokalt läses mallarna från `supabase/templates/` via
+`config.toml`; i molnet måste de klistras in en gång:
+
+1. Supabase → **Authentication → Emails** (fliken *Templates*).
+2. Välj **Magic Link**. Subject: `Din inloggningslänk till Kuggfri`. Ersätt hela brödtexten med
+   innehållet i `supabase/templates/magic-link.html`. Spara.
+3. Välj **Confirm signup**. Subject: `Bekräfta ditt konto på Kuggfri`. Ersätt brödtexten med
+   `supabase/templates/confirmation.html`. Spara. (Används bara om "Confirm email" slås på igen.)
+4. **Authentication → URL Configuration → Redirect URLs**: lägg till `https://kuggfri.com/**` och
+   `https://kuggfri.vercel.app/**`. Vercel-integrationen lade bara in sina egna
+   `kuggfri-…-gate-ai-sverige.vercel.app`-adresser, vilket är varför länkar hamnade där 14 sep.
+5. Testa: kuggfri.com → Logga in → "Skicka inloggningslänk i stället" → öppna mejlet på en annan
+   enhet än den du beställde från. Du ska landa inloggad på startsidan.
+
+`supabase config push` ska **inte** användas för detta: config.toml deklarerar lokala värden
+(site_url, redirect-listan, rate limits) som då skulle skriva över molnets riktiga inställningar.
+`supabase config diff` är däremot ofarligt och visar skillnaderna.
+
+## 3c. Egen mejlserver (krävs före lansering till studenter)
+
+Supabase inbyggda utskick är begränsat till ett par mejl per timme per projekt och är avsett för
+test. Med många studenter behövs egen SMTP. Rekommendation: **Resend** (gratis upp till 3 000 mejl
+per månad).
+
+1. Skapa konto på resend.com, lägg till domänen `kuggfri.com` under *Domains* och lägg in de
+   DNS-poster Resend visar hos Hostinger (TXT för verifiering, MX + TXT för DKIM/SPF på en subdomän).
+2. Skapa en API-nyckel i Resend (Sending access räcker).
+3. Supabase → **Project Settings → Authentication → SMTP Settings** → Enable Custom SMTP:
+   Sender email `noreply@kuggfri.com`, Sender name `Kuggfri`, Host `smtp.resend.com`, Port `465`,
+   Username `resend`, Password = API-nyckeln. Spara.
+4. Supabase → Authentication → Rate Limits: höj "Rate limit for sending emails" till t.ex. 100/timme.
+
+API-nyckeln är en hemlighet: klistra in den i Supabase-dashboarden, aldrig i repot eller i chatten.
+
 ## 4. Claude gör (när ovanstående finns)
 
 - `supabase db push` (eller SQL-filen), kontroll att RLS och seed finns i molnet.
 - Gör dig till admin i molndatabasen (SQL enligt README).
-- Kontroll av registrering, magic link och studieflödet på den riktiga adressen.
+- Kontroll av registrering, magic link och studieflödet på den riktiga adressen. Gjort 14–15 sep:
+  registrering och lösenordsinloggning fungerar på kuggfri.com; inloggningslänk fungerar lokalt med
+  de nya mallarna (testat utan cookies mot Mailpit) och i molnet så snart mallarna är inklistrade.
 - E2E-körning mot produktion i läsläge (inga testkonton skapas där).
 - Tar bort `/d/dev-preview`-rutten (svarar redan 404 i produktion).
 

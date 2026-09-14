@@ -62,7 +62,9 @@ från `supabase status`. Första gången: `npx playwright install chromium`.
    (`npx supabase db push` tar inte med seed.sql; kör i stället innehållet i `supabase/seed.sql`
    i SQL-editorn, eller importera via admin, se nedan).
 4. I Supabase-dashboarden under Authentication → URL Configuration: sätt Site URL till din
-   domän och lägg till `https://din-domän/**` under Redirect URLs. Under Providers → Email:
+   domän och lägg till `https://din-domän/**` under Redirect URLs. Klistra in mallarna från
+   `supabase/templates/` under Authentication → Emails (Magic Link, Confirm signup), annars fungerar
+   inloggningslänkar bara i samma webbläsare som beställde dem (se docs/DEPLOY.md 3b). Under Providers → Email:
    välj om e-postbekräftelse ska krävas. Aktivera inga tredjepartsinloggningar.
 5. Sätt miljövariablerna (se `.env.example`): `NEXT_PUBLIC_SUPABASE_URL`,
    `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`.

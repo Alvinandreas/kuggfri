@@ -105,6 +105,10 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
+- [?] **Alvin (5 min): klistra in mejlmallarna i Supabase** (Authentication → Emails → Magic Link och Confirm signup, innehåll från `supabase/templates/`) och lägg till `https://kuggfri.com/**` + `https://kuggfri.vercel.app/**` under Redirect URLs. Exakta steg i docs/DEPLOY.md 3b. Utan detta fungerar inloggningslänken bara i samma webbläsare som beställde den
+- [x] Inloggningslänk fungerar på alla enheter: egna mallar med `token_hash` (tis 00:10). Testat lokalt utan cookies mot Mailpit: länken loggar in, förbrukad länk ger felsidan
+- [x] Byt lösenord under Konto (för den som loggat in med länk eller glömt lösenordet), E2E-test tillagt (tis 00:20)
+- [x] Felsökning tis 00:00: lösenordsinloggning på kuggfri.com fungerar tekniskt (fel lösenord ger rätt fel, Supabase svarar). Molnets Redirect URLs innehöll bara Vercel-integrationens `kuggfri-gate-ai-sverige.vercel.app`, inte kuggfri.com, därför hamnade länken där
 - [?] **Före lansering till studenter: egen SMTP i Supabase.** Den inbyggda mejlservern skickar bara ett par mejl per timme (det var det som gav "Det gick inte" för Alvin mån kväll). Med e-postbekräftelse avstängd fungerar registrering med lösenord utan mejl, men inloggningslänkar behöver riktig SMTP (t.ex. Resend, gratis upp till 3 000 mejl/månad: Supabase → Project Settings → Authentication → SMTP Settings). Alvin skapar kontot och klistrar in nyckeln själv
 - [x] Auth-fel visar nu specifik orsak (mejlbegränsning, obekräftad e-post, ogiltig adress) och loggas i Vercel
 - [x] Återvändsadress i mejllänkar följer besökt domän; inloggningskod fångas på valfri sida

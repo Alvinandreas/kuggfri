@@ -6,11 +6,14 @@ import { SELF_RATINGS, type StudyMode } from "@/lib/progress/types";
 import { formatRelative } from "@/lib/time/format";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { ratingClass } from "./RatingButtons";
+import { CategoryTag } from "@/components/ui/CategoryTag";
 import type { StudyCard } from "./StudySession";
 
 type Props = {
   summary: Summary;
   cardsById: Map<string, StudyCard>;
+  categories: { id: string; title: string }[];
+  colorIndex: Map<string, number>;
   mode: StudyMode;
   nextDue: { date: Date; count: number } | null;
   deckSlug: string;
@@ -30,11 +33,12 @@ function firstLine(text: string): string {
   return line.replace(/^[#*\-\s]+/, "").trim();
 }
 
-export function SessionSummary({ summary, cardsById, mode, nextDue, deckSlug, onPrevious }: Props) {
+export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, deckSlug, onPrevious }: Props) {
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));
+  const categoryTitle = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null);
 
   return (
-    <div className="grid gap-6" data-testid="session-summary">
+    <div className="mx-auto grid w-full max-w-[44rem] gap-6" data-testid="session-summary">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">{sv.summary.title}</h1>
         <p className="mt-1 text-muted" data-testid="summary-reviewed">
@@ -72,14 +76,21 @@ export function SessionSummary({ summary, cardsById, mode, nextDue, deckSlug, on
           <p className="mt-2 text-muted">{sv.summary.needsWorkEmpty}</p>
         ) : (
           <ul className="mt-3 grid gap-2">
-            {summary.needsWork.slice(0, 10).map(({ cardId, rating }) => (
-              <li key={cardId} className="flex items-start gap-3 text-sm">
-                <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-semibold text-fg ${ratingClass[rating]}`}>
-                  {rating}
-                </span>
-                <span>{firstLine(cardsById.get(cardId)?.front ?? "")}</span>
-              </li>
-            ))}
+            {summary.needsWork.slice(0, 10).map(({ cardId, rating }) => {
+              const card = cardsById.get(cardId);
+              const title = categoryTitle(card?.category_id ?? null);
+              return (
+                <li key={cardId} className="flex items-start gap-3 text-sm">
+                  <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-semibold text-fg ${ratingClass[rating]}`}>
+                    {rating}
+                  </span>
+                  <span className="grid gap-1">
+                    <span>{firstLine(card?.front ?? "")}</span>
+                    {title && card?.category_id ? <CategoryTag title={title} colorIndex={colorIndex.get(card.category_id) ?? 0} /> : null}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

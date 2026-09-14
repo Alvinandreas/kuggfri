@@ -250,6 +250,8 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
       <SessionSummary
         summary={summary}
         cardsById={cardsById}
+        categories={categories}
+        colorIndex={colorIndex}
         mode={mode}
         nextDue={nextDue}
         deckSlug={deck.slug}

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 
 type Theme = "system" | "light" | "dark";
-const STORAGE_KEY = "plugget:theme";
+const STORAGE_KEY = "kuggfri:theme";
 const ORDER: Theme[] = ["system", "light", "dark"];
 
 function readTheme(): Theme {

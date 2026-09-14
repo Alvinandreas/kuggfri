@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 };
 
 /** Sätter temat innan första målningen så att sidan inte blinkar. */
-const themeScript = `(function(){try{var t=localStorage.getItem('plugget:theme');var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
+const themeScript = `(function(){try{var t=localStorage.getItem('kuggfri:theme');var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const user = await getCurrentUser();

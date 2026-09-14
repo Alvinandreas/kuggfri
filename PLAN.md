@@ -1,4 +1,4 @@
-# PLAN – Plugget
+# PLAN – Kuggfri
 
 Vertikala skivor i byggordning. Varje skiva committas separat när `npm run verify` är grön
 (se BLOCKERS.md för vad som inte kunnat köras på den här maskinen).

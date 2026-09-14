@@ -4,7 +4,7 @@
  */
 import { isSelfRating, type CardProgress, type ProgressMap } from "./types";
 
-export const LOCAL_PROGRESS_KEY = "plugget:progress:v1";
+export const LOCAL_PROGRESS_KEY = "kuggfri:progress:v1";
 
 type StoredShape = { version: 1; cards: ProgressMap };
 

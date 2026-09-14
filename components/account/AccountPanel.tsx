@@ -75,7 +75,7 @@ export function AccountPanel({ userId, email, displayName }: Props) {
         <h2 className="text-lg font-semibold">{sv.account.dataTitle}</h2>
         <p className="text-sm text-muted">{sv.account.downloadHelp}</p>
         <div>
-          <a href="/api/konto/export" download="plugget-data.json" className="inline-flex h-11 items-center rounded-md border border-line-strong bg-surface px-4 font-medium hover:bg-surface-2">
+          <a href="/api/konto/export" download="kuggfri-data.json" className="inline-flex h-11 items-center rounded-md border border-line-strong bg-surface px-4 font-medium hover:bg-surface-2">
             {sv.account.download}
           </a>
         </div>

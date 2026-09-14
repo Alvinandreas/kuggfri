@@ -23,7 +23,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] `npx playwright install chromium`
 - [x] `npm run test:e2e`: 28/28 gröna efter fixar (understrukna textlänkar för axe, tvetydiga lokatorer, admin ser opublicerade deck, längre timeouts för dev-kompilering, städning av importerade testkort)
 - [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), BLOCKERS.md uppdaterad
-- [x] Adminflödet mot riktig databas: deck, kategori, kort, import, export (E2E) samt ombeställning och statistik (manuellt som admin@plugget.test). Hittade och rättade: seedens sort_order räknades per kategori så att kategorierna blandades i deckets ordning; nu global numrering
+- [x] Adminflödet mot riktig databas: deck, kategori, kort, import, export (E2E) samt ombeställning och statistik (manuellt som admin@kuggfri.test). Hittade och rättade: seedens sort_order räknades per kategori så att kategorierna blandades i deckets ordning; nu global numrering
 - [ ] Gör Alvin till admin (SQL enligt README) när e-post finns
 
 ### Deploy (om Alvin säger ja)
@@ -50,6 +50,8 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] F5. Kategoritabell med kryssrutor (flera kategorier i urvalet, URL `urval=kategori:id1,id2`), klick på namnet väljer bara den, kolumner Studerade/Inlärda, stapel (studerat tonat + inlärt grönt), sortering "Minst inlärt först". Rullgardinen kvar och synkad
 - [x] F1. Desktop: innehållsbredd 64 rem, deck-sidan i två kolumner med Starta/Nollställ sticky till höger, bredare kort i studieläget. Mobil: Starta-panelen före kategorilistan
 - [ ] F2b (senare): färgtema utöver taggarna, om Alvin vill ha mer färg i helheten
+- [x] Namnbyte Plugget → **Kuggfri** (kuggfri.com) i app, dokument, lagringsnycklar (`kuggfri:progress:v1`, `kuggfri:theme`), testkonton och exportfilnamn (mån 13:30). Obs: gästprogress sparad under gamla nyckeln följer inte med; ingen har sådan ännu utom Alvins egna tester
+- [ ] Domän: koppla kuggfri.com i Vercel när deployen finns (se README, steg 5)
 
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 

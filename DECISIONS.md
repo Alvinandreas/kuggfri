@@ -71,8 +71,8 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Swipe**: horisontellt svep = föregående/nästa i alla lägen. På ett vänt kort betyder svep åt
   vänster skattning 1 och svep åt höger skattning 5; däremellan används knapparna. Det ger snabb
   tumnavigering utan att kräva fem olika gester.
-- **Gästprogress i localStorage** under nyckeln `plugget:progress:v1`, samma fältnamn som
-  `card_progress`. Temat sparas under `plugget:theme`. Inget annat lagras lokalt.
+- **Gästprogress i localStorage** under nyckeln `kuggfri:progress:v1`, samma fältnamn som
+  `card_progress`. Temat sparas under `kuggfri:theme`. Inget annat lagras lokalt.
 - **Migrering vid inloggning**: varje lokalt kort jämförs med databasens rad; den med senast
   `last_review` vinner (lokal rad utan `last_review` vinner bara om databasen saknar raden).
   Efter lyckad migrering rensas localStorage.

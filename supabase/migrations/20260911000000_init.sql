@@ -1,4 +1,4 @@
--- Plugget – grundschema
+-- Kuggfri – grundschema
 -- Tabeller, RLS-policyer och hjälpfunktioner. Körs av `supabase db reset`.
 
 -- ---------------------------------------------------------------------------

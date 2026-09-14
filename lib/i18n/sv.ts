@@ -3,7 +3,7 @@
  */
 export const sv = {
   app: {
-    name: "Plugget",
+    name: "Kuggfri",
     tagline: "Flashcards för Chalmersstudenter.",
     skipToContent: "Hoppa till innehållet",
   },
@@ -18,7 +18,7 @@ export const sv = {
   },
   footer: {
     privacy: "Integritetspolicy",
-    about: "Om Plugget",
+    about: "Om Kuggfri",
     noTracking: "Ingen spårning, inga kakor utöver inloggningen.",
   },
   theme: {
@@ -310,9 +310,9 @@ export const sv = {
     noDecks: "Inga deck ännu.",
   },
   about: {
-    title: "Om Plugget",
+    title: "Om Kuggfri",
     intro:
-      "Plugget är en fri flashcard-tjänst för kurser på Chalmers. Den är byggd av en student, för studenter, och kostar ingenting.",
+      "Kuggfri är en fri flashcard-tjänst för kurser på Chalmers. Den är byggd av en student, för studenter, och kostar ingenting.",
     why: "Varför",
     whyBody:
       "Tjänsten ersätter ett tidigare upplägg i en kommersiell flashcard-app där åtkomst krävde manuell hantering och där grundläggande funktioner som att nollställa sin progress låg bakom en betalvägg. Här är allt öppet, gratis och utan spårning.",

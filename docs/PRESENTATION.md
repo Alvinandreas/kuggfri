@@ -30,7 +30,7 @@ Visa i telefonen eller laptopen. Poängen att göra:
 - Grundfunktioner som att nollställa sin progress ligger bakom betalvägg.
 - Du äger inte plattformen: innehållet lever på ett kommersiellt konto.
 
-### 3. Den nya plattformen: Plugget (10 min)
+### 3. Den nya plattformen: Kuggfri (10 min)
 
 **Demo i telefonen, som gäst, utan inloggning.**
 
@@ -90,7 +90,7 @@ Fråga också om det finns delar av det nuvarande kursinnehållet som han vill l
 
 ## Att ha med
 
-- Telefon med Plugget öppet som gäst (ha redan pluggat några kort så progressvyn inte är tom).
+- Telefon med Kuggfri öppet som gäst (ha redan pluggat några kort så progressvyn inte är tom).
 - Laptop inloggad som admin, med importsidan och statistiken öppna i flikar.
 - Brainscape öppet för jämförelsen.
 - Laddare. Mobildata om campus-wifi krånglar.

@@ -8,12 +8,12 @@ export const SUPABASE_SERVICE_ROLE_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
 
-export const ADMIN_USER = { email: "admin@plugget.test", password: "admin-losenord-123" };
+export const ADMIN_USER = { email: "admin@kuggfri.test", password: "admin-losenord-123" };
 
 export const DECK_SLUG = "materialteknik";
 
 export function uniqueEmail(prefix = "e2e"): string {
-  return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@plugget.test`;
+  return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@kuggfri.test`;
 }
 
 /** Inga allvarliga eller kritiska tillgänglighetsfel på sidan. */
@@ -54,7 +54,7 @@ export async function studyCards(page: Page, mode: "fsrs" | "free" | "random", c
 
 export async function readLocalProgress(page: Page): Promise<Record<string, unknown>> {
   return page.evaluate(() => {
-    const raw = localStorage.getItem("plugget:progress:v1");
+    const raw = localStorage.getItem("kuggfri:progress:v1");
     return raw ? (JSON.parse(raw).cards as Record<string, unknown>) : {};
   });
 }

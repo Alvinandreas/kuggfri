@@ -1,4 +1,4 @@
-# Plugget
+# Kuggfri
 
 Fri flashcard-plattform för kurser på Chalmers. Gratis för studenter, ingen administration,
 ingen spårning. Version ett innehåller decket **Materialteknik** (144 kort i elva kategorier)
@@ -44,7 +44,7 @@ RLS-testerna kör som standard mot PGlite (riktig Postgres i process) med samma 
 Sätt `DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres` för att köra dem mot
 den lokala Supabase-databasen i stället.
 
-E2E-testerna skapar en admin-användare (`admin@plugget.test`) via service role-nyckeln. De
+E2E-testerna skapar en admin-användare (`admin@kuggfri.test`) via service role-nyckeln. De
 lokala standardnycklarna används automatiskt; skiljer de sig, sätt `SUPABASE_SERVICE_ROLE_KEY`
 från `supabase status`. Första gången: `npx playwright install chromium`.
 
@@ -100,6 +100,10 @@ och kör `npm run seed:build`.
 3. `vercel.json` sätter serverfunktionernas region till `arn1` (Stockholm) så att servern kör
    inom EU nära databasen.
 4. Uppdatera Site URL och Redirect URLs i Supabase till produktionsdomänen.
+5. Domänen **kuggfri.com** kopplas under Vercel → Project → Settings → Domains. Vercel visar vilka
+   DNS-poster (A eller CNAME) som ska läggas in hos domänleverantören. Sätt sedan
+   `NEXT_PUBLIC_SITE_URL=https://kuggfri.com` och lägg till `https://kuggfri.com/**` som
+   Redirect URL i Supabase.
 
 Sajten skickar `noindex, nofollow` i både metadata och HTTP-header och har en `robots.txt` som
 blockerar allt. Det är avsiktligt: deck delas via länk (`/d/<slug>`), inte via sökmotorer.

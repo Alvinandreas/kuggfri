@@ -19,14 +19,14 @@ export default function PrivacyPage() {
       <section>
         <h2>Vem ansvarar för dina uppgifter</h2>
         <p>
-          Plugget drivs ideellt av en student vid Chalmers och är personuppgiftsansvarig för de uppgifter som
-          beskrivs här. Kontaktuppgifter finns på sidan <Link href="/om">Om Plugget</Link>.
+          Kuggfri drivs ideellt av en student vid Chalmers och är personuppgiftsansvarig för de uppgifter som
+          beskrivs här. Kontaktuppgifter finns på sidan <Link href="/om">Om Kuggfri</Link>.
         </p>
       </section>
 
       <section>
         <h2>Vilka uppgifter vi behandlar</h2>
-        <p>Du kan använda Plugget helt utan konto. Då lämnar du inga personuppgifter till oss alls.</p>
+        <p>Du kan använda Kuggfri helt utan konto. Då lämnar du inga personuppgifter till oss alls.</p>
         <p>Om du väljer att skapa ett konto behandlar vi följande:</p>
         <ul>
           <li>

@@ -26,7 +26,7 @@ export async function GET() {
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {
       "content-type": "application/json; charset=utf-8",
-      "content-disposition": 'attachment; filename="plugget-data.json"',
+      "content-disposition": 'attachment; filename="kuggfri-data.json"',
       "cache-control": "no-store",
     },
   });

@@ -29,8 +29,14 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 ### Deploy (Alvin vill ha kuggfri.com uppe till torsdag)
 - [x] Konton skapade på Supabase och Vercel (mån 16:30)
 - [x] `docs/DEPLOY.md` med exakta steg för Alvin; `supabase/deploy/full.sql` (alla migrationer + seed) för SQL-editorn; `npm run deploy:sql` bygger om den
-- [?] Alvin: GitHub-repo + `git push` (kräver hans inloggning i fönstret som öppnas), `npx supabase login` + `link`, Vercel-import med miljövariabler. Se docs/DEPLOY.md
-- [ ] `supabase link` + `supabase db push` mot Alvins projekt
+- [x] GitHub: repo `Alvinandreas/kuggfri`, `main` pushad (mån 17:05). Remote-URL innehåller användarnamnet så att Git inte tar fel konto
+- [x] Supabase CLI inloggat (mån 17:15). Projekt **Kuggfri**, ref `fujwpsmqllqwvnzaxatg`, region eu-west-1 (Irland, EU), URL `https://fujwpsmqllqwvnzaxatg.supabase.co`, anon-nyckel hämtad
+- [x] Alvin körde `supabase link` + `db push --include-seed` (mån 17:30): 4 migrationer, 144 kort i molnet
+- [x] Vercel: **https://kuggfri.vercel.app** svarar med riktig data och noindex (mån 17:35)
+- [?] Alvin: registrera konto på kuggfri.vercel.app och säg till, så sätter Claude is_admin i molnet
+- [?] Alvin: Supabase → Authentication → URL Configuration: Site URL `https://kuggfri.com`, Redirect URLs `https://kuggfri.com/**` och `https://kuggfri.vercel.app/**` (annars fungerar inte magic link)
+- [?] Alvin: Vercel → Settings → Domains → kuggfri.com + DNS hos domänleverantören
+- [ ] Gästflödena i E2E mot produktion (`E2E_BASE_URL=https://kuggfri.vercel.app E2E_SKIP_SETUP=1`)
 - [ ] Kör seed mot molnprojektet (SQL-editorn eller admin-import)
 - [ ] Miljövariabler i Vercel, deploy, kontrollera magic link och registrering på riktig domän
 - [ ] Sätt Site URL / Redirect URLs i Supabase-dashboarden (Alvin, eftersom det är hans konto)

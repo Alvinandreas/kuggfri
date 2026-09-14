@@ -52,6 +52,10 @@ export const sv = {
     modeFreeHelp: "Bläddra fritt genom ett urval, hur många gånger du vill. Påverkar inte schemat.",
     modeRandom: "Slumpad genomkörning",
     modeRandomHelp: "Hela decket i slumpad ordning, utan schemaläggning.",
+    modeTricky: "Kluriga kort",
+    modeTrickyHelp: "Bara kort med låg skattning (1–2). Kort du aldrig sett räknas som kluriga tills de fått en skattning.",
+    trickyEmptyCategory: "Inga kluriga kort kvar",
+    summaryTricky: (n: number) => (n === 1 ? "1 klurigt kort" : `${n} kluriga kort`),
     selection: "Urval",
     selectionAll: "Hela decket",
     selectionCategory: "Kategori",
@@ -141,6 +145,7 @@ export const sv = {
     empty: "Det finns inga kort att visa i det här läget just nu.",
     emptyFsrs:
       "Inga kort är förfallna just nu. Kom tillbaka senare eller välj fri repetition.",
+    emptyTricky: "Det finns inga kluriga kort i urvalet. Bra jobbat.",
     backToDeck: "Tillbaka till decket",
     loading: "Laddar…",
     saveError: "Kunde inte spara skattningen. Kontrollera anslutningen.",

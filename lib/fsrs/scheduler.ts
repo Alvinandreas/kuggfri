@@ -145,23 +145,46 @@ export function isNew(progress: CardProgress | undefined): boolean {
 
 export type QueueStats = { due: number; new: number; total: number };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /**
- * Bygger kön för schemalagd repetition: förfallna kort först (mest förfallna
- * först), därefter nya kort i deckets ordning.
+ * Bygger kön för schemalagd repetition: förfallna kort först, mest förfallna
+ * först räknat i hela dagar, därefter nya kort. Kort med samma förfallodag
+ * blandas slumpmässigt, liksom de nya korten, så att ordningen aldrig blir
+ * densamma två sessioner i rad.
  */
-export function buildFsrsQueue(cardIds: readonly string[], progress: ProgressMap, now: Date = new Date()): string[] {
-  const due: { id: string; due: number }[] = [];
+export function buildFsrsQueue(
+  cardIds: readonly string[],
+  progress: ProgressMap,
+  now: Date = new Date(),
+  random: () => number = Math.random,
+): string[] {
+  const due: { id: string; day: number }[] = [];
   const fresh: string[] = [];
   for (const id of cardIds) {
     const p = progress[id];
     if (!p || p.state === 0) {
       fresh.push(id);
     } else if (isDue(p, now)) {
-      due.push({ id, due: new Date(p.due).getTime() });
+      due.push({ id, day: Math.floor(new Date(p.due).getTime() / DAY_MS) });
     }
   }
-  due.sort((a, b) => a.due - b.due);
-  return [...due.map((d) => d.id), ...fresh];
+  const byDay = new Map<number, string[]>();
+  for (const d of due) byDay.set(d.day, [...(byDay.get(d.day) ?? []), d.id]);
+  const orderedDue = [...byDay.keys()].sort((a, b) => a - b).flatMap((day) => shuffleIds(byDay.get(day) ?? [], random));
+  return [...orderedDue, ...shuffleIds(fresh, random)];
+}
+
+/** Fisher–Yates utan beroende på session-modulen (som importerar härifrån). */
+export function shuffleIds(ids: readonly string[], random: () => number = Math.random): string[] {
+  const arr = [...ids];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    const a = arr[i] as string;
+    arr[i] = arr[j] as string;
+    arr[j] = a;
+  }
+  return arr;
 }
 
 export function queueStats(cardIds: readonly string[], progress: ProgressMap, now: Date = new Date()): QueueStats {

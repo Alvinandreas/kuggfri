@@ -1,10 +1,12 @@
-import { reviewCard } from "./scheduler";
+import { newProgress, reviewCard } from "./scheduler";
 import type { CardProgress, ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
 
 /**
  * Enda vägen från en självskattning till ny progress.
- * Bara schemalagd repetition ('fsrs') ger något att spara. Fri och slumpad
- * repetition returnerar null och rör aldrig progressen.
+ * - fsrs: full omschemaläggning med FSRS.
+ * - tricky: bara self_rating och last_review uppdateras; schemat lämnas orört
+ *   (ett aldrig sett kort får en rad i state New så att det slutar räknas som klurigt).
+ * - free och random: null, progressen rörs aldrig.
  */
 export function applyRating(input: {
   mode: StudyMode;
@@ -13,6 +15,16 @@ export function applyRating(input: {
   progress: ProgressMap;
   now?: Date;
 }): CardProgress | null {
-  if (input.mode !== "fsrs") return null;
-  return reviewCard(input.cardId, input.progress[input.cardId], input.rating, input.now ?? new Date());
+  const now = input.now ?? new Date();
+  switch (input.mode) {
+    case "fsrs":
+      return reviewCard(input.cardId, input.progress[input.cardId], input.rating, now);
+    case "tricky": {
+      const previous = input.progress[input.cardId] ?? newProgress(input.cardId, now);
+      return { ...previous, self_rating: input.rating, last_review: now.toISOString() };
+    }
+    case "free":
+    case "random":
+      return null;
+  }
 }

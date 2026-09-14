@@ -30,8 +30,19 @@ export function isSelfRating(value: unknown): value is SelfRating {
 /** card_id -> progress */
 export type ProgressMap = Record<string, CardProgress>;
 
-export type StudyMode = "fsrs" | "free" | "random";
+/**
+ * fsrs   = schemalagd repetition (uppdaterar FSRS-schemat)
+ * free   = fri repetition (rör inte progressen)
+ * random = slumpad genomkörning (rör inte progressen)
+ * tricky = kluriga kort: låg skattning eller aldrig sedda (uppdaterar bara self_rating)
+ */
+export type StudyMode = "fsrs" | "free" | "random" | "tricky";
 
 export function isStudyMode(value: unknown): value is StudyMode {
-  return value === "fsrs" || value === "free" || value === "random";
+  return value === "fsrs" || value === "free" || value === "random" || value === "tricky";
+}
+
+/** Ett kort räknas som "klurigt" om det aldrig skattats eller senast fick 1–2. */
+export function isTricky(progress: CardProgress | undefined): boolean {
+  return !progress || progress.self_rating === null || progress.self_rating <= 2;
 }

@@ -151,7 +151,7 @@ function Stamp({ rating }: { rating: SelfRating }) {
     <div
       aria-hidden="true"
       data-testid="stamp"
-      className={`card-stamp pointer-events-none absolute right-5 top-14 flex h-20 w-20 flex-col items-center justify-center rounded-full border-4 bg-surface/90 text-fg sm:right-8 sm:top-16 sm:h-24 sm:w-24 ${ratingClass[rating]}`}
+      className={`card-stamp pointer-events-none absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border-4 bg-surface/92 text-fg shadow-card sm:h-28 sm:w-28 ${ratingClass[rating]}`}
     >
       <span className="text-3xl font-bold leading-none sm:text-4xl">{sv.study.stamp(rating)}</span>
       <span className="mt-1 text-[0.65rem] font-medium uppercase tracking-wide">{sv.study.rate[rating]}</span>

@@ -60,6 +60,14 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] G5. Bredare desktop: innehållet följer skärmen upp till 76 rem (88 rem på mycket breda skärmar); kortet max 56 rem
 - [x] G6. Nollställning flyttad till kontosidan (per deck, bara schemat, allt). Deck-sidan har bara en diskret textlänk längst ner för att nollställa det decket, eftersom gäster inte har någon kontosida (specen kräver att gäster kan nollställa)
 - [x] E2E 30/30 gröna efter runda 2 (mån 14:50), kopian på port 3001 ombyggd
+
+## Alvins feedback, runda 3 (mån 16:00)
+
+- [~] H1. Ordningen ska inte vara hårdkodad: fsrs blandar kort med samma förfallodag och alla nya kort; fri repetition och kluriga kort går svagast först (1, 2, aldrig sedda, 3, 4, 5) med blandning inom varje grupp
+- [~] H2. Stämpeln syns cirka 0,7 s innan kortet glider ut, och ligger centrerad i kortet (aldrig över rullningslisten)
+- [~] H3. Statistik och diagram under "Din progress": kort per dag, ackumulerad kunskap m.m. Kräver ny tabell `review_log` (repetitionshistorik) + localStorage-motsvarighet för gäster + migrering till konto
+- [~] H3b. Grön kontrastfärg (checkmark-grön) i stället för blågrön, även som huvudfärg i diagrammen
+- [~] H4. Nytt läge "Kluriga kort": bara kort med skattning 1–2 eller aldrig sedda; bara kategorier med kluriga kort går att välja; skattning i läget uppdaterar self_rating men inte FSRS-schemat. Migration för `study_sessions.mode`
 - [x] Namnbyte Plugget → **Kuggfri** (kuggfri.com) i app, dokument, lagringsnycklar (`kuggfri:progress:v1`, `kuggfri:theme`), testkonton och exportfilnamn (mån 13:30). Obs: gästprogress sparad under gamla nyckeln följer inte med; ingen har sådan ännu utom Alvins egna tester
 - [ ] Domän: koppla kuggfri.com i Vercel när deployen finns (se README, steg 5)
 

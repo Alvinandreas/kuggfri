@@ -6,6 +6,7 @@ import {
   parseSelection,
   selectCardIds,
   serializeSelection,
+  trickyCards,
   type SelectableCard,
 } from "@/lib/study/selection";
 import { reviewCard } from "@/lib/fsrs/scheduler";
@@ -18,6 +19,9 @@ const cards: SelectableCard[] = [
   { id: "b", category_id: "k1", sort_order: 1 },
   { id: "d", category_id: null, sort_order: 3 },
 ];
+
+/** Deterministisk "slump" som lämnar ordningen orörd (returnerar alltid 0.999…). */
+const keepOrder = () => 0.999999;
 
 describe("parseSelection / serializeSelection", () => {
   it("tolkar URL-parametern", () => {
@@ -38,7 +42,7 @@ describe("parseSelection / serializeSelection", () => {
   });
 });
 
-describe("filterCards", () => {
+describe("filterCards / trickyCards", () => {
   it("filtrerar på en eller flera kategorier och på låg skattning", () => {
     const progress: ProgressMap = {
       a: reviewCard("a", undefined, 1, NOW),
@@ -50,12 +54,45 @@ describe("filterCards", () => {
     expect(filterCards(cards, progress, { kind: "low" }).map((c) => c.id)).toEqual(["c", "a"]);
     expect(filterCards(cards, {}, { kind: "low" })).toEqual([]);
   });
+
+  it("kluriga kort är låg skattning eller aldrig sedda", () => {
+    const progress: ProgressMap = {
+      a: reviewCard("a", undefined, 1, NOW),
+      b: reviewCard("b", undefined, 4, NOW),
+    };
+    expect(trickyCards(cards, progress).map((c) => c.id)).toEqual(["c", "a", "d"]);
+    expect(trickyCards(cards, {}).map((c) => c.id)).toEqual(["c", "a", "b", "d"]);
+  });
 });
 
 describe("selectCardIds", () => {
-  it("fri repetition ger urvalet i deckets ordning", () => {
-    expect(selectCardIds({ cards, progress: {}, mode: "free", selection: { kind: "all" } })).toEqual(["a", "b", "c", "d"]);
-    expect(selectCardIds({ cards, progress: {}, mode: "free", selection: { kind: "categories", categoryIds: ["k1"] } })).toEqual(["a", "b"]);
+  it("fri repetition ger svagast först: 1, 2, aldrig sedda, 3, 4, 5", () => {
+    const progress: ProgressMap = {
+      a: reviewCard("a", undefined, 5, NOW),
+      b: reviewCard("b", undefined, 2, NOW),
+      c: reviewCard("c", undefined, 1, NOW),
+    };
+    expect(selectCardIds({ cards, progress, mode: "free", selection: { kind: "all" }, random: keepOrder })).toEqual(["c", "b", "d", "a"]);
+    expect(selectCardIds({ cards, progress: {}, mode: "free", selection: { kind: "categories", categoryIds: ["k1"] }, random: keepOrder })).toEqual(["a", "b"]);
+  });
+
+  it("blandar kort inom samma grupp", () => {
+    const seq = [0.9, 0.1, 0.5, 0.3, 0.7];
+    let i = 0;
+    const random = () => seq[i++ % seq.length] ?? 0;
+    const ids = selectCardIds({ cards, progress: {}, mode: "free", selection: { kind: "all" }, random });
+    expect([...ids].sort()).toEqual(["a", "b", "c", "d"]);
+    expect(ids).not.toEqual(["a", "b", "c", "d"]);
+  });
+
+  it("kluriga kort tar bara låga och osedda kort, svagast först", () => {
+    const progress: ProgressMap = {
+      a: reviewCard("a", undefined, 5, NOW),
+      b: reviewCard("b", undefined, 2, NOW),
+      c: reviewCard("c", undefined, 1, NOW),
+    };
+    expect(selectCardIds({ cards, progress, mode: "tricky", selection: { kind: "all" }, random: keepOrder })).toEqual(["c", "b", "d"]);
+    expect(selectCardIds({ cards, progress, mode: "tricky", selection: { kind: "categories", categoryIds: ["k1"] }, random: keepOrder })).toEqual(["b"]);
   });
 
   it("schemalagd repetition tar bara förfallna och nya kort, förfallna först", () => {
@@ -64,7 +101,7 @@ describe("selectCardIds", () => {
       a: reviewCard("a", undefined, 5, NOW), // inte förfallet om 3 dagar
       b: reviewCard("b", undefined, 1, NOW), // förfallet
     };
-    expect(selectCardIds({ cards, progress, mode: "fsrs", selection: { kind: "all" }, now: later })).toEqual(["b", "c", "d"]);
+    expect(selectCardIds({ cards, progress, mode: "fsrs", selection: { kind: "all" }, now: later, random: keepOrder })).toEqual(["b", "c", "d"]);
   });
 
   it("slumpad genomkörning tar hela decket oavsett urval", () => {
@@ -78,17 +115,17 @@ describe("selectCardIds", () => {
 });
 
 describe("categoryStats", () => {
-  it("räknar studerade, inlärda och svaga kort per kategori", () => {
+  it("räknar studerade, inlärda, svaga och kluriga kort per kategori", () => {
     const progress: ProgressMap = {
       a: reviewCard("a", undefined, 5, NOW),
       b: reviewCard("b", undefined, 2, NOW),
     };
     const stats = categoryStats(cards, progress, ["k1", "k2"]);
     expect(stats).toEqual([
-      { categoryId: "k1", total: 2, studied: 2, learned: 1, weak: 1 },
-      { categoryId: "k2", total: 1, studied: 0, learned: 0, weak: 0 },
+      { categoryId: "k1", total: 2, studied: 2, learned: 1, weak: 1, tricky: 1 },
+      { categoryId: "k2", total: 1, studied: 0, learned: 0, weak: 0, tricky: 1 },
     ]);
     expect(learnedRatio(stats[0]!)).toBe(0.5);
-    expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0 })).toBe(1);
+    expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0, tricky: 0 })).toBe(1);
   });
 });

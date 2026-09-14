@@ -145,7 +145,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
       feedbackTimer.current = setTimeout(() => {
         setFeedback(null);
         setSession((s) => (s ? rateCurrent(s, rating) : s));
-      }, 520);
+      }, 960);
     },
     [session, card, flipped, store, progress, mode, feedback],
   );
@@ -228,7 +228,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   if (session.order.length === 0) {
     return (
       <div className="py-12 text-center">
-        <p className="text-muted">{mode === "fsrs" ? sv.study.emptyFsrs : sv.study.empty}</p>
+        <p className="text-muted">{mode === "fsrs" ? sv.study.emptyFsrs : mode === "tricky" ? sv.study.emptyTricky : sv.study.empty}</p>
         <div className="mt-6">
           <LinkButton href={`/d/${deck.slug}`} variant="secondary">
             {sv.study.backToDeck}

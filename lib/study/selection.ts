@@ -1,9 +1,8 @@
 /**
  * Urval av kort för en session. Ren modul.
  */
-import { buildFsrsQueue } from "@/lib/fsrs/scheduler";
-import { shuffle } from "@/lib/fsrs/session";
-import type { ProgressMap, StudyMode } from "@/lib/progress/types";
+import { buildFsrsQueue, shuffleIds } from "@/lib/fsrs/scheduler";
+import { isTricky, type ProgressMap, type StudyMode } from "@/lib/progress/types";
 
 export type Selection = { kind: "all" } | { kind: "categories"; categoryIds: string[] } | { kind: "low" };
 
@@ -52,10 +51,35 @@ export function filterCards(cards: readonly SelectableCard[], progress: Progress
   }
 }
 
+/** Kort som räknas som kluriga: aldrig skattade eller senast 1–2. */
+export function trickyCards(cards: readonly SelectableCard[], progress: ProgressMap): SelectableCard[] {
+  return cards.filter((c) => isTricky(progress[c.id]));
+}
+
+/**
+ * Sorteringsnyckel för fri repetition och kluriga kort: svagast först.
+ * 1, 2, aldrig skattat, 3, 4, 5. Kort i samma grupp blandas.
+ */
+function ratingGroup(progress: ProgressMap, id: string): number {
+  const r = progress[id]?.self_rating ?? null;
+  if (r === null) return 2.5;
+  return r;
+}
+
+function orderByWeakness(ids: readonly string[], progress: ProgressMap, random: () => number): string[] {
+  const groups = new Map<number, string[]>();
+  for (const id of ids) {
+    const g = ratingGroup(progress, id);
+    groups.set(g, [...(groups.get(g) ?? []), id]);
+  }
+  return [...groups.keys()].sort((a, b) => a - b).flatMap((g) => shuffleIds(groups.get(g) ?? [], random));
+}
+
 /**
  * Kort-id i den ordning sessionen ska visa dem.
- * - fsrs: förfallna och nya kort ur urvalet, förfallna först.
- * - free: urvalet i deckets ordning.
+ * - fsrs: förfallna och nya kort ur urvalet, förfallna först (blandat inom samma dag).
+ * - free: urvalet, svagast först, blandat inom samma skattning.
+ * - tricky: bara kluriga kort ur urvalet, svagast först, blandat inom samma skattning.
  * - random: hela decket i slumpad ordning (urvalet ignoreras).
  */
 export function selectCardIds(input: {
@@ -66,15 +90,19 @@ export function selectCardIds(input: {
   now?: Date;
   random?: () => number;
 }): string[] {
+  const random = input.random ?? Math.random;
   const ordered = [...input.cards].sort((a, b) => a.sort_order - b.sort_order);
   if (input.mode === "random") {
-    return shuffle(ordered.map((c) => c.id), input.random);
+    return shuffleIds(ordered.map((c) => c.id), random);
   }
-  const filtered = filterCards(ordered, input.progress, input.selection).map((c) => c.id);
+  const filtered = filterCards(ordered, input.progress, input.selection);
   if (input.mode === "fsrs") {
-    return buildFsrsQueue(filtered, input.progress, input.now ?? new Date());
+    return buildFsrsQueue(filtered.map((c) => c.id), input.progress, input.now ?? new Date(), random);
   }
-  return filtered;
+  if (input.mode === "tricky") {
+    return orderByWeakness(trickyCards(filtered, input.progress).map((c) => c.id), input.progress, random);
+  }
+  return orderByWeakness(filtered.map((c) => c.id), input.progress, random);
 }
 
 export type CategoryStats = {
@@ -86,17 +114,22 @@ export type CategoryStats = {
   learned: number;
   /** Kort vars senaste skattning är 1–2. */
   weak: number;
+  /** Kluriga kort: 1–2 eller aldrig skattade. */
+  tricky: number;
 };
 
 /** Statistik per kategori ur progressen. Kort utan kategori ignoreras. */
 export function categoryStats(cards: readonly SelectableCard[], progress: ProgressMap, categoryIds: readonly string[]): CategoryStats[] {
-  const byId = new Map<string, CategoryStats>(categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0 }]));
+  const byId = new Map<string, CategoryStats>(
+    categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0, tricky: 0 }]),
+  );
   for (const card of cards) {
     if (!card.category_id) continue;
     const s = byId.get(card.category_id);
     if (!s) continue;
     s.total++;
     const p = progress[card.id];
+    if (isTricky(p)) s.tricky++;
     if (!p) continue;
     s.studied++;
     if (p.self_rating === 5) s.learned++;

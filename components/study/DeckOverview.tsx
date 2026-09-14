@@ -11,6 +11,7 @@ import {
   filterCards,
   learnedRatio,
   serializeSelection,
+  trickyCards,
   type SelectableCard,
   type Selection,
 } from "@/lib/study/selection";
@@ -41,7 +42,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [mode, setMode] = useState<StudyMode>("fsrs");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [lowOnly, setLowOnly] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [confirmReset, setConfirmReset] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -103,20 +103,25 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     });
   }
 
-  // Urvalet: valda kategorier (eller hela decket), i fri repetition ev. bara låg skattning.
+  // Urvalet: valda kategorier (eller hela decket). I läget kluriga kort räknas bara kluriga kort.
   const categorySelection = useMemo<Selection>(
     () => (selectedIds.length > 0 ? { kind: "categories", categoryIds: selectedIds } : { kind: "all" }),
     [selectedIds],
   );
   const selectedCards = useMemo(() => filterCards(cards, progress ?? {}, categorySelection), [cards, progress, categorySelection]);
   const selectionCards = useMemo(
-    () => (mode === "free" && lowOnly ? filterCards(selectedCards, progress ?? {}, { kind: "low" }) : selectedCards),
-    [mode, lowOnly, selectedCards, progress],
+    () => (mode === "tricky" ? trickyCards(selectedCards, progress ?? {}) : selectedCards),
+    [mode, selectedCards, progress],
   );
   const selectionLearned = useMemo(() => selectionCards.filter((c) => progress?.[c.id]?.self_rating === 5).length, [selectionCards, progress]);
 
-  const effectiveSelection: Selection =
-    mode === "random" ? { kind: "all" } : mode === "free" && lowOnly ? { kind: "low" } : categorySelection;
+  // I läget kluriga kort går bara kategorier med kluriga kort att välja; övriga avmarkeras.
+  useEffect(() => {
+    if (mode !== "tricky") return;
+    setSelectedIds((prev) => prev.filter((id) => (perCategory.find((s) => s.categoryId === id)?.tricky ?? 0) > 0));
+  }, [mode, perCategory]);
+
+  const effectiveSelection: Selection = mode === "random" ? { kind: "all" } : categorySelection;
   const selectionCount = mode === "random" ? cards.length : selectionCards.length;
   const startHref = `/d/${deck.slug}/plugga?mode=${mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
   const nothingDue = mode === "fsrs" && stats !== null && stats.due + stats.new === 0 && selectedIds.length === 0;
@@ -262,21 +267,35 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                   const checked = selectedSet.has(c.id);
                   const learnedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.learned / c.stats.total) * 100);
                   const studiedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.studied / c.stats.total) * 100);
+                  const selectable = mode !== "tricky" || c.stats.tricky > 0;
                   return (
-                    <tr key={c.id} className={`border-b border-line last:border-b-0 ${checked ? "bg-accent-soft/60" : ""}`} data-testid="category-row">
+                    <tr
+                      key={c.id}
+                      className={`border-b border-line last:border-b-0 ${checked ? "bg-accent-soft/60" : ""} ${selectable ? "" : "opacity-45"}`}
+                      data-testid="category-row"
+                    >
                       <td className="px-3 py-2.5">
                         <input
                           type="checkbox"
                           checked={checked}
+                          disabled={!selectable}
                           onChange={() => toggleCategory(c.id)}
                           aria-label={c.title}
-                          className="h-4 w-4 accent-[var(--accent)]"
+                          title={selectable ? undefined : sv.deck.trickyEmptyCategory}
+                          className="h-4 w-4 accent-[var(--accent)] disabled:cursor-not-allowed"
                         />
                       </td>
                       <td className="px-2 py-2.5">
-                        <button type="button" onClick={() => setSelectedIds([c.id])} className="text-left" title={sv.deck.categoriesHelp}>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedIds([c.id])}
+                          disabled={!selectable}
+                          className="text-left disabled:cursor-not-allowed"
+                          title={selectable ? sv.deck.categoriesHelp : sv.deck.trickyEmptyCategory}
+                        >
                           <CategoryTag title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} size="md" />
                         </button>
+                        {mode === "tricky" ? <span className="ml-2 text-xs text-muted">{sv.deck.summaryTricky(c.stats.tricky)}</span> : null}
                       </td>
                       <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.studied, c.stats.total)}</td>
                       <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.learned, c.stats.total)}</td>
@@ -340,6 +359,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
             {(
               [
                 ["fsrs", sv.deck.modeFsrs, sv.deck.modeFsrsHelp],
+                ["tricky", sv.deck.modeTricky, sv.deck.modeTrickyHelp],
                 ["free", sv.deck.modeFree, sv.deck.modeFreeHelp],
                 ["random", sv.deck.modeRandom, sv.deck.modeRandomHelp],
               ] as const
@@ -370,15 +390,9 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                 )}
               </div>
               <p className="text-sm text-muted">
-                {sv.deck.summaryCards(selectionCount)}
-                {progress ? ` · ${sv.deck.summaryLearned(selectionLearned)}` : ""}
+                {mode === "tricky" ? sv.deck.summaryTricky(selectionCount) : sv.deck.summaryCards(selectionCount)}
+                {progress && mode !== "tricky" ? ` · ${sv.deck.summaryLearned(selectionLearned)}` : ""}
               </p>
-              {mode === "free" ? (
-                <label className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" checked={lowOnly} onChange={(e) => setLowOnly(e.target.checked)} className="h-4 w-4 accent-[var(--accent)]" />
-                  {sv.deck.summaryLow}
-                </label>
-              ) : null}
             </div>
           ) : null}
 

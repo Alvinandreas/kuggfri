@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getSiteUrl } from "@/lib/supabase/env";
+import { getRequestOrigin } from "@/lib/supabase/request-origin";
 import { sv } from "@/lib/i18n/sv";
 import { safeNext } from "./safe-next";
 
@@ -45,7 +45,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
     password,
     options: {
       data: displayName ? { display_name: displayName } : undefined,
-      emailRedirectTo: `${getSiteUrl()}/auth/confirm?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
   if (error) {
@@ -77,7 +77,7 @@ export async function sendMagicLinkAction(formData: FormData): Promise<AuthResul
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${getSiteUrl()}/auth/confirm?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
   if (error) return { ok: false, error: sv.auth.error };

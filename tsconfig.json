@@ -44,6 +44,6 @@
   "exclude": [
     "node_modules",
     "playwright-report",
-    "test-results"
+    "test-results", ".next-prod"
   ]
 }

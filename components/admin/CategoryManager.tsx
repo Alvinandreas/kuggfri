@@ -102,10 +102,10 @@ function CategoryRowEditor({
   return (
     <div className="flex items-center gap-2">
       <input value={title} onChange={(e) => setTitle(e.target.value)} aria-label={sv.admin.categoryTitle} className={inputClass} />
-      <Button variant="secondary" size="sm" disabled={!dirty || pending} onClick={() => onSave(title)}>
+      <Button variant="secondary" size="sm" disabled={!dirty || pending} onClick={() => onSave(title)} className="shrink-0 whitespace-nowrap">
         {sv.common.save}
       </Button>
-      <Button variant="ghost" size="sm" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`}>
+      <Button variant="ghost" size="sm" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`} className="shrink-0 whitespace-nowrap">
         {sv.common.delete}
       </Button>
     </div>

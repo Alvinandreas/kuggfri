@@ -35,6 +35,18 @@
   --rate-4: #6d9a4a;
   --rate-5: #3f8b5c;
 
+  /* Kategoritaggar, tio dämpade nyanser (Notion-stil). Index = kategorins plats i decket. */
+  --tag-1: #e6d3c3;
+  --tag-2: #f1dcc2;
+  --tag-3: #ece3b8;
+  --tag-4: #d6e5c4;
+  --tag-5: #cfe3dc;
+  --tag-6: #cfdfe8;
+  --tag-7: #d5d6ea;
+  --tag-8: #e5d3e4;
+  --tag-9: #ecd5d1;
+  --tag-10: #e0dcd4;
+
   /* Typografi */
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif;
@@ -73,6 +85,16 @@
   --rate-4: #8ab56b;
   --rate-5: #62a97c;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  --tag-1: #4a3a2e;
+  --tag-2: #4d3f2a;
+  --tag-3: #48442a;
+  --tag-4: #34452c;
+  --tag-5: #2c4540;
+  --tag-6: #2c3f4a;
+  --tag-7: #35364d;
+  --tag-8: #46344a;
+  --tag-9: #4c3634;
+  --tag-10: #3c3b37;
 }
 
 @theme inline {
@@ -95,12 +117,30 @@
   --color-rate-3: var(--rate-3);
   --color-rate-4: var(--rate-4);
   --color-rate-5: var(--rate-5);
+  --color-tag-1: var(--tag-1);
+  --color-tag-2: var(--tag-2);
+  --color-tag-3: var(--tag-3);
+  --color-tag-4: var(--tag-4);
+  --color-tag-5: var(--tag-5);
+  --color-tag-6: var(--tag-6);
+  --color-tag-7: var(--tag-7);
+  --color-tag-8: var(--tag-8);
+  --color-tag-9: var(--tag-9);
+  --color-tag-10: var(--tag-10);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --shadow-card: var(--shadow-card);
+}
+
+/* Bredare innehållsyta på desktop: deck-sidan får två kolumner och kortet mer luft. */
+@media (min-width: 1024px) {
+  :root {
+    --content-width: 64rem;
+    --card-min-height: 22rem;
+  }
 }
 
 html {
@@ -154,6 +194,73 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .flip-inner {
     transition: none;
+  }
+}
+
+/* Kortbyte och kvittens på skattning */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes card-leave-good {
+  to {
+    opacity: 0;
+    transform: translateX(-28px) scale(0.98);
+  }
+}
+@keyframes card-leave-bad {
+  to {
+    opacity: 0;
+    transform: translateX(28px) scale(0.98);
+  }
+}
+@keyframes ring-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--pulse-color);
+  }
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
+.card-enter {
+  animation: card-enter 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.card-leave-good {
+  animation: card-leave-good 220ms ease-in forwards;
+}
+.card-leave-bad {
+  animation: card-leave-bad 220ms ease-in forwards;
+}
+.rate-pulse {
+  animation: ring-pulse 480ms ease-out;
+}
+.rate-pulse-1 {
+  --pulse-color: color-mix(in oklab, var(--rate-1) 55%, transparent);
+}
+.rate-pulse-2 {
+  --pulse-color: color-mix(in oklab, var(--rate-2) 55%, transparent);
+}
+.rate-pulse-3 {
+  --pulse-color: color-mix(in oklab, var(--rate-3) 55%, transparent);
+}
+.rate-pulse-4 {
+  --pulse-color: color-mix(in oklab, var(--rate-4) 60%, transparent);
+}
+.rate-pulse-5 {
+  --pulse-color: color-mix(in oklab, var(--rate-5) 70%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-enter,
+  .card-leave-good,
+  .card-leave-bad,
+  .rate-pulse {
+    animation: none;
   }
 }
 

@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: sv.privacy.title };
  */
 export default function PrivacyPage() {
   return (
-    <article className="prose-body grid gap-6">
+    <article className="prose-body mx-auto grid max-w-[44rem] gap-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">{sv.privacy.title}</h1>
         <p className="mt-2 text-sm text-muted">Senast uppdaterad: 11 september 2026</p>

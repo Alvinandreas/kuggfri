@@ -5,7 +5,7 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 select-none";
+  "inline-flex items-center justify-center gap-2 rounded-md text-center font-medium transition-[background-color,transform,opacity] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 select-none";
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-accent-fg hover:bg-accent-hover",
@@ -15,9 +15,9 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-11 px-4 text-base",
-  lg: "h-12 px-5 text-base",
+  sm: "min-h-9 px-3 py-1.5 text-sm",
+  md: "min-h-11 px-4 py-2 text-base",
+  lg: "min-h-12 px-5 py-2.5 text-base",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", extra = ""): string {

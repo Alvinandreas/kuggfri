@@ -8,7 +8,7 @@ export default async function HomePage() {
   const decks = await getPublishedDecks();
 
   return (
-    <div>
+    <div className="mx-auto max-w-[44rem]">
       <h1 className="text-2xl font-semibold tracking-tight">{sv.home.title}</h1>
       <p className="mt-2 text-muted">{sv.home.lead}</p>
 

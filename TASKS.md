@@ -41,9 +41,19 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Stabil testkopia: produktionsbygge i `.next-prod` på **http://localhost:3001** så att Alvins test inte störs av dev-serverns omkompileringar. Byggs om med `NEXT_DIST_DIR=.next-prod npx next build` när nya ändringar ska testas
 - **Regel från och med nu:** ingen `supabase db reset` medan Alvin har konto och progress lokalt. Seedändringar appliceras med riktade SQL-uppdateringar
 
+## Alvins feedback (mån 12:15), i prioritetsordning
+
+- [x] F6. Nollställningsfältet: knapparna staplas i en kolumn med hjälptext under (mån 13:10)
+- [x] F3. Frågan centrerad på framsidan, baksidan lodrätt centrerad när den är kort
+- [x] F2. Färgade kategoritaggar (tio tokens i globals.css, index efter kategorins plats i decket) uppe till vänster på kortet och i kategorilistan
+- [x] F4. Kortet glider in, pulserar i skattningens färg och glider ut (åt vänster vid 3–5, åt höger vid 1–2); knappar trycks ihop vid klick; allt av vid prefers-reduced-motion
+- [x] F5. Kategoritabell med kryssrutor (flera kategorier i urvalet, URL `urval=kategori:id1,id2`), klick på namnet väljer bara den, kolumner Studerade/Inlärda, stapel (studerat tonat + inlärt grönt), sortering "Minst inlärt först". Rullgardinen kvar och synkad
+- [x] F1. Desktop: innehållsbredd 64 rem, deck-sidan i två kolumner med Starta/Nollställ sticky till höger, bredare kort i studieläget. Mobil: Starta-panelen före kategorilistan
+- [ ] F2b (senare): färgtema utöver taggarna, om Alvin vill ha mer färg i helheten
+
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 
-- [ ] Rätta allt från Alvins måndagslista
+- [ ] Rätta allt från Alvins måndagslista (se ovan)
 - [x] Formatera om kort enligt den godkända granskningslistan (gjort mån 11:40 via `applyTypography` i seed-bygget, med tester)
 - [x] Konvertera unicode-matte till KaTeX (gjort mån 11:40)
 - [x] `docs/PRESENTATION.md` utkast skrivet redan mån 11:10 (talarpunkter, demo i tre steg, erbjudande till Johan, frågor och svar, packlista). Alvin redigerar ons kväll

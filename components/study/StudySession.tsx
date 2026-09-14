@@ -20,6 +20,7 @@ import type { ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
 import { endOfDay } from "@/lib/time/format";
+import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Flashcard } from "./Flashcard";
 import { RatingButtons } from "./RatingButtons";
@@ -66,6 +67,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
     (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null),
     [categories],
   );
+  const colorIndex = useMemo(() => categoryColorIndex(categories), [categories]);
 
   // Ladda progress och bygg kön en gång per lager/läge/urval. Kortlistan läses
   // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
@@ -120,18 +122,30 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
     });
   }, [card]);
 
+  const [feedback, setFeedback] = useState<SelfRating | null>(null);
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+  }, []);
+
   const rate = useCallback(
     (rating: SelfRating) => {
       if (!session || session.finished || !card || !flipped || !store || !progress) return;
+      if (feedback !== null) return; // Ett kort i taget: vänta tills kvittensen är klar.
       const next = applyRating({ mode, cardId: card.id, rating, progress });
       if (next) {
         setProgress((p) => ({ ...(p ?? {}), [card.id]: next }));
         store.save(next).catch(() => setSaveError(true));
       }
-      setSession((s) => (s ? rateCurrent(s, rating) : s));
       setAnnounce(sv.study.ratedAnnounce(rating));
+      // Visa kvittensen (puls + utglidning) innan nästa kort kommer.
+      setFeedback(rating);
+      feedbackTimer.current = setTimeout(() => {
+        setFeedback(null);
+        setSession((s) => (s ? rateCurrent(s, rating) : s));
+      }, 230);
     },
-    [session, card, flipped, store, progress, mode],
+    [session, card, flipped, store, progress, mode, feedback],
   );
 
   const next = useCallback(() => setSession((s) => (s ? skipCurrent(s) : s)), []);
@@ -190,7 +204,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
     return () => window.removeEventListener("keydown", onKey);
   }, [flip, rate, next, previous, card]);
 
-  const canRate = flipped && !!card;
+  const canRate = flipped && !!card && feedback === null;
 
   const onSwipeLeft = useCallback(() => {
     if (canRate) rate(1);
@@ -269,8 +283,10 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
           back={card.back}
           hint={card.hint}
           categoryTitle={categoryTitle(card.category_id)}
+          categoryColorIndex={card.category_id ? (colorIndex.get(card.category_id) ?? 0) : 0}
           flipped={flipped}
           showHint={showHint}
+          feedback={feedback}
           onFlip={flip}
           onToggleHint={() => setShowHint((v) => !v)}
           onSwipeLeft={onSwipeLeft}
@@ -278,7 +294,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         />
       ) : null}
 
-      <div className="grid grid-cols-[auto_1fr_auto] gap-2">
+      <div className="grid grid-cols-[auto_1fr_auto] gap-2 lg:mx-auto lg:w-full lg:max-w-xl">
         <Button variant="secondary" onClick={previous} disabled={!canGoPrevious(session)} aria-label={sv.study.previous} data-testid="prev">
           ←
         </Button>
@@ -290,7 +306,9 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         </Button>
       </div>
 
-      <RatingButtons disabled={!canRate} onRate={rate} />
+      <div className="lg:mx-auto lg:w-full lg:max-w-xl">
+        <RatingButtons disabled={!canRate} onRate={rate} />
+      </div>
 
       <p className="hidden text-center text-xs text-muted sm:block">{sv.study.keyboardHelp}</p>
       <p className="text-center text-xs text-muted sm:hidden">{sv.study.swipeHelp}</p>

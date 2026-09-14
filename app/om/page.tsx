@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: sv.about.title };
 export default async function AboutPage() {
   const decks = await getDecksForAbout();
   return (
-    <article className="prose-body grid gap-6">
+    <article className="prose-body mx-auto grid max-w-[44rem] gap-6">
       <h1 className="text-2xl font-semibold tracking-tight">{sv.about.title}</h1>
       <p>{sv.about.intro}</p>
 

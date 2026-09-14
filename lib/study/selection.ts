@@ -5,18 +5,22 @@ import { buildFsrsQueue } from "@/lib/fsrs/scheduler";
 import { shuffle } from "@/lib/fsrs/session";
 import type { ProgressMap, StudyMode } from "@/lib/progress/types";
 
-export type Selection = { kind: "all" } | { kind: "category"; categoryId: string } | { kind: "low" };
+export type Selection = { kind: "all" } | { kind: "categories"; categoryIds: string[] } | { kind: "low" };
 
 export type SelectableCard = { id: string; category_id: string | null; sort_order: number };
 
-/** Från URL-parametern `urval`: "all", "low" eller "kategori:<id>". */
+/** Från URL-parametern `urval`: "all", "low" eller "kategori:<id>[,<id>...]". */
 export function parseSelection(raw: string | string[] | undefined): Selection {
   const value = Array.isArray(raw) ? raw[0] : raw;
   if (!value || value === "all") return { kind: "all" };
   if (value === "low") return { kind: "low" };
   if (value.startsWith("kategori:")) {
-    const categoryId = value.slice("kategori:".length);
-    if (categoryId) return { kind: "category", categoryId };
+    const categoryIds = value
+      .slice("kategori:".length)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (categoryIds.length > 0) return { kind: "categories", categoryIds: [...new Set(categoryIds)] };
   }
   return { kind: "all" };
 }
@@ -27,8 +31,8 @@ export function serializeSelection(selection: Selection): string {
       return "all";
     case "low":
       return "low";
-    case "category":
-      return `kategori:${selection.categoryId}`;
+    case "categories":
+      return `kategori:${selection.categoryIds.join(",")}`;
   }
 }
 
@@ -36,8 +40,10 @@ export function filterCards(cards: readonly SelectableCard[], progress: Progress
   switch (selection.kind) {
     case "all":
       return [...cards];
-    case "category":
-      return cards.filter((c) => c.category_id === selection.categoryId);
+    case "categories": {
+      const wanted = new Set(selection.categoryIds);
+      return cards.filter((c) => c.category_id !== null && wanted.has(c.category_id));
+    }
     case "low":
       return cards.filter((c) => {
         const r = progress[c.id]?.self_rating;
@@ -69,4 +75,37 @@ export function selectCardIds(input: {
     return buildFsrsQueue(filtered, input.progress, input.now ?? new Date());
   }
   return filtered;
+}
+
+export type CategoryStats = {
+  categoryId: string;
+  total: number;
+  /** Kort med någon progress. */
+  studied: number;
+  /** Kort vars senaste skattning är 5. */
+  learned: number;
+  /** Kort vars senaste skattning är 1–2. */
+  weak: number;
+};
+
+/** Statistik per kategori ur progressen. Kort utan kategori ignoreras. */
+export function categoryStats(cards: readonly SelectableCard[], progress: ProgressMap, categoryIds: readonly string[]): CategoryStats[] {
+  const byId = new Map<string, CategoryStats>(categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0 }]));
+  for (const card of cards) {
+    if (!card.category_id) continue;
+    const s = byId.get(card.category_id);
+    if (!s) continue;
+    s.total++;
+    const p = progress[card.id];
+    if (!p) continue;
+    s.studied++;
+    if (p.self_rating === 5) s.learned++;
+    if (p.self_rating !== null && p.self_rating <= 2) s.weak++;
+  }
+  return categoryIds.map((id) => byId.get(id)!);
+}
+
+/** Andel inlärt 0–1, för sortering "minst inlärt först". */
+export function learnedRatio(s: CategoryStats): number {
+  return s.total === 0 ? 1 : s.learned / s.total;
 }

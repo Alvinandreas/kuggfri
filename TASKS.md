@@ -18,11 +18,12 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 ## Måndag 14 sep
 
 ### När Docker finns
-- [ ] `npx supabase start`, skriv riktig anon-nyckel till `.env.local`
-- [ ] `npm run db:reset` (151 kort laddade), kontrollera `/` och `/d/materialteknik` i webbläsaren
-- [ ] `npx playwright install chromium`, kör `npm run test:e2e`, rätta det som spricker
-- [ ] `npm run verify` grönt, uppdatera BLOCKERS.md (Docker-blockern löst)
-- [ ] Klicka igenom hela adminflödet mot riktig databas: deck, kategori, kort, dnd, import, export, statistik
+- [x] `npx supabase start`, skriv riktig anon-nyckel till `.env.local` (mån 10:05; migrationer + seed kördes automatiskt vid start)
+- [x] 151 kort laddade, `/d/materialteknik` kontrollerad mot riktig databas
+- [x] `npx playwright install chromium`
+- [x] `npm run test:e2e`: 28/28 gröna efter fixar (understrukna textlänkar för axe, tvetydiga lokatorer, admin ser opublicerade deck, längre timeouts för dev-kompilering, städning av importerade testkort)
+- [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), BLOCKERS.md uppdaterad
+- [~] Klicka igenom hela adminflödet mot riktig databas: deck, kategori, kort, import, export täcks av E2E; dnd-ordning och statistik återstår att titta på manuellt
 - [ ] Gör Alvin till admin (SQL enligt README) när e-post finns
 
 ### Deploy (om Alvin säger ja)
@@ -33,8 +34,8 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [ ] Sätt Alvin som admin även i molnet
 
 ### Innehållsgranskning, steg 1
-- [ ] Skript som listar kort där normaliseringen kan ha blivit fel (lösa "−"-rader, kolonrader, unicode-matte som 𝜎 = 𝐸 𝜀)
-- [ ] Lista i `docs/INNEHALL-GRANSKNING.md` för Alvin att godkänna, inga innehållsändringar utan godkännande
+- [x] `scripts/content-review.ts` listar kort med formateringsanmärkningar (körs med `npx tsx scripts/content-review.ts`)
+- [?] `docs/INNEHALL-GRANSKNING.md`: 34 av 151 kort har anmärkning (pilar, kemiska formler, unicode-matte, radbrytningar). Alvin bockar i vilka generella åtgärder som får göras; inga innehållsändringar utan godkännande
 
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 

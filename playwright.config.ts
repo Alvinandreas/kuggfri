@@ -8,7 +8,9 @@ export default defineConfig({
   workers: 1,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
-  timeout: 60_000,
+  timeout: 90_000,
+  // Dev-servern kompilerar sidor vid första anropet; ge förväntningar tid för det.
+  expect: { timeout: 15_000 },
   globalSetup: "./tests/e2e/global-setup.ts",
   use: {
     baseURL,

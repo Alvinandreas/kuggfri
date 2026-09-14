@@ -109,7 +109,8 @@ test.describe("konto", () => {
     await page.getByLabel("E-postadress").fill(email);
     await page.locator('input[name="password"]').fill(PASSWORD);
     await page.getByTestId("login-submit").click();
-    await expect(page.getByRole("alert")).toContainText("Fel e-post eller lösenord.");
+    // Next.js har en egen tom role="alert" (route announcer), så filtrera på texten.
+    await expect(page.getByRole("alert").filter({ hasText: "Fel e-post eller lösenord." })).toBeVisible();
   });
 
   test("inloggning med lösenord fungerar för befintligt konto", async ({ page }) => {

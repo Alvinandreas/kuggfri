@@ -12,9 +12,9 @@
    npx playwright install chromium
    npm run verify
    ```
-   `npm run verify:unit` (typecheck, lint, 133 enhetstester inkl. alla RLS-policyer) är grön
-   här. **E2E-testerna är skrivna men har inte kunnat köras** eftersom de kräver Supabase i
-   Docker. Räkna med att några selektorer eller väntetider behöver justeras första gången.
+   **Uppdatering 2026-09-14:** Docker är installerat, Supabase kör lokalt och hela `npm run verify`
+   är grön (134 enhetstester inkl. alla RLS-policyer + 28 E2E-tester med axe). Se TASKS.md för
+   veckans läge.
 2. **Kontrollera innehållet i seeden**: kategorititlar, ordning, kurskod (`MTM081` är tagen från
    din spec-exempeltext) och krediteringstexten i `seed/materialteknik/deck.json`. Allt kan också
    ändras i admin.

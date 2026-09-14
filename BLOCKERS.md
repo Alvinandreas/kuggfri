@@ -1,5 +1,11 @@
 # BLOCKERS
 
+## LÖST 2026-09-14: Docker Desktop installerat
+
+Alvin installerade Docker Desktop (per-user, WSL 2) efter `wsl --install --no-distribution` och
+omstart. `supabase start` fungerar, migrationer och seed körs vid start. Texten nedan är kvar som
+historik.
+
 ## Docker saknas på utvecklingsmaskinen (2026-09-11)
 
 Supabase CLI kräver Docker för `supabase start`. På den här maskinen finns varken Docker Desktop,

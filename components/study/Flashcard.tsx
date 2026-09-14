@@ -101,7 +101,7 @@ export function Flashcard({
                   {hint}
                 </p>
               ) : (
-                <button type="button" onClick={onToggleHint} className="text-accent underline-offset-2 hover:underline" data-testid="show-hint">
+                <button type="button" onClick={onToggleHint} className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent" data-testid="show-hint">
                   {sv.study.showHint}
                 </button>
               )}

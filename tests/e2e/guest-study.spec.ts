@@ -80,7 +80,7 @@ test.describe("gäst", () => {
     await page.goto(`/d/${DECK_SLUG}`);
     // Välj fri repetition och en kategori via urvalsmenyn.
     await page.getByLabel("Fri repetition").check();
-    const select = page.getByLabel("Urval");
+    const select = page.getByLabel("Urval", { exact: true });
     const options = await select.locator("option").allTextContents();
     const small = options.find((o) => /Materialvalsprocessen/.test(o));
     expect(small).toBeTruthy();

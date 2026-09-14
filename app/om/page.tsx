@@ -29,7 +29,7 @@ export default async function AboutPage() {
           {decks.map((d) => (
             <li key={d.id} className="rounded-lg border border-line bg-surface p-4">
               <p className="font-medium">
-                <Link href={`/d/${d.slug}`} className="hover:underline">
+                <Link href={`/d/${d.slug}`} className="underline underline-offset-2 decoration-line-strong hover:decoration-fg">
                   {d.title}
                 </Link>
                 {d.course_code ? <span className="text-muted"> · {d.course_code}</span> : null}
@@ -44,7 +44,7 @@ export default async function AboutPage() {
         <h2>{sv.about.privacy}</h2>
         <p>
           {sv.about.privacyBody}{" "}
-          <Link href="/integritet" className="text-accent underline-offset-2 hover:underline">
+          <Link href="/integritet" className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.footer.privacy}
           </Link>
           .

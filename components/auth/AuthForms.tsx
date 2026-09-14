@@ -59,7 +59,7 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
           <Button type="submit" disabled={linkPending}>
             {sv.auth.magicLinkTitle}
           </Button>
-          <button type="button" onClick={() => setUseLink(false)} className="text-sm text-accent underline-offset-2 hover:underline">
+          <button type="button" onClick={() => setUseLink(false)} className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.orPassword}
           </button>
         </form>
@@ -78,7 +78,7 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
           <Button type="submit" disabled={passwordPending} data-testid="login-submit">
             {sv.auth.login}
           </Button>
-          <button type="button" onClick={() => setUseLink(true)} className="text-sm text-accent underline-offset-2 hover:underline">
+          <button type="button" onClick={() => setUseLink(true)} className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.magicLink}
           </button>
         </form>
@@ -86,7 +86,7 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
 
       <p className="text-sm text-muted">
         {sv.auth.noAccount}{" "}
-        <Link href={`/registrera?next=${encodeURIComponent(next)}`} className="text-accent underline-offset-2 hover:underline">
+        <Link href={`/registrera?next=${encodeURIComponent(next)}`} className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
           {sv.auth.register}
         </Link>
       </p>
@@ -123,7 +123,7 @@ export function RegisterForm({ next }: { next: string }) {
       </form>
       <p className="text-sm text-muted">
         {sv.auth.hasAccount}{" "}
-        <Link href={`/logga-in?next=${encodeURIComponent(next)}`} className="text-accent underline-offset-2 hover:underline">
+        <Link href={`/logga-in?next=${encodeURIComponent(next)}`} className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
           {sv.auth.login}
         </Link>
       </p>

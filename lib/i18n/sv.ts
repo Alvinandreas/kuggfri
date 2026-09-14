@@ -214,6 +214,11 @@ export const sv = {
     error: "Det gick inte. Kontrollera uppgifterna och försök igen.",
     invalidCredentials: "Fel e-post eller lösenord.",
     emailInUse: "Det finns redan ett konto med den e-postadressen.",
+    invalidEmail: "E-postadressen ser inte giltig ut.",
+    rateLimited:
+      "För många e-postutskick på kort tid. Vänta en stund och försök igen, eller logga in med lösenord.",
+    signupDisabled: "Det går inte att skapa konton just nu.",
+    notConfirmed: "E-postadressen är inte bekräftad ännu. Öppna länken i mejlet, eller be om en ny inloggningslänk.",
     weakPassword: "Lösenordet är för kort.",
     privacyNote:
       "Vi sparar bara din e-post, ditt valfria visningsnamn och din studieprogress.",

@@ -11,7 +11,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 - [x] Installera Docker Desktop och säga "Docker är igång" (klart mån 09:45, krävde `wsl --install` + omstart)
 - [?] Bestämma: publik deploy (Supabase EU + Vercel + GitHub, ~30 min mån 13:00) eller demo från laptop
-- [?] Registrera konto i appen och ange e-post så att Claude kan sätta is_admin (mån 18:30)
+- [x] Registrera konto i appen och ange e-post så att Claude kan sätta is_admin (klart mån 20:30, efter att Confirm email stängts av)
 - [?] Testa fem kort i mobilen och lämna felaktighetslista (mån 18:30)
 - [?] Sista ändringslista efter tisdagens rapport (ons 09:45)
 
@@ -24,7 +24,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] `npm run test:e2e`: 28/28 gröna efter fixar (understrukna textlänkar för axe, tvetydiga lokatorer, admin ser opublicerade deck, längre timeouts för dev-kompilering, städning av importerade testkort)
 - [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), BLOCKERS.md uppdaterad
 - [x] Adminflödet mot riktig databas: deck, kategori, kort, import, export (E2E) samt ombeställning och statistik (manuellt som admin@kuggfri.test). Hittade och rättade: seedens sort_order räknades per kategori så att kategorierna blandades i deckets ordning; nu global numrering
-- [ ] Gör Alvin till admin (SQL enligt README) när e-post finns
+- [x] Gör Alvin till admin (SQL enligt README) när e-post finns (lokalt mån 11:55, molnet mån 20:30)
 
 ### Deploy (Alvin vill ha kuggfri.com uppe till torsdag)
 - [x] Konton skapade på Supabase och Vercel (mån 16:30)
@@ -33,14 +33,14 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Supabase CLI inloggat (mån 17:15). Projekt **Kuggfri**, ref `fujwpsmqllqwvnzaxatg`, region eu-west-1 (Irland, EU), URL `https://fujwpsmqllqwvnzaxatg.supabase.co`, anon-nyckel hämtad
 - [x] Alvin körde `supabase link` + `db push --include-seed` (mån 17:30): 4 migrationer, 144 kort i molnet
 - [x] Vercel: **https://kuggfri.vercel.app** svarar med riktig data och noindex (mån 17:35)
-- [?] Alvin: registrera konto på kuggfri.vercel.app och säg till, så sätter Claude is_admin i molnet
+- [x] Alvin registrerade konto på kuggfri.vercel.app (Confirm email avstängt i Supabase); is_admin = true satt i molnet via `supabase db query --linked` (mån 20:30)
 - [?] Alvin: Supabase → Authentication → URL Configuration: Site URL `https://kuggfri.com`, Redirect URLs `https://kuggfri.com/**` och `https://kuggfri.vercel.app/**` (annars fungerar inte magic link)
 - [?] Alvin: Vercel → Settings → Domains → kuggfri.com + DNS hos domänleverantören
-- [ ] Gästflödena i E2E mot produktion (`E2E_BASE_URL=https://kuggfri.vercel.app E2E_SKIP_SETUP=1`)
-- [ ] Kör seed mot molnprojektet (SQL-editorn eller admin-import)
-- [ ] Miljövariabler i Vercel, deploy, kontrollera magic link och registrering på riktig domän
-- [ ] Sätt Site URL / Redirect URLs i Supabase-dashboarden (Alvin, eftersom det är hans konto)
-- [ ] Sätt Alvin som admin även i molnet
+- [x] Gästflödena i E2E mot produktion: 5/5 gröna (`E2E_BASE_URL=https://kuggfri.vercel.app E2E_SKIP_SETUP=1`, mån 17:50)
+- [x] Seed i molnet via `db push --include-seed` (144 kort)
+- [x] Miljövariabler i Vercel, deploy. Registrering med lösenord fungerar i produktion (mån 20:30). Magic link väntar på egen SMTP (se Tillkommit)
+- [x] Site URL / Redirect URLs satta av Alvin i Supabase-dashboarden
+- [x] Sätt Alvin som admin även i molnet (mån 20:30)
 
 ### Innehållsgranskning, steg 1
 - [x] `scripts/content-review.ts` listar kort med formateringsanmärkningar (körs med `npx tsx scripts/content-review.ts`)

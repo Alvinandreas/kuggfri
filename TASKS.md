@@ -9,7 +9,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ## Väntar på Alvin (blockerar)
 
-- [?] Installera Docker Desktop och säga "Docker är igång" (mån 09:30)
+- [x] Installera Docker Desktop och säga "Docker är igång" (klart mån 09:45, krävde `wsl --install` + omstart)
 - [?] Bestämma: publik deploy (Supabase EU + Vercel + GitHub, ~30 min mån 13:00) eller demo från laptop
 - [?] Registrera konto i appen och ange e-post så att Claude kan sätta is_admin (mån 18:30)
 - [?] Testa fem kort i mobilen och lämna felaktighetslista (mån 18:30)

@@ -107,3 +107,19 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Namnet är Kuggfri** (kuggfri.com). localStorage-nycklarna bytte samtidigt namn.
 - **Stabil testkopia på port 3001** (`NEXT_DIST_DIR=.next-prod`) så att Alvin kan testa medan
   dev-servern på 3000 kompilerar om.
+
+## Beslut 2026-09-14, runda 3
+
+- **Repetitionshistorik (`review_log`)** loggas i alla lägen, även fri och slumpad repetition,
+  eftersom det är aktivitet och inte schema. Specens krav att fri repetition inte muterar
+  `card_progress` gäller fortfarande och testas. Nollställning av deck/allt raderar även historiken;
+  schemanollställning behåller den.
+- **"Kluriga kort"** uppdaterar bara `self_rating` och `last_review`, aldrig FSRS-fälten. Annars skulle
+  ett cramläge skjuta fram schemat. Ett aldrig sett kort får en rad i state New så att det slutar
+  räknas som klurigt utan att bli "repeterat" för schemat.
+- **Ordning inom samma nivå slumpas** (förfallodag för fsrs, skattning för fri/kluriga). Fri repetition
+  går svagast först i stället för deckets ordning, på Alvins önskan.
+- **Diagram i ren SVG** utan bibliotek. Paletten (`--chart-1` grön, `--chart-2` blå) är validerad med
+  dataviz-skillens validator i både ljust och mörkt läge. Två serier har legend och direkt etikett;
+  varje diagram har tabellvy.
+- **Kontrastfärgen är grön** (`#1f7a4d` / `#3aa868`), samma som diagrammens huvudfärg.

@@ -61,7 +61,7 @@ test.describe("admin", () => {
     await page.goto(`/d/${DECK_SLUG}`);
     const totalAfter = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
     expect(totalAfter).toBe(totalBefore + 2);
-    await expect(page.locator("li", { hasText: "E2E-kategori" }).first()).toBeVisible();
+    await expect(page.getByTestId("category-row").filter({ hasText: "E2E-kategori" }).first()).toBeVisible();
 
     // Kortet kan pluggas: fri repetition i den nya kategorin.
     const select = page.getByLabel("Urval", { exact: true });

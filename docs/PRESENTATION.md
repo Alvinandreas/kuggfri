@@ -34,14 +34,15 @@ Visa i telefonen eller laptopen. Poängen att göra:
 
 **Demo i telefonen, som gäst, utan inloggning.**
 
-1. Öppna decket via länk. Ingen inloggning, inget konto. Peka på: 144 kort, elva kategorier som följer kursens
-   upplägg.
-2. Starta **schemalagd repetition**. Vänd ett kort, skatta 1–5. Förklara i en mening: FSRS är en
-   öppen algoritm för spaced repetition som lägger nästa repetition beroende på hur väl man kunde kortet.
-   Kort man kan sällan, kort man inte kan snart och igen samma session.
-3. Visa **fri repetition** på en kategori och nämn **slumpad genomkörning**: cram-läge inför tentan som
-   inte rör schemat.
-4. Visa **nollställning** direkt på deckets sida, gratis och utan att fråga någon.
+1. Öppna decket via länk. Ingen inloggning, inget konto. Peka på: 144 kort, elva färgkodade kategorier
+   som följer kursens upplägg, och per kategori hur många kort som är studerade och inlärda.
+2. Starta **schemalagd repetition**. Vänd ett kort, skatta 1–5: kortet stämplas med betyget och glider ut.
+   Förklara i en mening: FSRS är en öppen algoritm för spaced repetition som lägger nästa repetition
+   beroende på hur väl man kunde kortet. Kort man kan sällan, kort man inte kan snart och igen samma session.
+3. Kryssa i en eller två kategorier, visa **fri repetition** på dem och nämn **slumpad genomkörning**:
+   cram-läge inför tentan som inte rör schemat. Sortera kategorilistan på "Minst inlärt först": det är så
+   studenten hittar vad den behöver jobba mest med.
+4. Nämn **nollställning**: gratis, ett klick under Konto, utan att fråga någon.
 5. Nämn: progress sparas på enheten; skapar man konto följer den med. Inget samlas in utöver e-post och
    valfritt visningsnamn, ingen spårning, data inom EU. Det finns en integritetspolicy.
 

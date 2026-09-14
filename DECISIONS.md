@@ -86,3 +86,24 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   (`forbidden()` → status 403). Alla server actions under admin kontrollerar dessutom `is_admin`
   själva. Databasen nekar ändå via RLS om något skulle missas.
 - **Inga tredjepartsinloggningar**, ingen telefon, inga profilbilder.
+
+## Beslut 2026-09-14 (efter Alvins feedback)
+
+- **Nollställning ligger under Konto**, inte på deck-sidan, på Alvins uttryckliga önskan (specen sa
+  ursprungligen motsatsen). Gäster har ingen kontosida och specen kräver att de kan nollställa, så
+  deck-sidan behåller en diskret textlänk längst ner för att nollställa just det decket.
+- **Urvalsrullgardinen är borttagen.** Urvalet görs via kryssrutor i kategorilistan; en
+  sammanställning visar valda kategorier, antal kort och antal inlärda. Filtret "bara kort med låg
+  skattning" (krav i specen) finns kvar som en kryssruta i fri repetition.
+- **Kortet stämplas vid skattning** med siffran i skattningens färg och glider ut åt vänster; nästa
+  kort visas alltid på framsidan. Vändläget är knutet till kort + position, aldrig till komponenten,
+  så ett kortbyte kan inte utlösa en flip.
+- **Kategorifärger** är tio tokens (`--tag-1` … `--tag-10`) som tilldelas efter kategorins plats i
+  decket. Samma färg används på kortet, i kategorilistan och i urvalssammanställningen.
+- **Dubbletter i seeden tas bort automatiskt** (samma första 100 tecken i svaret, första förekomsten
+  vinner). Sju kort försvann ur "Tillverkning och värmebehandling av stål".
+- **Typografiska rättelser i seed-bygget** (`applyTypography`): `=>` → `→`, nedsänkta siffror i
+  kemiska formler, unicode-matte som KaTeX. Godkänt av Alvin; rör aldrig innehållet.
+- **Namnet är Kuggfri** (kuggfri.com). localStorage-nycklarna bytte samtidigt namn.
+- **Stabil testkopia på port 3001** (`NEXT_DIST_DIR=.next-prod`) så att Alvin kan testa medan
+  dev-servern på 3000 kompilerar om.

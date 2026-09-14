@@ -23,6 +23,16 @@
 4. Gå igenom några kort i mobilen. Textnormaliseringen från Brainscape (punktlistor) är
    försiktig; enstaka kort kan behöva en handpåläggning i admin.
 
+## Läget måndag 14 sep, kväll
+
+- Docker, lokal Supabase och hela `npm run verify` gröna (140 enhetstester, 30 E2E).
+- Två feedbackrundor från Alvin införda: färgkodade kategorier med klickbar lista och urval,
+  centrerad fråga, stämpel och animationer vid skattning, desktop-layout, nollställning under Konto.
+- Innehåll: typografi rättad, sju dubbletter borta, K1c-formeln rättad. 144 kort.
+- Appen heter Kuggfri. Stabil testkopia på http://localhost:3001.
+- Väntar på Alvin: Supabase-projekt, GitHub, Vercel (för kuggfri.com), nästa feedbackrunda.
+- Se TASKS.md för allt annat.
+
 ## Klart
 
 - **Studieläge**: schemalagd repetition (FSRS via ts-fsrs), fri repetition (hela decket, en

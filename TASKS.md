@@ -34,8 +34,8 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Alvin körde `supabase link` + `db push --include-seed` (mån 17:30): 4 migrationer, 144 kort i molnet
 - [x] Vercel: **https://kuggfri.vercel.app** svarar med riktig data och noindex (mån 17:35)
 - [x] Alvin registrerade konto på kuggfri.vercel.app (Confirm email avstängt i Supabase); is_admin = true satt i molnet via `supabase db query --linked` (mån 20:30)
-- [x] Redirect URLs för kuggfri.com och kuggfri.vercel.app satta av Alvin. Kvar: Site URL till `https://kuggfri.com` när huvudadressen är bytt i Vercel
-- [x] Domänen kopplad (mån 21:00): DNS hos Hostinger (A `@` → 216.198.79.1, CNAME `www` → Vercels projektspecifika värde), certifikat utfärdat, `https://www.kuggfri.com` svarar. Gästflödena 5/5 gröna mot domänen. Obs: Vercel satte www som huvudadress; Alvin byter till kuggfri.com (Settings → Domains) så att kuggfri.com inte omdirigerar till www
+- [x] Site URL `https://kuggfri.com` och Redirect URLs för kuggfri.com och kuggfri.vercel.app satta av Alvin (mån 21:15)
+- [x] Domänen kopplad (mån 21:00): DNS hos Hostinger (A `@` → 216.198.79.1, CNAME `www` → Vercels projektspecifika värde), certifikat utfärdat, `https://www.kuggfri.com` svarar. Gästflödena 5/5 gröna mot domänen. Huvudadress kuggfri.com, www och http omdirigerar dit (308), verifierat mån 21:15
 - [x] Gästflödena i E2E mot produktion: 5/5 gröna (`E2E_BASE_URL=https://kuggfri.vercel.app E2E_SKIP_SETUP=1`, mån 17:50)
 - [x] Seed i molnet via `db push --include-seed` (144 kort)
 - [x] Miljövariabler i Vercel, deploy. Registrering med lösenord fungerar i produktion (mån 20:30). Magic link väntar på egen SMTP (se Tillkommit)

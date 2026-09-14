@@ -139,6 +139,10 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         setProgress((p) => ({ ...(p ?? {}), [card.id]: next }));
         store.save(next).catch(() => setSaveError(true));
       }
+      // Historiken loggas i alla lägen (underlag för statistiken); progressen rörs bara enligt applyRating.
+      store.logReview({ card_id: card.id, rating, mode, reviewed_at: new Date().toISOString() }).catch(() => {
+        // Historik är inte kritisk.
+      });
       setAnnounce(sv.study.ratedAnnounce(rating));
       // Stämpla kortet, låt det glida ut, och visa först därefter nästa kort (på framsidan).
       setFeedback(rating);

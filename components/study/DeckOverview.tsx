@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { nextDueDate, queueStats } from "@/lib/fsrs/scheduler";
-import type { ProgressMap, StudyMode } from "@/lib/progress/types";
+import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
+import { ProgressStats } from "@/components/stats/ProgressStats";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import {
   categoryStats,
@@ -40,6 +41,7 @@ type SortMode = "deck" | "learned";
 export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
+  const [reviews, setReviews] = useState<ReviewEntry[]>([]);
   const [mode, setMode] = useState<StudyMode>("fsrs");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sortMode, setSortMode] = useState<SortMode>("deck");
@@ -54,9 +56,12 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const reload = useCallback(async () => {
     if (!store) return;
     try {
-      setProgress(await store.load(cardIds));
+      const [p, r] = await Promise.all([store.load(cardIds), store.loadReviews(cardIds)]);
+      setProgress(p);
+      setReviews(r);
     } catch {
       setProgress({});
+      setReviews([]);
     }
   }, [store, cardIds]);
 
@@ -66,12 +71,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
 
   const stats = useMemo(() => (progress ? queueStats(cardIds, progress, new Date()) : null), [cardIds, progress]);
   const seen = useMemo(() => (progress ? cardIds.filter((id) => progress[id]).length : 0), [cardIds, progress]);
-  const avgRating = useMemo(() => {
-    if (!progress) return null;
-    const ratings = cardIds.map((id) => progress[id]?.self_rating).filter((r): r is 1 | 2 | 3 | 4 | 5 => typeof r === "number");
-    if (ratings.length === 0) return null;
-    return ratings.reduce((a, b) => a + b, 0) / ratings.length;
-  }, [cardIds, progress]);
   const nextDue = useMemo(() => (progress ? nextDueDate(cardIds, progress, new Date()) : null), [cardIds, progress]);
 
   const perCategory = useMemo(
@@ -176,30 +175,23 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
           </h2>
           {progress === null ? (
             <p className="mt-2 text-muted">{sv.common.loading}</p>
-          ) : seen === 0 ? (
+          ) : seen === 0 && reviews.length === 0 ? (
             <p className="mt-2 text-muted">{sv.deck.noProgress}</p>
           ) : (
-            <>
-              <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-                <div>
-                  <dt className="text-muted">{sv.deck.progressTitle}</dt>
-                  <dd data-testid="seen-count" className="text-base font-medium">
-                    {sv.deck.seen(seen, cards.length)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted">{sv.deck.averageRating}</dt>
-                  <dd className="text-base font-medium">{avgRating === null ? "–" : avgRating.toFixed(1)}</dd>
-                </div>
-              </dl>
-              <p data-testid="due-info" className="mt-3 text-base font-medium">
-                {stats && stats.due + stats.new > 0
-                  ? `${sv.deck.dueNow(stats.due)}, ${sv.deck.newCards(stats.new)}`
-                  : nextDue
-                    ? `${sv.deck.nothingDue} ${sv.deck.nextDue(formatRelative(nextDue))}`
-                    : sv.deck.nothingDue}
-              </p>
-            </>
+            <div className="mt-4">
+              <ProgressStats
+                cardIds={cardIds}
+                progress={progress}
+                reviews={reviews}
+                dueText={
+                  stats && stats.due + stats.new > 0
+                    ? `${sv.deck.dueNow(stats.due)}, ${sv.deck.newCards(stats.new)}`
+                    : nextDue
+                      ? `${sv.deck.nothingDue} ${sv.deck.nextDue(formatRelative(nextDue))}`
+                      : sv.deck.nothingDue
+                }
+              />
+            </div>
           )}
           {notice ? (
             <p role="status" className="mt-3 text-sm text-accent">

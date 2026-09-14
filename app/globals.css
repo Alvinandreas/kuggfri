@@ -20,13 +20,18 @@
   --muted: #676259;
   --line: #dedbd3;
   --line-strong: #c4c0b6;
-  --accent: #2f5d62;
-  --accent-hover: #25494d;
+  --accent: #1f7a4d;
+  --accent-hover: #196540;
   --accent-fg: #ffffff;
-  --accent-soft: #e3eded;
+  --accent-soft: #dcefe3;
   --danger: #a13d3d;
   --danger-soft: #f6e6e6;
-  --focus: #2f5d62;
+  --focus: #1f7a4d;
+
+  /* Diagram: validerad kategorisk palett (dataviz-skillens validator, ljus yta #ffffff) */
+  --chart-1: #1f7a4d;
+  --chart-2: #3b6ea5;
+  --chart-grid: #e6e3dc;
 
   /* Skattningsskala 1–5, dämpade toner */
   --rate-1: #b0523f;
@@ -72,13 +77,16 @@
   --muted: #a5a097;
   --line: #34322e;
   --line-strong: #4a4741;
-  --accent: #8dbdc2;
-  --accent-hover: #a6cfd3;
-  --accent-fg: #101b1c;
-  --accent-soft: #223638;
+  --accent: #3aa868;
+  --accent-hover: #4cb977;
+  --accent-fg: #0d1f14;
+  --accent-soft: #1c3527;
   --danger: #d98080;
   --danger-soft: #3a2323;
-  --focus: #8dbdc2;
+  --focus: #3aa868;
+  --chart-1: #3aa868;
+  --chart-2: #4f86c9;
+  --chart-grid: #34322e;
   --rate-1: #c9705d;
   --rate-2: #cf9455;
   --rate-3: #bfb15a;
@@ -112,6 +120,9 @@
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-focus: var(--focus);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-grid: var(--chart-grid);
   --color-rate-1: var(--rate-1);
   --color-rate-2: var(--rate-2);
   --color-rate-3: var(--rate-3);

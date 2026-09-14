@@ -2,7 +2,7 @@
  * Gästprogress i localStorage. Samma datastruktur som card_progress.
  * Funktionerna tar ett Storage-objekt som argument så att de kan testas utan webbläsare.
  */
-import { isSelfRating, type CardProgress, type ProgressMap } from "./types";
+import { isSelfRating, isStudyMode, type CardProgress, type ProgressMap, type ReviewEntry } from "./types";
 
 export const LOCAL_PROGRESS_KEY = "kuggfri:progress:v1";
 
@@ -80,4 +80,65 @@ export function upsertLocalProgress(storage: StorageLike, progress: CardProgress
 
 export function hasLocalProgress(storage: StorageLike): boolean {
   return Object.keys(readLocalProgress(storage)).length > 0;
+}
+
+// ---------------------------------------------------------------------------
+// Repetitionshistorik för gäster (motsvarar tabellen review_log)
+// ---------------------------------------------------------------------------
+
+export const LOCAL_REVIEWS_KEY = "kuggfri:reviews:v1";
+/** Tak så att localStorage inte växer obegränsat; äldsta rader faller bort. */
+export const LOCAL_REVIEWS_MAX = 5000;
+
+type StoredReviews = { version: 1; entries: ReviewEntry[] };
+
+function isValidReview(value: unknown): value is ReviewEntry {
+  if (!value || typeof value !== "object") return false;
+  const r = value as Record<string, unknown>;
+  return (
+    typeof r.card_id === "string" &&
+    isSelfRating(r.rating) &&
+    isStudyMode(r.mode) &&
+    typeof r.reviewed_at === "string" &&
+    !Number.isNaN(Date.parse(r.reviewed_at))
+  );
+}
+
+export function readLocalReviews(storage: StorageLike): ReviewEntry[] {
+  let raw: string | null;
+  try {
+    raw = storage.getItem(LOCAL_REVIEWS_KEY);
+  } catch {
+    return [];
+  }
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as Partial<StoredReviews> | null;
+    const entries = parsed && Array.isArray(parsed.entries) ? parsed.entries : [];
+    return entries.filter(isValidReview);
+  } catch {
+    return [];
+  }
+}
+
+export function writeLocalReviews(storage: StorageLike, entries: ReviewEntry[]): void {
+  const trimmed = entries.length > LOCAL_REVIEWS_MAX ? entries.slice(entries.length - LOCAL_REVIEWS_MAX) : entries;
+  const shape: StoredReviews = { version: 1, entries: trimmed };
+  try {
+    storage.setItem(LOCAL_REVIEWS_KEY, JSON.stringify(shape));
+  } catch {
+    // Fullt eller blockerat lagringsutrymme.
+  }
+}
+
+export function appendLocalReview(storage: StorageLike, entry: ReviewEntry): void {
+  writeLocalReviews(storage, [...readLocalReviews(storage), entry]);
+}
+
+export function clearLocalReviews(storage: StorageLike): void {
+  try {
+    storage.removeItem(LOCAL_REVIEWS_KEY);
+  } catch {
+    // ignorera
+  }
 }

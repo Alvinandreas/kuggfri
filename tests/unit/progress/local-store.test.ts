@@ -116,3 +116,27 @@ describe("LocalProgressStore", () => {
     expect(storage.getItem(LOCAL_PROGRESS_KEY)).toBe(snapshot);
   });
 });
+
+describe("repetitionshistorik för gäster", () => {
+  it("lägger till, läser tillbaka och begränsar antalet rader", async () => {
+    const storage = new FakeStorage();
+    const store = new LocalProgressStore(storage);
+    await store.logReview({ card_id: "a", rating: 4, mode: "fsrs", reviewed_at: NOW.toISOString() });
+    await store.logReview({ card_id: "b", rating: 1, mode: "tricky", reviewed_at: new Date(NOW.getTime() + 1000).toISOString() });
+    const all = await store.loadReviews(["a", "b", "c"]);
+    expect(all.map((r) => r.card_id)).toEqual(["a", "b"]);
+    expect(await store.loadReviews(["b"])).toHaveLength(1);
+
+    await store.resetDeck("deck", ["a"]);
+    expect((await store.loadReviews(["a", "b"])).map((r) => r.card_id)).toEqual(["b"]);
+    await store.resetAll();
+    expect(await store.loadReviews(["a", "b"])).toEqual([]);
+  });
+
+  it("ignorerar trasiga rader", async () => {
+    const storage = new FakeStorage();
+    storage.setItem("kuggfri:reviews:v1", JSON.stringify({ version: 1, entries: [{ card_id: "a", rating: 9, mode: "fsrs", reviewed_at: "x" }, { card_id: "b", rating: 3, mode: "free", reviewed_at: NOW.toISOString() }] }));
+    const store = new LocalProgressStore(storage);
+    expect((await store.loadReviews(["a", "b"])).map((r) => r.card_id)).toEqual(["b"]);
+  });
+});

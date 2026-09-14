@@ -63,11 +63,12 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ## Alvins feedback, runda 3 (mån 16:00)
 
-- [~] H1. Ordningen ska inte vara hårdkodad: fsrs blandar kort med samma förfallodag och alla nya kort; fri repetition och kluriga kort går svagast först (1, 2, aldrig sedda, 3, 4, 5) med blandning inom varje grupp
-- [~] H2. Stämpeln syns cirka 0,7 s innan kortet glider ut, och ligger centrerad i kortet (aldrig över rullningslisten)
-- [~] H3. Statistik och diagram under "Din progress": kort per dag, ackumulerad kunskap m.m. Kräver ny tabell `review_log` (repetitionshistorik) + localStorage-motsvarighet för gäster + migrering till konto
-- [~] H3b. Grön kontrastfärg (checkmark-grön) i stället för blågrön, även som huvudfärg i diagrammen
-- [~] H4. Nytt läge "Kluriga kort": bara kort med skattning 1–2 eller aldrig sedda; bara kategorier med kluriga kort går att välja; skattning i läget uppdaterar self_rating men inte FSRS-schemat. Migration för `study_sessions.mode`
+- [x] H1. Ordningen är inte hårdkodad: fsrs blandar kort med samma förfallodag och alla nya kort; fri repetition och kluriga kort går svagast först (1, 2, aldrig sedda, 3, 4, 5) med blandning inom varje grupp
+- [x] H2. Stämpeln syns cirka 0,7 s innan kortet glider ut, och ligger centrerad i kortet
+- [x] H3. "Din progress" har fyra nyckeltal (inlärda, dagar i rad, repetitioner i dag, snitt 7 dagar), stapeldiagram "Repetitioner per dag" (14 dagar) och linjediagram "Ackumulerad kunskap" (sedda och inlärda). Ny tabell `review_log` med RLS-tester, localStorage-motsvarighet för gäster (`kuggfri:reviews:v1`), migreras till kontot vid inloggning, rensas vid nollställning. Diagrammen har hover-tooltip och tabellvy
+- [x] H3b. Grön kontrastfärg (#1f7a4d ljust, #3aa868 mörkt) och diagrampalett validerad med dataviz-skillens verktyg i båda lägena
+- [x] H4. Läget "Kluriga kort": bara kort med skattning 1–2 eller aldrig sedda; kategorier utan kluriga kort är gråade; skattning i läget uppdaterar self_rating men inte FSRS-schemat. Migration för `study_sessions.mode`
+- Historiken loggas i alla lägen (även fri och slumpad) eftersom den bara är aktivitet, inte schema. Fri/slumpad rör fortfarande aldrig `card_progress` (testat)
 - [x] Namnbyte Plugget → **Kuggfri** (kuggfri.com) i app, dokument, lagringsnycklar (`kuggfri:progress:v1`, `kuggfri:theme`), testkonton och exportfilnamn (mån 13:30). Obs: gästprogress sparad under gamla nyckeln följer inte med; ingen har sådan ännu utom Alvins egna tester
 - [ ] Domän: koppla kuggfri.com i Vercel när deployen finns (se README, steg 5)
 

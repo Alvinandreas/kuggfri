@@ -326,6 +326,41 @@ describe("study_sessions", () => {
   });
 });
 
+describe("review_log", () => {
+  it("anon nekas helt", async () => {
+    await expectDenied(anon(db).query("select * from public.review_log"));
+    await expectDenied(anon(db).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 3, 'fsrs')`, [alice, publishedCard]));
+  });
+
+  it("användare kan logga och läsa bara egna rader", async () => {
+    await user(db, alice).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 4, 'fsrs')`, [alice, publishedCard]);
+    await user(db, bob).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 1, 'tricky')`, [bob, publishedCard]);
+    const mine = await user(db, alice).query<{ user_id: string; rating: number }>("select user_id, rating from public.review_log");
+    expect(mine).toHaveLength(1);
+    expect(mine[0]?.user_id).toBe(alice);
+  });
+
+  it("användare kan inte logga åt någon annan, uppdatera eller ta bort", async () => {
+    await expectDenied(user(db, alice).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 5, 'fsrs')`, [bob, publishedCard]));
+    await expectDenied(user(db, alice).query(`update public.review_log set rating = 5 where user_id = $1`, [alice]), /permission denied/i);
+    await expectDenied(user(db, alice).query(`delete from public.review_log where user_id = $1`, [alice]), /permission denied/i);
+  });
+
+  it("ogiltig skattning eller läge avvisas", async () => {
+    await expectDenied(user(db, alice).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 6, 'fsrs')`, [alice, publishedCard]), /check|violates/i);
+    await expectDenied(user(db, alice).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 3, 'cheat')`, [alice, publishedCard]), /check|violates/i);
+  });
+
+  it("nollställning av deck tar bort egen historik för decket, inte andras", async () => {
+    const [r] = await user(db, alice).query<{ n: number }>(`select public.reset_deck_progress($1) as n`, [publishedDeck]);
+    expect(typeof r?.n).toBe("number");
+    expect(await db.query(`select 1 from public.review_log where user_id = $1`, [alice])).toHaveLength(0);
+    expect(await db.query(`select 1 from public.review_log where user_id = $1`, [bob])).toHaveLength(1);
+    // Återställ Alices progressrad som nollställningen tog bort; senare tester räknar med den.
+    await db.query(`insert into public.card_progress (user_id, card_id, self_rating, reps) values ($1, $2, 2, 1)`, [alice, publishedCard]);
+  });
+});
+
 describe("funktioner", () => {
   it("is_admin() svarar rätt per identitet", async () => {
     expect((await anon(db).query<{ is_admin: boolean }>("select public.is_admin() as is_admin"))[0]?.is_admin).toBe(false);

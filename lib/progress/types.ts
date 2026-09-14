@@ -42,6 +42,14 @@ export function isStudyMode(value: unknown): value is StudyMode {
   return value === "fsrs" || value === "free" || value === "random" || value === "tricky";
 }
 
+/** En rad i repetitionshistoriken (tabellen review_log, eller localStorage för gäster). */
+export type ReviewEntry = {
+  card_id: string;
+  rating: SelfRating;
+  mode: StudyMode;
+  reviewed_at: string;
+};
+
 /** Ett kort räknas som "klurigt" om det aldrig skattats eller senast fick 1–2. */
 export function isTricky(progress: CardProgress | undefined): boolean {
   return !progress || progress.self_rating === null || progress.self_rating <= 2;

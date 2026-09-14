@@ -75,6 +75,15 @@ export type StudySessionRow = {
   cards_reviewed: number;
 };
 
+export type ReviewLogRow = {
+  id: string;
+  user_id: string;
+  card_id: string;
+  rating: number;
+  mode: string;
+  reviewed_at: string;
+};
+
 export type DeckStatsCardRow = {
   card_id: string;
   front: string;
@@ -150,6 +159,12 @@ export type Database = {
           "id" | "user_id" | "started_at" | "ended_at" | "cards_reviewed"
         >;
         Update: Partial<StudySessionRow>;
+        Relationships: [];
+      };
+      review_log: {
+        Row: ReviewLogRow;
+        Insert: Optional<ReviewLogRow, "id" | "reviewed_at">;
+        Update: Partial<ReviewLogRow>;
         Relationships: [];
       };
     };

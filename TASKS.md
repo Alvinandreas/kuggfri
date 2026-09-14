@@ -65,12 +65,14 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 
-- [ ] Rätta allt från Alvins måndagslista (se ovan)
+- [x] Rätta allt från Alvins måndagslista (båda rundorna gjorda redan måndag)
 - [x] Formatera om kort enligt den godkända granskningslistan (gjort mån 11:40 via `applyTypography` i seed-bygget, med tester)
 - [x] Konvertera unicode-matte till KaTeX (gjort mån 11:40)
-- [x] `docs/PRESENTATION.md` utkast skrivet redan mån 11:10 (talarpunkter, demo i tre steg, erbjudande till Johan, frågor och svar, packlista). Alvin redigerar ons kväll
-- [ ] Mobilpolish: testa iOS Safari-specifika saker (100dvh, svep vs. tillbaka-gest), långa baksidor, KaTeX-bredd
+- [x] `docs/PRESENTATION.md` utkast skrivet redan mån 11:10, uppdaterat efter runda 2. Alvin redigerar ons kväll
+- [x] Sessionssammanfattningen visar kategoritagg på korten som behöver mest arbete
+- [~] Mobilpolish: långa baksidor scrollar inom kortet (max 55 dvh), KaTeX-block scrollar vågrätt, ljust/mörkt kontrollerat med taggar. iOS Safari kan bara Alvin testa i riktig telefon (svep från vänsterkant krockar med bakåtgesten, det är känt och accepterat)
 - [ ] Rapport i chatten 12:00 och 17:00
+- [ ] Ta bort `/d/dev-preview`-rutten före deploy (finns kvar för utveckling, svarar 404 i produktion)
 
 ## Onsdag 16 sep
 

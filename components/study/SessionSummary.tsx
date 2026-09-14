@@ -84,7 +84,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
                   <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-semibold text-fg ${ratingClass[rating]}`}>
                     {rating}
                   </span>
-                  <span className="grid gap-1">
+                  <span className="flex flex-col items-start gap-1">
                     <span>{firstLine(card?.front ?? "")}</span>
                     {title && card?.category_id ? <CategoryTag title={title} colorIndex={colorIndex.get(card.category_id) ?? 0} /> : null}
                   </span>

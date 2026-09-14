@@ -34,16 +34,16 @@ type Props = {
   userId: string | null;
 };
 
-type ResetKind = "deck" | "schedule" | "all";
 type SortMode = "deck" | "learned";
 
 export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [mode, setMode] = useState<StudyMode>("fsrs");
-  const [selection, setSelection] = useState<Selection>({ kind: "all" });
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [lowOnly, setLowOnly] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("deck");
-  const [resetKind, setResetKind] = useState<ResetKind | null>(null);
+  const [confirmReset, setConfirmReset] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -73,7 +73,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     return ratings.reduce((a, b) => a + b, 0) / ratings.length;
   }, [cardIds, progress]);
   const nextDue = useMemo(() => (progress ? nextDueDate(cardIds, progress, new Date()) : null), [cardIds, progress]);
-  const lowCount = useMemo(() => (progress ? filterCards(cards, progress, { kind: "low" }).length : 0), [cards, progress]);
 
   const perCategory = useMemo(
     () =>
@@ -93,39 +92,48 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     return list;
   }, [categories, perCategory, sortMode]);
 
-  const selectedSet = useMemo(() => new Set(selection.kind === "categories" ? selection.categoryIds : []), [selection]);
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
   function toggleCategory(id: string) {
-    const next = new Set(selectedSet);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelection(next.size === 0 ? { kind: "all" } : { kind: "categories", categoryIds: categories.filter((c) => next.has(c.id)).map((c) => c.id) });
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return categories.filter((c) => next.has(c.id)).map((c) => c.id);
+    });
   }
 
-  const selectionCount = useMemo(() => {
-    if (mode === "random") return cards.length;
-    return filterCards(cards, progress ?? {}, selection).length;
-  }, [cards, mode, progress, selection]);
+  // Urvalet: valda kategorier (eller hela decket), i fri repetition ev. bara låg skattning.
+  const categorySelection = useMemo<Selection>(
+    () => (selectedIds.length > 0 ? { kind: "categories", categoryIds: selectedIds } : { kind: "all" }),
+    [selectedIds],
+  );
+  const selectedCards = useMemo(() => filterCards(cards, progress ?? {}, categorySelection), [cards, progress, categorySelection]);
+  const selectionCards = useMemo(
+    () => (mode === "free" && lowOnly ? filterCards(selectedCards, progress ?? {}, { kind: "low" }) : selectedCards),
+    [mode, lowOnly, selectedCards, progress],
+  );
+  const selectionLearned = useMemo(() => selectionCards.filter((c) => progress?.[c.id]?.self_rating === 5).length, [selectionCards, progress]);
 
-  const effectiveSelection: Selection = mode === "random" ? { kind: "all" } : selection;
+  const effectiveSelection: Selection =
+    mode === "random" ? { kind: "all" } : mode === "free" && lowOnly ? { kind: "low" } : categorySelection;
+  const selectionCount = mode === "random" ? cards.length : selectionCards.length;
   const startHref = `/d/${deck.slug}/plugga?mode=${mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
-  const nothingDue = mode === "fsrs" && stats !== null && stats.due + stats.new === 0 && selection.kind === "all";
+  const nothingDue = mode === "fsrs" && stats !== null && stats.due + stats.new === 0 && selectedIds.length === 0;
   const canStart = selectionCount > 0 && !nothingDue;
 
-  async function confirmReset() {
-    if (!store || !resetKind) return;
+  async function doResetDeck() {
+    if (!store) return;
     setBusy(true);
     try {
-      if (resetKind === "deck") await store.resetDeck(deck.id, cardIds);
-      else if (resetKind === "schedule") await store.resetSchedule(deck.id, cardIds);
-      else await store.resetAll();
+      await store.resetDeck(deck.id, cardIds);
       await reload();
       setNotice(sv.deck.resetDone);
     } catch {
       setNotice(sv.errors.generic);
     } finally {
       setBusy(false);
-      setResetKind(null);
+      setConfirmReset(false);
     }
   }
 
@@ -139,10 +147,10 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     }
   }
 
-  const dropdownValue = selection.kind === "categories" ? "categories" : selection.kind;
+  const selectedTitles = categories.filter((c) => selectedSet.has(c.id));
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-10">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-12">
       {/* Vänster kolumn: innehåll och progress. På mobil ligger allt i ett flöde där Starta kommer före kategorierna. */}
       <div className="contents lg:grid lg:gap-8">
         <header className="order-1">
@@ -229,9 +237,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                       type="checkbox"
                       aria-label={selectedSet.size === categories.length ? sv.deck.selectNone : sv.deck.selectAll}
                       checked={selectedSet.size === categories.length && categories.length > 0}
-                      onChange={(e) =>
-                        setSelection(e.target.checked ? { kind: "categories", categoryIds: categories.map((c) => c.id) } : { kind: "all" })
-                      }
+                      onChange={(e) => setSelectedIds(e.target.checked ? categories.map((c) => c.id) : [])}
                       className="h-4 w-4 accent-[var(--accent)]"
                     />
                   </th>
@@ -258,7 +264,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                   const studiedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.studied / c.stats.total) * 100);
                   return (
                     <tr key={c.id} className={`border-b border-line last:border-b-0 ${checked ? "bg-accent-soft/60" : ""}`} data-testid="category-row">
-                      <td className="px-3 py-2">
+                      <td className="px-3 py-2.5">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -267,19 +273,14 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                           className="h-4 w-4 accent-[var(--accent)]"
                         />
                       </td>
-                      <td className="px-2 py-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelection({ kind: "categories", categoryIds: [c.id] })}
-                          className="text-left"
-                          title={sv.deck.categoriesHelp}
-                        >
+                      <td className="px-2 py-2.5">
+                        <button type="button" onClick={() => setSelectedIds([c.id])} className="text-left" title={sv.deck.categoriesHelp}>
                           <CategoryTag title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} size="md" />
                         </button>
                       </td>
-                      <td className="px-2 py-2 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.studied, c.stats.total)}</td>
-                      <td className="px-2 py-2 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.learned, c.stats.total)}</td>
-                      <td className="hidden px-3 py-2 sm:table-cell">
+                      <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.studied, c.stats.total)}</td>
+                      <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.learned, c.stats.total)}</td>
+                      <td className="hidden px-3 py-2.5 sm:table-cell">
                         <div className="h-2 w-full overflow-hidden rounded bg-surface-2" aria-hidden="true">
                           <div className="relative h-full">
                             <div className={`absolute inset-y-0 left-0 rounded opacity-50 ${tagBgClass(colorIndex.get(c.id) ?? 0)}`} style={{ width: `${studiedPct}%` }} />
@@ -295,7 +296,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
           </div>
         </section>
 
-        {/* Dela och källa */}
+        {/* Dela, källa och diskret nollställning (gäster har ingen kontosida) */}
         <section className="order-6 grid gap-2 text-sm text-muted">
           <div className="flex flex-wrap items-center gap-3">
             <span>{sv.deck.share}</span>
@@ -309,10 +310,26 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
               <span className="font-medium text-fg">{sv.deck.source}:</span> {deck.source_credit}
             </p>
           ) : null}
+          <p className="mt-2">
+            <button
+              type="button"
+              onClick={() => setConfirmReset(true)}
+              disabled={!store}
+              className="underline underline-offset-2 decoration-line-strong hover:text-fg"
+              data-testid="reset-deck"
+            >
+              {sv.deck.resetLink}
+            </button>{" "}
+            {userId ? (
+              <Link href="/konto" className="underline underline-offset-2 decoration-line-strong hover:text-fg">
+                {sv.deck.resetInAccount}
+              </Link>
+            ) : null}
+          </p>
         </section>
       </div>
 
-      {/* Höger kolumn: starta och nollställ (sticky på desktop) */}
+      {/* Höger kolumn: läge, urval och Starta (sticky på desktop) */}
       <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
         <section aria-labelledby="lage-rubrik" className="order-2 grid gap-4 rounded-lg border border-line bg-surface p-5 shadow-card">
           <h2 id="lage-rubrik" className="text-lg font-semibold">
@@ -343,41 +360,25 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
           </fieldset>
 
           {mode !== "random" ? (
-            <div className="grid gap-2">
-              <label htmlFor="urval" className="text-sm font-medium">
-                {sv.deck.selection}
-              </label>
-              <select
-                id="urval"
-                value={dropdownValue}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  if (v === "all") setSelection({ kind: "all" });
-                  else if (v === "low") setSelection({ kind: "low" });
-                  else if (v.startsWith("kategori:")) setSelection({ kind: "categories", categoryIds: [v.slice("kategori:".length)] });
-                }}
-                className="h-11 w-full min-w-0 rounded-md border border-line-strong bg-bg px-3 text-fg"
-              >
-                <option value="all">
-                  {sv.deck.selectionAll} ({cards.length})
-                </option>
-                {selection.kind === "categories" ? (
-                  <option value="categories">
-                    {sv.deck.selectionCategories(selection.categoryIds.length)} ({selectionCount})
-                  </option>
-                ) : null}
-                {categories.map((c) => (
-                  <option key={c.id} value={`kategori:${c.id}`}>
-                    {c.title} ({perCategory.find((s) => s.categoryId === c.id)?.total ?? 0})
-                  </option>
-                ))}
-                {mode === "free" ? (
-                  <option value="low">
-                    {sv.deck.selectionLowRated} ({lowCount})
-                  </option>
-                ) : null}
-              </select>
-              {selection.kind === "low" && lowCount === 0 ? <p className="text-sm text-muted">{sv.deck.lowRatedEmpty}</p> : null}
+            <div className="grid gap-2 rounded-lg border border-line bg-bg p-3" data-testid="selection-summary">
+              <p className="text-sm font-medium">{sv.deck.summaryTitle}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedTitles.length === 0 ? (
+                  <span className="text-sm text-muted">{sv.deck.summaryAll}</span>
+                ) : (
+                  selectedTitles.map((c) => <CategoryTag key={c.id} title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} />)
+                )}
+              </div>
+              <p className="text-sm text-muted">
+                {sv.deck.summaryCards(selectionCount)}
+                {progress ? ` · ${sv.deck.summaryLearned(selectionLearned)}` : ""}
+              </p>
+              {mode === "free" ? (
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={lowOnly} onChange={(e) => setLowOnly(e.target.checked)} className="h-4 w-4 accent-[var(--accent)]" />
+                  {sv.deck.summaryLow}
+                </label>
+              ) : null}
             </div>
           ) : null}
 
@@ -400,44 +401,16 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
             </span>
           </div>
         </section>
-
-        <section aria-labelledby="nollstall-rubrik" className="order-5 grid gap-3 rounded-lg border border-line p-5">
-          <h2 id="nollstall-rubrik" className="text-lg font-semibold">
-            {sv.deck.resetTitle}
-          </h2>
-          <ul className="grid gap-4">
-            {(
-              [
-                ["deck", sv.deck.resetDeck, sv.deck.resetDeckHelp, "danger", "reset-deck"],
-                ["schedule", sv.deck.resetSchedule, sv.deck.resetScheduleHelp, "secondary", "reset-schedule"],
-                ["all", sv.deck.resetAll, sv.deck.resetAllHelp, "danger", "reset-all"],
-              ] as const
-            ).map(([kind, label, help, variant, testId]) => (
-              <li key={kind} className="grid gap-1.5">
-                <Button variant={variant} size="sm" onClick={() => setResetKind(kind)} disabled={!store} data-testid={testId} className="w-full">
-                  {label}
-                </Button>
-                <p className="text-xs text-muted">{help}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
       </div>
 
       <ConfirmDialog
-        open={resetKind !== null}
+        open={confirmReset}
         title={sv.deck.resetConfirmTitle}
-        body={
-          resetKind === "deck"
-            ? sv.deck.resetDeckConfirm(deck.title)
-            : resetKind === "schedule"
-              ? sv.deck.resetScheduleConfirm(deck.title)
-              : sv.deck.resetAllConfirm
-        }
-        danger={resetKind !== "schedule"}
+        body={sv.deck.resetDeckConfirm(deck.title)}
+        danger
         busy={busy}
-        onConfirm={confirmReset}
-        onCancel={() => setResetKind(null)}
+        onConfirm={doResetDeck}
+        onCancel={() => setConfirmReset(false)}
       />
     </div>
   );

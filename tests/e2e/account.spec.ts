@@ -41,15 +41,27 @@ test.describe("konto", () => {
     await studyCards(page, "fsrs", 2, 5);
     expect(await seenCountText(page)).toContain("2 av");
 
-    await page.getByTestId("reset-deck").click();
+    // Nollställning per deck finns på kontosidan.
+    await page.goto("/konto");
+    await page.getByTestId(`reset-deck-${DECK_SLUG}`).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await dialog.getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
 
-    await page.reload();
+    await page.goto(`/d/${DECK_SLUG}`);
     await expect(page.getByText("Du har inte pluggat det här decket ännu.")).toBeVisible();
     await expect(page.getByTestId("seen-count")).toHaveCount(0);
+  });
+
+  test("gäst kan nollställa decket via länken på deck-sidan", async ({ page }) => {
+    await studyCards(page, "fsrs", 2, 4);
+    expect(await seenCountText(page)).toContain("2 av");
+    await page.getByTestId("reset-deck").click();
+    await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
+    await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
+    await page.reload();
+    await expect(page.getByText("Du har inte pluggat det här decket ännu.")).toBeVisible();
   });
 
   test("nollställ schemat behåller skattningarna", async ({ page }) => {
@@ -59,10 +71,11 @@ test.describe("konto", () => {
     await page.goto(`/d/${DECK_SLUG}`);
     await expect(page.getByTestId("seen-count")).toContainText("2 av");
 
+    await page.goto("/konto");
     await page.getByTestId("reset-schedule").click();
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
-    await page.reload();
+    await page.goto(`/d/${DECK_SLUG}`);
     // Korten är kvar som sedda (skattningen finns) men räknas som nya igen.
     await expect(page.getByTestId("seen-count")).toContainText("2 av");
     await expect(page.getByTestId("due-info")).toContainText("nya kort");

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
-import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, expectNoSeriousA11yViolations, login, startSession } from "./helpers";
+import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, expectNoSeriousA11yViolations, login } from "./helpers";
 
 /** Städar bort det importtestet lägger in i det riktiga decket, så att lokala databasen inte fylls på. */
 async function cleanupImportedCards() {
@@ -63,13 +63,12 @@ test.describe("admin", () => {
     expect(totalAfter).toBe(totalBefore + 2);
     await expect(page.getByTestId("category-row").filter({ hasText: "E2E-kategori" }).first()).toBeVisible();
 
-    // Kortet kan pluggas: fri repetition i den nya kategorin.
-    const select = page.getByLabel("Urval", { exact: true });
+    // Kortet kan pluggas: fri repetition i den nya kategorin via kryssrutan.
     await page.getByLabel("Fri repetition").check();
-    const option = (await select.locator("option").allTextContents()).find((o) => o.startsWith("E2E-kategori"));
-    expect(option).toBeTruthy();
-    const value = await select.locator("option", { hasText: "E2E-kategori" }).first().getAttribute("value");
-    await startSession(page, "free", value ?? "all");
+    // Sista raden ligger under Next.js dev-badge på smala skärmar; force hoppar över träffytetestet.
+    await page.getByTestId("category-row").filter({ hasText: "E2E-kategori" }).getByRole("checkbox").check({ force: true });
+    await page.getByTestId("start-session").click();
+    await expect(page.getByTestId("flashcard")).toBeVisible();
     await expect(page.getByTestId("flashcard")).toContainText(unique);
   });
 

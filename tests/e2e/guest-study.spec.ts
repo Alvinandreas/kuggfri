@@ -78,13 +78,10 @@ test.describe("gäst", () => {
 
   test("sessionssammanfattning efter en liten kategori", async ({ page }) => {
     await page.goto(`/d/${DECK_SLUG}`);
-    // Välj fri repetition och en kategori via urvalsmenyn.
+    // Välj fri repetition och en kategori via kryssrutan i kategorilistan.
     await page.getByLabel("Fri repetition").check();
-    const select = page.getByLabel("Urval", { exact: true });
-    const options = await select.locator("option").allTextContents();
-    const small = options.find((o) => /Materialvalsprocessen/.test(o));
-    expect(small).toBeTruthy();
-    await select.selectOption({ label: small! });
+    await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check();
+    await expect(page.getByTestId("selection-summary")).toContainText("Materialvalsprocessen");
     await page.getByTestId("start-session").click();
     await expect(page.getByTestId("flashcard")).toBeVisible();
 

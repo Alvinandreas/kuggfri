@@ -54,7 +54,8 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [session, setSession] = useState<SessionState | null>(null);
-  const [flipped, setFlipped] = useState(false);
+  /** Nyckel (kort + position) för det kort som är vänt. Ett nytt kort börjar alltid på framsidan. */
+  const [flippedKey, setFlippedKey] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [announce, setAnnounce] = useState("");
   const [saveError, setSaveError] = useState(false);
@@ -101,26 +102,27 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   const card = currentId ? (cardsById.get(currentId) ?? null) : null;
   const position = session?.position ?? 0;
   const total = session?.order.length ?? 0;
+  const cardKey = currentId ? `${currentId}-${position}` : null;
+  const flipped = cardKey !== null && flippedKey === cardKey;
 
-  // Nytt kort: visa framsidan, dölj ledtråd, meddela skärmläsare.
+  // Nytt kort: dölj ledtråd, meddela skärmläsare.
   useEffect(() => {
-    setFlipped(false);
     setShowHint(false);
     if (session && !session.finished && currentId) {
       setAnnounce(sv.study.cardAnnounce(session.position + 1, session.order.length));
     }
     // Endast när kortet (eller dess position) byts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentId, position]);
+  }, [cardKey]);
 
   const flip = useCallback(() => {
-    if (!card) return;
-    setFlipped((f) => {
-      const next = !f;
+    if (!card || !cardKey) return;
+    setFlippedKey((prev) => {
+      const next = prev === cardKey ? null : cardKey;
       setAnnounce(next ? sv.study.flippedAnnounce : sv.study.front);
       return next;
     });
-  }, [card]);
+  }, [card, cardKey]);
 
   const [feedback, setFeedback] = useState<SelfRating | null>(null);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -138,12 +140,12 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         store.save(next).catch(() => setSaveError(true));
       }
       setAnnounce(sv.study.ratedAnnounce(rating));
-      // Visa kvittensen (puls + utglidning) innan nästa kort kommer.
+      // Stämpla kortet, låt det glida ut, och visa först därefter nästa kort (på framsidan).
       setFeedback(rating);
       feedbackTimer.current = setTimeout(() => {
         setFeedback(null);
         setSession((s) => (s ? rateCurrent(s, rating) : s));
-      }, 230);
+      }, 520);
     },
     [session, card, flipped, store, progress, mode, feedback],
   );
@@ -259,7 +261,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   const progressPct = total === 0 ? 0 : Math.round((position / total) * 100);
 
   return (
-    <div className="grid gap-4">
+    <div className="mx-auto grid w-full max-w-4xl gap-4">
       <h1 className="sr-only">
         {deck.title} – {sv.study.position(position + 1, total)}
       </h1>
@@ -294,7 +296,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         />
       ) : null}
 
-      <div className="grid grid-cols-[auto_1fr_auto] gap-2 lg:mx-auto lg:w-full lg:max-w-xl">
+      <div className="mt-3 grid grid-cols-[auto_1fr_auto] gap-2 lg:mx-auto lg:w-full lg:max-w-xl">
         <Button variant="secondary" onClick={previous} disabled={!canGoPrevious(session)} aria-label={sv.study.previous} data-testid="prev">
           ←
         </Button>

@@ -50,6 +50,16 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] F5. Kategoritabell med kryssrutor (flera kategorier i urvalet, URL `urval=kategori:id1,id2`), klick på namnet väljer bara den, kolumner Studerade/Inlärda, stapel (studerat tonat + inlärt grönt), sortering "Minst inlärt först". Rullgardinen kvar och synkad
 - [x] F1. Desktop: innehållsbredd 64 rem, deck-sidan i två kolumner med Starta/Nollställ sticky till höger, bredare kort i studieläget. Mobil: Starta-panelen före kategorilistan
 - [ ] F2b (senare): färgtema utöver taggarna, om Alvin vill ha mer färg i helheten
+
+## Alvins feedback, runda 2 (mån 14:00)
+
+- [x] G1. "Deckets ordning" → "Kronologisk ordning"
+- [x] G2. Urvalsrullgardinen borttagen; i stället en sammanställning "Ditt urval" med valda kategorier som taggar, antal kort och antal inlärda. Låg-skattning-filtret finns kvar som en kryssruta i fri repetition (specen kräver det)
+- [x] G3. Vid skattning: kortet stämplas med siffran i skattningens färg, glider ut åt vänster, och nästa kort visas alltid på framsidan (ingen flip mitt i bytet). Kortbunt bakom kortet
+- [x] G4. Större kategoritagg: text-base på kortet, mer luft i pillret
+- [x] G5. Bredare desktop: innehållet följer skärmen upp till 76 rem (88 rem på mycket breda skärmar); kortet max 56 rem
+- [x] G6. Nollställning flyttad till kontosidan (per deck, bara schemat, allt). Deck-sidan har bara en diskret textlänk längst ner för att nollställa det decket, eftersom gäster inte har någon kontosida (specen kräver att gäster kan nollställa)
+- [x] E2E 30/30 gröna efter runda 2 (mån 14:50), kopian på port 3001 ombyggd
 - [x] Namnbyte Plugget → **Kuggfri** (kuggfri.com) i app, dokument, lagringsnycklar (`kuggfri:progress:v1`, `kuggfri:theme`), testkonton och exportfilnamn (mån 13:30). Obs: gästprogress sparad under gamla nyckeln följer inte med; ingen har sådan ännu utom Alvins egna tester
 - [ ] Domän: koppla kuggfri.com i Vercel när deployen finns (se README, steg 5)
 

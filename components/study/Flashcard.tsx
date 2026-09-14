@@ -5,6 +5,7 @@ import { sv } from "@/lib/i18n/sv";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
 import { CategoryTag } from "@/components/ui/CategoryTag";
+import { ratingClass } from "./RatingButtons";
 
 type Props = {
   cardId: string;
@@ -15,7 +16,7 @@ type Props = {
   categoryColorIndex: number;
   flipped: boolean;
   showHint: boolean;
-  /** Skattning som just gavs: kortet pulserar i den färgen och glider ut. */
+  /** Skattning som just gavs: kortet stämplas och glider ut åt vänster. */
   feedback: SelfRating | null;
   onFlip: () => void;
   onToggleHint: () => void;
@@ -72,70 +73,64 @@ export function Flashcard({
       swiped.current = false;
       return;
     }
+    if (feedback !== null) return;
     // Klick på knappar och länkar inuti kortet ska inte vända det.
     if (e.target instanceof HTMLElement && e.target.closest("button, a")) return;
     onFlip();
   }
 
-  const leaveClass = feedback === null ? "" : feedback >= 3 ? "card-leave-good" : "card-leave-bad";
-  const pulseClass = feedback === null ? "" : `rate-pulse rate-pulse-${feedback}`;
+  const faceClass =
+    "flip-face col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg bg-surface p-5 shadow-card sm:p-7";
 
   return (
-    <div className={`flip-scene card-enter ${leaveClass}`.trim()} data-testid="flashcard" data-card-id={cardId} data-flipped={flipped}>
-      <div
-        className={`flip-inner grid cursor-pointer select-none rounded-lg ${pulseClass}`.trim()}
-        data-flipped={flipped}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          start.current = null;
-        }}
-        onClick={onClick}
-        style={{ touchAction: "pan-y" }}
-      >
-        <section
-          aria-label={sv.study.front}
-          aria-hidden={flipped}
-          inert={flipped}
-          className="flip-face flip-front col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg border border-line bg-surface p-5 shadow-card sm:p-7 lg:min-h-[24rem]"
+    <div className="card-stack" data-testid="flashcard" data-card-id={cardId} data-flipped={flipped}>
+      <div className={`flip-scene card-enter ${feedback !== null ? "card-leave" : ""}`.trim()}>
+        <div
+          className={`flip-inner grid cursor-pointer select-none rounded-lg ${feedback !== null ? `rate-pulse rate-pulse-${feedback}` : ""}`.trim()}
+          data-flipped={flipped}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => {
+            start.current = null;
+          }}
+          onClick={onClick}
+          style={{ touchAction: "pan-y" }}
         >
-          <FaceHeader label={sv.study.front} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
-          <div className="flex max-h-[55dvh] flex-1 items-center justify-center overflow-y-auto py-2 text-center">
-            <Markdown text={front} />
-          </div>
-          {hint ? (
-            <div className="mt-4 border-t border-line pt-3 text-center text-sm">
-              {showHint ? (
-                <p>
-                  <span className="font-medium text-muted">{sv.study.hint}: </span>
-                  {hint}
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={onToggleHint}
-                  className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent"
-                  data-testid="show-hint"
-                >
-                  {sv.study.showHint}
-                </button>
-              )}
+          <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line`}>
+            <FaceHeader label={sv.study.front} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
+            <div className="flex max-h-[55dvh] flex-1 items-center justify-center overflow-y-auto py-2 text-center">
+              <Markdown text={front} />
             </div>
-          ) : null}
-          <p className="mt-4 text-center text-xs text-muted">{sv.study.flipHint}</p>
-        </section>
+            {hint ? (
+              <div className="mt-4 border-t border-line pt-3 text-center text-sm">
+                {showHint ? (
+                  <p>
+                    <span className="font-medium text-muted">{sv.study.hint}: </span>
+                    {hint}
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onToggleHint}
+                    className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent"
+                    data-testid="show-hint"
+                  >
+                    {sv.study.showHint}
+                  </button>
+                )}
+              </div>
+            ) : null}
+            <p className="mt-4 text-center text-xs text-muted">{sv.study.flipHint}</p>
+          </section>
 
-        <section
-          aria-label={sv.study.back}
-          aria-hidden={!flipped}
-          inert={!flipped}
-          className="flip-face flip-back col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg border border-accent/40 bg-surface p-5 shadow-card sm:p-7 lg:min-h-[24rem]"
-        >
-          <FaceHeader label={sv.study.back} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
-          <div className="flex max-h-[55dvh] flex-1 items-center overflow-y-auto py-2">
-            <Markdown text={back} className="w-full" />
-          </div>
-        </section>
+          <section aria-label={sv.study.back} aria-hidden={!flipped} inert={!flipped} className={`${faceClass} flip-back border border-accent/40`}>
+            <FaceHeader label={sv.study.back} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
+            <div className="flex max-h-[55dvh] flex-1 items-center overflow-y-auto py-2">
+              <Markdown text={back} className="w-full" />
+            </div>
+            {feedback !== null ? <Stamp rating={feedback} /> : null}
+          </section>
+        </div>
       </div>
     </div>
   );
@@ -143,9 +138,23 @@ export function Flashcard({
 
 function FaceHeader({ label, categoryTitle, colorIndex }: { label: string; categoryTitle: string | null; colorIndex: number }) {
   return (
-    <div className="mb-3 flex items-center justify-between gap-3">
-      {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} /> : <span />}
+    <div className="mb-4 flex items-center justify-between gap-3">
+      {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} size="lg" /> : <span />}
       <span className="shrink-0 text-xs uppercase tracking-wide text-muted">{label}</span>
+    </div>
+  );
+}
+
+/** Stämpel med vald skattning, i skattningens färg. */
+function Stamp({ rating }: { rating: SelfRating }) {
+  return (
+    <div
+      aria-hidden="true"
+      data-testid="stamp"
+      className={`card-stamp pointer-events-none absolute right-5 top-14 flex h-20 w-20 flex-col items-center justify-center rounded-full border-4 bg-surface/90 text-fg sm:right-8 sm:top-16 sm:h-24 sm:w-24 ${ratingClass[rating]}`}
+    >
+      <span className="text-3xl font-bold leading-none sm:text-4xl">{sv.study.stamp(rating)}</span>
+      <span className="mt-1 text-[0.65rem] font-medium uppercase tracking-wide">{sv.study.rate[rating]}</span>
     </div>
   );
 }

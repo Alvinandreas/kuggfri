@@ -1,7 +1,7 @@
 # Plugget
 
 Fri flashcard-plattform för kurser på Chalmers. Gratis för studenter, ingen administration,
-ingen spårning. Version ett innehåller decket **Materialteknik** (151 kort i elva kategorier)
+ingen spårning. Version ett innehåller decket **Materialteknik** (144 kort i elva kategorier)
 byggt från de Brainscape-set som redan använts av två årskullar.
 
 - Next.js 15 (App Router), TypeScript strict, Tailwind CSS v4

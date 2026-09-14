@@ -48,16 +48,15 @@
   strängar i `lib/i18n/sv.ts`.
 - **GDPR**: integritetspolicy på `/integritet`, `/om` med kreditering per deck, `noindex` +
   `robots.txt`, inga kakor utöver sessionen, ingen analytics, Vercel-region Stockholm.
-- **Seed**: dina elva Brainscape-exporter som ett deck med elva kategorier, 151 kort, byggt av
+- **Seed**: dina elva Brainscape-exporter som ett deck med elva kategorier, 144 kort, byggt av
   `npm run seed:build`.
 
 ## Återstår / kända luckor
 
-- E2E-testerna exekverade inte här (Docker). Alla sex flöden i specen är täckta i
-  `tests/e2e/`, plus axe-kontroller, men de är oprövade.
+- E2E-testerna körs nu mot lokal Supabase och är gröna (2026-09-14). De kräver `supabase start`.
 - Byte av e-postadress finns inte i gränssnittet (policyn hänvisar till kontakt). Lätt att lägga
   till med `supabase.auth.updateUser`.
-- Ingen paginering i admin-kortlistan (151 kort går bra; tusentals blir långsamt).
+- Ingen paginering i admin-kortlistan (144 kort går bra; tusentals blir långsamt).
 - Import via fil läser filen i webbläsaren; mycket stora filer (>5 MB) har inte testats.
 - Statistiken räknar bara inloggade användare (gäster finns bara i sina webbläsare). Det står
   på statistiksidan.

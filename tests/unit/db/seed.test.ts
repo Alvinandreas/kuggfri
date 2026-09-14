@@ -18,12 +18,12 @@ describe("seed", () => {
     const [cats] = await db.query<{ n: number }>(`select count(*)::int as n from public.categories where deck_id = $1`, [deck!.id]);
     expect(cats?.n).toBe(11);
     const [cards] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where deck_id = $1`, [deck!.id]);
-    expect(cards?.n).toBe(151);
+    expect(cards?.n).toBe(144);
   });
 
   it("gäster (anon) kan läsa hela det publicerade decket", async () => {
     const cards = await anon(db).query(`select id from public.cards`);
-    expect(cards).toHaveLength(151);
+    expect(cards).toHaveLength(144);
     const cats = await anon(db).query(`select id from public.categories`);
     expect(cats).toHaveLength(11);
   });

@@ -34,7 +34,7 @@ Visa i telefonen eller laptopen. Poängen att göra:
 
 **Demo i telefonen, som gäst, utan inloggning.**
 
-1. Öppna decket via länk. Ingen inloggning, inget konto. Peka på: 151 kort, elva kategorier som följer kursens
+1. Öppna decket via länk. Ingen inloggning, inget konto. Peka på: 144 kort, elva kategorier som följer kursens
    upplägg.
 2. Starta **schemalagd repetition**. Vänd ett kort, skatta 1–5. Förklara i en mening: FSRS är en
    öppen algoritm för spaced repetition som lägger nästa repetition beroende på hur väl man kunde kortet.

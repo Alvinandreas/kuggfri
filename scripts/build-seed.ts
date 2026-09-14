@@ -9,7 +9,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { parseImportCsv } from "../lib/import/parse-import";
-import { normalizeBrainscapeMarkdown } from "../lib/import/normalize";
+import { applyTypography, duplicateKey, normalizeBrainscapeMarkdown } from "../lib/import/normalize";
 
 type Manifest = {
   slug: string;
@@ -63,6 +63,7 @@ function buildDeck(dir: string, manifest: Manifest, out: string[]): number {
   // sort_order är global inom decket (inte per kategori), annars blandas
   // kategorierna i "deckets ordning" och i admin-listan.
   let cardCount = 0;
+  const seenBacks = new Set<string>();
   manifest.categories.forEach((cat, catIndex) => {
     const categoryId = uuidV5(`category:${manifest.slug}:${cat.title}`);
     out.push(
@@ -75,8 +76,16 @@ function buildDeck(dir: string, manifest: Manifest, out: string[]): number {
     }
     const seenFronts = new Set<string>();
     parsed.cards.forEach((card) => {
-      const front = normalizeBrainscapeMarkdown(card.front);
-      const back = normalizeBrainscapeMarkdown(card.back);
+      const front = applyTypography(normalizeBrainscapeMarkdown(card.front));
+      const back = applyTypography(normalizeBrainscapeMarkdown(card.back));
+      // Dubbletter (samma baksida som ett tidigare kort i decket) hoppas över.
+      // Godkänt av Alvin 2026-09-14. Första förekomsten vinner.
+      const dupKey = duplicateKey(back);
+      if (seenBacks.has(dupKey)) {
+        console.warn(`  hoppar över dubblett i "${cat.title}": ${front.slice(0, 60)}`);
+        return;
+      }
+      seenBacks.add(dupKey);
       // Samma framsida kan förekomma i flera kategorier (repetitionskort); id:t tar hänsyn till kategori.
       let key = `card:${manifest.slug}:${cat.title}:${front}`;
       while (seenFronts.has(key)) key += ":dup";

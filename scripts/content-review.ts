@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { parseImportCsv } from "../lib/import/parse-import";
-import { normalizeBrainscapeMarkdown } from "../lib/import/normalize";
+import { applyTypography, duplicateKey, normalizeBrainscapeMarkdown } from "../lib/import/normalize";
 
 type Finding = { category: string; front: string; reasons: string[]; excerpt: string };
 
@@ -35,13 +35,18 @@ const dir = join(root, "seed", "materialteknik");
 const manifest = JSON.parse(readFileSync(join(dir, "deck.json"), "utf8")) as { categories: { file: string; title: string }[] };
 
 const findings: Finding[] = [];
+const seenBacks = new Set<string>();
 let total = 0;
 for (const cat of manifest.categories) {
   const parsed = parseImportCsv(readFileSync(join(dir, cat.file), "utf8"));
   for (const card of parsed.cards) {
+    const front = applyTypography(normalizeBrainscapeMarkdown(card.front));
+    const back = applyTypography(normalizeBrainscapeMarkdown(card.back));
+    // Samma dubblettregel som seed-bygget.
+    const key = duplicateKey(back);
+    if (seenBacks.has(key)) continue;
+    seenBacks.add(key);
     total++;
-    const front = normalizeBrainscapeMarkdown(card.front);
-    const back = normalizeBrainscapeMarkdown(card.back);
     const reasons = review(front, back);
     if (reasons.length > 0) {
       findings.push({ category: cat.title, front: firstLine(front), reasons, excerpt: back.slice(0, 160).replace(/\n/g, " ⏎ ") });
@@ -63,12 +68,18 @@ const out: string[] = [
   "",
   ...[...byReason.entries()].sort((a, b) => b[1] - a[1]).map(([r, n]) => `- ${r}: ${n} kort`),
   "",
-  "## Förslag på generella åtgärder (kräver ditt ja)",
+  "## Generella åtgärder (godkända av Alvin 2026-09-14, gjorda i `lib/import/normalize.ts`)",
   "",
-  "- [ ] Byt \"=>\" mot \"→\" överallt (ren typografi, ingen betydelseändring)",
-  "- [ ] Skriv kemiska formler med nedsänkt text: Fe₃C, CO₂, Al₂O₃, SiO₂",
-  "- [ ] Konvertera unicode-matte till KaTeX, t.ex. `𝜎 = 𝐸 𝜀` → `$\\sigma = E\\varepsilon$`",
-  "- [ ] Ta bort prefixet \"Repetition:\" på dubblettkort, eller ta bort dubbletten",
+  "- [x] \"=>\" är utbytt mot \"→\"",
+  "- [x] Kemiska formler har nedsänkt text: Fe₃C, CO₂, Al₂O₃, SiO₂, O₂",
+  "- [x] Unicode-matte är KaTeX, t.ex. `$\\sigma = E\\,\\varepsilon$`, `$\\varepsilon_T = \\alpha\\,(T - T_0)$`",
+  "- [x] Sju dubbletter borttagna (alla i \"Tillverkning och värmebehandling av stål\", originalen finns i \"Stål, värmebehandling och bearbetning\")",
+  "",
+  "Öppen fråga till Alvin: kortet om brottseghet anger `K1c = EGc`. Det fysikaliskt korrekta sambandet är",
+  "K_Ic = √(E·G_c); kvadratroten föll troligen bort i Brainscape-exporten. Det är en innehållsändring, så",
+  "Claude har inte rättat det. Säg till om det ska rättas.",
+  "",
+  "Anmärkningen \"radbrytning mitt i mening\" nedan är ofarlig: markdown slår ihop raderna vid visning.",
   "",
   "## Kort med anmärkning",
   "",

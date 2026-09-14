@@ -19,7 +19,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ### När Docker finns
 - [x] `npx supabase start`, skriv riktig anon-nyckel till `.env.local` (mån 10:05; migrationer + seed kördes automatiskt vid start)
-- [x] 151 kort laddade, `/d/materialteknik` kontrollerad mot riktig databas
+- [x] 144 kort laddade, `/d/materialteknik` kontrollerad mot riktig databas
 - [x] `npx playwright install chromium`
 - [x] `npm run test:e2e`: 28/28 gröna efter fixar (understrukna textlänkar för axe, tvetydiga lokatorer, admin ser opublicerade deck, längre timeouts för dev-kompilering, städning av importerade testkort)
 - [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), BLOCKERS.md uppdaterad
@@ -35,13 +35,14 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ### Innehållsgranskning, steg 1
 - [x] `scripts/content-review.ts` listar kort med formateringsanmärkningar (körs med `npx tsx scripts/content-review.ts`)
-- [?] `docs/INNEHALL-GRANSKNING.md`: 34 av 151 kort har anmärkning (pilar, kemiska formler, unicode-matte, radbrytningar). Alvin bockar i vilka generella åtgärder som får göras; inga innehållsändringar utan godkännande
+- [x] Alvin godkände alla fyra åtgärderna + borttagning av dubbletter (mån 11:30). Gjort: pilar →, nedsänkta kemiska formler, unicode-matte som KaTeX, sju dubbletter bort. Decket har nu 144 kort. Kvar i `docs/INNEHALL-GRANSKNING.md`: 10 ofarliga radbrytningsanmärkningar
+- [?] Innehållsfråga: brottseghetskortet anger `K1c = EGc`; korrekt är K_Ic = √(E·G_c). Ska Claude rätta? (innehållsändring, kräver ja)
 
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 
 - [ ] Rätta allt från Alvins måndagslista
-- [ ] Formatera om kort enligt den godkända granskningslistan (bara markdown, inte innehåll); uppdatera seed och kör `npm run seed:build`
-- [ ] Konvertera uppenbar unicode-matte till KaTeX där det ger bättre läsbarhet (t.ex. `$\sigma = E\varepsilon$`)
+- [x] Formatera om kort enligt den godkända granskningslistan (gjort mån 11:40 via `applyTypography` i seed-bygget, med tester)
+- [x] Konvertera unicode-matte till KaTeX (gjort mån 11:40)
 - [x] `docs/PRESENTATION.md` utkast skrivet redan mån 11:10 (talarpunkter, demo i tre steg, erbjudande till Johan, frågor och svar, packlista). Alvin redigerar ons kväll
 - [ ] Mobilpolish: testa iOS Safari-specifika saker (100dvh, svep vs. tillbaka-gest), långa baksidor, KaTeX-bredd
 - [ ] Rapport i chatten 12:00 och 17:00

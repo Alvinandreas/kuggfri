@@ -16,7 +16,7 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
   - Keramer, polymerer
 * Metallbindning:
   - Stark
-  - Elektronmoln=>elektrisk och
+  - Elektronmoln → elektrisk och
 termisk ledning
   - Hos metaller
 * Jonbindning
@@ -30,7 +30,7 @@ polära bindningar
   - Mellan polymerkedjor$seed$, null, 1);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('daacead1-119b-5ef5-9fb5-d7ff236d1333', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '20e76167-bad1-5c23-86ab-85047b278b49', $seed$Vad är en keram och vad kännetecknar dem?$seed$, $seed$* Oorganiska, kemiska föreningar
 mellan metal- och icke-metall
-* Ex: Al2O3, SiC, SiO2
+* Ex: Al₂O₃, SiC, SiO₂
 * Använder sig av kovalent- eller jonbindning
 * Cement, betong, tegel, porslin,
 glas, tekniska keramer
@@ -151,7 +151,7 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 * Oxidation (reagerar med syre)
 * Reaktioner i användningsmiljön
 * Giftigt$seed$, null, 13);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('8427cac8-2352-5c74-aca9-af60357d64fc', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '20e76167-bad1-5c23-86ab-85047b278b49', $seed$Ge minst två exempel på miljöegenskaper.$seed$, $seed$* CO2 footprint: mängd CO2-som
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('8427cac8-2352-5c74-aca9-af60357d64fc', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '20e76167-bad1-5c23-86ab-85047b278b49', $seed$Ge minst två exempel på miljöegenskaper.$seed$, $seed$* CO₂ footprint: mängd CO₂-som
 bildas vid framställning
 * Embedded energy: mängd
 energi som åtgår för
@@ -217,8 +217,7 @@ materialet (ex. C i Fe)$seed$, null, 25);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('1a66c915-4bb7-5453-806f-c02852fece92', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '3640d01d-e7e7-5a68-89f2-3fa8c69470e9', $seed$Millerindex: Beskriv kortfattat vad det är och hur det tas fram.$seed$, $seed$Millerindex är en form av vektorbeteckning som används för att beskriva atomplans position. Origo för koordinatsystemet placeras i regel i ett av enhetscellens hörn. På följande sätt härleds en enhetscells Millerindex:
 1. Bestäm planets skärningar med koordinataxlarna
 2. Invertera
-3. Gör heltalig
-=> Millerindex (hkl)
+3. Gör heltalig → Millerindex (hkl)
 (hkl) = specifikt plan
 {hkl} = familj av plan
 
@@ -278,10 +277,10 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 * Töjning kan orsakas av:
 
 Mekaniska laster:
-𝜎 = 𝐸 𝜀
+$\sigma = E\,\varepsilon$
 Temperatur:
-𝜀 = 𝛼 ∆𝑇
-𝛼 = längdutvidgningskoefficienten
+$\varepsilon = \alpha\,\Delta T$
+$\alpha$ = längdutvidgningskoefficienten
 Elektriska och magnetiska fält
 Fukt m.m.$seed$, null, 34);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('e2aa18a7-b7aa-54fd-8246-4f0833d971eb', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'a10dd962-3cc6-555d-b5e0-f3c06d69c1cd', $seed$Vad kännetecknar ett isotropt material?$seed$, $seed$Ett isotropt material är ett material som kan beskrivas med minst två elastiska konstanter:
@@ -290,7 +289,7 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 * Poissons tal, tvärkontraktion
 
 Fler elastiska konstanter i t.ex.
-kompositer, trä => anisotropt material$seed$, null, 35);
+kompositer, trä → anisotropt material$seed$, null, 35);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7b45f59c-2a7c-5f87-98f6-7ec58d9eb4f0', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'a10dd962-3cc6-555d-b5e0-f3c06d69c1cd', $seed$Vad har lastfall för inverkan på materialindexet?$seed$, $seed$Lastfallet bestämmer vilket materialindex som är bäst lämpat för situationen. Materialindexet beskriver i sin tur hur bra ett material presterar i det aktuella lastfallet och kan därför med fördel användas för att rangordna en mängd material.$seed$, null, 36);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('bbc1ddfb-162b-5777-9a9a-e0b834781db6', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'a10dd962-3cc6-555d-b5e0-f3c06d69c1cd', $seed$Vad är ett lastfall och varför är det viktigt i materialvalsprocessen?$seed$, $seed$* Ett lastfall är en isolerad belastningssituation som materialet kan utsättas för.
 * Ex: En stång i tryck/drag/vridspänning, en balk i böjning/knäckning eller utsatt för utbredd last, ett tryckkärl utsatt för tryckskillnader.
@@ -357,7 +356,7 @@ dislokationer att röra sig (låser
 varandra)
 * Mängden dislokationer ökar
 kraftigt vid plastisk
-deformation => plastiskt
+deformation → plastiskt
 hårdnande
 * Sker vid kallbearbetning
 (pressning, valsning, smide ...)$seed$, null, 45);
@@ -377,11 +376,11 @@ sträckgräns om last utan plasticering
 spänning)$seed$, null, 47);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('cee7692a-a886-5dfa-b59b-35def89068d1', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'ed573ff4-cf6a-52d7-8d84-b8cfc2247678', $seed$Vad är brottseghet?$seed$, $seed$Ett mått på ett materials naturliga motstånd mot propagering av sprickor.
 
-* Brottseghet K1c (MPam1/2), 1 för modus, c för kritisk
-* Brott när K1c> K1
+* Brottseghet $K_{1c}$ ($\text{MPa}\sqrt{\text{m}}$), 1 för modus, c för kritisk
+* Brott när $K_{1c}$> $K_1$
 * Tar hänsyn till last och spricklängd
 * Beror på energin som krävs för att driva sprickan
-* (𝐾1𝑐 = 𝐸𝐺𝑐)$seed$, null, 48);
+* ($K_{1c} = E\,G_c$)$seed$, null, 48);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('458cc835-967a-5401-81e7-7fc07e316c05', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'ed573ff4-cf6a-52d7-8d84-b8cfc2247678', $seed$Varför är spröda material extra känsliga för defekter?$seed$, $seed$Största förekommande defekten i en komponent ger störst spänning vilket innebär att brottet börjar där. Brottstyrkan blir då beroende av sannolikheten för att det finns en defekt i det belastade området och ju större komponenten är desto högre blir sannolikheten att det förekommer defekter. Eftersom sprickor uppträder lättare i spröda material blir de mer defektkänsliga.$seed$, null, 49);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('b79f8d63-be43-5173-a3e1-af8e32818407', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'ed573ff4-cf6a-52d7-8d84-b8cfc2247678', $seed$Vad har temperatur för inverkan på ett materials brottseghet?$seed$, $seed$När temperaturen sjunker blir materialen sprödare, och sannolikheten för sprickbildning ökar.$seed$, null, 50);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('04161dbf-75bd-57a7-a8cb-ac02438a1382', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'ed573ff4-cf6a-52d7-8d84-b8cfc2247678', $seed$Vad är skillnaden mellan ett segt- respektive sprött brott?$seed$, $seed$Ett segt material deformeras plastiskt under en längre tid innan brott uppstår, till skillnad från ett sprött material som deformeras betydligt mindre innan brott sker.$seed$, null, 51);
@@ -396,7 +395,7 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('fef659b9-5801-568e-9319-554cdc41e727', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad är ett fasdiagram och vad används det till?$seed$, $seed$Ett fasdiagram visar vilka faser som är stabila vid vilka specifika temperaturer och sammansättningar av de ingående metallerna i en legering (även tryck m.m.). Gäller vid långsamma förlopp så att utjämning av koncentrationsskillnader kan ske m.h.a. diffusion = jämvikt uppnås.$seed$, null, 54);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('96514959-707a-59b2-851e-4ef3c42c7efc', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad är Ferrit och när uppstår det?$seed$, $seed$Ferrit är rent järn upp till 910°C, BCC, låg löslighet av C.$seed$, null, 55);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('373c8293-aef4-5d42-b0ce-848100050a38', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad är Austenit och när uppstår det?$seed$, $seed$Austenit, rent järn upp över 910 °C, FCC, upp till 2.1 % löslighet av C.$seed$, null, 56);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('9e790f40-15cb-5a05-a2c6-f36a250c5bb4', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad är cementit och när uppstår det?$seed$, $seed$Cementit, Fe3C, intermediär fas, 6,67 % C, mycket hård$seed$, null, 57);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('9e790f40-15cb-5a05-a2c6-f36a250c5bb4', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad är cementit och när uppstår det?$seed$, $seed$Cementit, Fe₃C, intermediär fas, 6,67 % C, mycket hård$seed$, null, 57);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('c886bdde-cdd0-54a9-8aa1-eb5651c1bd72', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Beskriv vad en anlöpning är.$seed$, $seed$Anlöpning av härdat stål är en process som används för att öka materialets duktilitet och sänka dess hårdhet.
 
 För att uppnå detta återuppvärms stålet till en temperatur beroende på stålsort och produkt precis under den punkt där ferrit omvandlas till austenit (cirka 910 °C).
@@ -421,15 +420,14 @@ Maskinstål kan härdas och är legerat för att öka härdbarheten. Dock är de
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('9f45e627-10c5-5639-97b3-d0cc3fcf61d3', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad kännetecknar underkategorin: "Verktygsstål"?$seed$, $seed$* Kolhalt: 0.5-1.7 % C
 
 Verktygsstål är legerat för att erhålla stabila karbider vid hög temperatur. Används i exempelvis gjutformar, pressverktyg, skärverktyg och kullager.$seed$, null, 65);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('11a98f33-6c63-52d2-83c5-4958d48f096c', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad kännetecknar underkategorin: "Rostfritt stål"?$seed$, $seed$Legeras med Cr för att få ett kromoxidskikt på ytan =>
-korrosionsskydd
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('11a98f33-6c63-52d2-83c5-4958d48f096c', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad kännetecknar underkategorin: "Rostfritt stål"?$seed$, $seed$Legeras med Cr för att få ett kromoxidskikt på ytan → korrosionsskydd
 
 * Ni, stabiliserar austenit vid rumstemperatur
 * Tre typer: ferritiska (billiga), austenitiska (bäst korrosionsmotstånd, lågtemperaturegenskaper), martensitiska (kan härdas)$seed$, null, 66);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('baba4631-739c-56a8-99c5-5415f51bdeaf', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad innebär kalldeformation?$seed$, $seed$Kallbearbetning, även känt som deformationshärdning eller kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
 
 Mycket högre dislokationsdensitet efter
-kallbearbetning => högre sträckgräns
+kallbearbetning → högre sträckgräns
 (deformationshärdning)$seed$, null, 67);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('221bb716-4d37-5c54-92db-6a9cd47d5b84', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'd462076e-8a0c-5486-85b1-860c999ea1c5', $seed$Vad innebär rekristallation?$seed$, $seed$Rekristallation är en process inom metallbearbetning där en deformerad metall omstrukturerar sin inre kristallstruktur för att minska spänningar och återställa dess ursprungliga egenskaper. När metallen deformeras plastiskt, till exempel genom valsning eller smidning, blir dess kristallstruktur och dislokationer störda, vilket leder till hårdare och sprödare egenskaper (detta kallas kallbearbetning).
 Rekristallation sker när en deformerad metall värms upp till en specifik temperatur, kallad rekristallationstemperaturen. Vid denna temperatur börjar nya, icke-deformerade korn att bildas inuti materialet. Dessa nya korn ersätter de gamla, deformerade kornen och bidrar till att:
@@ -505,7 +503,7 @@ begränsas t.ex. av:
 
 * Sprödhet$seed$, null, 76);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('cf45183e-2b01-57d5-8312-95fc93146277', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Beskriv vad ett materials specifika värmekapacitet innebär för materialet.$seed$, $seed$Värmekapacitet är ett mått på hur mycket energi som krävs för att höja temperaturen i ett material.$seed$, null, 77);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7c0ac23d-0b96-5fd0-aaff-0593c2283b4e', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Vad är termisk utvidgning respektive termiska spänningar?$seed$, $seed$När temperaturen ökar i ett material uppstår "Termisk utvidgning/töjning" (procentuella förlängningen/utvidgningen av materialet) och "Termiska gradienter" (storleken och riktningen av utvidgningen på vektorform) eftersom materialet expanderar. Den termiska utvidgningen är proportionell mot temperaturskillnaden*temperaturutvidgningskoefficienten alpha enl: 𝜖𝑇 = 𝛼 (𝑇 − 𝑇0).
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7c0ac23d-0b96-5fd0-aaff-0593c2283b4e', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Vad är termisk utvidgning respektive termiska spänningar?$seed$, $seed$När temperaturen ökar i ett material uppstår "Termisk utvidgning/töjning" (procentuella förlängningen/utvidgningen av materialet) och "Termiska gradienter" (storleken och riktningen av utvidgningen på vektorform) eftersom materialet expanderar. Den termiska utvidgningen är proportionell mot temperaturskillnaden*temperaturutvidgningskoefficienten alpha enl: $\varepsilon_T = \alpha\,(T - T_0)$.
 
 Termiska spänningar är de spänningar som uppstår till följd av att:
 
@@ -513,7 +511,7 @@ Termiska spänningar är de spänningar som uppstår till följd av att:
 * Termisk utvidgning ger upphov till termiska gradienter
 
 Detta resulterar sammantaget i "Termisk utmattning" över tid.$seed$, null, 78);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3cd7c03b-6f20-554e-a01a-dae1e3f529fe', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Vad har atombindningar med termisk utvidgning att göra?$seed$, $seed$Den termiska utvidgningen är proportionell mot temperaturskillnaden*temperaturutvidgningskoefficienten alpha enl 𝜖𝑇 = 𝛼 (𝑇 − 𝑇0).
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3cd7c03b-6f20-554e-a01a-dae1e3f529fe', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Vad har atombindningar med termisk utvidgning att göra?$seed$, $seed$Den termiska utvidgningen är proportionell mot temperaturskillnaden*temperaturutvidgningskoefficienten alpha enl $\varepsilon_T = \alpha\,(T - T_0)$.
 
 Svaga atombindningar ger stor termisk utvidgning och eftersom styrkan hos atombindningarna beror på temperaturen gör också den termiska utvidningskoefficienten det!$seed$, null, 79);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('31807683-5ade-5c0c-ad20-b4f244c2a381', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Vilka faktorer är avgörande för ett materials termiska ledningsförmåga?$seed$, $seed$Temperatur fördelas med hjälp av nedanstående mekanismer:
@@ -535,7 +533,7 @@ Notera särskilt att:
 ledningsförmåga
 * Dislokationer, inlösta atomer och
 utskiljningar hindrar/sprider
-fononerna => lägre
+fononerna → lägre
 värmeledningsförmåga$seed$, null, 80);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('b5122c3c-2f5b-5803-b235-3a2032e58717', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '8323164b-a5df-5b23-83ce-053207cd4da8', $seed$Beskriv kort vad värmeflöde är och hur det beräknas$seed$, $seed$Värmeflödet i ett material är proportionellt mot den partiella derivatan av temperaturen med avseende på avståndet från ytan. Temperaturförändringen över tid är istället proportionellt mot andraterivatan av temperaturen med avseende på avståndet  från ytan.
 
@@ -587,9 +585,9 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 Miljöbelastning:
 
 * Ingrepp i naturen
-* Utsläpp av CO2
+* Utsläpp av CO₂
 * Andra utsläpp och föroreningar
-* CO2 används som mått på miljöbelastning (carbon footprint)$seed$, null, 88);
+* CO₂ används som mått på miljöbelastning (carbon footprint)$seed$, null, 88);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('9cdc41aa-d4cd-54c4-afb0-11ee62c1f4e7', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'db7d4388-c808-59fd-b538-ef7a7a809ad7', $seed$Hur återanvändningsbara är egentligen metaller? Vad finns det för utmaningar med det?$seed$, $seed$* Metallskrot är en utmärkt råvara för metalltillverkning
 * Kräver mindre energi än tillverkning från malm: 1/10 för Al och 1/3 för stål
 * Ger mindre miljöbelastning
@@ -607,16 +605,14 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 
 * Det vanligaste grundämnet i jordskorpan
 * Framställning av primäraluminium kräver mycket energi
-* Mycket mindre energi krävs för återvinning
-=> Lämpligt för produkter som kan återvinnas, mindre lämpligt för
+* Mycket mindre energi krävs för återvinning → Lämpligt för produkter som kan återvinnas, mindre lämpligt för
 produkter som inte kan återvinnas.
 
 Problem med återvinning av aluminium
 
 * Gjutlegeringar innehåller mycket Si, 8-14%
 * Övriga legeringar (smideslegeringar) innehåller små mängder Si
-* Förorenas av Fe
-=> Blandat skrot kan bara användas i begränsade mängder för återvinning till smideslegeringar.$seed$, null, 90);
+* Förorenas av Fe → Blandat skrot kan bara användas i begränsade mängder för återvinning till smideslegeringar.$seed$, null, 90);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('df7886e9-b9d8-517c-8d6c-ab75b92d554b', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'db7d4388-c808-59fd-b538-ef7a7a809ad7', $seed$Hur bra är stål respektive rostfritt stål sett ur ett hållbarhetsperspektiv?$seed$, $seed$Stål:
 
 * God tillgång i jordskorpan
@@ -635,13 +631,13 @@ Oftast inte bundna i rostfritt stål.
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('ab05ea9c-7e06-5544-a4bd-873e3228906d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'db7d4388-c808-59fd-b538-ef7a7a809ad7', $seed$Vad finns det för problem med återvinningen av blandat skrot?$seed$, $seed$* Vid återanvändning av skrot är kontroll av legeringsämne ett problem
 * Överflödiga legeringsämne och förorenande metaller kan vara eller är oekonomiska att ta bort
 * Sorterat skrott är mer användbart och har högre värde$seed$, null, 92);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('eba33107-d858-59b9-8b66-b2ae8bc4828a', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'db7d4388-c808-59fd-b538-ef7a7a809ad7', $seed$Vad är "CO2- footprint" respektive "Embodied Energy"?$seed$, $seed$CO2 footprint:
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('43ac1b3a-80c6-5c0b-bd3a-c956cb75f72a', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'db7d4388-c808-59fd-b538-ef7a7a809ad7', $seed$Vad är "CO₂- footprint" respektive "Embodied Energy"?$seed$, $seed$CO₂ footprint:
 
-* Mängd CO2 som bildas vid produktion av 1 kg material
+* Mängd CO₂ som bildas vid produktion av 1 kg material
 
 För metaller:
-- CO2 bildas vid produktion av energi
-- CO2 bildas vid kemiska reaktioner vid reduktion av malm till metall
+- CO₂ bildas vid produktion av energi
+- CO₂ bildas vid kemiska reaktioner vid reduktion av malm till metall
 
 Embodied energy:
 
@@ -658,57 +654,14 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
   - Sparar resurser och energi
   - Ger lika bra material
 * Problem med föroreningar och legeringsämne
-* CO2 footprint och embodied energy ger viss
+* CO₂ footprint och embodied energy ger viss
 vägledning – kan användas i materialindex
 * Bör titta på totala miljöbelastningen under
 livscykeln$seed$, null, 95);
 insert into public.categories (id, deck_id, title, sort_order) values ('70008fc5-6f65-544a-bd75-7a9ddf330103', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $seed$Tillverkning och värmebehandling av stål$seed$, 8);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('e4550056-cf88-54ee-bb13-9b6d90951600', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Vad innebär kallbearbetning?$seed$, $seed$Kallbearbetning, även känt som deformationshärdning eller kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
-
-Mycket högre dislokationsdensitet efter
-kallbearbetning => högre sträckgräns
-(deformationshärdning)$seed$, null, 96);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('a69b8a93-75e8-585c-9e29-f4999aba41fe', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Vad innebär rekristallation?$seed$, $seed$Rekristallation är en process inom metallbearbetning där en deformerad metall omstrukturerar sin inre kristallstruktur för att minska spänningar och återställa dess ursprungliga egenskaper. När metallen deformeras plastiskt, till exempel genom valsning eller smidning, blir dess kristallstruktur och dislokationer störda, vilket leder till hårdare och sprödare egenskaper (detta kallas kallbearbetning).
-Rekristallation sker när den deformerade metallen värms upp till en specifik temperatur, kallad rekristallationstemperaturen. Vid denna temperatur börjar nya, icke-deformerade korn att bildas inuti materialet. Dessa nya korn ersätter de gamla, deformerade kornen och bidrar till att:
-
-* Sänka metallens hårdhet och öka dess duktilitet – metallen blir mjukare och mer formbar.
-* Minska inre spänningar – som byggts upp under deformationen.
-* Förbättra materialets struktur – den får en jämnare och mer homogen kornstruktur.$seed$, null, 97);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('65f826c2-817f-56cd-83c0-6da14bb041f8', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Vad innebär varmbearbetning?$seed$, $seed$Varmdeformation är en process där metaller deformeras vid temperaturer som är högre än deras rekristallationstemperatur (ofta över cirka 0,5 gånger smälttemperaturen i kelvin). Vid dessa temperaturer kan metallens kristallstruktur rekonstrueras samtidigt som deformationen sker, vilket gör att nya korn kan bildas kontinuerligt under bearbetningen. Detta innebär att materialet inte härdas, och det behåller sin duktilitet och formbarhet. Varmdeformation används ofta för stora formändringar, exempelvis vid smidning och valsning i höga temperaturer.
-
-Sammanfattningsvis:
-
-* Bearbetning vid en temperatur över rekristallisations-
-temperaturen
-* Ger deformation utan att höja sträckgänsen
-* Stora deformationer är möjliga$seed$, null, 98);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('12d0d8ce-f5ea-5824-9dd3-9b3907f827cb', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Ge minst två exempel på plastiska formningsmetoder.$seed$, $seed$Exempel:
-
-* Smide
-* Valsning
-* Pressning
-* Tråddragning$seed$, null, 99);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('a7f1b629-558b-59de-b972-0c72fb42faeb', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Redogör för vad gjutning innebär för materialet och ge exempel på minst två gjutningsmetoder.$seed$, $seed$* Gjutstruktur – Olika struktur i
-olika delar av gjutgodset
-* Defekter – porer, sprickor
-* Ofta något sämre mekaniska
-egenskaper än valsade eller
-smidda material
-
-Exempel:
-* Formgjutning
-(högt och lågt tryck)
-* Sandgjutning
-* Lost wax- casting$seed$, null, 100);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('cdab8f5f-8d21-5054-90b0-49d813f3ea64', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Redogör för vad svetsning innebär för det vederbörande materialet.$seed$, $seed$* Svets där materialet har smält och
-stelnat – gjutstruktur
-* Värmepåverkad zon (HAZ) –
-förändrad mikrostruktur,
-korntillväxt, förändrad härdning
-* Ofta sprickor$seed$, null, 101);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('11f675c7-6caf-50ca-a8a3-12cf6d271953', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Beskriv stålets tillverkningsprocess i grova mått.$seed$, $seed$* Utgångsmaterial: järnoxid
 * Reduceras i masugn:
-järnoxid + kol + energi => tackjärn + koloxid
+järnoxid + kol + energi → tackjärn + koloxid
 * Kolhalten i tackjärnet justeras till rätt kolhalt, stålet legeras, skrot kan tillsättas
 * Processen kräver energi
   - processenergi
@@ -722,27 +675,15 @@ Därefter behandlas stålet:
 * Kontinuerlig gjutning
 * Varmvalsning
 * Kallbearbetning
-* Kallvalsning, tråddragning, m.m.
-=> plåt, räls, balkar, stång, tråd$seed$, null, 102);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('618174ae-745f-5fd1-bb7f-126d103b76be', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Repetition: Beskriv vad en anlöpning är och hur den används.$seed$, $seed$Anlöpning av härdat stål är en process som används för att öka materialets duktilitet och sänka dess hårdhet.
-
-För att uppnå detta återuppvärms stålet till en temperatur beroende på stålsort och produkt precis under den punkt där ferrit omvandlas till austenit (cirka 910 °C).
-
-* En uppvärmning till en temperatur under
-austenittemeraturen ger fasomvandling till
-anlöpt martensit = perlit + cementit (mycket
-fina utskiljningar)
-* Minskar hårdhet något, men mycket segare
-* Kan bestämma hårdhet med
-anlöpningstemperatur$seed$, null, 103);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3e8d26c8-156c-5c48-8984-20c16eae5fc4', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Ge minst två exempel på värmebehandlingar för stål.$seed$, $seed$* Normalisering: austenitisering + långsam kylning => primär ferrit eller cementit + perlit. Andel perlit ges av kolhalten. Ger ”normal” mikrostruktur, lämpligt för konstruktioner där styvheten är viktig.
-* Mjukglödgning: värmning till temperatur under austenittemperatur (723 C) => diffusion och korntillväxt, sfäriodiserad perlit, lägre sträckgräns. Används för
+* Kallvalsning, tråddragning, m.m. → plåt, räls, balkar, stång, tråd$seed$, null, 96);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3e8d26c8-156c-5c48-8984-20c16eae5fc4', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Ge minst två exempel på värmebehandlingar för stål.$seed$, $seed$* Normalisering: austenitisering + långsam kylning → primär ferrit eller cementit + perlit. Andel perlit ges av kolhalten. Ger ”normal” mikrostruktur, lämpligt för konstruktioner där styvheten är viktig.
+* Mjukglödgning: värmning till temperatur under austenittemperatur (723 C) → diffusion och korntillväxt, sfäriodiserad perlit, lägre sträckgräns. Används för
 stål som skall maskinbearbetas och därefter härdas.
 * Martensithärdning:
 1. Värmning till austenitområdet
-2. Snabbskylning => martensit
-3. Anlöpning => anlöpt martensit = ferrit med mycket små cementitpartiklar
-Kolhalten avgör andelen cementit. Temperatur och tid för anlöpningen avgör storleken på cementitpartiklarna. Används när hårdhet och sträckgräns är viktigt.$seed$, null, 104);
+2. Snabbskylning → martensit
+3. Anlöpning → anlöpt martensit = ferrit med mycket små cementitpartiklar
+Kolhalten avgör andelen cementit. Temperatur och tid för anlöpningen avgör storleken på cementitpartiklarna. Används när hårdhet och sträckgräns är viktigt.$seed$, null, 97);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('96ce059f-eb9d-5090-a3c1-7586ce80c34f', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '70008fc5-6f65-544a-bd75-7a9ddf330103', $seed$Nämn minst två produktionsmässiga anledningar till att man legerar stål.$seed$, $seed$Stål legeras bland annat för att:
 
 * Öka hållfastheten – Genom att tillsätta legeringsämnen som nickel eller krom kan stålets styrka och hållfasthet förbättras.
@@ -755,97 +696,97 @@ insert into public.cards (id, deck_id, category_id, front, back, hint, sort_orde
 
 * Förbättra värmebeständigheten – Legeringar med ämnen som molybden och volfram hjälper stålet att behålla sina egenskaper vid höga temperaturer, vilket är viktigt för verktygsstål och höglegerat stål.
 
-* Förbättra härdbarheten – Legeringar med ämnen som krom och molybden ökar stålets förmåga att härdas djupt, vilket gör att materialet får en jämn hårdhet vid härdning.$seed$, null, 105);
+* Förbättra härdbarheten – Legeringar med ämnen som krom och molybden ökar stålets förmåga att härdas djupt, vilket gör att materialet får en jämn hårdhet vid härdning.$seed$, null, 98);
 insert into public.categories (id, deck_id, title, sort_order) values ('5b7db3d5-8eb1-57af-a25e-f5867b27887c', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $seed$Icke-järnmetaller$seed$, 9);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('47b4d590-e47c-5fdb-b75a-e92f979b6016', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '5b7db3d5-8eb1-57af-a25e-f5867b27887c', $seed$Vad kännetecknar Aluminium?$seed$, $seed$* Lägre vikt än stål, densiteten är 2,7 kg/dm3
-* FCC struktur => god plastisk formbarhet
+* FCC struktur → god plastisk formbarhet
 * God maskinbarhet
 * God elektrisk- och värmeledning
-* Korrosionsskydd: Al reagerar med O2 och bildar ett
-skyddande oxidskikt på ytan$seed$, null, 106);
+* Korrosionsskydd: Al reagerar med O₂ och bildar ett
+skyddande oxidskikt på ytan$seed$, null, 99);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('f3cfe84c-a05b-5afa-81a0-d9e5fce5d575', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '5b7db3d5-8eb1-57af-a25e-f5867b27887c', $seed$Vad kännetecknar Magnesium?$seed$, $seed$* Låg densitet 1,8 kg/dm3
-* HCP struktur => begränsad plastisk formbarhet
+* HCP struktur → begränsad plastisk formbarhet
 * God maskinbarhet
 * God gjutbarhet, större delen används som gjutgods
 * Bildar poröst oxidskikt, sämre korrosionsskydd
 * Brännbart – men bara som pulver eller tunn plåt
-* Energikrävande produktion$seed$, null, 107);
+* Energikrävande produktion$seed$, null, 100);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('6aac01af-daed-5261-b5cf-ed3308dbfcdd', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '5b7db3d5-8eb1-57af-a25e-f5867b27887c', $seed$Vad kännetecknar Titan?$seed$, $seed$* Medel densitet 4,1 kg/dm3
 * Utmärkt hållfasthet
 * Utmärkt korrosionsskydd
 * Dyrt på grund av tillverkningsprocessen
 * Används i ren form eller legerat
 * Titan är den enda metallen som är biokompatibel (inte är
-negativ för kroppen)$seed$, null, 108);
+negativ för kroppen)$seed$, null, 101);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('643176a4-3a05-5292-8129-4b6e4149cc36', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '5b7db3d5-8eb1-57af-a25e-f5867b27887c', $seed$Vad kännetecknar Koppar och dess legeringar?$seed$, $seed$* Hög densitet 8,9 kg/dm3
 * Koppar: Utmärkt formbarhet, hög elektrisk och termisk
 ledningsförmåga, pris=50 SEK/kg
 * Mässing: legerat med 5-40 % Zn, bra form- och maskinbarhet.
 * Brons: legerat med 5-25 % Sn, bra hållfasthet men lite
 duktilitet, gjuts ofta
-* Lagerbrons har bra tribologiska egenskaper$seed$, null, 109);
+* Lagerbrons har bra tribologiska egenskaper$seed$, null, 102);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3b2548ba-d87e-57a0-bb7c-35f13c5d7d11', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '5b7db3d5-8eb1-57af-a25e-f5867b27887c', $seed$Vad kännetecknar Nickel- och så kallade superlegeringar?$seed$, $seed$* Medel densitet 7,9-8,7 kg/dm3
 * E-modul: 200-220 GPa
 * Sträckgräns: 272-900 MPa
-* Brottseghet: 127-251 MPa m1/2
+* Brottseghet: 127-251 $\text{MPa}\sqrt{\text{m}}$
 * Användningstemperatur: -273-1040 C
 * Carbon footprint: 13 kg/kg
 * Pris: 150 SEK/kg (för superlegeringar)
 * Exceptionella högtemperatur- egenskaper med god
 oxidations och korrosionsegenskaper
 * Legeras med Cr, Co, Al, Ti Mo,
-Zr, Fe, Hf$seed$, null, 110);
+Zr, Fe, Hf$seed$, null, 103);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('9646e436-ccab-5338-96cf-4c98f5dd6f6c', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '5b7db3d5-8eb1-57af-a25e-f5867b27887c', $seed$Varför använder man inte alltid stål eftersom det är billigast?$seed$, $seed$Stål har bra mekaniska egenskaper, låg miljöbelastning per kilo och återfinns i många olika varianter för olika användningsområden till det billigaste priset, men aluminium har lägre densitet, fortfarande bra pris, är lättbearbetat och har bra naturligt korrosionsskydd.
 
-Stål är bra, men i vissa situationer väljs andra material för att deras speciella egenskaper gör de särskilt fördelaktiga.$seed$, null, 111);
+Stål är bra, men i vissa situationer väljs andra material för att deras speciella egenskaper gör de särskilt fördelaktiga.$seed$, null, 104);
 insert into public.categories (id, deck_id, title, sort_order) values ('e001f141-56b3-509c-b7db-9b03f6746a85', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $seed$Begrepp och ja/nej-frågor$seed$, 10);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('33e09b93-ad54-5af8-a8d3-461322d4a11d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Åldring$seed$, $seed$Åldring av metaller (eller åldringshärdning) är en process där metallens mikrostruktur och egenskaper förändras över tid, antingen genom naturlig åldring vid rumstemperatur eller genom en kontrollerad värmebehandling som kallas artificiell åldring. Åldring används ofta för att förbättra mekaniska egenskaper som hårdhet och hållfasthet i metallegeringar, särskilt aluminium-, titan- och nickelbaserade legeringar.$seed$, null, 112);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('e949b21c-e3c3-523b-a357-fdffbf868555', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Brottförlängning$seed$, $seed$Den plastiska förlängningen som kvarstår efter ett material har belastats till brott.$seed$, null, 113);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('12e7a5da-d96c-50bc-b32b-f47dfe70ea17', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Keram$seed$, $seed$Ett material som är uppbyggt av en metall och en icke-metall (minst).$seed$, null, 114);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('2b5d4ef7-bc14-5be2-972a-86b38c917357', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$CO2-foot print$seed$, $seed$Den mängd CO2 som bildas vid produktion av ett kilo material.$seed$, null, 115);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('12eef9a1-4df6-5467-967d-c0ce30c760be', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Anisotropt$seed$, $seed$Olika egenskaper i olika riktningar$seed$, null, 116);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('33e09b93-ad54-5af8-a8d3-461322d4a11d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Åldring$seed$, $seed$Åldring av metaller (eller åldringshärdning) är en process där metallens mikrostruktur och egenskaper förändras över tid, antingen genom naturlig åldring vid rumstemperatur eller genom en kontrollerad värmebehandling som kallas artificiell åldring. Åldring används ofta för att förbättra mekaniska egenskaper som hårdhet och hållfasthet i metallegeringar, särskilt aluminium-, titan- och nickelbaserade legeringar.$seed$, null, 105);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('e949b21c-e3c3-523b-a357-fdffbf868555', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Brottförlängning$seed$, $seed$Den plastiska förlängningen som kvarstår efter ett material har belastats till brott.$seed$, null, 106);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('12e7a5da-d96c-50bc-b32b-f47dfe70ea17', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Keram$seed$, $seed$Ett material som är uppbyggt av en metall och en icke-metall (minst).$seed$, null, 107);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('ea8bde5e-ab6e-5a18-8322-c07525d32f15', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$CO₂-foot print$seed$, $seed$Den mängd CO₂ som bildas vid produktion av ett kilo material.$seed$, null, 108);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('12eef9a1-4df6-5467-967d-c0ce30c760be', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Anisotropt$seed$, $seed$Olika egenskaper i olika riktningar$seed$, null, 109);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('cb6a01c9-dc50-560a-aab3-050efcb8dc2f', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$TTT-diagram$seed$, $seed$Ett diagram som visar fastransformationer vid svalning som funktion av tid och
-temperatur.$seed$, null, 117);
+temperatur.$seed$, null, 110);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('19451730-85bc-519d-a89c-46ae598cde34', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Krypning$seed$, $seed$Långsam plastisk deformation som beror på temperatur, tid och last. Sker vid temperaturer över halva smälttemperaturen i K, och töjningshastigheten ökar exponentiellt med
-temperaturen.$seed$, null, 118);
+temperaturen.$seed$, null, 111);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7c543bdb-db53-5736-9c7b-aabcac9bc9a3', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Brottseghet$seed$, $seed$Ett mått på materialets seghet, hur mycket energi som behövs för att driva en
-spricka. Brott fås när spänningsintensiteten vid sprickspetsen är högre än brottsegheten.$seed$, null, 119);
+spricka. Brott fås när spänningsintensiteten vid sprickspetsen är högre än brottsegheten.$seed$, null, 112);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7db11e3f-1a67-55a9-b130-331762c350f8', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Högcykelutmattning$seed$, $seed$Utmattning är brott som uppkommer vid cyklisk belastning. Vid högcykelutmattning är belastningen under sträckgränsen, och materialet plasticerar bara lokalt
-vid sprickspetsen, vilket ger ett stort antal cykler till brott.$seed$, null, 120);
+vid sprickspetsen, vilket ger ett stort antal cykler till brott.$seed$, null, 113);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('963b61b2-3291-5b78-a964-29a19695e8fc', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Aktiveringsenergi$seed$, $seed$Den energibarriär som måste övervinnas m.h.a. termisk energi för att vissa processer skall kunna
-ske, t.ex. kemiska reaktioner, diffusion, krypning.$seed$, null, 121);
+ske, t.ex. kemiska reaktioner, diffusion, krypning.$seed$, null, 114);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('87f82869-c5ed-5808-ae6c-e2dba8687edd', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Specifik värmekapacitet$seed$, $seed$Värmekapacitet är den mängd energi som krävs för att höja temperaturen med en grad Kelvin i en viss mängd material.
-Specifik värmekapacitet är den mängd energi som går åt för att värma upp specifikt ett kilogram av ämnet.$seed$, null, 122);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('469313fc-0f56-579c-aca3-4a5169c6acb0', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Diffusionskoefficient$seed$, $seed$Ett mått på hur snabbt atomer rör sig (diffunderar) i ett material. Beror på temperaturen och vilka atomer som diffunderar, och i vilket material.$seed$, null, 123);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('29b54f64-05a2-52b4-994e-2a25d083c80a', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Metastabil$seed$, $seed$Ett tillstånd i ett lokalt energiminimum. För att uppnå tillståndet med lägst energi (stabilt) måste en energibarriär övervinnas genom tillförsel av termisk energi. Fasen har högre Gibbs fria energi men antar spontant inte den mer stabila fasen.$seed$, null, 124);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('0917f92c-6d82-511b-931f-d5d57ae3ad41', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Intermetall$seed$, $seed$En fas bestående av minst två metaller som finns mellan två metaller i fasdiagrammet.$seed$, null, 125);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('522494fc-098f-5fee-bb78-b15935e62422', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Adhesiv förslitning$seed$, $seed$Vid nötningen binds materialen samman med atomära bindningar, och material rycks bort när ytorna glider mot varandra. De två materialen svetsas punktvis samman, och slits isär.$seed$, null, 126);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3348a42c-3784-50c4-9775-93af5ed39f20', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Slagseghet$seed$, $seed$Den energi som går åt för att slå av en anvisad provstav. Ett mått på hur segt eller sprött materialet är.$seed$, null, 127);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('f6fe48e3-566a-5fcf-996e-9689d6a4b5af', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Styvhet$seed$, $seed$Ett mått på hur mycket ett material deformeras elastiskt när det utsätts för en last.$seed$, null, 128);
+Specifik värmekapacitet är den mängd energi som går åt för att värma upp specifikt ett kilogram av ämnet.$seed$, null, 115);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('469313fc-0f56-579c-aca3-4a5169c6acb0', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Diffusionskoefficient$seed$, $seed$Ett mått på hur snabbt atomer rör sig (diffunderar) i ett material. Beror på temperaturen och vilka atomer som diffunderar, och i vilket material.$seed$, null, 116);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('29b54f64-05a2-52b4-994e-2a25d083c80a', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Metastabil$seed$, $seed$Ett tillstånd i ett lokalt energiminimum. För att uppnå tillståndet med lägst energi (stabilt) måste en energibarriär övervinnas genom tillförsel av termisk energi. Fasen har högre Gibbs fria energi men antar spontant inte den mer stabila fasen.$seed$, null, 117);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('0917f92c-6d82-511b-931f-d5d57ae3ad41', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Intermetall$seed$, $seed$En fas bestående av minst två metaller som finns mellan två metaller i fasdiagrammet.$seed$, null, 118);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('522494fc-098f-5fee-bb78-b15935e62422', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Adhesiv förslitning$seed$, $seed$Vid nötningen binds materialen samman med atomära bindningar, och material rycks bort när ytorna glider mot varandra. De två materialen svetsas punktvis samman, och slits isär.$seed$, null, 119);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('3348a42c-3784-50c4-9775-93af5ed39f20', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Slagseghet$seed$, $seed$Den energi som går åt för att slå av en anvisad provstav. Ett mått på hur segt eller sprött materialet är.$seed$, null, 120);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('f6fe48e3-566a-5fcf-996e-9689d6a4b5af', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Styvhet$seed$, $seed$Ett mått på hur mycket ett material deformeras elastiskt när det utsätts för en last.$seed$, null, 121);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('4090e8db-bd6e-54cb-9c69-b88751dbdd66', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Eutektikum$seed$, $seed$En strukturbeståndsdel som består av två faser. Eutektikum bildas vid konstant temperatur
-och koncentration genom en trefasreaktion där en smält fas L bildar två fasta faser: L => alpha + beta$seed$, null, 129);
+och koncentration genom en trefasreaktion där en smält fas L bildar två fasta faser: L → alpha + beta$seed$, null, 122);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('fc58e222-1e8d-5229-b0dc-ed4644439300', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Mjukglödgning$seed$, $seed$En värmebehandling av stål där man får sfäriodiserad perlit, vilket ger ett material med lägre sträckgräns men som är lättare att maskinarbeta. Stålet värms upp till en temperatur under austenitiseringstemperaturen, och
-diffusion ger sfäriodiserad cementit.$seed$, null, 130);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('86387465-e367-5e9f-a6ad-6dc06195cd16', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Kristallin$seed$, $seed$Atomer eller molekyler som sitter i en ordnad struktur.$seed$, null, 131);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('a03db887-8ac9-5ce3-be92-7a54af448492', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Krypning (metaller)$seed$, $seed$Plastisk deformation som beror på tid, temperatur och last.$seed$, null, 132);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('d6987f22-a4da-5cca-b0c3-f8412fd00b21', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Abrasiv förslitning$seed$, $seed$Förslitning som fås när ett hårt material/medium avverkar ytan.$seed$, null, 133);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('ac4f933f-ad88-5b59-b548-56b5fc352f46', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Verktygsstål$seed$, $seed$Höglegerat stål med hög kolhalt. Används i härdat tillstånd. Hårt och värmetåligt.$seed$, null, 134);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('38d0bf05-861f-50ba-b884-7a184fb2df5d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Bästa sättet att öka E-modulen är att värmebehandla (härda) metallen.$seed$, $seed$Nej, E-modulen (elasticitetsmodulen) är ett mått på ett materials styvhet och påverkas främst av materialets atomära bindningar. Värmebehandling, som härdning, förändrar inte de interatomära bindningarna i någon betydande utsträckning och därmed inte E-modulen. Härdning påverkar främst materialets sträckgräns och hårdhet, inte dess styvhet.$seed$, null, 135);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('11e7b581-b12f-511a-a934-1e89a5fa5c81', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Dislokationer är lika viktiga för ett materials E-modul som för sträckgränsen.$seed$, $seed$Nej, dislokationer påverkar främst materialets sträckgräns och duktilitet, eftersom de spelar en viktig roll i plastisk deformation. E-modulen bestäms däremot av de elastiska egenskaperna hos atomernas bindningar, och dislokationer har en försumbar effekt på den.$seed$, null, 136);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('5b828793-a8ed-5a66-a088-395b53d6206d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Perlit bildas vid en eutektisk reaktion från smälta.$seed$, $seed$Nej, perlit bildas inte vid en eutektisk reaktion, utan vid en eutektoidisk reaktion. I stål sker denna reaktion vid ca 727°C då austenit (en fast lösning) omvandlas till en blandning av ferrit och cementit (perlit), inte från smälta.$seed$, null, 137);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('a6c37b91-c4e0-5bf7-909d-03caa88bfaf1', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Målet med utskiljningshärdning är att få bort dislokationerna.$seed$, $seed$Nej, utskiljningshärdning syftar inte till att ta bort dislokationer, utan till att skapa små partiklar (utskiljningar) som hindrar dislokationsrörelser. Detta gör materialet starkare eftersom dislokationerna har svårare att röra sig genom materialet, vilket ökar sträckgränsen och hårdheten.$seed$, null, 138);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('582de5e8-8fa8-5cf9-bcbd-bdc3018fc34c', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Omslagstemperatur finns hos vanligt stål men inte hos aluminium och rostfritt stål.$seed$, $seed$Ja, vanligt stål har en omslagstemperatur, där materialet övergår från att vara duktilt vid högre temperaturer till att bli sprött vid lägre temperaturer. Aluminium och de flesta rostfria stål har dock inte denna sprödbrottsegenskap eftersom de behåller sin duktilitet vid låga temperaturer.$seed$, null, 139);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('22907691-2939-5f9d-b2ea-ce768690bc00', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Utmattningsgränsen är antalet cykler till brott vid en viss spänning.$seed$, $seed$Nej, utmattningsgränsen är inte antalet cykler till brott, utan den maximala spänningsnivån som ett material kan utsättas för ett oändligt antal cykler utan att gå sönder. Antalet cykler till brott vid en viss spänning kallas istället utmattningslivslängd.$seed$, null, 140);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('e22ce53c-a968-54b4-8c52-60c687d2400b', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Krypning är ett fenomen som bara uppstår vid höga temperaturer.$seed$, $seed$Ja, krypning är en deformation som sker över tid under konstant belastning och hög temperatur. För de flesta metaller uppträder krypning bara vid temperaturer över ungefär 0,4 gånger deras smälttemperatur (i Kelvin).$seed$, null, 141);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('c366cfd3-2e52-5587-9bee-e69c12e80d74', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: När ett material varmvalsas så ökar sträckgränsen.$seed$, $seed$Nej, vid varmvalsning sker processen vid höga temperaturer, där rekristallisation kan inträffa. Detta leder till att dislokationer kan "läkas", vilket innebär att materialet inte blir starkare. Sträckgränsen ökar snarare vid kallbearbetning, där dislokationsdensiteten ökar.$seed$, null, 142);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('922c5ec0-cf20-542a-b868-d81ad62e5260', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Spröda brott följer alltid korngränserna.$seed$, $seed$Nej, spröda brott kan vara både interkristallina (följer korngränserna) och transkristallina (går genom kornen). Det beror på materialets struktur och de förhållanden under vilka brottet sker.$seed$, null, 143);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7e5ab01a-a534-5c33-a165-0fb11ae217a0', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: I stål bildar kol cementit, men i gjutjärn förekommer kolet som ren grafit.$seed$, $seed$Ja, i stål bildar kol cementit (Fe₃C), en hård och spröd fas. I gjutjärn bildas istället grafit, som är ren kol i form av flingor eller klot beroende på gjutjärnets typ, vilket ger det unika egenskaper som skiljer det från stål.$seed$, null, 144);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('2c441d0e-7e73-5e36-9bcd-a6dd7ceffb17', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Löslighetsgräns$seed$, $seed$Den högsta koncentration av ett ämne som kan lösas i en fas.$seed$, null, 145);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('55ddb9b2-b6c5-5165-926c-6ff85260787e', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Utmattningsgräns$seed$, $seed$Den spänning under vilken inte utmattning sker.$seed$, null, 146);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('4a122d55-7a57-5f6d-b220-008b8aa74e35', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Segt brott$seed$, $seed$Ett brott som föregås av mycket plasticering. Lång töjning innan brott sker med andra ord.$seed$, null, 147);
+diffusion ger sfäriodiserad cementit.$seed$, null, 123);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('86387465-e367-5e9f-a6ad-6dc06195cd16', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Kristallin$seed$, $seed$Atomer eller molekyler som sitter i en ordnad struktur.$seed$, null, 124);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('a03db887-8ac9-5ce3-be92-7a54af448492', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Krypning (metaller)$seed$, $seed$Plastisk deformation som beror på tid, temperatur och last.$seed$, null, 125);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('d6987f22-a4da-5cca-b0c3-f8412fd00b21', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Abrasiv förslitning$seed$, $seed$Förslitning som fås när ett hårt material/medium avverkar ytan.$seed$, null, 126);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('ac4f933f-ad88-5b59-b548-56b5fc352f46', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Verktygsstål$seed$, $seed$Höglegerat stål med hög kolhalt. Används i härdat tillstånd. Hårt och värmetåligt.$seed$, null, 127);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('38d0bf05-861f-50ba-b884-7a184fb2df5d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Bästa sättet att öka E-modulen är att värmebehandla (härda) metallen.$seed$, $seed$Nej, E-modulen (elasticitetsmodulen) är ett mått på ett materials styvhet och påverkas främst av materialets atomära bindningar. Värmebehandling, som härdning, förändrar inte de interatomära bindningarna i någon betydande utsträckning och därmed inte E-modulen. Härdning påverkar främst materialets sträckgräns och hårdhet, inte dess styvhet.$seed$, null, 128);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('11e7b581-b12f-511a-a934-1e89a5fa5c81', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Dislokationer är lika viktiga för ett materials E-modul som för sträckgränsen.$seed$, $seed$Nej, dislokationer påverkar främst materialets sträckgräns och duktilitet, eftersom de spelar en viktig roll i plastisk deformation. E-modulen bestäms däremot av de elastiska egenskaperna hos atomernas bindningar, och dislokationer har en försumbar effekt på den.$seed$, null, 129);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('5b828793-a8ed-5a66-a088-395b53d6206d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Perlit bildas vid en eutektisk reaktion från smälta.$seed$, $seed$Nej, perlit bildas inte vid en eutektisk reaktion, utan vid en eutektoidisk reaktion. I stål sker denna reaktion vid ca 727°C då austenit (en fast lösning) omvandlas till en blandning av ferrit och cementit (perlit), inte från smälta.$seed$, null, 130);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('a6c37b91-c4e0-5bf7-909d-03caa88bfaf1', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Målet med utskiljningshärdning är att få bort dislokationerna.$seed$, $seed$Nej, utskiljningshärdning syftar inte till att ta bort dislokationer, utan till att skapa små partiklar (utskiljningar) som hindrar dislokationsrörelser. Detta gör materialet starkare eftersom dislokationerna har svårare att röra sig genom materialet, vilket ökar sträckgränsen och hårdheten.$seed$, null, 131);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('582de5e8-8fa8-5cf9-bcbd-bdc3018fc34c', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Omslagstemperatur finns hos vanligt stål men inte hos aluminium och rostfritt stål.$seed$, $seed$Ja, vanligt stål har en omslagstemperatur, där materialet övergår från att vara duktilt vid högre temperaturer till att bli sprött vid lägre temperaturer. Aluminium och de flesta rostfria stål har dock inte denna sprödbrottsegenskap eftersom de behåller sin duktilitet vid låga temperaturer.$seed$, null, 132);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('22907691-2939-5f9d-b2ea-ce768690bc00', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Utmattningsgränsen är antalet cykler till brott vid en viss spänning.$seed$, $seed$Nej, utmattningsgränsen är inte antalet cykler till brott, utan den maximala spänningsnivån som ett material kan utsättas för ett oändligt antal cykler utan att gå sönder. Antalet cykler till brott vid en viss spänning kallas istället utmattningslivslängd.$seed$, null, 133);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('e22ce53c-a968-54b4-8c52-60c687d2400b', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Krypning är ett fenomen som bara uppstår vid höga temperaturer.$seed$, $seed$Ja, krypning är en deformation som sker över tid under konstant belastning och hög temperatur. För de flesta metaller uppträder krypning bara vid temperaturer över ungefär 0,4 gånger deras smälttemperatur (i Kelvin).$seed$, null, 134);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('c366cfd3-2e52-5587-9bee-e69c12e80d74', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: När ett material varmvalsas så ökar sträckgränsen.$seed$, $seed$Nej, vid varmvalsning sker processen vid höga temperaturer, där rekristallisation kan inträffa. Detta leder till att dislokationer kan "läkas", vilket innebär att materialet inte blir starkare. Sträckgränsen ökar snarare vid kallbearbetning, där dislokationsdensiteten ökar.$seed$, null, 135);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('922c5ec0-cf20-542a-b868-d81ad62e5260', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: Spröda brott följer alltid korngränserna.$seed$, $seed$Nej, spröda brott kan vara både interkristallina (följer korngränserna) och transkristallina (går genom kornen). Det beror på materialets struktur och de förhållanden under vilka brottet sker.$seed$, null, 136);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('7e5ab01a-a534-5c33-a165-0fb11ae217a0', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Ja/Nej: I stål bildar kol cementit, men i gjutjärn förekommer kolet som ren grafit.$seed$, $seed$Ja, i stål bildar kol cementit (Fe₃C), en hård och spröd fas. I gjutjärn bildas istället grafit, som är ren kol i form av flingor eller klot beroende på gjutjärnets typ, vilket ger det unika egenskaper som skiljer det från stål.$seed$, null, 137);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('2c441d0e-7e73-5e36-9bcd-a6dd7ceffb17', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Löslighetsgräns$seed$, $seed$Den högsta koncentration av ett ämne som kan lösas i en fas.$seed$, null, 138);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('55ddb9b2-b6c5-5165-926c-6ff85260787e', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Utmattningsgräns$seed$, $seed$Den spänning under vilken inte utmattning sker.$seed$, null, 139);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('4a122d55-7a57-5f6d-b220-008b8aa74e35', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Segt brott$seed$, $seed$Ett brott som föregås av mycket plasticering. Lång töjning innan brott sker med andra ord.$seed$, null, 140);
 insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('68ad5222-ea26-5ef2-9edd-55de08e486cc', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Strukturbeståndsdel$seed$, $seed$En urskiljbar del av materialet som består av en eller flera faser och kan ses som en enhet på
-något sätt. Kan vara en fas, eutektikum eller eutektoid.$seed$, null, 148);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('92a44fa4-db77-5e62-ac5f-532c748898b5', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Fas$seed$, $seed$En del av materialet med homogena fysikaliska och kemiska egenskaper$seed$, null, 149);
-insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('ce7eb39b-38fb-545a-afa8-8b751e68fd1e', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Superlegering$seed$, $seed$Vanligtvis legeringar med Ni-bas som har excellenta högtemperaturegenskaper, oxidations- och korrosionsmotstånd.$seed$, null, 150);
+något sätt. Kan vara en fas, eutektikum eller eutektoid.$seed$, null, 141);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('92a44fa4-db77-5e62-ac5f-532c748898b5', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Fas$seed$, $seed$En del av materialet med homogena fysikaliska och kemiska egenskaper$seed$, null, 142);
+insert into public.cards (id, deck_id, category_id, front, back, hint, sort_order) values ('ce7eb39b-38fb-545a-afa8-8b751e68fd1e', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', 'e001f141-56b3-509c-b7db-9b03f6746a85', $seed$Superlegering$seed$, $seed$Vanligtvis legeringar med Ni-bas som har excellenta högtemperaturegenskaper, oxidations- och korrosionsmotstånd.$seed$, null, 143);
 
 commit;

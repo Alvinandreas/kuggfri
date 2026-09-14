@@ -23,7 +23,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] `npx playwright install chromium`
 - [x] `npm run test:e2e`: 28/28 gröna efter fixar (understrukna textlänkar för axe, tvetydiga lokatorer, admin ser opublicerade deck, längre timeouts för dev-kompilering, städning av importerade testkort)
 - [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), BLOCKERS.md uppdaterad
-- [~] Klicka igenom hela adminflödet mot riktig databas: deck, kategori, kort, import, export täcks av E2E; dnd-ordning och statistik återstår att titta på manuellt
+- [x] Adminflödet mot riktig databas: deck, kategori, kort, import, export (E2E) samt ombeställning och statistik (manuellt som admin@plugget.test). Hittade och rättade: seedens sort_order räknades per kategori så att kategorierna blandades i deckets ordning; nu global numrering
 - [ ] Gör Alvin till admin (SQL enligt README) när e-post finns
 
 ### Deploy (om Alvin säger ja)

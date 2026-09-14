@@ -60,6 +60,8 @@ function buildDeck(dir: string, manifest: Manifest, out: string[]): number {
       `);`,
   );
 
+  // sort_order är global inom decket (inte per kategori), annars blandas
+  // kategorierna i "deckets ordning" och i admin-listan.
   let cardCount = 0;
   manifest.categories.forEach((cat, catIndex) => {
     const categoryId = uuidV5(`category:${manifest.slug}:${cat.title}`);
@@ -72,7 +74,7 @@ function buildDeck(dir: string, manifest: Manifest, out: string[]): number {
       for (const e of parsed.errors) console.warn(`  ${cat.file} rad ${e.row}: ${e.message}`);
     }
     const seenFronts = new Set<string>();
-    parsed.cards.forEach((card, cardIndex) => {
+    parsed.cards.forEach((card) => {
       const front = normalizeBrainscapeMarkdown(card.front);
       const back = normalizeBrainscapeMarkdown(card.back);
       // Samma framsida kan förekomma i flera kategorier (repetitionskort); id:t tar hänsyn till kategori.
@@ -89,7 +91,7 @@ function buildDeck(dir: string, manifest: Manifest, out: string[]): number {
             sqlString(front),
             sqlString(back),
             sqlString(card.hint),
-            String(card.sort_order ?? cardIndex),
+            String(card.sort_order ?? cardCount),
           ].join(", ") +
           `);`,
       );

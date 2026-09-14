@@ -34,8 +34,8 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Alvin körde `supabase link` + `db push --include-seed` (mån 17:30): 4 migrationer, 144 kort i molnet
 - [x] Vercel: **https://kuggfri.vercel.app** svarar med riktig data och noindex (mån 17:35)
 - [x] Alvin registrerade konto på kuggfri.vercel.app (Confirm email avstängt i Supabase); is_admin = true satt i molnet via `supabase db query --linked` (mån 20:30)
-- [?] Alvin: Supabase → Authentication → URL Configuration: Site URL `https://kuggfri.com`, Redirect URLs `https://kuggfri.com/**` och `https://kuggfri.vercel.app/**` (annars fungerar inte magic link)
-- [?] Alvin: Vercel → Settings → Domains → kuggfri.com + DNS hos domänleverantören
+- [x] Redirect URLs för kuggfri.com och kuggfri.vercel.app satta av Alvin. Kvar: Site URL till `https://kuggfri.com` när huvudadressen är bytt i Vercel
+- [x] Domänen kopplad (mån 21:00): DNS hos Hostinger (A `@` → 216.198.79.1, CNAME `www` → Vercels projektspecifika värde), certifikat utfärdat, `https://www.kuggfri.com` svarar. Gästflödena 5/5 gröna mot domänen. Obs: Vercel satte www som huvudadress; Alvin byter till kuggfri.com (Settings → Domains) så att kuggfri.com inte omdirigerar till www
 - [x] Gästflödena i E2E mot produktion: 5/5 gröna (`E2E_BASE_URL=https://kuggfri.vercel.app E2E_SKIP_SETUP=1`, mån 17:50)
 - [x] Seed i molnet via `db push --include-seed` (144 kort)
 - [x] Miljövariabler i Vercel, deploy. Registrering med lösenord fungerar i produktion (mån 20:30). Magic link väntar på egen SMTP (se Tillkommit)
@@ -79,7 +79,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] H4. Läget "Kluriga kort": bara kort med skattning 1–2 eller aldrig sedda; kategorier utan kluriga kort är gråade; skattning i läget uppdaterar self_rating men inte FSRS-schemat. Migration för `study_sessions.mode`
 - Historiken loggas i alla lägen (även fri och slumpad) eftersom den bara är aktivitet, inte schema. Fri/slumpad rör fortfarande aldrig `card_progress` (testat)
 - [x] Namnbyte Plugget → **Kuggfri** (kuggfri.com) i app, dokument, lagringsnycklar (`kuggfri:progress:v1`, `kuggfri:theme`), testkonton och exportfilnamn (mån 13:30). Obs: gästprogress sparad under gamla nyckeln följer inte med; ingen har sådan ännu utom Alvins egna tester
-- [ ] Domän: koppla kuggfri.com i Vercel när deployen finns (se README, steg 5)
+- [x] Domän: kuggfri.com kopplad i Vercel via Hostinger-DNS (mån 21:00)
 
 ## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 

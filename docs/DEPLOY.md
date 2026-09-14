@@ -60,6 +60,11 @@ och laddar innehållet.
 4. **Settings → Domains**: lägg till `kuggfri.com` och `www.kuggfri.com`. Vercel visar DNS-poster
    (en A-post för roten och en CNAME för www). Lägg in dem hos den leverantör där du köpte domänen.
    Det tar från några minuter upp till ett dygn innan de slår igenom.
+   **Gjort 14 sep 2026** hos Hostinger (DNS / Nameservers → DNS records, Hostingers egna namnservrar
+   behålls): A `@` → `216.198.79.1`, CNAME `www` → det projektspecifika `…vercel-dns-017.com`-värdet
+   som Vercel visade. Hostingers parkeringsposter för `@` och `www` togs bort. Spridning tog under
+   fem minuter, certifikatet några minuter till. Sätt `kuggfri.com` som huvudadress (utan omdirigering)
+   och låt `www` omdirigera dit, annars hamnar besökare på www-adressen.
 5. Alternativ: logga in CLI:t så kan Claude deploya och sätta variabler själv:
 
 ```bash

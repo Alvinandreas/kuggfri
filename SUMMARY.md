@@ -32,7 +32,7 @@
   diagram under "Din progress" byggd på en ny repetitionshistorik (`review_log`).
 - Innehåll: typografi rättad, sju dubbletter borta, K1c-formeln rättad. 144 kort.
 - Appen heter Kuggfri. Stabil testkopia på http://localhost:3001.
-- Väntar på Alvin: Supabase-projekt, GitHub, Vercel (för kuggfri.com), nästa feedbackrunda.
+- Produktion: Supabase eu-west-1, GitHub `Alvinandreas/kuggfri`, Vercel med domänen **kuggfri.com** (Hostinger-DNS, live 14 sep). Alvin är admin i molnet. Väntar på Alvin: nästa feedbackrunda, egen SMTP före studentlansering.
 - Se TASKS.md för allt annat.
 
 ## Klart

@@ -105,6 +105,10 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
+- [?] **Före lansering till studenter: egen SMTP i Supabase.** Den inbyggda mejlservern skickar bara ett par mejl per timme (det var det som gav "Det gick inte" för Alvin mån kväll). Med e-postbekräftelse avstängd fungerar registrering med lösenord utan mejl, men inloggningslänkar behöver riktig SMTP (t.ex. Resend, gratis upp till 3 000 mejl/månad: Supabase → Project Settings → Authentication → SMTP Settings). Alvin skapar kontot och klistrar in nyckeln själv
+- [x] Auth-fel visar nu specifik orsak (mejlbegränsning, obekräftad e-post, ogiltig adress) och loggas i Vercel
+- [x] Återvändsadress i mejllänkar följer besökt domän; inloggningskod fångas på valfri sida
+
 - [ ] Byte av e-postadress på kontosidan (`supabase.auth.updateUser`)
 - [ ] Paginering eller sök i admin-kortlistan när deck blir större än ~300 kort
 - [ ] Redirect-tabell för gamla slugs om ett deck byter slug

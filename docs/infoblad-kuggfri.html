@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Kuggfri – infoblad</title>
+<style>
+  /* Samma tokens som app/globals.css (ljust tema) */
+  :root {
+    --bg: #f6f5f1; --surface: #ffffff; --surface-2: #eeece6; --fg: #1d1c19; --muted: #676259;
+    --line: #dedbd3; --line-strong: #c4c0b6; --accent: #1f7a4d; --accent-soft: #dcefe3;
+    --chart-2: #3b6ea5;
+    --tag-1: oklch(0.9 0.07 20); --tag-2: oklch(0.9 0.08 62); --tag-3: oklch(0.9 0.10 95); --tag-4: oklch(0.9 0.10 140);
+    --tag-5: oklch(0.9 0.10 175); --tag-6: oklch(0.9 0.10 215); --tag-7: oklch(0.9 0.10 255); --tag-8: oklch(0.9 0.10 290);
+    --tag-9: oklch(0.9 0.10 325); --tag-10: oklch(0.9 0.10 355);
+    --radius-md: 0.75rem; --radius-lg: 1.25rem;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Segoe UI", ui-sans-serif, system-ui, Roboto, Arial, sans-serif; font-size: 9.6pt; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 12mm 13mm 10mm; display: flex; flex-direction: column; gap: 4mm; background: var(--bg); page-break-after: always; overflow: hidden; }
+  .page:last-child { page-break-after: auto; }
+  h1 { font-size: 19pt; line-height: 1.15; letter-spacing: -0.01em; margin: 0; font-weight: 600; }
+  h2 { font-size: 12pt; margin: 0 0 5pt; font-weight: 600; }
+  h3 { font-size: 11pt; margin: 0 0 4pt; font-weight: 600; }
+  p { margin: 0 0 5pt; }
+  p:last-child { margin-bottom: 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 8.6pt; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 9pt 11pt; }
+  .card.accent { border-color: color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--accent-soft) 55%, white); }
+  .row { display: grid; gap: 4mm; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols-4 { grid-template-columns: repeat(4, 1fr); }
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 8mm; padding-bottom: 4mm; border-bottom: 1px solid var(--line); }
+  header.top img { height: 13mm; width: auto; display: block; }
+  .tagline { text-align: right; }
+  .tagline .t { font-size: 12pt; font-weight: 600; }
+  .tile { border: 1px solid var(--line); border-radius: var(--radius-md); padding: 6pt 8pt; background: var(--surface); }
+  .tile.green { border-color: color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--accent-soft) 60%, white); }
+  .tile.blue { border-color: var(--tag-7); background: color-mix(in oklab, var(--tag-7) 60%, white); }
+  .tile.teal { border-color: var(--tag-5); background: color-mix(in oklab, var(--tag-5) 60%, white); }
+  .tile.violet { border-color: var(--tag-8); background: color-mix(in oklab, var(--tag-8) 60%, white); }
+  .tile .v { font-size: 16pt; font-weight: 600; line-height: 1.1; }
+  .tile .l { font-size: 8pt; color: var(--muted); }
+  ul { margin: 0; padding-left: 0; list-style: none; }
+  ul li { position: relative; padding-left: 12pt; margin-bottom: 2.5pt; }
+  ul li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 6pt; height: 6pt; border-radius: 50%; background: var(--accent); }
+  ol.steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  ol.steps li { border: 1px solid var(--line); border-radius: var(--radius-md); padding: 6pt 8pt; background: var(--surface); }
+  ol.steps .n { display: inline-flex; width: 16pt; height: 16pt; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; align-items: center; justify-content: center; font-size: 10pt; margin-bottom: 4pt; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4pt; margin-top: 5pt; }
+  .tag { font-size: 8.5pt; font-weight: 600; padding: 2pt 8pt; border-radius: 999px; color: var(--fg); }
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  th { text-align: left; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; padding: 4pt 6pt; border-bottom: 1px solid var(--line); }
+  td { padding: 3.5pt 6pt; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.k { color: var(--accent); font-weight: 600; }
+  td.x { color: var(--muted); }
+  .check { display: inline-block; width: 12pt; height: 12pt; border-radius: 50%; background: var(--accent); color: #fff; font-size: 8.5pt; text-align: center; line-height: 12pt; margin-right: 4pt; vertical-align: -1.5pt; }
+  .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8mm; padding-top: 3mm; border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+  .foot img { height: 9mm; width: auto; }
+  .url { color: var(--accent); font-weight: 700; }
+  .illu { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; align-items: center; }
+  .callout { border-left: 3px solid var(--accent); padding: 3pt 9pt; background: color-mix(in oklab, var(--accent-soft) 45%, white); border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+</style>
+</head>
+<body>
+
+<!-- ============================ SIDA 1 ============================ -->
+<section class="page">
+  <header class="top">
+    <img src="../public/logo-light.png" alt="Kuggfri">
+    <div class="tagline">
+      <div class="t">Repetitionskort som en naturlig del av kursen</div>
+      <div class="muted small">Gratis · utan konto · byggt för Chalmers</div>
+    </div>
+  </header>
+
+  <h1>Studenterna pluggar redan med korten. Nu kan kursen äga dem.</h1>
+
+  <div class="row cols-4">
+    <div class="tile green"><div class="v">144</div><div class="l">kort i Materialteknik, i 11 kategorier som följer föreläsningarna</div></div>
+    <div class="tile blue"><div class="v">196</div><div class="l">studenter använde den tidigare versionen över två årskullar</div></div>
+    <div class="tile teal"><div class="v">0 kr</div><div class="l">för studenter och för kursen, ingen reklam, ingen spårning</div></div>
+    <div class="tile violet"><div class="v">EU</div><div class="l">data lagras inom EU, studenten raderar sitt konto själv</div></div>
+  </div>
+
+  <div class="row cols-2">
+    <div class="card">
+      <h2>Vad Kuggfri är</h2>
+      <p>En fri flashcard-tjänst för kurser på Chalmers. Studenten öppnar en länk och börjar plugga direkt i mobilen, utan konto. Varje kort har en fråga på framsidan och ett svar på baksidan, sorterat i kategorier som följer kursens upplägg.</p>
+      <p>Med konto följer progressen med mellan enheter. Innehållet ägs av kursen, redigeras i webbläsaren och kan exporteras när som helst.</p>
+      <div class="tags">
+        <span class="tag" style="background:var(--tag-1)">Materialgrupper</span>
+        <span class="tag" style="background:var(--tag-3)">Kristallstruktur</span>
+        <span class="tag" style="background:var(--tag-4)">Styvhet och töjning</span>
+        <span class="tag" style="background:var(--tag-6)">Stål och värmebehandling</span>
+        <span class="tag" style="background:var(--tag-8)">Hållbarhet</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Bakgrund</h2>
+      <p>Korten sammanställdes av en student under kursen, utifrån föreläsningarna, och spreds i klassen och vidare till nästa kull.</p>
+      <p>Den tidigare plattformen var en kommersiell app: varje student behövde godkännas manuellt, grundfunktioner som att nollställa sin progress låg bakom betalvägg, och innehållet levde på ett privat konto hos leverantören. Kuggfri byggdes för att ta bort de hindren.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Så maximerar den algoritmiska repetitionen inlärningen</h2>
+    <div class="illu">
+      <div>
+        <p>Efter varje kort skattar studenten sig själv, 1 till 5. Skattningen styr när kortet kommer tillbaka: kort man kan väntar länge, kort man inte kan kommer snart, och igen samma pass. Algoritmen (FSRS, öppen och väl beprövad) räknar ut intervallet per kort utifrån hur stabilt minnet är.</p>
+        <p>Det bygger på två av de mest robusta resultaten i inlärningsforskningen: <strong>retrieval practice</strong> (att hämta fram ett svar ur minnet ger mer än att läsa om det) och <strong>spacing</strong> (repetition utspridd över tid slår koncentrerad repetition). Studenten lägger tiden där den ger mest, i stället för jämnt över allt.</p>
+      </div>
+      <svg viewBox="0 0 260 150" width="100%" aria-hidden="true">
+        <defs><marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1f7a4d"/></marker></defs>
+        <line x1="20" y1="120" x2="245" y2="120" stroke="#dedbd3" stroke-width="1"/>
+        <text x="20" y="138" font-size="8" fill="#676259">dag 0</text>
+        <text x="215" y="138" font-size="8" fill="#676259">dag 30</text>
+        <!-- Kort som kunnats: långa intervall -->
+        <g stroke="#1f7a4d" stroke-width="2" fill="none">
+          <path d="M125,120 C138,82 150,82 163,120" marker-end="url(#a)"/>
+          <path d="M163,120 C185,42 223,42 245,120" marker-end="url(#a)"/>
+        </g>
+        <text x="130" y="36" font-size="8.5" fill="#1f7a4d" font-weight="600">kunde: allt längre intervall</text>
+        <!-- Kort som inte kunnats: täta intervall -->
+        <g stroke="#3b6ea5" stroke-width="1.6" fill="none" stroke-dasharray="3 2">
+          <path d="M20,120 C26,102 30,102 36,120"/>
+          <path d="M36,120 C43,100 48,100 55,120"/>
+          <path d="M55,120 C64,98 70,98 79,120"/>
+          <path d="M79,120 C88,94 96,94 105,120"/>
+        </g>
+        <text x="20" y="80" font-size="8.5" fill="#3b6ea5" font-weight="600">kunde inte: snart igen</text>
+        <g>
+          <rect x="18" y="8" width="10" height="10" rx="2" fill="#dcefe3" stroke="#1f7a4d"/><text x="32" y="17" font-size="8" fill="#1d1c19">skattning 5</text>
+          <rect x="90" y="8" width="10" height="10" rx="2" fill="#e8eef7" stroke="#3b6ea5"/><text x="104" y="17" font-size="8" fill="#1d1c19">skattning 1–2</text>
+        </g>
+      </svg>
+    </div>
+    <ol class="steps">
+      <li><span class="n">1</span><h3>Vänd och svara</h3><p class="small">Studenten försöker svara innan baksidan visas. Själva framplockningen är inlärningen.</p></li>
+      <li><span class="n">2</span><h3>Skatta 1–5</h3><p class="small">Ärlig självskattning. Låga skattningar ger täta repetitioner, höga ger långa.</p></li>
+      <li><span class="n">3</span><h3>Rätt kort, rätt dag</h3><p class="small">Nästa pass innehåller bara det som är dags. Statistik och radar per kategori visar var luckorna finns.</p></li>
+    </ol>
+  </div>
+
+  <div class="foot">
+    <img src="../public/logo-menu-light.png" alt="">
+    <span><span class="url">kuggfri.com</span> · sida 1 av 2</span>
+  </div>
+</section>
+
+<!-- ============================ SIDA 2 ============================ -->
+<section class="page">
+  <div class="card">
+    <h2>Jämfört med kommersiella flashcard-appar</h2>
+    <table>
+      <thead><tr><th style="width:26%"></th><th style="width:37%">Kuggfri</th><th>Kommersiella appar (t.ex. Brainscape, Quizlet)</th></tr></thead>
+      <tbody>
+        <tr><td>Kostnad</td><td class="k"><span class="check">✓</span>Gratis, för alltid, för alla</td><td class="x">Gratisnivå med begränsningar, prenumeration för resten</td></tr>
+        <tr><td>Åtkomst</td><td class="k"><span class="check">✓</span>En länk. Inget konto krävs för att plugga</td><td class="x">Konto krävs, ofta manuellt godkännande per student</td></tr>
+        <tr><td>Innehållet</td><td class="k"><span class="check">✓</span>Ägs av kursen, redigeras i webbläsaren, exporteras när som helst</td><td class="x">Ligger på leverantörens plattform, ofta på en privatpersons konto</td></tr>
+        <tr><td>Kvalitetsslinga</td><td class="k"><span class="check">✓</span>Studenter rapporterar fel direkt från kortet; samlas per deck</td><td class="x">Saknas eller går via leverantören</td></tr>
+        <tr><td>Insyn för läraren</td><td class="k"><span class="check">✓</span>Vilka kort som får lägst skattning, hur många som pluggar</td><td class="x">Ingen, eller bara i betalda lärarpaket</td></tr>
+        <tr><td>Data och integritet</td><td class="k"><span class="check">✓</span>Minimal insamling, EU, ingen reklam, ingen spårning</td><td class="x">Reklam och spårning i gratisversionen, data ofta utanför EU</td></tr>
+        <tr><td>Koppling till kursen</td><td class="k"><span class="check">✓</span>Kategorier följer föreläsningarna, kan uppdateras när kursen ändras</td><td class="x">Generiskt set som lever sitt eget liv</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row cols-2">
+    <div class="card">
+      <h2>För examinatorn</h2>
+      <ul>
+        <li><strong>Noll extra arbete som grund.</strong> Materialet finns, driften kostar inget och sköts av oss.</li>
+        <li><strong>Insyn i vad studenterna fastnar på.</strong> Kort med lägst snittskattning är antingen svåra eller otydliga: en färdig lista inför nästa kursomgång.</li>
+        <li><strong>Kontroll över innehållet.</strong> Granska, rätta, avaktivera eller lägga till kort i webbläsaren, med förhandsvisning av formler.</li>
+        <li><strong>Felrapporter från studenterna</strong> landar per deck med länk rakt in i kortet.</li>
+        <li><strong>Kreditering och samtycke</strong> på era villkor: källrad per deck, borttagning på begäran.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>För studenterna</h2>
+      <ul>
+        <li><strong>Börja på 10 sekunder.</strong> Öppna länken i mobilen, inget konto, ingen app att installera.</li>
+        <li><strong>Plugga smartare.</strong> Schemat lägger tiden på det man inte kan än, i stället för på det man redan kan.</li>
+        <li><strong>Se sin egen kurva.</strong> Dagar i rad, repetitioner per dag, kunskap per kategori. Det är det som håller igång pluggandet.</li>
+        <li><strong>Tre lägen efter behov:</strong> schemalagd repetition över kursen, fri repetition per kategori, slumpad genomkörning inför tentan.</li>
+        <li><strong>Lika för alla.</strong> Gratis, tillgänglighetstestat, fungerar med tangentbord och skärmläsare, ljust och mörkt tema.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card accent">
+    <h2>Som en naturlig del av kursen</h2>
+    <div class="row cols-3">
+      <div>
+        <h3>Vad det innebär</h3>
+        <p class="small">En länk på kurssidan i Canvas och en mening i första föreläsningen. Studenterna hittar materialet från dag ett i stället för via kompisar i vecka fyra.</p>
+      </div>
+      <div>
+        <h3>Vad du bidrar med</h3>
+        <p class="small">Så lite eller så mycket du vill: läsa igenom en utskrift, ha ett eget konto med redigeringsrätt, eller en halvtimme efter varje tentaperiod med listan över kort med lägst snitt.</p>
+      </div>
+      <div>
+        <h3>Vad vi står för</h3>
+        <p class="small">Drift, underhåll, rättningar och nya kort när kursen ändras. Allt innehåll är exporterbart och kursen kan när som helst ta det med sig.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:8pt">
+      <p class="small"><strong>Nästa steg:</strong> ett ja till att materialet får bygga på kursens innehåll, och hur du vill att det krediteras. Sedan går det att lägga till fler kurser på programmet på samma sätt.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <img src="../public/logo-menu-light.png" alt="">
+    <span>Alvin · alvinandreas.cth@gmail.com · <span class="url">kuggfri.com</span> · sida 2 av 2</span>
+  </div>
+</section>
+
+</body>
+</html>

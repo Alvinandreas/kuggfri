@@ -100,6 +100,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Appikon + manifest ("lägg till på hemskärmen"): `scripts/build-icons.py` → public/icon-*.png, `app/manifest.ts`, apple-touch-icon
 - [x] /om: avsnitt "För kursansvariga"; /d/dev-preview borttagen
 - [x] Lämna-kvar-sida: `docs/lamna-kvar-johan.pdf` (källa `docs/lamna-kvar-johan.html`), skriv ut och lägg ovanpå granskningsunderlaget
+- [x] Allt pushat och live på kuggfri.com (ons 21:50, commit be99e4e): felrapporter, ikon/manifest, /om, mobilfix i admin. Testkopian på 3001 ombyggd
 - [ ] Skärmdumpar av hela flödet som reserv
 - [ ] Ny kodfrysning 22:00, full verify, ombyggd testkopia
 

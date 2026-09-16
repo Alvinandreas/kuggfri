@@ -143,12 +143,29 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   }
 
   async function copyLink() {
+    const url = `${window.location.origin}/d/${deck.slug}`;
+    let ok = false;
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/d/${deck.slug}`);
+      await navigator.clipboard.writeText(url);
+      ok = true;
+    } catch {
+      // Reserv för webbläsare utan clipboard-API eller utan behörighet.
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        ok = document.execCommand("copy");
+      } finally {
+        ta.remove();
+      }
+    }
+    if (ok) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    } catch {
-      // Urklipp kan vara blockerat; länken syns ändå i adressfältet.
     }
   }
 
@@ -318,7 +335,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
               variant={copied ? "secondary" : "primary"}
               onClick={copyLink}
               aria-live="polite"
-              className={copied ? "border-accent bg-accent-soft text-accent" : ""}
+              className={copied ? "border-accent! bg-accent-soft! text-accent!" : ""}
               data-testid="copy-link"
             >
               {copied ? sv.deck.shareCopied : sv.deck.shareCopy}

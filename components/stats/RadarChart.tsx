@@ -10,7 +10,8 @@ export type RadarAxis = {
   /** Kategorins färgindex (samma som taggen i kategoritabellen). */
   colorIndex: number;
   total: number;
-  studied: number;
+  /** Skattning 3–4. */
+  partial: number;
   learned: number;
 };
 
@@ -47,7 +48,6 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
     setHoverState(i);
     onHover?.(i);
   };
-  const [table, setTable] = useState(false);
   const titleId = useId();
   const n = axes.length;
   const angle = (i: number) => (n === 0 ? 0 : (i / n) * Math.PI * 2);
@@ -55,7 +55,8 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
   const pts = (pick: (a: RadarAxis) => number) => axes.map((a, i) => polar(angle(i), R * pick(a)));
   const toPath = (p: [number, number][]) => (p.length === 0 ? "" : p.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ") + " Z");
   const learnedPts = pts((a) => ratio(a.learned, a.total));
-  const studiedPts = pts((a) => ratio(a.studied, a.total));
+  // Staplat: yttre ytan är inlärda + delvis inlärda, inre ytan bara inlärda.
+  const stackedPts = pts((a) => ratio(a.learned + a.partial, a.total));
   const pct = (num: number, den: number) => `${Math.round(ratio(num, den) * 100)} %`;
 
   return (
@@ -67,33 +68,29 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
           </span>
           {help ? <span className="block text-xs text-muted">{help}</span> : null}
         </div>
-        <button type="button" onClick={() => setTable((t) => !t)} className="shrink-0 text-xs text-muted underline underline-offset-2 hover:text-fg">
-          {table ? sv.stats.showChart : sv.stats.showTable}
-        </button>
       </figcaption>
 
-      {table ? (
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-              <th className="py-1 pr-2 font-medium">{sv.deck.selectionCategory}</th>
-              <th className="py-1 pr-2 text-right font-medium">{sv.stats.seriesStudied}</th>
-              <th className="py-1 text-right font-medium">{sv.stats.seriesLearned}</th>
+      <table className="sr-only">
+        <thead>
+          <tr>
+            <th>{sv.deck.selectionCategory}</th>
+            <th>{sv.stats.seriesPartial}</th>
+            <th>{sv.stats.seriesLearned}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {axes.map((a, i) => (
+            <tr key={a.key}>
+              <td>
+                {i + 1}. {a.label}
+              </td>
+              <td>{pct(a.partial, a.total)}</td>
+              <td>{pct(a.learned, a.total)}</td>
             </tr>
-          </thead>
-          <tbody>
-            {axes.map((a, i) => (
-              <tr key={a.key} className="border-b border-line last:border-b-0">
-                <td className="py-1 pr-2">
-                  <span className="text-muted">{i + 1}.</span> {a.label}
-                </td>
-                <td className="py-1 pr-2 text-right tabular-nums">{pct(a.studied, a.total)}</td>
-                <td className="py-1 text-right tabular-nums">{pct(a.learned, a.total)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
+          ))}
+        </tbody>
+      </table>
+      {(
         <div className="grid gap-3">
           <div className="relative">
             <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-labelledby={titleId} className="mx-auto h-auto w-full max-w-[20rem]" onMouseLeave={() => setHover(null)}>
@@ -111,8 +108,8 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
               ))}
               {n >= 3 ? (
                 <>
-                  <path d={toPath(studiedPts)} fill="none" className="stroke-chart-2" strokeWidth={1.5} strokeDasharray="4 3" strokeLinejoin="round" />
-                  <path d={toPath(learnedPts)} className="fill-chart-1/35 stroke-chart-1" strokeWidth={2} strokeLinejoin="round" />
+                  <path d={toPath(stackedPts)} className="fill-chart-3/30 stroke-chart-3" strokeWidth={1.5} strokeLinejoin="round" />
+                  <path d={toPath(learnedPts)} className="fill-chart-1/45 stroke-chart-1" strokeWidth={2} strokeLinejoin="round" />
                 </>
               ) : null}
               {axes.map((a, i) => {
@@ -138,7 +135,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
                 <span className="text-muted"> · </span>
                 {sv.stats.seriesLearned} {axes[hover].learned}/{axes[hover].total}
                 <span className="text-muted"> · </span>
-                {sv.stats.seriesStudied} {axes[hover].studied}/{axes[hover].total}
+                {sv.stats.seriesPartial} {axes[hover].partial}/{axes[hover].total}
               </div>
             ) : null}
           </div>
@@ -147,7 +144,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
               <span className="inline-block h-2.5 w-2.5 rounded-sm bg-chart-1" /> {sv.stats.seriesLearned}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-0 w-3 border-t-2 border-dashed border-chart-2" /> {sv.stats.seriesStudied}
+              <span className="inline-block h-2.5 w-2.5 rounded-sm bg-chart-3" /> {sv.stats.seriesPartial}
             </span>
           </div>
         </div>

@@ -31,6 +31,7 @@
   /* Diagram: validerad kategorisk palett (dataviz-skillens validator, ljus yta #ffffff) */
   --chart-1: #1f7a4d;
   --chart-2: #3b6ea5;
+  --chart-3: #c97a1f;
   --chart-grid: #e6e3dc;
 
   /* Skattningsskala 1–5, dämpade toner */
@@ -86,6 +87,7 @@
   --focus: #3aa868;
   --chart-1: #3aa868;
   --chart-2: #4f86c9;
+  --chart-3: #cf7f22;
   --chart-grid: #34322e;
   --rate-1: #c9705d;
   --rate-2: #cf9455;
@@ -122,6 +124,7 @@
   --color-focus: var(--focus);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
   --color-chart-grid: var(--chart-grid);
   --color-rate-1: var(--rate-1);
   --color-rate-2: var(--rate-2);

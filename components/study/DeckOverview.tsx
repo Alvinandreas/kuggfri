@@ -188,9 +188,21 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
 
         {/* Progress */}
         <section aria-labelledby="progress-rubrik" className="order-3 rounded-lg border border-line bg-surface p-5 shadow-card">
-          <h2 id="progress-rubrik" className="text-lg font-semibold">
-            {sv.deck.progressTitle}
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="progress-rubrik" className="text-lg font-semibold">
+              {sv.deck.progressTitle}
+            </h2>
+            <button
+              type="button"
+              onClick={() => setConfirmReset(true)}
+              disabled={!store}
+              className="text-xs text-muted underline underline-offset-2 hover:text-fg disabled:opacity-50"
+              title={sv.deck.resetLink}
+              data-testid="reset-deck"
+            >
+              {sv.deck.resetShort}
+            </button>
+          </div>
           {progress === null ? (
             <p className="mt-2 text-muted">{sv.common.loading}</p>
           ) : seen === 0 && reviews.length === 0 ? (
@@ -203,7 +215,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                 reviews={reviews}
                 categories={categories.map((c) => {
                   const s = perCategory.find((p) => p.categoryId === c.id);
-                  return { id: c.id, title: c.title, total: s?.total ?? 0, studied: s?.studied ?? 0, learned: s?.learned ?? 0 };
+                  return { id: c.id, title: c.title, total: s?.total ?? 0, partial: s?.partial ?? 0, learned: s?.learned ?? 0 };
                 })}
                 dueText={
                   stats && stats.due + stats.new > 0
@@ -326,7 +338,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
 
         {/* Dela, källa och diskret nollställning (gäster har ingen kontosida) */}
         <section className="order-6 grid gap-4 text-sm text-muted">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-surface p-5 shadow-card">
+          <div className="flex w-fit max-w-full flex-wrap items-center gap-x-8 gap-y-4 rounded-lg border border-line bg-surface p-5 shadow-card">
             <div className="min-w-0">
               <h2 className="text-lg font-semibold text-fg">{sv.deck.share}</h2>
               <p className="mt-1">{sv.deck.shareHelp}</p>
@@ -346,22 +358,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
               <span className="font-medium text-fg">{sv.deck.source}:</span> {deck.source_credit}
             </p>
           ) : null}
-          <p className="mt-2">
-            <button
-              type="button"
-              onClick={() => setConfirmReset(true)}
-              disabled={!store}
-              className="underline underline-offset-2 decoration-line-strong hover:text-fg"
-              data-testid="reset-deck"
-            >
-              {sv.deck.resetLink}
-            </button>{" "}
-            {userId ? (
-              <Link href="/konto" className="underline underline-offset-2 decoration-line-strong hover:text-fg">
-                {sv.deck.resetInAccount}
-              </Link>
-            ) : null}
-          </p>
         </section>
       </div>
 

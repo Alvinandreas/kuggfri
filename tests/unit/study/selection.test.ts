@@ -122,10 +122,10 @@ describe("categoryStats", () => {
     };
     const stats = categoryStats(cards, progress, ["k1", "k2"]);
     expect(stats).toEqual([
-      { categoryId: "k1", total: 2, studied: 2, learned: 1, weak: 1, tricky: 1 },
-      { categoryId: "k2", total: 1, studied: 0, learned: 0, weak: 0, tricky: 1 },
+      { categoryId: "k1", total: 2, studied: 2, learned: 1, weak: 1, tricky: 1, partial: 0 },
+      { categoryId: "k2", total: 1, studied: 0, learned: 0, weak: 0, tricky: 1, partial: 0 },
     ]);
     expect(learnedRatio(stats[0]!)).toBe(0.5);
-    expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0, tricky: 0 })).toBe(1);
+    expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0 })).toBe(1);
   });
 });

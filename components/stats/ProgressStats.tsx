@@ -14,7 +14,7 @@ type Props = {
   /** Rad med "X att repetera nu, Y nya" eller "Nästa repetition …" */
   dueText: string;
   /** Per kategori, i deckets ordning: underlag för radardiagrammet. */
-  categories: { id: string; title: string; total: number; studied: number; learned: number }[];
+  categories: { id: string; title: string; total: number; partial: number; learned: number }[];
 };
 
 /**
@@ -25,7 +25,7 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
   const stats = useMemo(() => buildProgressStats({ cardIds, progress, reviews }), [cardIds, progress, reviews]);
   const [axisHover, setAxisHover] = useState<number | null>(null);
   const axes: RadarAxis[] = useMemo(
-    () => categories.map((c, i) => ({ key: c.id, label: c.title, colorIndex: i, total: c.total, studied: c.studied, learned: c.learned })),
+    () => categories.map((c, i) => ({ key: c.id, label: c.title, colorIndex: i, total: c.total, partial: c.partial, learned: c.learned })),
     [categories],
   );
   const learnedPct = stats.totalCards === 0 ? 0 : Math.round((stats.learned / stats.totalCards) * 100);
@@ -33,10 +33,10 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
   return (
     <div className="grid gap-5">
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Tile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} accent />
-        <Tile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} />
-        <Tile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} />
-        <Tile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" />
+        <Tile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} tone="green" />
+        <Tile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} tone="orange" />
+        <Tile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="blue" />
+        <Tile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
       </dl>
 
       <p className="text-sm">
@@ -71,9 +71,18 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
   );
 }
 
-function Tile({ label, help, value, sub, accent = false }: { label: string; help?: string; value: string; sub: string; accent?: boolean }) {
+type Tone = "green" | "orange" | "blue" | "violet";
+// Samma mjuka färgskala som kategoritaggarna (tag-4 grön, tag-2 orange, tag-6 blå, tag-8 violett).
+const tones: Record<Tone, string> = {
+  green: "border-accent/40 bg-accent-soft/60",
+  orange: "border-tag-2 bg-tag-2/60 dark:bg-tag-2/35",
+  blue: "border-tag-6 bg-tag-6/60 dark:bg-tag-6/35",
+  violet: "border-tag-8 bg-tag-8/60 dark:bg-tag-8/35",
+};
+
+function Tile({ label, help, value, sub, tone }: { label: string; help?: string; value: string; sub: string; tone: Tone }) {
   return (
-    <div className={`rounded-lg border p-3 ${accent ? "border-accent/40 bg-accent-soft/50" : "border-line bg-bg"}`}>
+    <div className={`rounded-lg border p-3 ${tones[tone]}`}>
       <dt className="text-xs text-muted" title={help}>
         {label}
       </dt>

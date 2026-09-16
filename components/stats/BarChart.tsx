@@ -24,7 +24,6 @@ const PAD = { top: 12, right: 8, bottom: 26, left: 30 };
  */
 export function BarChart({ points, title, help, formatValue }: Props) {
   const [hover, setHover] = useState<number | null>(null);
-  const [table, setTable] = useState(false);
   const titleId = useId();
 
   const max = Math.max(1, ...points.map((p) => p.value));
@@ -35,6 +34,8 @@ export function BarChart({ points, title, help, formatValue }: Props) {
   const slot = innerW / Math.max(1, points.length);
   const barW = Math.max(4, slot - 2);
   const y = (v: number) => PAD.top + innerH - (v / top) * innerH;
+  // Högst sju datumetiketter, jämnt fördelade från första dagen.
+  const labelStep = Math.max(1, Math.ceil(points.length / 7));
 
   return (
     <figure className="grid gap-2">
@@ -45,13 +46,10 @@ export function BarChart({ points, title, help, formatValue }: Props) {
           </span>
           {help ? <span className="block text-xs text-muted">{help}</span> : null}
         </div>
-        <button type="button" onClick={() => setTable((t) => !t)} className="text-xs text-muted underline underline-offset-2 hover:text-fg">
-          {table ? sv.stats.showChart : sv.stats.showTable}
-        </button>
       </figcaption>
 
-      {table ? (
-        <table className="w-full text-sm">
+      {/* Tabellen finns kvar för skärmläsare, osynlig för alla andra. */}
+      <table className="sr-only">
           <thead>
             <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
               <th className="py-1 pr-2 font-medium">{sv.stats.day}</th>
@@ -67,7 +65,7 @@ export function BarChart({ points, title, help, formatValue }: Props) {
             ))}
           </tbody>
         </table>
-      ) : (
+      {(
         <div className="relative">
           <svg
             viewBox={`0 0 ${W} ${H}`}
@@ -97,7 +95,7 @@ export function BarChart({ points, title, help, formatValue }: Props) {
                   ) : (
                     <rect x={x} y={y(0) - 1} width={barW} height={1} className="fill-chart-grid" />
                   )}
-                  {(i === 0 || i === points.length - 1 || i % Math.ceil(points.length / 7) === 0) && (
+                  {i % labelStep === 0 && (
                     <text x={x + barW / 2} y={H - 8} textAnchor="middle" className="fill-muted" fontSize={11}>
                       {p.label}
                     </text>

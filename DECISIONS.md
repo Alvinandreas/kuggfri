@@ -158,6 +158,10 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   får inte plats runt en radar i en tredjedelskolumn, så axlarna är numrerade och namnen står i en
   färgkodad lista under båda diagrammen (samma färg som kategorins tagg). Fylld yta = inlärda,
   streckad kontur = studerade; legend, hover och tabellvy enligt dataviz-reglerna.
+- **"Delvis inlärda" = skattning 3 eller 4.** Alvin bad om "3"; kort med 4 ("Bra") räknas också som
+  delvis, annars försvinner de ur diagrammet (inlärt kräver 5). Ändras lätt i `categoryStats`.
+- **Tabellvyerna är dolda (sr-only), inte borttagna.** Alvin vill inte se länken; skärmläsare får
+  ändå siffrorna, vilket dataviz-reglerna kräver.
 - **Kategorifärgerna** är tio jämnt fördelade nyanser i oklch (ljust: L 0,90 C 0,10; mörkt: L 0,44
   C 0,13), inga bruna eller grå steg. Text i förgrundsfärg ovanpå fungerar i båda teman.
 - **Admin-rader är helt klickbara** (osynlig länk som täcker raden, knappar ovanpå) med hover, för

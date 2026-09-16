@@ -116,12 +116,14 @@ export type CategoryStats = {
   weak: number;
   /** Kluriga kort: 1–2 eller aldrig skattade. */
   tricky: number;
+  /** Skattning 3–4: på väg, men inte inlärt (5). */
+  partial: number;
 };
 
 /** Statistik per kategori ur progressen. Kort utan kategori ignoreras. */
 export function categoryStats(cards: readonly SelectableCard[], progress: ProgressMap, categoryIds: readonly string[]): CategoryStats[] {
   const byId = new Map<string, CategoryStats>(
-    categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0, tricky: 0 }]),
+    categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0 }]),
   );
   for (const card of cards) {
     if (!card.category_id) continue;
@@ -133,6 +135,7 @@ export function categoryStats(cards: readonly SelectableCard[], progress: Progre
     if (!p) continue;
     s.studied++;
     if (p.self_rating === 5) s.learned++;
+    if (p.self_rating === 3 || p.self_rating === 4) s.partial++;
     if (p.self_rating !== null && p.self_rating <= 2) s.weak++;
   }
   return categoryIds.map((id) => byId.get(id)!);

@@ -17,7 +17,7 @@ import {
   type Selection,
 } from "@/lib/study/selection";
 import { formatRelative } from "@/lib/time/format";
-import { categoryColorIndex, tagBgClass } from "@/lib/ui/tag-colors";
+import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { CategoryTag } from "@/components/ui/CategoryTag";
@@ -323,7 +323,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                       <td className="hidden px-3 py-2.5 sm:table-cell">
                         <div className="h-2 w-full overflow-hidden rounded bg-surface-2" aria-hidden="true">
                           <div className="relative h-full">
-                            <div className={`absolute inset-y-0 left-0 rounded opacity-50 ${tagBgClass(colorIndex.get(c.id) ?? 0)}`} style={{ width: `${studiedPct}%` }} />
+                            <div className="absolute inset-y-0 left-0 rounded bg-chart-1/20" style={{ width: `${studiedPct}%` }} />
                             <div className="absolute inset-y-0 left-0 rounded bg-rate-5" style={{ width: `${learnedPct}%` }} />
                           </div>
                         </div>

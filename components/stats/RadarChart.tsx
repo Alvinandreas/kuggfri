@@ -101,11 +101,6 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
                 const [x, y] = polar(angle(i), R);
                 return <line key={a.key} x1={CX} y1={CY} x2={x} y2={y} className="stroke-chart-grid" strokeWidth={1} />;
               })}
-              {[0.5, 1].map((f) => (
-                <text key={f} x={CX + 4} y={CY - R * f + 4} className="fill-muted" fontSize={9}>
-                  {Math.round(f * 100)} %
-                </text>
-              ))}
               {n >= 3 ? (
                 <>
                   <path d={toPath(stackedPts)} className="fill-chart-1/7 stroke-chart-1/35" strokeWidth={1.5} strokeLinejoin="round" />

@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { buildProgressStats } from "@/lib/stats/progress-stats";
 import { BarChart } from "./BarChart";
-import { LineChart } from "./LineChart";
+import { RadarChart, RadarLegend, type RadarAxis } from "./RadarChart";
 
 type Props = {
   cardIds: readonly string[];
@@ -13,14 +13,21 @@ type Props = {
   reviews: readonly ReviewEntry[];
   /** Rad med "X att repetera nu, Y nya" eller "Nästa repetition …" */
   dueText: string;
+  /** Per kategori, i deckets ordning: underlag för radardiagrammet. */
+  categories: { id: string; title: string; total: number; studied: number; learned: number }[];
 };
 
 /**
  * Din progress: fyra nyckeltal, repetitioner per dag och ackumulerad kunskap.
  * Data-testid seen-count och due-info används av E2E-testerna.
  */
-export function ProgressStats({ cardIds, progress, reviews, dueText }: Props) {
+export function ProgressStats({ cardIds, progress, reviews, dueText, categories }: Props) {
   const stats = useMemo(() => buildProgressStats({ cardIds, progress, reviews }), [cardIds, progress, reviews]);
+  const [axisHover, setAxisHover] = useState<number | null>(null);
+  const axes: RadarAxis[] = useMemo(
+    () => categories.map((c, i) => ({ key: c.id, label: c.title, colorIndex: i, total: c.total, studied: c.studied, learned: c.learned })),
+    [categories],
+  );
   const learnedPct = stats.totalCards === 0 ? 0 : Math.round((stats.learned / stats.totalCards) * 100);
 
   return (
@@ -41,23 +48,21 @@ export function ProgressStats({ cardIds, progress, reviews, dueText }: Props) {
       </p>
 
       {stats.hasReviews ? (
-        <div className="grid gap-6">
+        <div className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:items-start">
           <BarChart
             title={sv.stats.reviewsPerDay}
             help={sv.stats.reviewsPerDayHelp}
             points={stats.series.map((p) => ({ key: p.day, label: p.label, value: p.reviews }))}
             formatValue={(v) => sv.stats.cards(v)}
           />
-          <LineChart
-            title={sv.stats.knowledge}
-            help={sv.stats.knowledgeHelp}
-            points={stats.series.map((p) => ({ key: p.day, label: p.label, values: [p.seen, p.learned] }))}
-            series={[
-              { name: sv.stats.seriesSeen, colorClass: { stroke: "stroke-chart-2", fill: "fill-chart-2 bg-chart-2", text: "text-chart-2" } },
-              { name: sv.stats.seriesLearned, colorClass: { stroke: "stroke-chart-1", fill: "fill-chart-1 bg-chart-1", text: "text-chart-1" } },
-            ]}
-            formatValue={(v) => `${v}`}
-          />
+          {axes.length >= 3 ? (
+            <>
+              <RadarChart title={sv.stats.radar} help={sv.stats.radarHelp} axes={axes} hover={axisHover} onHover={setAxisHover} />
+              <div className="md:col-span-2">
+                <RadarLegend axes={axes} hover={axisHover} onHover={setAxisHover} />
+              </div>
+            </>
+          ) : null}
         </div>
       ) : (
         <p className="text-sm text-muted">{sv.stats.empty}</p>

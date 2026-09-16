@@ -14,6 +14,7 @@ import numpy as np
 
 SRC = "brand/logotyp-kuggfri.png"
 ICON_SRC = "brand/ikon-kuggfri.png"  # bara kugghjulet, för appikon och favicon
+MENU_SRC = "brand/logotyp-kuggfri-meny.png"  # variant med större ordmärke, för sidhuvudet
 DARK_INK = (28, 28, 26)      # --fg i ljust tema (nästan svart)
 PLATE = (0, 0, 0)            # ikonplatta, som originalet
 T = 120.0                    # max-kanal >= T räknas som helt täckande
@@ -122,6 +123,15 @@ def main() -> None:
     text = im.crop((tx0 - tpad, ty0 - tpad, tx1 + tpad, ty1 + tpad))
     fit_height(text, 200).save("public/logo-text-dark.png", optimize=True)
     fit_height(recolor_light(text), 200).save("public/logo-text-light.png", optimize=True)
+    # Menyvarianten: samma behandling, egen fil.
+    menu_im = load_rgba(MENU_SRC)
+    ma = np.asarray(menu_im)[..., 3]
+    qx0, qy0, qx1, qy1 = bbox(ma)
+    qpad = int((qy1 - qy0) * 0.04)
+    menu = menu_im.crop((qx0 - qpad, qy0 - qpad, qx1 + qpad, qy1 + qpad))
+    fit_height(menu, 160).save("public/logo-menu-dark.png", optimize=True)
+    fit_height(recolor_light(menu), 160).save("public/logo-menu-light.png", optimize=True)
+    print("menu:", menu.size)
     fit_height(full, 200).save("public/logo-dark.png", optimize=True)
     fit_height(recolor_light(full), 200).save("public/logo-light.png", optimize=True)
     mark.resize((512, 512), Image.LANCZOS).save("public/logo-mark-dark.png", optimize=True)

@@ -153,6 +153,13 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   Två färgvarianter byggs av ett skript: mörkt bläck för ljust tema (annars osynlig), vitt för mörkt;
   bocken förblir vit på grön. Visas bara i sidhuvudet (40 px) och på /om, inte på startsidan
   (dubblering). Appikon och favicon byggs från Alvins separata ikonfil (bara kugghjulet).
+- **Radardiagram i stället för linjediagram** på decksidan: kunskap per kategori är mer talande för
+  en student än ackumulerade kurvor, och passar bredvid stapeldiagrammet. Elva långa kategorinamn
+  får inte plats runt en radar i en tredjedelskolumn, så axlarna är numrerade och namnen står i en
+  färgkodad lista under båda diagrammen (samma färg som kategorins tagg). Fylld yta = inlärda,
+  streckad kontur = studerade; legend, hover och tabellvy enligt dataviz-reglerna.
+- **Kategorifärgerna** är tio jämnt fördelade nyanser i oklch (ljust: L 0,90 C 0,10; mörkt: L 0,44
+  C 0,13), inga bruna eller grå steg. Text i förgrundsfärg ovanpå fungerar i båda teman.
 - **Admin-rader är helt klickbara** (osynlig länk som täcker raden, knappar ovanpå) med hover, för
   både kategorier och kort, så att listorna beter sig likadant. Ingen separat "Öppna"-knapp.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på

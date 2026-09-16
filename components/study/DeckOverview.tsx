@@ -184,6 +184,10 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                 cardIds={cardIds}
                 progress={progress}
                 reviews={reviews}
+                categories={categories.map((c) => {
+                  const s = perCategory.find((p) => p.categoryId === c.id);
+                  return { id: c.id, title: c.title, total: s?.total ?? 0, studied: s?.studied ?? 0, learned: s?.learned ?? 0 };
+                })}
                 dueText={
                   stats && stats.due + stats.new > 0
                     ? `${sv.deck.dueNow(stats.due)}, ${sv.deck.newCards(stats.new)}`
@@ -304,11 +308,19 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
         </section>
 
         {/* Dela, källa och diskret nollställning (gäster har ingen kontosida) */}
-        <section className="order-6 grid gap-2 text-sm text-muted">
-          <div className="flex flex-wrap items-center gap-3">
-            <span>{sv.deck.share}</span>
-            <code className="rounded bg-surface-2 px-2 py-1 text-fg">/d/{deck.slug}</code>
-            <Button variant="ghost" size="sm" onClick={copyLink}>
+        <section className="order-6 grid gap-4 text-sm text-muted">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-surface p-5 shadow-card">
+            <div className="min-w-0">
+              <h2 className="text-lg font-semibold text-fg">{sv.deck.share}</h2>
+              <p className="mt-1">{sv.deck.shareHelp}</p>
+            </div>
+            <Button
+              variant={copied ? "secondary" : "primary"}
+              onClick={copyLink}
+              aria-live="polite"
+              className={copied ? "border-accent bg-accent-soft text-accent" : ""}
+              data-testid="copy-link"
+            >
               {copied ? sv.deck.shareCopied : sv.deck.shareCopy}
             </Button>
           </div>

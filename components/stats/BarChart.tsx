@@ -14,7 +14,7 @@ type Props = {
 };
 
 const W = 440;
-const H = 170;
+const H = 250;
 const PAD = { top: 12, right: 8, bottom: 26, left: 30 };
 
 /**

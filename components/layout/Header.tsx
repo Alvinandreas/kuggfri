@@ -13,7 +13,7 @@ export async function Header() {
     <header className="border-b border-line bg-bg/90 backdrop-blur">
       <div className="mx-auto flex w-full max-w-[var(--content-width)] items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/" aria-label={`${sv.app.name} – ${sv.nav.decks}`} className="inline-flex shrink-0 items-center rounded-md">
-          <Logo height={40} priority />
+          <Logo variant="menu" height={40} priority />
         </Link>
         <nav aria-label={sv.nav.menu} className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-sm sm:gap-1">
           <Link href="/" className="hidden rounded-md px-2 py-1.5 text-muted hover:text-fg sm:inline-block">

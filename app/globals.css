@@ -41,16 +41,16 @@
   --rate-5: #3f8b5c;
 
   /* Kategoritaggar, tio dämpade nyanser (Notion-stil). Index = kategorins plats i decket. */
-  --tag-1: #e6d3c3;
-  --tag-2: #f1dcc2;
-  --tag-3: #ece3b8;
-  --tag-4: #d6e5c4;
-  --tag-5: #cfe3dc;
-  --tag-6: #cfdfe8;
-  --tag-7: #d5d6ea;
-  --tag-8: #e5d3e4;
-  --tag-9: #ecd5d1;
-  --tag-10: #e0dcd4;
+  --tag-1: oklch(0.9 0.10 25);
+  --tag-2: oklch(0.9 0.10 60);
+  --tag-3: oklch(0.9 0.10 95);
+  --tag-4: oklch(0.9 0.10 140);
+  --tag-5: oklch(0.9 0.10 175);
+  --tag-6: oklch(0.9 0.10 215);
+  --tag-7: oklch(0.9 0.10 255);
+  --tag-8: oklch(0.9 0.10 290);
+  --tag-9: oklch(0.9 0.10 325);
+  --tag-10: oklch(0.9 0.10 355);
 
   /* Typografi */
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
@@ -93,16 +93,16 @@
   --rate-4: #8ab56b;
   --rate-5: #62a97c;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
-  --tag-1: #4a3a2e;
-  --tag-2: #4d3f2a;
-  --tag-3: #48442a;
-  --tag-4: #34452c;
-  --tag-5: #2c4540;
-  --tag-6: #2c3f4a;
-  --tag-7: #35364d;
-  --tag-8: #46344a;
-  --tag-9: #4c3634;
-  --tag-10: #3c3b37;
+  --tag-1: oklch(0.44 0.13 25);
+  --tag-2: oklch(0.44 0.13 60);
+  --tag-3: oklch(0.44 0.13 95);
+  --tag-4: oklch(0.44 0.13 140);
+  --tag-5: oklch(0.44 0.13 175);
+  --tag-6: oklch(0.44 0.13 215);
+  --tag-7: oklch(0.44 0.13 255);
+  --tag-8: oklch(0.44 0.13 290);
+  --tag-9: oklch(0.44 0.13 325);
+  --tag-10: oklch(0.44 0.13 355);
 }
 
 @theme inline {

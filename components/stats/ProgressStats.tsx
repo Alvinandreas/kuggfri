@@ -72,10 +72,10 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
 }
 
 type Tone = "green" | "navy" | "teal" | "violet";
-// Mjuk skala: grön (accent), mörkblå (chart-2), turkos (tag-5) och violett (tag-8).
+// Samma mjuka skala som kategoritaggarna: grön (accent), blå (tag-7), turkos (tag-5), violett (tag-8).
 const tones: Record<Tone, string> = {
   green: "border-accent/40 bg-accent-soft/60",
-  navy: "border-chart-2/50 bg-chart-2/15 dark:bg-chart-2/35",
+  navy: "border-tag-7 bg-tag-7/60 dark:bg-tag-7/35",
   teal: "border-tag-5 bg-tag-5/60 dark:bg-tag-5/35",
   violet: "border-tag-8 bg-tag-8/60 dark:bg-tag-8/35",
 };

@@ -108,7 +108,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
               ))}
               {n >= 3 ? (
                 <>
-                  <path d={toPath(stackedPts)} className="fill-chart-3/30 stroke-chart-3" strokeWidth={1.5} strokeLinejoin="round" />
+                  <path d={toPath(stackedPts)} className="fill-chart-1/15 stroke-chart-1/50" strokeWidth={1.5} strokeLinejoin="round" />
                   <path d={toPath(learnedPts)} className="fill-chart-1/45 stroke-chart-1" strokeWidth={2} strokeLinejoin="round" />
                 </>
               ) : null}
@@ -144,7 +144,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
               <span className="inline-block h-2.5 w-2.5 rounded-sm bg-chart-1" /> {sv.stats.seriesLearned}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2.5 w-2.5 rounded-sm bg-chart-3" /> {sv.stats.seriesPartial}
+              <span className="inline-block h-2.5 w-2.5 rounded-sm bg-chart-1/30 ring-1 ring-chart-1/50" /> {sv.stats.seriesPartial}
             </span>
           </div>
         </div>

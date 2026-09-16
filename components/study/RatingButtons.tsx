@@ -20,7 +20,7 @@ export const ratingClass: Record<SelfRating, string> = {
 export function RatingButtons({ disabled, onRate }: Props) {
   return (
     <fieldset className="grid gap-2" aria-label={sv.study.rateLabel}>
-      <legend className="text-center text-sm text-muted">{sv.study.rateLabel}</legend>
+      <legend className="sr-only">{sv.study.rateLabel}</legend>
       <div className="grid grid-cols-5 gap-2">
         {SELF_RATINGS.map((r) => (
           <button

@@ -183,6 +183,8 @@ export const sv = {
     reviewed: (n: number) => (n === 1 ? "1 kort genomgånget" : `${n} kort genomgångna`),
     distribution: "Fördelning av skattningar",
     needsWork: "Behöver mest arbete",
+    colQuestion: "Fråga",
+    colRating: "Skattning",
     needsWorkEmpty: "Inga kort fick lågt betyg.",
     nextDue: "Nästa schemalagda repetition",
     nextDueNone: "Inget kort är schemalagt ännu.",

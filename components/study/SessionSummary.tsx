@@ -75,23 +75,42 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
         {summary.needsWork.length === 0 ? (
           <p className="mt-2 text-muted">{sv.summary.needsWorkEmpty}</p>
         ) : (
-          <ul className="mt-3 grid gap-2">
-            {summary.needsWork.slice(0, 10).map(({ cardId, rating }) => {
-              const card = cardsById.get(cardId);
-              const title = categoryTitle(card?.category_id ?? null);
-              return (
-                <li key={cardId} className="flex items-start gap-3 text-sm">
-                  <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-semibold text-fg ${ratingClass[rating]}`}>
-                    {rating}
-                  </span>
-                  <span className="flex flex-col items-start gap-1">
-                    <span>{firstLine(card?.front ?? "")}</span>
-                    {title && card?.category_id ? <CategoryTag title={title} colorIndex={colorIndex.get(card.category_id) ?? 0} /> : null}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th scope="col" className="py-2 pr-3 font-medium">
+                    {sv.summary.colQuestion}
+                  </th>
+                  <th scope="col" className="py-2 pr-3 font-medium">
+                    {sv.deck.selectionCategory}
+                  </th>
+                  <th scope="col" className="py-2 text-right font-medium">
+                    {sv.summary.colRating}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {summary.needsWork.slice(0, 10).map(({ cardId, rating }) => {
+                  const card = cardsById.get(cardId);
+                  const title = categoryTitle(card?.category_id ?? null);
+                  return (
+                    <tr key={cardId} className="border-b border-line last:border-b-0">
+                      <td className="py-2.5 pr-3 align-middle">{firstLine(card?.front ?? "")}</td>
+                      <td className="py-2.5 pr-3 align-middle">
+                        {title && card?.category_id ? <CategoryTag title={title} colorIndex={colorIndex.get(card.category_id) ?? 0} /> : <span className="text-muted">–</span>}
+                      </td>
+                      <td className="py-2.5 text-right align-middle">
+                        <span className={`inline-flex h-7 min-w-7 items-center justify-center rounded-md border px-1.5 text-xs font-semibold text-fg ${ratingClass[rating]}`}>
+                          {rating}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

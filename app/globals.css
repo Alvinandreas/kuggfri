@@ -42,8 +42,8 @@
   --rate-5: #3f8b5c;
 
   /* Kategoritaggar, tio dämpade nyanser (Notion-stil). Index = kategorins plats i decket. */
-  --tag-1: oklch(0.9 0.10 25);
-  --tag-2: oklch(0.9 0.10 60);
+  --tag-1: oklch(0.9 0.07 20);
+  --tag-2: oklch(0.9 0.08 62);
   --tag-3: oklch(0.9 0.10 95);
   --tag-4: oklch(0.9 0.10 140);
   --tag-5: oklch(0.9 0.10 175);
@@ -67,6 +67,8 @@
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
   --content-width: 44rem;
   --card-min-height: 18rem;
+  /* Innehållets maxhöjd: lämna plats för rubrikrad, knappar och luft ovanför skärmkanten. */
+  --card-content-max: max(12rem, calc(100dvh - 27rem));
 }
 
 .dark {
@@ -95,8 +97,8 @@
   --rate-4: #8ab56b;
   --rate-5: #62a97c;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
-  --tag-1: oklch(0.44 0.13 25);
-  --tag-2: oklch(0.44 0.13 60);
+  --tag-1: oklch(0.44 0.09 20);
+  --tag-2: oklch(0.44 0.10 62);
   --tag-3: oklch(0.44 0.13 95);
   --tag-4: oklch(0.44 0.13 140);
   --tag-5: oklch(0.44 0.13 175);
@@ -261,11 +263,52 @@ body {
 @keyframes stamp-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) rotate(-12deg) scale(1.7);
+    transform: rotate(-12deg) scale(1.6);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) rotate(-12deg) scale(1);
+    transform: rotate(-12deg) scale(1);
+  }
+}
+@keyframes stamp-in-big {
+  0% {
+    opacity: 0;
+    transform: rotate(-14deg) scale(2.4);
+  }
+  70% {
+    opacity: 1;
+    transform: rotate(-10deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1.04);
+  }
+}
+@keyframes stamp-in-low {
+  from {
+    opacity: 0;
+    transform: rotate(-8deg) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1);
+  }
+}
+@keyframes rate-shake {
+  0%, 100% { translate: 0 0; }
+  20% { translate: -6px 0; }
+  40% { translate: 5px 0; }
+  60% { translate: -3px 0; }
+  80% { translate: 2px 0; }
+}
+@keyframes burst {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
   }
 }
 @keyframes ring-pulse {
@@ -273,7 +316,7 @@ body {
     box-shadow: 0 0 0 0 var(--pulse-color);
   }
   100% {
-    box-shadow: 0 0 0 14px transparent;
+    box-shadow: 0 0 0 var(--pulse-size, 14px) transparent;
   }
 }
 .card-enter {
@@ -286,14 +329,44 @@ body {
 .card-stamp {
   animation: stamp-in 160ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
+.card-stamp-big {
+  animation: stamp-in-big 320ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.card-stamp-low {
+  animation: stamp-in-low 200ms ease-out both;
+}
 .rate-pulse {
   animation: ring-pulse 480ms ease-out;
+}
+/* Kraftigare ring för höga skattningar, skakning för låga. */
+.rate-pulse-4,
+.rate-pulse-5 {
+  animation: ring-pulse 720ms ease-out;
+}
+.rate-pulse-5 {
+  --pulse-size: 26px;
+}
+.rate-shake {
+  animation: ring-pulse 480ms ease-out, rate-shake 360ms ease-in-out;
+}
+.rate-burst {
+  position: absolute;
+  inset: -6px;
+  border-radius: calc(var(--radius-lg) + 6px);
+  border: 3px solid var(--rate-5);
+  pointer-events: none;
+  animation: burst 700ms ease-out both;
+}
+.rate-burst-4 {
+  border-color: var(--rate-4);
+  animation-duration: 520ms;
 }
 .rate-pulse-1 {
   --pulse-color: color-mix(in oklab, var(--rate-1) 55%, transparent);
 }
 .rate-pulse-2 {
-  --pulse-color: color-mix(in oklab, var(--rate-2) 55%, transparent);
+  /* Tvåan pulserar rött som ettan: låg skattning ska kännas. */
+  --pulse-color: color-mix(in oklab, var(--rate-1) 55%, transparent);
 }
 .rate-pulse-3 {
   --pulse-color: color-mix(in oklab, var(--rate-3) 55%, transparent);
@@ -308,7 +381,11 @@ body {
   .card-enter,
   .card-leave,
   .card-stamp,
-  .rate-pulse {
+  .card-stamp-big,
+  .card-stamp-low,
+  .rate-pulse,
+  .rate-shake,
+  .rate-burst {
     animation: none;
   }
 }

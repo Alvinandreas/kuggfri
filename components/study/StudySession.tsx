@@ -320,12 +320,9 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         <RatingButtons disabled={!canRate} onRate={rate} />
       </div>
 
-      <p className="hidden text-center text-xs text-muted sm:block">{sv.study.keyboardHelp}</p>
-      <p className="text-center text-xs text-muted sm:hidden">{sv.study.swipeHelp}</p>
-
       {card ? (
         <>
-          <p className="text-center">
+          <p className="mt-3 text-center">
             <button
               type="button"
               onClick={() => setReportOpen(true)}

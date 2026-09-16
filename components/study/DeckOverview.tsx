@@ -353,11 +353,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
               {copied ? sv.deck.shareCopied : sv.deck.shareCopy}
             </Button>
           </div>
-          {deck.source_credit ? (
-            <p>
-              <span className="font-medium text-fg">{sv.deck.source}:</span> {deck.source_credit}
-            </p>
-          ) : null}
         </section>
       </div>
 

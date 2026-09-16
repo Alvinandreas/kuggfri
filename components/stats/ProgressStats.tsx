@@ -34,8 +34,8 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
     <div className="grid gap-5">
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} tone="green" />
-        <Tile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} tone="orange" />
-        <Tile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="blue" />
+        <Tile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} tone="navy" />
+        <Tile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
         <Tile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
       </dl>
 
@@ -71,12 +71,12 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
   );
 }
 
-type Tone = "green" | "orange" | "blue" | "violet";
-// Samma mjuka färgskala som kategoritaggarna (tag-4 grön, tag-2 orange, tag-6 blå, tag-8 violett).
+type Tone = "green" | "navy" | "teal" | "violet";
+// Mjuk skala: grön (accent), mörkblå (chart-2), turkos (tag-5) och violett (tag-8).
 const tones: Record<Tone, string> = {
   green: "border-accent/40 bg-accent-soft/60",
-  orange: "border-tag-2 bg-tag-2/60 dark:bg-tag-2/35",
-  blue: "border-tag-6 bg-tag-6/60 dark:bg-tag-6/35",
+  navy: "border-chart-2/50 bg-chart-2/15 dark:bg-chart-2/35",
+  teal: "border-tag-5 bg-tag-5/60 dark:bg-tag-5/35",
   violet: "border-tag-8 bg-tag-8/60 dark:bg-tag-8/35",
 };
 

@@ -86,7 +86,9 @@ export function Flashcard({
     <div className="card-stack" data-testid="flashcard" data-card-id={cardId} data-flipped={flipped}>
       <div className={`flip-scene card-enter ${feedback !== null ? "card-leave" : ""}`.trim()}>
         <div
-          className={`flip-inner grid cursor-pointer select-none rounded-lg ${feedback !== null ? `rate-pulse rate-pulse-${feedback}` : ""}`.trim()}
+          className={`flip-inner grid cursor-pointer select-none rounded-lg ${feedback !== null ? `rate-pulse rate-pulse-${feedback}` : ""} ${
+            feedback !== null && feedback <= 2 ? "rate-shake" : ""
+          }`.trim()}
           data-flipped={flipped}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
@@ -98,8 +100,10 @@ export function Flashcard({
         >
           <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line`}>
             <FaceHeader label={sv.study.front} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
-            <div className="flex max-h-[55dvh] flex-1 items-center justify-center overflow-y-auto py-2 text-center">
-              <Markdown text={front} />
+            {/* m-auto på innehållet (inte items-center på behållaren): centrerat när det får plats,
+                scrollbart från toppen när det inte gör det, så inget hamnar under rubrikraden. */}
+            <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2 text-center">
+              <Markdown text={front} className="m-auto w-full" />
             </div>
             {hint ? (
               <div className="mt-4 border-t border-line pt-3 text-center text-sm">
@@ -125,10 +129,11 @@ export function Flashcard({
 
           <section aria-label={sv.study.back} aria-hidden={!flipped} inert={!flipped} className={`${faceClass} flip-back border border-accent/40`}>
             <FaceHeader label={sv.study.back} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
-            <div className="flex max-h-[55dvh] flex-1 items-center overflow-y-auto py-2">
-              <Markdown text={back} className="w-full" />
+            <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2">
+              <Markdown text={back} className="m-auto w-full" />
             </div>
             {feedback !== null ? <Stamp rating={feedback} /> : null}
+            {feedback !== null && feedback >= 4 ? <span aria-hidden="true" className={`rate-burst rate-burst-${feedback}`} /> : null}
           </section>
         </div>
       </div>
@@ -145,15 +150,27 @@ function FaceHeader({ label, categoryTitle, colorIndex }: { label: string; categ
   );
 }
 
-/** Stämpel med vald skattning, i skattningens färg. */
+/**
+ * Stämpel med vald skattning, alltid en bit in i kortets övre högra hörn.
+ * 5 och 4 får en större stämpel med kraftigare intåg (och en grön ring runt kortet),
+ * 1 och 2 en mindre, tyngre stämpel.
+ */
+const stampSize: Record<SelfRating, string> = {
+  1: "h-20 w-20 sm:h-24 sm:w-24 card-stamp-low",
+  2: "h-20 w-20 sm:h-24 sm:w-24 card-stamp-low",
+  3: "h-24 w-24 sm:h-28 sm:w-28",
+  4: "h-28 w-28 sm:h-32 sm:w-32 card-stamp-big",
+  5: "h-32 w-32 sm:h-36 sm:w-36 card-stamp-big",
+};
+
 function Stamp({ rating }: { rating: SelfRating }) {
   return (
     <div
       aria-hidden="true"
       data-testid="stamp"
-      className={`card-stamp pointer-events-none absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border-4 bg-surface/92 text-fg shadow-card sm:h-28 sm:w-28 ${ratingClass[rating]}`}
+      className={`card-stamp pointer-events-none absolute right-4 top-14 flex flex-col items-center justify-center rounded-full border-4 bg-surface/92 text-fg shadow-card sm:right-7 sm:top-16 ${stampSize[rating]} ${ratingClass[rating]}`}
     >
-      <span className="text-3xl font-bold leading-none sm:text-4xl">{sv.study.stamp(rating)}</span>
+      <span className={`font-bold leading-none ${rating >= 4 ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl"}`}>{sv.study.stamp(rating)}</span>
       <span className="mt-1 text-[0.65rem] font-medium uppercase tracking-wide">{sv.study.rate[rating]}</span>
     </div>
   );

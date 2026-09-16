@@ -158,6 +158,12 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   får inte plats runt en radar i en tredjedelskolumn, så axlarna är numrerade och namnen står i en
   färgkodad lista under båda diagrammen (samma färg som kategorins tagg). Fylld yta = inlärda,
   streckad kontur = studerade; legend, hover och tabellvy enligt dataviz-reglerna.
+- **Kortinnehåll centreras med `m-auto` på barnet, inte `items-center` på behållaren.** Med
+  items-center + overflow klipps toppen av långt innehåll under rubrikraden och går inte att scrolla
+  fram; med m-auto är kort innehåll fortfarande centrerat och långt innehåll scrollas från toppen.
+- **Skattningskvittensen skalar med betyget.** 5 och 4 får större stämpel, längre intåg och en grön ring
+  runt kortet; 1 och 2 en mindre stämpel och en kort skakning. Poängen är känslan: en femma ska
+  kännas som en belöning, en etta ska kännas.
 - **"Delvis inlärda" = skattning 3 eller 4.** Alvin bad om "3"; kort med 4 ("Bra") räknas också som
   delvis, annars försvinner de ur diagrammet (inlärt kräver 5). Ändras lätt i `categoryStats`.
 - **Tabellvyerna är dolda (sr-only), inte borttagna.** Alvin vill inte se länken; skärmläsare får

@@ -101,7 +101,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] /om: avsnitt "För kursansvariga"; /d/dev-preview borttagen
 - [x] Lämna-kvar-sida: `docs/lamna-kvar-johan.pdf` (källa `docs/lamna-kvar-johan.html`), skriv ut och lägg ovanpå granskningsunderlaget
 - [x] Allt pushat och live på kuggfri.com (ons 21:50, commit be99e4e): felrapporter, ikon/manifest, /om, mobilfix i admin. Testkopian på 3001 ombyggd
-- [ ] Skärmdumpar av hela flödet som reserv
+- [x] Skärmdumpar av hela flödet som reserv: `docs/demo-skarmdumpar/` (17 bilder: gäst i mobilen mot kuggfri.com, admin på desktop; byggs om med `node scripts/demo-shots.cjs`)
 - [ ] Ny kodfrysning 22:00, full verify, ombyggd testkopia
 
 - [ ] Sista ändringar från Alvins onsdagslista

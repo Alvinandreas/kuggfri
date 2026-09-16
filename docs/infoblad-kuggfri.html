@@ -17,8 +17,8 @@
   }
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Segoe UI", ui-sans-serif, system-ui, Roboto, Arial, sans-serif; font-size: 9.6pt; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { width: 210mm; height: 297mm; padding: 12mm 13mm 10mm; display: flex; flex-direction: column; gap: 4mm; background: var(--bg); page-break-after: always; overflow: hidden; }
+  html, body { margin: 0; background: #ffffff; color: var(--fg); font-family: "Segoe UI", ui-sans-serif, system-ui, Roboto, Arial, sans-serif; font-size: 9.6pt; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 12mm 13mm 10mm; display: flex; flex-direction: column; gap: 4mm; background: #ffffff; page-break-after: always; overflow: hidden; }
   .page:last-child { page-break-after: auto; }
   h1 { font-size: 19pt; line-height: 1.15; letter-spacing: -0.01em; margin: 0; font-weight: 600; }
   h2 { font-size: 12pt; margin: 0 0 5pt; font-weight: 600; }
@@ -27,7 +27,7 @@
   p:last-child { margin-bottom: 0; }
   .muted { color: var(--muted); }
   .small { font-size: 8.6pt; }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 9pt 11pt; }
+  .card { background: #f7f6f2; border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 9pt 11pt; }
   .card.accent { border-color: color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--accent-soft) 55%, white); }
   .row { display: grid; gap: 4mm; }
   .cols-2 { grid-template-columns: 1fr 1fr; }
@@ -47,8 +47,8 @@
   ul { margin: 0; padding-left: 0; list-style: none; }
   ul li { position: relative; padding-left: 12pt; margin-bottom: 2.5pt; }
   ul li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 6pt; height: 6pt; border-radius: 50%; background: var(--accent); }
-  ol.steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
-  ol.steps li { border: 1px solid var(--line); border-radius: var(--radius-md); padding: 6pt 8pt; background: var(--surface); }
+  ol.steps { margin: 4pt 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  ol.steps li { border: 1px solid var(--line); border-radius: var(--radius-md); padding: 7pt 9pt; background: #ffffff; }
   ol.steps .n { display: inline-flex; width: 16pt; height: 16pt; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; align-items: center; justify-content: center; font-size: 10pt; margin-bottom: 4pt; }
   .tags { display: flex; flex-wrap: wrap; gap: 4pt; margin-top: 5pt; }
   .tag { font-size: 8.5pt; font-weight: 600; padding: 2pt 8pt; border-radius: 999px; color: var(--fg); }
@@ -57,12 +57,18 @@
   td { padding: 3.5pt 6pt; border-bottom: 1px solid var(--line); vertical-align: top; }
   tr:last-child td { border-bottom: 0; }
   td.k { color: var(--accent); font-weight: 600; }
+  td.k .cell { display: flex; align-items: flex-start; gap: 5pt; }
+  td.k .check { flex: none; margin-top: 1.5pt; margin-right: 0; }
   td.x { color: var(--muted); }
   .check { display: inline-block; width: 12pt; height: 12pt; border-radius: 50%; background: var(--accent); color: #fff; font-size: 8.5pt; text-align: center; line-height: 12pt; margin-right: 4pt; vertical-align: -1.5pt; }
   .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8mm; padding-top: 3mm; border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
   .foot img { height: 9mm; width: auto; }
   .url { color: var(--accent); font-weight: 700; }
-  .illu { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; align-items: center; }
+  .illu { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; align-items: center; margin-bottom: 6pt; }
+  .illu p { font-size: 10pt; line-height: 1.55; margin-bottom: 8pt; }
+  .legend { display: grid; gap: 4pt; margin-top: 6pt; font-size: 8.8pt; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6pt; }
+  .legend svg { flex: none; }
   .callout { border-left: 3px solid var(--accent); padding: 3pt 9pt; background: color-mix(in oklab, var(--accent-soft) 45%, white); border-radius: 0 var(--radius-md) var(--radius-md) 0; }
 </style>
 </head>
@@ -73,8 +79,7 @@
   <header class="top">
     <img src="../public/logo-light.png" alt="Kuggfri">
     <div class="tagline">
-      <div class="t">Repetitionskort som en naturlig del av kursen</div>
-      <div class="muted small">Gratis · utan konto · byggt för Chalmers</div>
+      <div class="t">Flashcardset för kursen Materialteknik MTT085</div>
     </div>
   </header>
 
@@ -92,13 +97,6 @@
       <h2>Vad Kuggfri är</h2>
       <p>En fri flashcard-tjänst för kurser på Chalmers. Studenten öppnar en länk och börjar plugga direkt i mobilen, utan konto. Varje kort har en fråga på framsidan och ett svar på baksidan, sorterat i kategorier som följer kursens upplägg.</p>
       <p>Med konto följer progressen med mellan enheter. Innehållet ägs av kursen, redigeras i webbläsaren och kan exporteras när som helst.</p>
-      <div class="tags">
-        <span class="tag" style="background:var(--tag-1)">Materialgrupper</span>
-        <span class="tag" style="background:var(--tag-3)">Kristallstruktur</span>
-        <span class="tag" style="background:var(--tag-4)">Styvhet och töjning</span>
-        <span class="tag" style="background:var(--tag-6)">Stål och värmebehandling</span>
-        <span class="tag" style="background:var(--tag-8)">Hållbarhet</span>
-      </div>
     </div>
     <div class="card">
       <h2>Bakgrund</h2>
@@ -114,30 +112,31 @@
         <p>Efter varje kort skattar studenten sig själv, 1 till 5. Skattningen styr när kortet kommer tillbaka: kort man kan väntar länge, kort man inte kan kommer snart, och igen samma pass. Algoritmen (FSRS, öppen och väl beprövad) räknar ut intervallet per kort utifrån hur stabilt minnet är.</p>
         <p>Det bygger på två av de mest robusta resultaten i inlärningsforskningen: <strong>retrieval practice</strong> (att hämta fram ett svar ur minnet ger mer än att läsa om det) och <strong>spacing</strong> (repetition utspridd över tid slår koncentrerad repetition). Studenten lägger tiden där den ger mest, i stället för jämnt över allt.</p>
       </div>
-      <svg viewBox="0 0 260 150" width="100%" aria-hidden="true">
-        <defs><marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1f7a4d"/></marker></defs>
-        <line x1="20" y1="120" x2="245" y2="120" stroke="#dedbd3" stroke-width="1"/>
-        <text x="20" y="138" font-size="8" fill="#676259">dag 0</text>
-        <text x="215" y="138" font-size="8" fill="#676259">dag 30</text>
-        <!-- Kort som kunnats: långa intervall -->
-        <g stroke="#1f7a4d" stroke-width="2" fill="none">
-          <path d="M125,120 C138,82 150,82 163,120" marker-end="url(#a)"/>
-          <path d="M163,120 C185,42 223,42 245,120" marker-end="url(#a)"/>
+      <div>
+      <svg viewBox="0 0 260 130" width="100%" aria-hidden="true">
+        <defs>
+          <marker id="ag" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1f7a4d"/></marker>
+          <marker id="ab" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#3b6ea5"/></marker>
+        </defs>
+        <line x1="20" y1="110" x2="245" y2="110" stroke="#dedbd3" stroke-width="1"/>
+        <text x="20" y="126" font-size="8" fill="#676259">dag 0</text>
+        <text x="216" y="126" font-size="8" fill="#676259">dag 30</text>
+        <!-- Först täta repetitioner (kunde inte), sedan allt längre (kunde): ett sammanhängande svep -->
+        <g stroke="#3b6ea5" stroke-width="1.8" fill="none" stroke-dasharray="3 2.5">
+          <path d="M20,110 C25,92 31,92 36,110" marker-end="url(#ab)"/>
+          <path d="M36,110 C43,88 50,88 57,110" marker-end="url(#ab)"/>
+          <path d="M57,110 C66,82 75,82 84,110" marker-end="url(#ab)"/>
         </g>
-        <text x="130" y="36" font-size="8.5" fill="#1f7a4d" font-weight="600">kunde: allt längre intervall</text>
-        <!-- Kort som inte kunnats: täta intervall -->
-        <g stroke="#3b6ea5" stroke-width="1.6" fill="none" stroke-dasharray="3 2">
-          <path d="M20,120 C26,102 30,102 36,120"/>
-          <path d="M36,120 C43,100 48,100 55,120"/>
-          <path d="M55,120 C64,98 70,98 79,120"/>
-          <path d="M79,120 C88,94 96,94 105,120"/>
-        </g>
-        <text x="20" y="80" font-size="8.5" fill="#3b6ea5" font-weight="600">kunde inte: snart igen</text>
-        <g>
-          <rect x="18" y="8" width="10" height="10" rx="2" fill="#dcefe3" stroke="#1f7a4d"/><text x="32" y="17" font-size="8" fill="#1d1c19">skattning 5</text>
-          <rect x="90" y="8" width="10" height="10" rx="2" fill="#e8eef7" stroke="#3b6ea5"/><text x="104" y="17" font-size="8" fill="#1d1c19">skattning 1–2</text>
+        <g stroke="#1f7a4d" stroke-width="2.2" fill="none">
+          <path d="M84,110 C98,64 114,64 128,110" marker-end="url(#ag)"/>
+          <path d="M128,110 C155,22 218,22 245,110" marker-end="url(#ag)"/>
         </g>
       </svg>
+      <div class="legend">
+        <span><svg width="26" height="10" viewBox="0 0 26 10"><path d="M1,9 C7,-2 19,-2 25,9" fill="none" stroke="#3b6ea5" stroke-width="1.8" stroke-dasharray="3 2.5"/></svg>Skattning 1–2: kortet kommer tillbaka snart, och igen samma pass</span>
+        <span><svg width="26" height="10" viewBox="0 0 26 10"><path d="M1,9 C7,-2 19,-2 25,9" fill="none" stroke="#1f7a4d" stroke-width="2.2"/></svg>Skattning 4–5: allt längre intervall, kortet tar allt mindre tid</span>
+      </div>
+      </div>
     </div>
     <ol class="steps">
       <li><span class="n">1</span><h3>Vänd och svara</h3><p class="small">Studenten försöker svara innan baksidan visas. Själva framplockningen är inlärningen.</p></li>
@@ -159,13 +158,13 @@
     <table>
       <thead><tr><th style="width:26%"></th><th style="width:37%">Kuggfri</th><th>Kommersiella appar (t.ex. Brainscape, Quizlet)</th></tr></thead>
       <tbody>
-        <tr><td>Kostnad</td><td class="k"><span class="check">✓</span>Gratis, för alltid, för alla</td><td class="x">Gratisnivå med begränsningar, prenumeration för resten</td></tr>
-        <tr><td>Åtkomst</td><td class="k"><span class="check">✓</span>En länk. Inget konto krävs för att plugga</td><td class="x">Konto krävs, ofta manuellt godkännande per student</td></tr>
-        <tr><td>Innehållet</td><td class="k"><span class="check">✓</span>Ägs av kursen, redigeras i webbläsaren, exporteras när som helst</td><td class="x">Ligger på leverantörens plattform, ofta på en privatpersons konto</td></tr>
-        <tr><td>Kvalitetsslinga</td><td class="k"><span class="check">✓</span>Studenter rapporterar fel direkt från kortet; samlas per deck</td><td class="x">Saknas eller går via leverantören</td></tr>
-        <tr><td>Insyn för läraren</td><td class="k"><span class="check">✓</span>Vilka kort som får lägst skattning, hur många som pluggar</td><td class="x">Ingen, eller bara i betalda lärarpaket</td></tr>
-        <tr><td>Data och integritet</td><td class="k"><span class="check">✓</span>Minimal insamling, EU, ingen reklam, ingen spårning</td><td class="x">Reklam och spårning i gratisversionen, data ofta utanför EU</td></tr>
-        <tr><td>Koppling till kursen</td><td class="k"><span class="check">✓</span>Kategorier följer föreläsningarna, kan uppdateras när kursen ändras</td><td class="x">Generiskt set som lever sitt eget liv</td></tr>
+        <tr><td>Kostnad</td><td class="k"><span class="cell"><span class="check">✓</span><span>Gratis, för alltid, för alla</span></span></td><td class="x">Gratisnivå med begränsningar, prenumeration för resten</td></tr>
+        <tr><td>Åtkomst</td><td class="k"><span class="cell"><span class="check">✓</span><span>En länk. Inget konto krävs för att plugga</span></span></td><td class="x">Konto krävs, ofta manuellt godkännande per student</td></tr>
+        <tr><td>Innehållet</td><td class="k"><span class="cell"><span class="check">✓</span><span>Ägs av kursen, redigeras i webbläsaren, exporteras när som helst</span></span></td><td class="x">Ligger på leverantörens plattform, ofta på en privatpersons konto</td></tr>
+        <tr><td>Kvalitetsslinga</td><td class="k"><span class="cell"><span class="check">✓</span><span>Studenter rapporterar fel direkt från kortet; samlas per deck</span></span></td><td class="x">Saknas eller går via leverantören</td></tr>
+        <tr><td>Insyn för läraren</td><td class="k"><span class="cell"><span class="check">✓</span><span>Vilka kort som får lägst skattning, hur många som pluggar</span></span></td><td class="x">Ingen, eller bara i betalda lärarpaket</td></tr>
+        <tr><td>Data och integritet</td><td class="k"><span class="cell"><span class="check">✓</span><span>Minimal insamling, EU, ingen reklam, ingen spårning</span></span></td><td class="x">Reklam och spårning i gratisversionen, data ofta utanför EU</td></tr>
+        <tr><td>Koppling till kursen</td><td class="k"><span class="cell"><span class="check">✓</span><span>Kategorier följer föreläsningarna, kan uppdateras när kursen ändras</span></span></td><td class="x">Generiskt set som lever sitt eget liv</td></tr>
       </tbody>
     </table>
   </div>

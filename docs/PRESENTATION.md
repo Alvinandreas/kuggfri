@@ -52,6 +52,9 @@ Visa i telefonen eller laptopen. Poängen att göra:
 
 - Visa ett kort i redigeraren med live-förhandsvisning av markdown och formler.
 - Visa importen: klistra in en CSV, se diffen (nya, uppdaterade, oförändrade) innan något skrivs.
+- Visa **Felrapporter**: en student (eller gäst) har tryckt "Rapportera fel på kortet" mitt i pluggandet,
+  skrivit två rader, och här ligger den med länk rakt in i kortet. Åtgärda, markera. Poängen: studenterna
+  gör granskningsjobbet åt er, ni behöver bara ta ställning. (Ha en rapport inlagd i förväg.)
 - Visa statistiken: vilka kort som får lägst snittskattning. Poängen: de korten är antingen svåra eller
   dåligt formulerade, och det är precis den listan som är intressant för en examinator.
 
@@ -64,7 +67,8 @@ Ge honom tre alternativ, från lättast till mest involverad:
 2. **Eget konto med adminrättigheter** på just det här decket. Han kan rätta direkt, avaktivera kort och
    se statistiken själv. (Tekniskt finns bara "admin för allt" i dag; en granskarroll per deck är nästa
    steg om han vill det.)
-3. **Löpande:** efter varje tentaperiod tittar ni tillsammans på korten med lägst snitt.
+3. **Löpande:** efter varje tentaperiod tittar ni tillsammans på korten med lägst snitt och på
+   felrapporterna från studenterna.
 
 Fråga också om det finns delar av det nuvarande kursinnehållet som han vill lägga till eller ta bort
 (nya föreläsningar, ändrad kurslitteratur).

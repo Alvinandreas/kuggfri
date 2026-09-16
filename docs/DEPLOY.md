@@ -119,7 +119,7 @@ API-nyckeln är en hemlighet: klistra in den i Supabase-dashboarden, aldrig i re
   registrering och lösenordsinloggning fungerar på kuggfri.com; inloggningslänk fungerar lokalt med
   de nya mallarna (testat utan cookies mot Mailpit) och i molnet så snart mallarna är inklistrade.
 - E2E-körning mot produktion i läsläge (inga testkonton skapas där).
-- Tar bort `/d/dev-preview`-rutten (svarar redan 404 i produktion).
+- Tar bort `/d/dev-preview`-rutten. Gjort 16 sep.
 
 ## Skicka till Claude
 

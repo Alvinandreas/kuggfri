@@ -50,25 +50,25 @@ export function CardEditor({ deckId, categories, card }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-6">
+    <form onSubmit={onSubmit} className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <p className="text-sm text-muted">{sv.admin.markdownHelp}</p>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="grid gap-4">
-          <label className="grid gap-1 text-sm">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
+          <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.front}</span>
             <textarea value={front} onChange={(e) => setFront(e.target.value)} rows={5} required className={textareaClass} data-testid="card-front" />
           </label>
-          <label className="grid gap-1 text-sm">
+          <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.back}</span>
             <textarea value={back} onChange={(e) => setBack(e.target.value)} rows={12} required className={textareaClass} data-testid="card-back" />
           </label>
-          <label className="grid gap-1 text-sm">
+          <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.hint}</span>
             <input value={hint} onChange={(e) => setHint(e.target.value)} className="h-10 w-full rounded-md border border-line-strong bg-surface px-3 text-fg" />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="grid gap-1 text-sm">
+            <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
               <span>{sv.admin.category}</span>
               <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="h-10 rounded-md border border-line-strong bg-surface px-3 text-fg">
                 <option value="">{sv.admin.noCategory}</option>
@@ -86,7 +86,7 @@ export function CardEditor({ deckId, categories, card }: Props) {
           </div>
         </div>
 
-        <div className="grid content-start gap-4">
+        <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-4">
           <p className="text-sm font-medium">{sv.admin.preview}</p>
           <div className="rounded-lg border border-line bg-surface p-5" aria-label={`${sv.admin.preview}: ${sv.admin.front}`}>
             <p className="mb-2 text-xs uppercase tracking-wide text-muted">{sv.study.front}</p>

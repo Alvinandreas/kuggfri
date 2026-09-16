@@ -19,7 +19,7 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
   const lowest = rated.slice(0, 10);
 
   return (
-    <div className="grid gap-8">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
       <h1 className="text-2xl font-semibold tracking-tight">
         {sv.admin.stats}: {data.deck.title}
       </h1>
@@ -50,7 +50,7 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
             <h2 id="lagst" className="text-lg font-semibold">
               {sv.admin.statsLowest}
             </h2>
-            <ol className="mt-3 grid gap-2">
+            <ol className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-2">
               {lowest.map((c) => (
                 <li key={c.card_id} className="flex items-center justify-between gap-3 rounded-md border border-line bg-surface px-3 py-2 text-sm">
                   <span className="truncate">{firstLine(c.front)}</span>

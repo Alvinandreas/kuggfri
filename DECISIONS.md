@@ -136,6 +136,14 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Byt lösenord under Konto** i stället för ett separat "glömt lösenord"-flöde. Inloggningslänken
   är återställningsvägen: logga in med länk, välj nytt lösenord. Färre mejl, färre sidor, samma
   resultat. Kräver ingen ominloggning (`secure_password_change` är av).
+- **Felrapporter från studenter (`card_reports`)** är kvalitetsslingan: vem som helst, även gäster,
+  kan flagga ett kort direkt från studieläget; admin ser rapporterna per deck, hoppar till kortet,
+  åtgärdar och markerar. Kolumnrättigheter gör att klienten bara får sätta kort, text och kontakt;
+  `user_id` sätts av databasen (`default auth.uid()`), status av default. RLS släpper bara in
+  rapporter på kort i publicerade deck och låter bara admin läsa. Ingen rate-limit ännu; om skräp
+  dyker upp är en captcha eller "max N per timme och IP" nästa steg. Inloggningslänken var inte
+  klar för molnet (kräver egen SMTP), så det här är veckans viktigaste tillägg inför examinatormötet:
+  det gör granskningserbjudandet konkret.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
   mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
   till före lansering till studenter, se docs/DEPLOY.md 3c.

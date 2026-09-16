@@ -30,7 +30,7 @@ export function CategoryManager({ deckId, categories }: { deckId: string; catego
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
       <p className="text-sm text-muted">{sv.admin.reorderHelp}</p>
       <SortableList
         items={categories}

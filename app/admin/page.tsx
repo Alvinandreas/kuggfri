@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: sv.admin.title };
 export default async function AdminPage() {
   const decks = await getAllDecksForAdmin();
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">{sv.admin.decks}</h1>
         <LinkButton href="/admin/deck/ny" size="sm">
@@ -19,7 +19,7 @@ export default async function AdminPage() {
       {decks.length === 0 ? (
         <p className="text-muted">{sv.admin.noDecks}</p>
       ) : (
-        <ul className="grid gap-2" data-testid="admin-deck-list">
+        <ul className="grid grid-cols-[minmax(0,1fr)] gap-2" data-testid="admin-deck-list">
           {decks.map((d) => (
             <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface p-4">
               <div>

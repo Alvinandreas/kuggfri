@@ -75,6 +75,17 @@ export type StudySessionRow = {
   cards_reviewed: number;
 };
 
+export type CardReportRow = {
+  id: string;
+  card_id: string;
+  user_id: string | null;
+  message: string;
+  contact: string | null;
+  status: "open" | "resolved";
+  created_at: string;
+  resolved_at: string | null;
+};
+
 export type ReviewLogRow = {
   id: string;
   user_id: string;
@@ -165,6 +176,13 @@ export type Database = {
         Row: ReviewLogRow;
         Insert: Optional<ReviewLogRow, "id" | "reviewed_at">;
         Update: Partial<ReviewLogRow>;
+        Relationships: [];
+      };
+      card_reports: {
+        Row: CardReportRow;
+        // Klienten får bara sätta dessa kolumner (kolumnrättigheter i databasen).
+        Insert: { card_id: string; message: string; contact?: string | null };
+        Update: Partial<Pick<CardReportRow, "status" | "resolved_at">>;
         Relationships: [];
       };
     };

@@ -23,6 +23,7 @@ import { endOfDay } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Flashcard } from "./Flashcard";
+import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
 import { SessionSummary } from "./SessionSummary";
 
@@ -57,6 +58,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   /** Nyckel (kort + position) för det kort som är vänt. Ett nytt kort börjar alltid på framsidan. */
   const [flippedKey, setFlippedKey] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [announce, setAnnounce] = useState("");
   const [saveError, setSaveError] = useState(false);
   const startedAt = useRef(new Date());
@@ -320,6 +322,22 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
 
       <p className="hidden text-center text-xs text-muted sm:block">{sv.study.keyboardHelp}</p>
       <p className="text-center text-xs text-muted sm:hidden">{sv.study.swipeHelp}</p>
+
+      {card ? (
+        <>
+          <p className="text-center">
+            <button
+              type="button"
+              onClick={() => setReportOpen(true)}
+              className="text-xs text-muted underline underline-offset-2 decoration-line-strong hover:text-fg"
+              data-testid="report-open"
+            >
+              {sv.report.open}
+            </button>
+          </p>
+          <ReportDialog open={reportOpen} cardId={card.id} onClose={() => setReportOpen(false)} />
+        </>
+      ) : null}
 
       {saveError ? (
         <p role="alert" className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">

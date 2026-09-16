@@ -11,7 +11,7 @@ export default async function ImportPage({ params }: { params: Promise<{ id: str
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <h1 className="text-2xl font-semibold tracking-tight">
         {sv.admin.importTitle}: {data.deck.title}
       </h1>

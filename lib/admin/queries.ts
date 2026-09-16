@@ -1,6 +1,6 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { CardRow, CategoryRow, DeckRow } from "@/lib/supabase/database.types";
+import type { CardReportRow, CardRow, CategoryRow, DeckRow } from "@/lib/supabase/database.types";
 
 export type AdminDeckSummary = DeckRow & { cardCount: number };
 
@@ -64,4 +64,31 @@ export async function getDeckStats(deckId: string): Promise<DeckStats> {
       total_reps: Number(c.total_reps),
     })),
   };
+}
+
+export type AdminReport = CardReportRow & { card: { id: string; front: string } | null };
+
+/** Alla felrapporter för kort i decket, nyast först. */
+export async function getDeckReports(deckId: string): Promise<AdminReport[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data: cards } = await supabase.from("cards").select("id, front").eq("deck_id", deckId);
+  const byId = new Map((cards ?? []).map((c) => [c.id, c] as const));
+  if (byId.size === 0) return [];
+  const { data, error } = await supabase
+    .from("card_reports")
+    .select("*")
+    .in("card_id", [...byId.keys()])
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({ ...r, card: byId.get(r.card_id) ?? null }));
+}
+
+/** Antal öppna felrapporter i decket (för länken på deckets adminsida). */
+export async function countOpenReports(deckId: string): Promise<number> {
+  const supabase = await createSupabaseServerClient();
+  const { data: cards } = await supabase.from("cards").select("id").eq("deck_id", deckId);
+  const ids = (cards ?? []).map((c) => c.id);
+  if (ids.length === 0) return 0;
+  const { count } = await supabase.from("card_reports").select("id", { count: "exact", head: true }).in("card_id", ids).eq("status", "open");
+  return count ?? 0;
 }

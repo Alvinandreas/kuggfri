@@ -359,6 +359,20 @@ export const sv = {
     sortOrder: "Ordning",
     open: "Öppna",
     viewDeck: "Visa decket",
+    reports: "Felrapporter",
+    reportsHelp:
+      "Studenter kan flagga fel eller otydligheter direkt från kortet, även som gäster. Åtgärda i kortet, markera sedan rapporten som åtgärdad.",
+    reportsNone: "Inga felrapporter.",
+    reportsOpen: "Öppna",
+    reportsResolved: "Åtgärdade",
+    reportStatusOpen: "Öppen",
+    reportStatusResolved: "Åtgärdad",
+    reportResolve: "Markera som åtgärdad",
+    reportReopen: "Öppna igen",
+    reportDelete: "Ta bort",
+    reportCard: "Kort",
+    reportContact: "Kontakt",
+    reportAnonymous: "anonym",
     noDecks: "Inga deck ännu.",
   },
   about: {
@@ -375,12 +389,35 @@ export const sv = {
     sourcesBody:
       "Innehållet i varje deck är sammanställt av studenter utifrån kursmaterial. Kreditering per deck:",
     noSource: "Ingen källa angiven.",
+    teachers: "För kursansvariga",
+    teachersIntro:
+      "Kuggfri är byggt för att en kurs ska kunna använda det utan extra arbete för läraren, men med full insyn och kontroll om man vill ha det.",
+    teachersPoints: [
+      "Innehållet ägs av kursen. Alla kort kan exporteras när som helst som en vanlig fil, ingen inlåsning.",
+      "Studenterna rapporterar fel direkt från kortet. Rapporterna samlas per deck med länk rakt in i kortet, så granskningen görs där felet finns.",
+      "Statistiken visar vilka kort som får lägst självskattning, alltså de som antingen är svåra eller otydligt formulerade. Det är en färdig lista att titta på efter varje tentaperiod.",
+      "Redigering sker i webbläsaren med förhandsvisning av formler och formatering. Import från CSV eller JSON visar vad som ändras innan något sparas.",
+      "Inga kostnader, ingen reklam, ingen spårning. Studenter kan plugga helt utan konto. Data för den som skapar konto lagras inom EU.",
+    ],
+    teachersOutro:
+      "Vill du granska, påverka eller lägga till innehåll i ett deck för din kurs? Hör av dig till den som sammanställt decket, se krediteringen ovan.",
     privacy: "Integritet",
     privacyBody:
       "Vi samlar inte in något utöver e-post, valfritt visningsnamn och studieprogress för den som väljer att skapa konto. Läs mer i integritetspolicyn.",
   },
   privacy: {
     title: "Integritetspolicy",
+  },
+  report: {
+    open: "Rapportera fel på kortet",
+    title: "Rapportera fel på kortet",
+    help: "Beskriv vad som är fel eller otydligt. Rapporten går till den som ansvarar för decket.",
+    message: "Vad är fel?",
+    contact: "E-post om du vill ha svar (valfritt)",
+    send: "Skicka rapport",
+    sent: "Tack! Rapporten är skickad.",
+    tooShort: "Skriv några ord om vad som är fel.",
+    tooLong: "Rapporten är för lång (max 1000 tecken).",
   },
   errors: {
     generic: "Något gick fel. Försök igen.",

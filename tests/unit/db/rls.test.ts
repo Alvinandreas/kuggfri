@@ -361,6 +361,50 @@ describe("review_log", () => {
   });
 });
 
+describe("card_reports", () => {
+  it("gäst (anon) kan rapportera kort i publicerat deck, men inte i utkast", async () => {
+    await anon(db).query(`insert into public.card_reports (card_id, message) values ($1, 'Fel enhet i svaret')`, [publishedCard]);
+    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message) values ($1, 'Smyg')`, [draftCard]));
+  });
+
+  it("gäst kan inte sätta user_id eller status, och inte läsa", async () => {
+    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message, user_id) values ($1, 'x y z', $2)`, [publishedCard, alice]), /permission denied/i);
+    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message, status) values ($1, 'x y z', 'resolved')`, [publishedCard]), /permission denied/i);
+    await expectDenied(anon(db).query("select * from public.card_reports"), /permission denied/i);
+  });
+
+  it("inloggad användare rapporterar med sitt user_id automatiskt, men ser ingenting", async () => {
+    await user(db, alice).query(`insert into public.card_reports (card_id, message, contact) values ($1, 'Otydlig fråga', 'alice@example.com')`, [publishedCard]);
+    const rows = await db.query<{ user_id: string | null }>(`select user_id from public.card_reports where message = 'Otydlig fråga'`);
+    expect(rows[0]?.user_id).toBe(alice);
+    expect(await user(db, alice).query("select * from public.card_reports")).toHaveLength(0);
+    // Kolumnrättighet finns, men RLS döljer alla rader: uppdateringen träffar 0 rader.
+    await user(db, alice).query(`update public.card_reports set status = 'resolved'`);
+    expect(await db.query(`select 1 from public.card_reports where status = 'resolved'`)).toHaveLength(0);
+  });
+
+  it("för kort meddelande avvisas", async () => {
+    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message) values ($1, '  ')`, [publishedCard]), /check|violates/i);
+  });
+
+  it("admin läser, åtgärdar och tar bort", async () => {
+    const all = await user(db, admin).query<{ id: string; status: string }>("select id, status from public.card_reports order by created_at");
+    expect(all.length).toBeGreaterThanOrEqual(2);
+    await user(db, admin).query(`update public.card_reports set status = 'resolved', resolved_at = now() where id = $1`, [all[0]!.id]);
+    const after = await user(db, admin).query<{ status: string }>("select status from public.card_reports where id = $1", [all[0]!.id]);
+    expect(after[0]?.status).toBe("resolved");
+    await user(db, admin).query("delete from public.card_reports where id = $1", [all[0]!.id]);
+    expect(await user(db, admin).query("select 1 from public.card_reports where id = $1", [all[0]!.id])).toHaveLength(0);
+  });
+
+  it("vanlig användare kan inte uppdatera eller ta bort rapporter (0 rader)", async () => {
+    const before = await db.query("select 1 from public.card_reports");
+    // Kolumnrättighet finns (update/delete), men RLS filtrerar bort alla rader: 0 påverkade.
+    await user(db, bob).query("delete from public.card_reports");
+    expect(await db.query("select 1 from public.card_reports")).toHaveLength(before.length);
+  });
+});
+
 describe("funktioner", () => {
   it("is_admin() svarar rätt per identitet", async () => {
     expect((await anon(db).query<{ is_admin: boolean }>("select public.is_admin() as is_admin"))[0]?.is_admin).toBe(false);

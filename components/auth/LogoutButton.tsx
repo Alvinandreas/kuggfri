@@ -11,7 +11,7 @@ export function LogoutButton() {
       type="button"
       onClick={() => startTransition(() => signOutAction())}
       disabled={pending}
-      className="rounded-md px-2 py-1.5 text-muted hover:text-fg disabled:opacity-60"
+      className="rounded-md px-1.5 py-1.5 text-muted hover:text-fg disabled:opacity-60 sm:px-2"
     >
       {sv.nav.logout}
     </button>

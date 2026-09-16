@@ -43,6 +43,12 @@ export default function PrivacyPage() {
             och hur många kort du gick igenom.
           </li>
         </ul>
+        <p>
+          <strong>Felrapporter.</strong> Om du rapporterar ett fel på ett kort sparar vi din text, vilket kort
+          det gäller, tidpunkten och, om du är inloggad, vilket konto rapporten kom från. Du kan frivilligt
+          lämna en e-postadress för svar. Rapporten tas bort när den är åtgärdad eller när du raderar ditt
+          konto kopplas den bort från dig.
+        </p>
         <p>Vi samlar inte in namn, personnummer, telefonnummer, IP-adress för profilering eller något annat.</p>
       </section>
 

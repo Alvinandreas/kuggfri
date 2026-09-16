@@ -14,27 +14,27 @@ export async function Header() {
         <Link href="/" className="text-lg font-semibold tracking-tight text-fg">
           {sv.app.name}
         </Link>
-        <nav aria-label={sv.nav.menu} className="flex items-center gap-1 text-sm">
-          <Link href="/" className="rounded-md px-2 py-1.5 text-muted hover:text-fg">
+        <nav aria-label={sv.nav.menu} className="flex min-w-0 items-center gap-0.5 whitespace-nowrap text-sm sm:gap-1">
+          <Link href="/" className="hidden rounded-md px-2 py-1.5 text-muted hover:text-fg sm:inline-block">
             {sv.nav.decks}
           </Link>
-          <Link href="/om" className="rounded-md px-2 py-1.5 text-muted hover:text-fg">
+          <Link href="/om" className="rounded-md px-1.5 py-1.5 text-muted hover:text-fg sm:px-2">
             {sv.nav.about}
           </Link>
           {isAdmin ? (
-            <Link href="/admin" className="rounded-md px-2 py-1.5 text-muted hover:text-fg">
+            <Link href="/admin" className="rounded-md px-1.5 py-1.5 text-muted hover:text-fg sm:px-2">
               {sv.nav.admin}
             </Link>
           ) : null}
           {session ? (
             <>
-              <Link href="/konto" className="rounded-md px-2 py-1.5 text-muted hover:text-fg">
+              <Link href="/konto" className="rounded-md px-1.5 py-1.5 text-muted hover:text-fg sm:px-2">
                 {sv.nav.account}
               </Link>
               <LogoutButton />
             </>
           ) : (
-            <Link href="/logga-in" className="rounded-md px-2 py-1.5 text-muted hover:text-fg">
+            <Link href="/logga-in" className="rounded-md px-1.5 py-1.5 text-muted hover:text-fg sm:px-2">
               {sv.nav.login}
             </Link>
           )}

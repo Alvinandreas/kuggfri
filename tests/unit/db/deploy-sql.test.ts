@@ -34,7 +34,7 @@ describe("supabase/deploy/full.sql", () => {
     const tables = await db.query<{ table_name: string }>(
       `select table_name from information_schema.tables where table_schema = 'public' order by table_name`,
     );
-    expect(tables.map((t) => t.table_name)).toEqual(["card_progress", "cards", "categories", "decks", "profiles", "review_log", "study_sessions"]);
+    expect(tables.map((t) => t.table_name)).toEqual(["card_progress", "card_reports", "cards", "categories", "decks", "profiles", "review_log", "study_sessions"]);
     const cards = await anon(db).query(`select id from public.cards`);
     expect(cards).toHaveLength(144);
   });

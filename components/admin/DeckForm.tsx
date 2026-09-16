@@ -63,27 +63,27 @@ export function DeckForm({ deck }: { deck?: DeckRow }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4 rounded-lg border border-line bg-surface p-5">
+    <form onSubmit={onSubmit} className="grid grid-cols-[minmax(0,1fr)] gap-4 rounded-lg border border-line bg-surface p-5">
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="grid gap-1 text-sm">
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.deckTitle}</span>
           <input name="title" required defaultValue={deck?.title ?? ""} className={inputClass} data-testid="deck-title" />
         </label>
-        <label className="grid gap-1 text-sm">
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.slug}</span>
           <input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" defaultValue={deck?.slug ?? ""} className={inputClass} data-testid="deck-slug" />
           <span className="text-xs text-muted">{sv.admin.slugHelp}</span>
         </label>
-        <label className="grid gap-1 text-sm">
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.courseCode}</span>
           <input name="course_code" defaultValue={deck?.course_code ?? ""} className={inputClass} />
         </label>
       </div>
-      <label className="grid gap-1 text-sm">
+      <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
         <span>{sv.admin.description}</span>
         <textarea name="description" rows={2} defaultValue={deck?.description ?? ""} className={textareaClass} />
       </label>
-      <label className="grid gap-1 text-sm">
+      <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
         <span>{sv.admin.sourceCredit}</span>
         <textarea name="source_credit" rows={3} defaultValue={deck?.source_credit ?? ""} className={textareaClass} />
       </label>

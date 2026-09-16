@@ -36,14 +36,14 @@ export function CardList({ deckId, cards, categories }: { deckId: string; cards:
   if (cards.length === 0) return <p className="text-muted">{sv.admin.importNothing}</p>;
 
   return (
-    <div className="grid gap-3" data-testid="admin-card-list">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-3" data-testid="admin-card-list">
       <p className="text-sm text-muted">{sv.admin.reorderHelp}</p>
       <SortableList
         items={cards}
         label={sv.admin.cards}
         onReorder={(ids) => handle(reorderCardsAction(deckId, ids))}
         renderItem={(card) => (
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start justify-between gap-3">
             <div className="min-w-0">
               <Link href={`/admin/deck/${deckId}/kort/${card.id}`} className="block truncate font-medium hover:underline" data-testid="admin-card-front">
                 {firstLine(card.front)}

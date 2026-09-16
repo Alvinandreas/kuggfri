@@ -41,6 +41,20 @@ export default async function AboutPage() {
       </section>
 
       <section>
+        <h2>{sv.about.teachers}</h2>
+        <p>{sv.about.teachersIntro}</p>
+        <ul className="mt-3 grid gap-2">
+          {sv.about.teachersPoints.map((point) => (
+            <li key={point} className="flex gap-3">
+              <span aria-hidden="true" className="mt-[0.45em] h-2 w-2 shrink-0 rounded-full bg-accent" />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3">{sv.about.teachersOutro}</p>
+      </section>
+
+      <section>
         <h2>{sv.about.privacy}</h2>
         <p>
           {sv.about.privacyBody}{" "}

@@ -11,7 +11,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
   const [data, card] = await Promise.all([getDeckForAdmin(id), getCardForAdmin(cardId)]);
   if (!data || !card || card.deck_id !== data.deck.id) notFound();
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <h1 className="text-2xl font-semibold tracking-tight">{sv.admin.editCard}</h1>
       <CardEditor deckId={data.deck.id} categories={data.categories.map((c) => ({ id: c.id, title: c.title }))} card={card} />
     </div>

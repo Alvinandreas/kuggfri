@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (decision.kind === "forbidden") forbidden();
 
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.title} className="flex items-center gap-3 border-b border-line pb-3 text-sm">
         <Link href="/admin" className="font-semibold">
           {sv.admin.title}
@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {sv.admin.newDeck}
         </Link>
       </nav>
-      {children}
+      <div className="min-w-0 overflow-x-auto">{children}</div>
     </div>
   );
 }

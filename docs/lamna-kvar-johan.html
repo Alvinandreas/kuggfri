@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Kuggfri – Materialteknik</title>
+<style>
+  @page { size: A4; margin: 18mm 18mm 16mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 11pt; line-height: 1.45; color: #1a1a1a; margin: 0; }
+  h1 { font-size: 24pt; margin: 2pt 0 4pt; letter-spacing: -0.01em; }
+  h2 { font-size: 12.5pt; margin: 16pt 0 6pt; color: #1f7a4d; }
+  p { margin: 0 0 6pt; }
+  .kicker { color: #1f7a4d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 9pt; margin: 0; }
+  .lead { font-size: 12pt; color: #333; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14pt; margin-top: 8pt; }
+  .box { border: 1pt solid #cfd8d2; border-radius: 6pt; padding: 10pt 12pt; background: #f7faf8; }
+  .box h3 { margin: 0 0 4pt; font-size: 11pt; }
+  .box p { font-size: 10pt; margin-bottom: 3pt; }
+  ul { margin: 0; padding-left: 16pt; }
+  li { margin-bottom: 3pt; }
+  .options { counter-reset: opt; display: grid; gap: 8pt; }
+  .opt { display: grid; grid-template-columns: 22pt 1fr; gap: 8pt; align-items: start; }
+  .opt .n { width: 20pt; height: 20pt; border-radius: 50%; background: #1f7a4d; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10.5pt; }
+  .opt strong { display: block; }
+  .opt p { font-size: 10.5pt; margin: 0; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10pt; margin-top: 8pt; }
+  .fact { border-top: 2pt solid #1f7a4d; padding-top: 5pt; }
+  .fact .v { font-size: 20pt; font-weight: 700; line-height: 1.1; }
+  .fact .l { font-size: 9.5pt; color: #555; }
+  .foot { margin-top: 18pt; padding-top: 8pt; border-top: 0.8pt solid #ccc; font-size: 9.5pt; color: #555; display: flex; justify-content: space-between; gap: 12pt; }
+  .url { font-weight: 700; color: #1f7a4d; }
+</style>
+</head>
+<body>
+  <p class="kicker">Kuggfri · Materialteknik MTM081</p>
+  <h1>Repetitionskort för Materialteknik, byggda av studenter</h1>
+  <p class="lead">Gratis, utan konto, i mobilen. Sammanställda när jag själv läste kursen, använda av två årskullar. Nu på en plattform som kursen kan äga och påverka.</p>
+
+  <div class="facts">
+    <div class="fact"><div class="v">144</div><div class="l">kort i 11 kategorier som följer föreläsningarna</div></div>
+    <div class="fact"><div class="v">196</div><div class="l">studenter använde förra versionen (Brainscape) över två årskullar</div></div>
+    <div class="fact"><div class="v">0 kr</div><div class="l">för studenter och för kursen, ingen reklam, ingen spårning</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <h3>För studenten</h3>
+      <ul>
+        <li>Öppna länken, börja plugga. Inget konto krävs.</li>
+        <li>Schemalagd repetition (FSRS): kort man kan kommer sällan, kort man inte kan kommer snart.</li>
+        <li>Fri repetition per kategori, slumpad genomkörning inför tentan, och läget "Kluriga kort".</li>
+        <li>Egen progress per kategori och över tid. Nollställ när som helst.</li>
+        <li>Rapportera fel direkt från kortet.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>För kursen</h3>
+      <ul>
+        <li>Innehållet ägs av kursen och kan exporteras som fil när som helst.</li>
+        <li>Studenternas felrapporter samlas per deck, med länk rakt in i kortet.</li>
+        <li>Statistik: vilka kort får lägst självskattning, alltså är svåra eller otydliga.</li>
+        <li>Redigera i webbläsaren med förhandsvisning av formler. Import från CSV/JSON.</li>
+        <li>Data inom EU, minimal insamling, integritetspolicy. Studenter raderar sitt konto själva.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Tre sätt att vara med, välj det som passar</h2>
+  <div class="options">
+    <div class="opt"><div class="n">1</div><div><strong>Läs igenom underlaget.</strong><p>Du får alla kort som utskrift (bifogad) eller fil. Markera fel, otydligt eller utanför kursen. Jag rättar.</p></div></div>
+    <div class="opt"><div class="n">2</div><div><strong>Eget konto med redigeringsrätt.</strong><p>Rätta direkt i webbläsaren, avaktivera kort, se felrapporter och statistik själv.</p></div></div>
+    <div class="opt"><div class="n">3</div><div><strong>Löpande efter varje tentaperiod.</strong><p>Vi tittar tillsammans på korten med lägst snitt och på felrapporterna. En halvtimme per gång.</p></div></div>
+  </div>
+
+  <h2>Frågor jag gärna vill ha din syn på</h2>
+  <ul>
+    <li>Är du bekväm med att materialet bygger på kursens föreläsningar och kursmaterial, och hur vill du att det krediteras?</li>
+    <li>Ska materialet vara öppet för alla, eller bara för kursens studenter (inloggning med Chalmerskonto)?</li>
+    <li>Finns det avsnitt som saknas, eller kort som inte längre hör till kursen?</li>
+  </ul>
+
+  <div class="foot">
+    <span><span class="url">kuggfri.com</span> · Alvin · alvinandreas.cth@gmail.com</span>
+    <span>Presenterat 17 september 2026</span>
+  </div>
+</body>
+</html>

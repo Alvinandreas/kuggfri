@@ -60,16 +60,16 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <p className="text-sm text-muted">{sv.admin.importHelp}</p>
       <p className="text-sm text-muted">{sv.admin.importMatchHelp}</p>
 
-      <div className="grid gap-3">
-        <label className="grid gap-1 text-sm">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.importFile}</span>
           <input type="file" accept=".csv,.json,text/csv,application/json,text/plain" onChange={onFile} data-testid="import-file" className="text-sm" />
         </label>
-        <label className="grid gap-1 text-sm">
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.importPaste}</span>
           <textarea
             value={text}
@@ -91,7 +91,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
           <h2 id="importfel" className="font-semibold text-danger">
             {sv.admin.importErrors} ({errors.length})
           </h2>
-          <ul className="mt-2 grid gap-1 text-sm">
+          <ul className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             {errors.slice(0, 50).map((e, i) => (
               <li key={i}>
                 {e.row > 0 ? `${sv.admin.importRow(e.row)}: ` : ""}
@@ -103,7 +103,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
       ) : null}
 
       {diff ? (
-        <section aria-labelledby="diff" className="grid gap-4" data-testid="import-diff">
+        <section aria-labelledby="diff" className="grid grid-cols-[minmax(0,1fr)] gap-4" data-testid="import-diff">
           <h2 id="diff" className="text-lg font-semibold">
             {sv.admin.preview}
           </h2>
@@ -141,7 +141,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
               <summary className="cursor-pointer font-medium">
                 {sv.admin.importDiffNew} ({diff.create.length})
               </summary>
-              <ul className="mt-3 grid gap-2 text-sm">
+              <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-2 text-sm">
                 {diff.create.map((c) => (
                   <li key={c.row} className="border-b border-line pb-2">
                     <p className="font-medium">{truncate(firstLine(c.front))}</p>
@@ -158,7 +158,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
               <summary className="cursor-pointer font-medium">
                 {sv.admin.importDiffUpdated} ({diff.update.length})
               </summary>
-              <ul className="mt-3 grid gap-3 text-sm">
+              <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-3 text-sm">
                 {diff.update.map((u) => (
                   <li key={u.id} className="border-b border-line pb-3">
                     <p className="font-medium">{truncate(firstLine(u.before.front))}</p>

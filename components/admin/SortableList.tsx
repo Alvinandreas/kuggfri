@@ -59,7 +59,7 @@ export function SortableList<T extends { id: string }>({ items, label, onReorder
   return (
     <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       <SortableContext items={order.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-        <ul aria-label={label} className="grid gap-2">
+        <ul aria-label={label} className="grid grid-cols-[minmax(0,1fr)] gap-2">
           {order.map((item, index) => (
             <SortableRow key={item.id} id={item.id} index={index} count={order.length} onMove={move}>
               {renderItem(item)}

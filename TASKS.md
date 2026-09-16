@@ -90,9 +90,18 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Sessionssammanfattningen visar kategoritagg på korten som behöver mest arbete
 - [~] Mobilpolish: långa baksidor scrollar inom kortet (max 55 dvh), KaTeX-block scrollar vågrätt, ljust/mörkt kontrollerat med taggar. iOS Safari kan bara Alvin testa i riktig telefon (svep från vänsterkant krockar med bakåtgesten, det är känt och accepterat)
 - [ ] Rapport i chatten 12:00 och 17:00
-- [ ] Ta bort `/d/dev-preview`-rutten före deploy (finns kvar för utveckling, svarar 404 i produktion)
+- [x] Ta bort `/d/dev-preview`-rutten (ons kväll)
 
-## Onsdag 16 sep
+## Onsdag 16 sep (kväll: förberedelser inför Johan, se kartläggningen i chatten)
+
+- [x] Alvin registrerade om kontot med manuellt lösenord, admin satt i molnet (ons 20:30)
+- [x] Felrapporter (se Tillkommit)
+- [x] Granskningsunderlag: `docs/granskning-materialteknik.pdf` (144 kort per kategori, kryssrutor + anteckningsrad, byggs med `npx tsx scripts/build-review-pdf.tsx`)
+- [x] Appikon + manifest ("lägg till på hemskärmen"): `scripts/build-icons.py` → public/icon-*.png, `app/manifest.ts`, apple-touch-icon
+- [x] /om: avsnitt "För kursansvariga"; /d/dev-preview borttagen
+- [x] Lämna-kvar-sida: `docs/lamna-kvar-johan.pdf` (källa `docs/lamna-kvar-johan.html`), skriv ut och lägg ovanpå granskningsunderlaget
+- [ ] Skärmdumpar av hela flödet som reserv
+- [ ] Ny kodfrysning 22:00, full verify, ombyggd testkopia
 
 - [ ] Sista ändringar från Alvins onsdagslista
 - [ ] Full `npm run verify`, kontroll i mobilen ljust/mörkt, axe utan allvarliga fel
@@ -117,7 +126,7 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [ ] Paginering eller sök i admin-kortlistan när deck blir större än ~300 kort
 - [ ] Redirect-tabell för gamla slugs om ett deck byter slug
 - [ ] Reviewer-roll: låta Johan kommentera kort utan full admin (kräver ny tabell + RLS)
-- [ ] "Rapportera fel på kortet"-knapp för studenter (kräver ny tabell + RLS)
+- [x] "Rapportera fel på kortet"-knapp för studenter: tabell `card_reports` med RLS (6 nya RLS-tester), dialog i studieläget (även gäster), adminsida /admin/deck/[id]/rapporter med åtgärda/öppna igen/ta bort, länk med antal öppna på deckets adminsida, E2E-test, integritetspolicyn uppdaterad. Migration pushad till molnet (ons 21:30)
 - [ ] Fler deck från Alvins övriga Brainscape-set (samma seed-manifest-format)
 
 ## Klart

@@ -318,3 +318,39 @@ export async function importCardsAction(deckId: string, cards: ImportCard[]): Pr
     return fail(e);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Felrapporter
+// ---------------------------------------------------------------------------
+
+function revalidateReports(deckId: string) {
+  revalidatePath(`/admin/deck/${deckId}`);
+  revalidatePath(`/admin/deck/${deckId}/rapporter`);
+}
+
+export async function setReportStatusAction(id: string, deckId: string, status: "open" | "resolved"): Promise<ActionResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { error } = await supabase
+      .from("card_reports")
+      .update({ status, resolved_at: status === "resolved" ? new Date().toISOString() : null })
+      .eq("id", id);
+    if (error) throw error;
+    revalidateReports(deckId);
+    return { ok: true, data: undefined };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function deleteReportAction(id: string, deckId: string): Promise<ActionResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { error } = await supabase.from("card_reports").delete().eq("id", id);
+    if (error) throw error;
+    revalidateReports(deckId);
+    return { ok: true, data: undefined };
+  } catch (e) {
+    return fail(e);
+  }
+}

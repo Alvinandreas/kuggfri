@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: sv.admin.newDeck };
 
 export default function NewDeckPage() {
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <h1 className="text-2xl font-semibold tracking-tight">{sv.admin.newDeck}</h1>
       <DeckForm />
     </div>

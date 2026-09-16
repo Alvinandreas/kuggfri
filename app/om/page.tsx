@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import { getDecksForAbout } from "@/lib/content/queries";
+import { Logo } from "@/components/layout/Logo";
 
 export const metadata: Metadata = { title: sv.about.title };
 
@@ -9,6 +10,9 @@ export default async function AboutPage() {
   const decks = await getDecksForAbout();
   return (
     <article className="prose-body mx-auto grid max-w-[44rem] gap-6">
+      <div>
+        <Logo height={72} decorative />
+      </div>
       <h1 className="text-2xl font-semibold tracking-tight">{sv.about.title}</h1>
       <p>{sv.about.intro}</p>
 

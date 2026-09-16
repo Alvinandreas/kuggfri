@@ -38,7 +38,20 @@ export async function getDeckBySlug(slug: string): Promise<DeckWithContent | nul
       .order("sort_order")
       .order("created_at"),
   ]);
-  return { deck, categories: categories ?? [], cards: cards ?? [] };
+  return { deck, categories: categories ?? [], cards: sortCardsByCategory(cards ?? [], categories ?? []) };
+}
+
+/**
+ * Deckets ordning = kategoriernas ordning, sedan kortens ordning inom kategorin.
+ * Kort utan kategori sist. Så kan admin ordna om inom en kategori utan att röra de andra.
+ */
+export function sortCardsByCategory<C extends { category_id: string | null; sort_order: number; created_at: string }>(
+  cards: C[],
+  categories: { id: string }[],
+): C[] {
+  const rank = new Map(categories.map((c, i) => [c.id, i] as const));
+  const pos = (c: C) => (c.category_id ? (rank.get(c.category_id) ?? categories.length) : categories.length + 1);
+  return [...cards].sort((a, b) => pos(a) - pos(b) || a.sort_order - b.sort_order || a.created_at.localeCompare(b.created_at));
 }
 
 /** Alla deck (även opublicerade) för /om-sidan. RLS filtrerar bort opublicerade för icke-admin. */

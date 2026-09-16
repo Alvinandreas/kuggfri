@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { deleteCardAction, reorderCardsAction } from "@/lib/admin/actions";
-import type { CardRow, CategoryRow } from "@/lib/supabase/database.types";
+import type { CardRow } from "@/lib/supabase/database.types";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SortableList } from "./SortableList";
@@ -15,12 +15,11 @@ function firstLine(text: string): string {
   return line.replace(/^[#*\-\s]+/, "").trim();
 }
 
-export function CardList({ deckId, cards, categories }: { deckId: string; cards: CardRow[]; categories: CategoryRow[] }) {
+export function CardList({ deckId, cards }: { deckId: string; cards: CardRow[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<CardRow | null>(null);
-  const categoryTitle = new Map(categories.map((c) => [c.id, c.title] as const));
 
   function handle(promise: Promise<{ ok: boolean; error?: string }>) {
     startTransition(async () => {
@@ -37,7 +36,6 @@ export function CardList({ deckId, cards, categories }: { deckId: string; cards:
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-3" data-testid="admin-card-list">
-      <p className="text-sm text-muted">{sv.admin.reorderHelp}</p>
       <SortableList
         items={cards}
         label={sv.admin.cards}
@@ -49,8 +47,8 @@ export function CardList({ deckId, cards, categories }: { deckId: string; cards:
                 {firstLine(card.front)}
               </Link>
               <p className="truncate text-xs text-muted">
-                {card.category_id ? (categoryTitle.get(card.category_id) ?? sv.admin.noCategory) : sv.admin.noCategory}
-                {card.is_active ? "" : ` · ${sv.admin.inactive}`}
+                {card.is_active ? "" : `${sv.admin.inactive} · `}
+                {firstLine(card.back)}
                 {card.hint ? ` · ${sv.study.hint}` : ""}
               </p>
             </div>

@@ -5,7 +5,9 @@ import { useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { saveCardAction } from "@/lib/admin/actions";
 import type { CardRow } from "@/lib/supabase/database.types";
+import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Markdown } from "@/components/markdown/Markdown";
+import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Button, LinkButton } from "@/components/ui/Button";
 
 const textareaClass = "w-full rounded-md border border-line-strong bg-surface px-3 py-2 font-mono text-sm text-fg";
@@ -14,16 +16,24 @@ type Props = {
   deckId: string;
   categories: { id: string; title: string }[];
   card?: CardRow;
+  /** Förvald kategori för ett nytt kort (från kategorisidan). */
+  initialCategoryId?: string | null;
+  /** Dit "Tillbaka" och "Spara och stäng" leder. */
+  backHref?: string;
 };
 
 /** Kortredigerare med live-förhandsvisning av markdown och KaTeX. */
-export function CardEditor({ deckId, categories, card }: Props) {
+export function CardEditor({ deckId, categories, card, initialCategoryId = null, backHref }: Props) {
+  const closeHref = backHref ?? `/admin/deck/${deckId}`;
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [front, setFront] = useState(card?.front ?? "");
   const [back, setBack] = useState(card?.back ?? "");
   const [hint, setHint] = useState(card?.hint ?? "");
-  const [categoryId, setCategoryId] = useState(card?.category_id ?? "");
+  const [categoryId, setCategoryId] = useState(card?.category_id ?? initialCategoryId ?? "");
+  const [closeAfter, setCloseAfter] = useState(false);
+  const colorIndex = categoryColorIndex(categories);
+  const previewCategory = categories.find((c) => c.id === categoryId) ?? null;
   const [isActive, setIsActive] = useState(card?.is_active ?? true);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
@@ -41,7 +51,8 @@ export function CardEditor({ deckId, categories, card }: Props) {
       });
       if (result.ok) {
         setMessage({ ok: true, text: sv.admin.saved });
-        if (!card) router.push(`/admin/deck/${deckId}/kort/${result.data.id}`);
+        if (closeAfter) router.push(closeHref);
+        else if (!card) router.push(`/admin/deck/${deckId}/kort/${result.data.id}`);
         else router.refresh();
       } else {
         setMessage({ ok: false, text: result.error });
@@ -86,16 +97,37 @@ export function CardEditor({ deckId, categories, card }: Props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-4">
-          <p className="text-sm font-medium">{sv.admin.preview}</p>
-          <div className="rounded-lg border border-line bg-surface p-5" aria-label={`${sv.admin.preview}: ${sv.admin.front}`}>
-            <p className="mb-2 text-xs uppercase tracking-wide text-muted">{sv.study.front}</p>
-            <Markdown text={front || "…"} />
+        <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-4 lg:sticky lg:top-4 lg:self-start">
+          <div>
+            <p className="text-sm font-medium">{sv.admin.preview}</p>
+            <p className="text-xs text-muted">{sv.admin.previewHelp}</p>
           </div>
-          <div className="rounded-lg border border-line bg-surface p-5" aria-label={`${sv.admin.preview}: ${sv.admin.back}`}>
-            <p className="mb-2 text-xs uppercase tracking-wide text-muted">{sv.study.back}</p>
-            <Markdown text={back || "…"} />
-          </div>
+          {[
+            { label: sv.study.front, text: front, key: "front" },
+            { label: sv.study.back, text: back, key: "back" },
+          ].map((side) => (
+            <div
+              key={side.key}
+              className="rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6"
+              aria-label={`${sv.admin.preview}: ${side.label}`}
+              data-testid={`preview-${side.key}`}
+            >
+              <div className="mb-4 flex items-center justify-between gap-3">
+                {previewCategory ? (
+                  <CategoryTag title={previewCategory.title} colorIndex={colorIndex.get(previewCategory.id) ?? 0} size="md" />
+                ) : (
+                  <span className="text-xs text-muted">{sv.admin.noCategory}</span>
+                )}
+                <span className="text-xs uppercase tracking-wide text-muted">{side.label}</span>
+              </div>
+              <Markdown text={side.text || "…"} variant="card" />
+              {side.key === "front" && hint.trim() ? (
+                <p className="mt-4 rounded-md bg-surface-2 px-3 py-2 text-sm text-muted">
+                  {sv.study.hint}: {hint}
+                </p>
+              ) : null}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -105,11 +137,14 @@ export function CardEditor({ deckId, categories, card }: Props) {
         </p>
       ) : null}
 
-      <div className="flex gap-2">
-        <Button type="submit" disabled={pending} data-testid="card-save">
+      <div className="flex flex-wrap gap-2">
+        <Button type="submit" disabled={pending} data-testid="card-save" onClick={() => setCloseAfter(false)}>
           {pending ? sv.admin.saving : sv.common.save}
         </Button>
-        <LinkButton href={`/admin/deck/${deckId}`} variant="secondary">
+        <Button type="submit" variant="secondary" disabled={pending} data-testid="card-save-close" onClick={() => setCloseAfter(true)}>
+          {sv.admin.saveAndClose}
+        </Button>
+        <LinkButton href={closeHref} variant="ghost">
           {sv.common.back}
         </LinkButton>
       </div>

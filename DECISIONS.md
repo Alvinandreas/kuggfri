@@ -144,6 +144,14 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   dyker upp är en captcha eller "max N per timme och IP" nästa steg. Inloggningslänken var inte
   klar för molnet (kräver egen SMTP), så det här är veckans viktigaste tillägg inför examinatormötet:
   det gör granskningserbjudandet konkret.
+- **Admin är kategori-först.** Deckets adminsida visar kategorierna (deckets ordning, antal kort,
+  byt namn/ta bort/ordna om) och varje kategori har en egen sida med sina kort. 144 kort i en platt
+  lista var oöverskådligt. Konsekvens: **deckets ordning definieras som kategoriordning, sedan
+  kortordning inom kategorin** (`sortCardsByCategory`), så att ombeställning inom en kategori aldrig
+  rör de andra. Kort utan kategori ligger sist och nås via "Utan kategori".
+- **Logotypen** är Alvins original (brand/). Två färgvarianter byggs av ett skript: mörkt bläck för
+  ljust tema, vitt för mörkt; bocken förblir vit på grön. Sidhuvudet sätter ihop märke + ordmärke
+  med något större ordmärke än originalet, för läsbarhet i 36 px.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
   mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
   till före lansering till studenter, se docs/DEPLOY.md 3c.

@@ -1,6 +1,7 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { CardReportRow, CardRow, CategoryRow, DeckRow } from "@/lib/supabase/database.types";
+import { sortCardsByCategory } from "@/lib/content/queries";
 
 export type AdminDeckSummary = DeckRow & { cardCount: number };
 
@@ -27,7 +28,7 @@ export async function getDeckForAdmin(id: string): Promise<AdminDeck | null> {
     supabase.from("categories").select("*").eq("deck_id", id).order("sort_order").order("title"),
     supabase.from("cards").select("*").eq("deck_id", id).order("sort_order").order("created_at"),
   ]);
-  return { deck, categories: categories ?? [], cards: cards ?? [] };
+  return { deck, categories: categories ?? [], cards: sortCardsByCategory(cards ?? [], categories ?? []) };
 }
 
 export async function getCardForAdmin(id: string): Promise<CardRow | null> {

@@ -102,7 +102,8 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 - [x] Lämna-kvar-sida: `docs/lamna-kvar-johan.pdf` (källa `docs/lamna-kvar-johan.html`), skriv ut och lägg ovanpå granskningsunderlaget
 - [x] Allt pushat och live på kuggfri.com (ons 21:50, commit be99e4e): felrapporter, ikon/manifest, /om, mobilfix i admin. Testkopian på 3001 ombyggd
 - [x] Skärmdumpar av hela flödet som reserv: `docs/demo-skarmdumpar/` (17 bilder: gäst i mobilen mot kuggfri.com, admin på desktop; byggs om med `node scripts/demo-shots.cjs`)
-- [ ] Ny kodfrysning 22:00, full verify, ombyggd testkopia
+- [x] Feedbackrunda 4 (ons 22:30, lokalt, ej pushad förrän Alvin verifierat): Alvins logotyp i sidhuvud, startsida och /om (ljus/mörk variant, `scripts/build-logo.py` → public/logo-*.png, nya appikoner från märket); kryssrutan i kategoritabellen fick luft; admin omstrukturerad: kategorier först med antal kort, egen sida per kategori (`/admin/deck/[id]/kategori/[katId]`, "ingen" = utan kategori), kortredigeraren har förhandsvisning som ser ut som studentens kort, "Spara och stäng", föregående/nästa kort, sökväg. Deckets ordning = kategoriordning, sedan kortordning inom kategorin
+- [ ] Ny kodfrysning efter Alvins verifiering, full verify, ombyggd testkopia
 
 - [ ] Sista ändringar från Alvins onsdagslista
 - [ ] Full `npm run verify`, kontroll i mobilen ljust/mörkt, axe utan allvarliga fel

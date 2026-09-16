@@ -52,10 +52,13 @@ test.describe("admin", () => {
     await page.getByTestId("import-confirm").click();
     await expect(page.getByTestId("import-result")).toContainText("2 kort importerade.", { timeout: 20_000 });
 
-    // Korten syns i admin-listan.
+    // Korten syns i admin: kategorin på deckets sida, sedan kortlistan i kategorin.
     const deckAdminUrl = page.url().replace(/\/import$/, "");
     await page.goto(deckAdminUrl);
+    await page.getByTestId("admin-category-list").getByRole("link", { name: "E2E-kategori", exact: true }).click();
+    await page.waitForURL(/\/kategori\/[0-9a-f-]{36}$/);
     await expect(page.getByTestId("admin-card-list").getByText(unique, { exact: true })).toBeVisible();
+    await expectNoSeriousA11yViolations(page);
 
     // Och i det publika decket.
     await page.goto(`/d/${DECK_SLUG}`);

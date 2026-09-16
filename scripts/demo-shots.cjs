@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Skärmdumpar av demoflödet som reserv om nätet strular i morgon.
 // Gäst/mobil mot produktion (kuggfri.com), admin/desktop mot testkopian på :3001 (lokalt adminkonto).
 const { chromium, devices } = require("@playwright/test");

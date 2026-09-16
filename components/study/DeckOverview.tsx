@@ -229,7 +229,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
             <table className="w-full table-fixed text-sm">
               <thead>
                 <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th scope="col" className="w-10 px-3 py-2">
+                  <th scope="col" className="w-12 py-3 pl-4 pr-2 align-middle">
                     <input
                       type="checkbox"
                       aria-label={selectedSet.size === categories.length ? sv.deck.selectNone : sv.deck.selectAll}
@@ -266,7 +266,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                       className={`border-b border-line last:border-b-0 ${checked ? "bg-accent-soft/60" : ""} ${selectable ? "" : "opacity-45"}`}
                       data-testid="category-row"
                     >
-                      <td className="px-3 py-2.5">
+                      <td className="py-2.5 pl-4 pr-2 align-middle">
                         <input
                           type="checkbox"
                           checked={checked}

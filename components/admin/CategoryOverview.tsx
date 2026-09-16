@@ -172,17 +172,23 @@ function CategoryRowView({
   }
 
   return (
-    <div className="flex min-h-9 flex-wrap items-center justify-between gap-x-3 gap-y-1">
-      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
-        <CategoryTag title={category.title} colorIndex={colorIndex} size="md" />
-        <span className="text-sm text-muted">{countLabel(counts)}</span>
+    <div className="flex min-h-9 items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-1 items-center gap-x-3">
+        <CategoryTag title={category.title} colorIndex={colorIndex} size="md" className="min-w-0 truncate" />
+        <span className="shrink-0 whitespace-nowrap text-sm text-muted">{countLabel(counts)}</span>
       </div>
-      <div className="flex shrink-0 items-center gap-1">
-        <Button variant="ghost" size="sm" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`}>
-          {sv.admin.rename}
+      <div className="flex shrink-0 items-center gap-0.5">
+        <Button variant="ghost" size="sm" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`} title={sv.admin.rename}>
+          <span className="hidden sm:inline">{sv.admin.rename}</span>
+          <span className="sm:hidden" aria-hidden="true">
+            ✎
+          </span>
         </Button>
-        <Button variant="ghost" size="sm" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`}>
-          {sv.common.delete}
+        <Button variant="ghost" size="sm" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`} title={sv.common.delete}>
+          <span className="hidden sm:inline">{sv.common.delete}</span>
+          <span className="sm:hidden" aria-hidden="true">
+            ✕
+          </span>
         </Button>
       </div>
     </div>

@@ -52,8 +52,11 @@ export function CardList({ deckId, cards }: { deckId: string; cards: CardRow[] }
                 {card.hint ? ` · ${sv.study.hint}` : ""}
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setDeleting(card)} disabled={pending} aria-label={`${sv.admin.deleteCard}: ${firstLine(card.front)}`} className="shrink-0 whitespace-nowrap">
-              {sv.common.delete}
+            <Button variant="ghost" size="sm" onClick={() => setDeleting(card)} disabled={pending} aria-label={`${sv.admin.deleteCard}: ${firstLine(card.front)}`} title={sv.common.delete} className="shrink-0 whitespace-nowrap">
+              <span className="hidden sm:inline">{sv.common.delete}</span>
+              <span className="sm:hidden" aria-hidden="true">
+                ✕
+              </span>
             </Button>
           </div>
         )}

@@ -55,7 +55,8 @@ test.describe("admin", () => {
     // Korten syns i admin: kategorin på deckets sida, sedan kortlistan i kategorin.
     const deckAdminUrl = page.url().replace(/\/import$/, "");
     await page.goto(deckAdminUrl);
-    await page.getByTestId("admin-category-list").getByRole("link", { name: "E2E-kategori", exact: true }).click();
+    // Hela raden är en länk; tryck på titeln (till vänster), inte radens mitt där knapparna kan ligga på smal skärm.
+    await page.getByTestId("admin-category-list").getByRole("link", { name: "E2E-kategori", exact: true }).click({ position: { x: 24, y: 16 } });
     await page.waitForURL(/\/kategori\/[0-9a-f-]{36}$/);
     await expect(page.getByTestId("admin-card-list").getByText(unique, { exact: true })).toBeVisible();
     await expectNoSeriousA11yViolations(page);

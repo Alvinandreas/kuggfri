@@ -50,9 +50,9 @@ export const sv = {
     modeFsrsHelp:
       "Endast kort som är nya eller förfallna. Din skattning styr när kortet kommer tillbaka.",
     modeFree: "Fri repetition",
-    modeFreeHelp: "Bläddra fritt genom ett urval, hur många gånger du vill. Påverkar inte schemat.",
+    modeFreeHelp: "Bläddra fritt genom ett urval, hur många gånger du vill. Påverkar varken schemat eller din progress.",
     modeRandom: "Slumpad genomkörning",
-    modeRandomHelp: "Hela decket i slumpad ordning, utan schemaläggning.",
+    modeRandomHelp: "Hela decket i slumpad ordning. Påverkar varken schemat eller din progress.",
     modeTricky: "Kluriga kort",
     modeTrickyHelp: "Bara kort med låg skattning (1–2). Kort du aldrig sett räknas som kluriga tills de fått en skattning.",
     trickyEmptyCategory: "Inga kluriga kort kvar",

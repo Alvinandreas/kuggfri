@@ -158,6 +158,10 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   får inte plats runt en radar i en tredjedelskolumn, så axlarna är numrerade och namnen står i en
   färgkodad lista under båda diagrammen (samma färg som kategorins tagg). Fylld yta = inlärda,
   streckad kontur = studerade; legend, hover och tabellvy enligt dataviz-reglerna.
+- **Fri och slumpad repetition rör fortfarande inte progressen** (specens krav), men det står nu i
+  lägesbeskrivningen. Alvin pluggade 42 kort i fri repetition på kuggfri.com och undrade varför
+  kategorier och radar stod stilla. Alternativet, att låta fri repetition räkna som "studerat", bryter
+  specens "påverkar inte schemat" och gör radarn tvetydig; tydligare text valdes i stället.
 - **Kortinnehåll centreras med `m-auto` på barnet, inte `items-center` på behållaren.** Med
   items-center + overflow klipps toppen av långt innehåll under rubrikraden och går inte att scrolla
   fram; med m-auto är kort innehåll fortfarande centrerat och långt innehåll scrollas från toppen.

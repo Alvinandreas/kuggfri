@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
@@ -40,19 +39,20 @@ export function CardList({ deckId, cards }: { deckId: string; cards: CardRow[] }
         items={cards}
         label={sv.admin.cards}
         onReorder={(ids) => handle(reorderCardsAction(deckId, ids))}
+        href={(card) => `/admin/deck/${deckId}/kort/${card.id}`}
+        hrefLabel={(card) => firstLine(card.front)}
+        linkTestId="admin-card-front"
         renderItem={(card) => (
-          <div className="flex min-w-0 items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center justify-between gap-3">
             <div className="min-w-0">
-              <Link href={`/admin/deck/${deckId}/kort/${card.id}`} className="block truncate font-medium hover:underline" data-testid="admin-card-front">
-                {firstLine(card.front)}
-              </Link>
+              <p className="truncate font-medium">{firstLine(card.front)}</p>
               <p className="truncate text-xs text-muted">
                 {card.is_active ? "" : `${sv.admin.inactive} · `}
                 {firstLine(card.back)}
                 {card.hint ? ` · ${sv.study.hint}` : ""}
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setDeleting(card)} disabled={pending} aria-label={`${sv.admin.deleteCard}: ${firstLine(card.front)}`}>
+            <Button variant="ghost" size="sm" onClick={() => setDeleting(card)} disabled={pending} aria-label={`${sv.admin.deleteCard}: ${firstLine(card.front)}`} className="shrink-0 whitespace-nowrap">
               {sv.common.delete}
             </Button>
           </div>

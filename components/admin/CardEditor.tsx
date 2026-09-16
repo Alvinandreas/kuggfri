@@ -9,6 +9,7 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Markdown } from "@/components/markdown/Markdown";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 
 const textareaClass = "w-full rounded-md border border-line-strong bg-surface px-3 py-2 font-mono text-sm text-fg";
 
@@ -76,19 +77,19 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
           </label>
           <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.hint}</span>
-            <input value={hint} onChange={(e) => setHint(e.target.value)} className="h-10 w-full rounded-md border border-line-strong bg-surface px-3 text-fg" />
+            <input value={hint} onChange={(e) => setHint(e.target.value)} className="h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg" />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
               <span>{sv.admin.category}</span>
-              <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="h-10 rounded-md border border-line-strong bg-surface px-3 text-fg">
+              <Select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
                 <option value="">{sv.admin.noCategory}</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.title}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label className="flex items-center gap-2 self-end text-sm">
               <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="h-4 w-4 accent-[var(--accent)]" />

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import { getPublishedDecks } from "@/lib/content/queries";
-import { Logo } from "@/components/layout/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -10,9 +9,6 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-[44rem]">
-      <div className="mb-6">
-        <Logo height={64} decorative />
-      </div>
       <h1 className="text-2xl font-semibold tracking-tight">{sv.home.title}</h1>
       <p className="mt-2 text-muted">{sv.home.lead}</p>
 

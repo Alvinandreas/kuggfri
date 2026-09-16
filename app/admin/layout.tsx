@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {sv.admin.newDeck}
         </Link>
       </nav>
-      <div className="min-w-0 overflow-x-auto">{children}</div>
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }

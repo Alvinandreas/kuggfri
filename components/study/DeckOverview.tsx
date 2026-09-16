@@ -19,6 +19,7 @@ import {
 import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex, tagBgClass } from "@/lib/ui/tag-colors";
 import { Button, buttonClass } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
@@ -213,15 +214,10 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
               <label htmlFor="sortering" className="text-muted">
                 {sv.deck.sortBy}
               </label>
-              <select
-                id="sortering"
-                value={sortMode}
-                onChange={(e) => setSortMode(e.target.value as SortMode)}
-                className="h-9 rounded-md border border-line-strong bg-surface px-2 text-fg"
-              >
+              <Select fit id="sortering" value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
                 <option value="deck">{sv.deck.sortDeckOrder}</option>
                 <option value="learned">{sv.deck.sortLeastLearned}</option>
-              </select>
+              </Select>
             </div>
           </div>
 

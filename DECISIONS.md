@@ -149,9 +149,12 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   lista var oöverskådligt. Konsekvens: **deckets ordning definieras som kategoriordning, sedan
   kortordning inom kategorin** (`sortCardsByCategory`), så att ombeställning inom en kategori aldrig
   rör de andra. Kort utan kategori ligger sist och nås via "Utan kategori".
-- **Logotypen** är Alvins original (brand/). Två färgvarianter byggs av ett skript: mörkt bläck för
-  ljust tema, vitt för mörkt; bocken förblir vit på grön. Sidhuvudet sätter ihop märke + ordmärke
-  med något större ordmärke än originalet, för läsbarhet i 36 px.
+- **Logotypen** är Alvins original (brand/) med oförändrad komposition, bara beskuren till innehållet.
+  Två färgvarianter byggs av ett skript: mörkt bläck för ljust tema (annars osynlig), vitt för mörkt;
+  bocken förblir vit på grön. Visas bara i sidhuvudet (40 px) och på /om, inte på startsidan
+  (dubblering). Appikon och favicon byggs från Alvins separata ikonfil (bara kugghjulet).
+- **Admin-rader är helt klickbara** (osynlig länk som täcker raden, knappar ovanpå) med hover, för
+  både kategorier och kort, så att listorna beter sig likadant. Ingen separat "Öppna"-knapp.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
   mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
   till före lansering till studenter, se docs/DEPLOY.md 3c.

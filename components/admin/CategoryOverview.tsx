@@ -8,7 +8,7 @@ import { createCategoryAction, deleteCategoryAction, reorderCategoriesAction, up
 import type { CategoryRow } from "@/lib/supabase/database.types";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CategoryTag } from "@/components/ui/CategoryTag";
-import { Button, LinkButton } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SortableList } from "./SortableList";
 
@@ -54,9 +54,11 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
         items={categories}
         label={sv.admin.categories}
         onReorder={(ids) => handle(reorderCategoriesAction(deckId, ids))}
+        href={(c) => `/admin/deck/${deckId}/kategori/${c.id}`}
+        hrefLabel={(c) => c.title}
+        linkTestId="admin-category-link"
         renderItem={(c) => (
           <CategoryRowView
-            deckId={deckId}
             category={c}
             colorIndex={colorIndex.get(c.id) ?? 0}
             counts={counts[c.id] ?? { total: 0, inactive: 0 }}
@@ -67,17 +69,13 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
         )}
       />
       {uncategorized.total > 0 ? (
-        <div className="flex items-center justify-between gap-3 rounded-md border border-dashed border-line-strong bg-surface px-3 py-2">
-          <div className="min-w-0">
-            <Link href={`/admin/deck/${deckId}/kategori/ingen`} className="font-medium underline-offset-2 hover:underline" data-testid="admin-category-link">
-              {sv.admin.uncategorized}
-            </Link>
-            <p className="text-xs text-muted">{countLabel(uncategorized)}</p>
-          </div>
-          <LinkButton href={`/admin/deck/${deckId}/kategori/ingen`} variant="secondary" size="sm">
-            {sv.admin.openCategory}
-          </LinkButton>
-        </div>
+        <Link
+          href={`/admin/deck/${deckId}/kategori/ingen`}
+          className="flex items-center gap-3 rounded-md border border-dashed border-line-strong bg-surface px-3 py-3 transition-colors hover:bg-surface-2"
+        >
+          <span className="font-medium">{sv.admin.uncategorized}</span>
+          <span className="text-sm text-muted">{countLabel(uncategorized)}</span>
+        </Link>
       ) : null}
       <form
         onSubmit={(e) => {
@@ -126,7 +124,6 @@ function countLabel(c: CategoryCounts): string {
 }
 
 function CategoryRowView({
-  deckId,
   category,
   colorIndex,
   counts,
@@ -134,7 +131,6 @@ function CategoryRowView({
   onRename,
   onDelete,
 }: {
-  deckId: string;
   category: CategoryRow;
   colorIndex: number;
   counts: CategoryCounts;
@@ -144,7 +140,6 @@ function CategoryRowView({
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(category.title);
-  const href = `/admin/deck/${deckId}/kategori/${category.id}`;
 
   if (editing) {
     return (
@@ -177,17 +172,12 @@ function CategoryRowView({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-      <div className="min-w-0 flex-1">
-        <Link href={href} className="inline-flex max-w-full items-center gap-2 underline-offset-2 hover:underline" data-testid="admin-category-link">
-          <CategoryTag title={category.title} colorIndex={colorIndex} size="md" />
-        </Link>
-        <p className="mt-1 text-xs text-muted">{countLabel(counts)}</p>
+    <div className="flex min-h-9 flex-wrap items-center justify-between gap-x-3 gap-y-1">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+        <CategoryTag title={category.title} colorIndex={colorIndex} size="md" />
+        <span className="text-sm text-muted">{countLabel(counts)}</span>
       </div>
       <div className="flex shrink-0 items-center gap-1">
-        <LinkButton href={href} variant="secondary" size="sm">
-          {sv.admin.openCategory}
-        </LinkButton>
         <Button variant="ghost" size="sm" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`}>
           {sv.admin.rename}
         </Button>

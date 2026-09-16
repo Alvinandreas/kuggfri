@@ -67,6 +67,12 @@ export default async function AdminDeckPage({ params }: { params: Params }) {
         </div>
       </div>
 
+      <section aria-labelledby="deck-form" className="grid grid-cols-[minmax(0,1fr)] gap-4">
+        <h2 id="deck-form" className="text-lg font-semibold">
+          {sv.admin.deckSettings}
+        </h2>
+        <DeckForm deck={deck} />
+      </section>
       <section aria-labelledby="kategorier" className="grid grid-cols-[minmax(0,1fr)] gap-4">
         <h2 id="kategorier" className="text-lg font-semibold">
           {sv.admin.categories}
@@ -74,12 +80,6 @@ export default async function AdminDeckPage({ params }: { params: Params }) {
         <CategoryOverview deckId={deck.id} categories={categories} counts={counts} uncategorized={uncategorized} />
       </section>
 
-      <section aria-labelledby="deck-form" className="grid grid-cols-[minmax(0,1fr)] gap-4">
-        <h2 id="deck-form" className="text-lg font-semibold">
-          {sv.admin.deckSettings}
-        </h2>
-        <DeckForm deck={deck} />
-      </section>
     </div>
   );
 }

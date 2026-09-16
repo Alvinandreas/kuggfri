@@ -11,7 +11,7 @@ export default async function AboutPage() {
   return (
     <article className="prose-body mx-auto grid max-w-[44rem] gap-6">
       <div>
-        <Logo height={72} decorative />
+        <Logo height={80} decorative />
       </div>
       <h1 className="text-2xl font-semibold tracking-tight">{sv.about.title}</h1>
       <p>{sv.about.intro}</p>

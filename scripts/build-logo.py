@@ -13,13 +13,14 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 SRC = "brand/logotyp-kuggfri.png"
+ICON_SRC = "brand/ikon-kuggfri.png"  # bara kugghjulet, för appikon och favicon
 DARK_INK = (28, 28, 26)      # --fg i ljust tema (nästan svart)
 PLATE = (0, 0, 0)            # ikonplatta, som originalet
 T = 120.0                    # max-kanal >= T räknas som helt täckande
 
 
-def load_rgba() -> Image.Image:
-    im = Image.open(SRC).convert("RGB")
+def load_rgba(src: str = SRC) -> Image.Image:
+    im = Image.open(src).convert("RGB")
     a = np.asarray(im).astype(np.float32)
     maxc = a.max(axis=2)
     alpha = np.clip(maxc / T, 0, 1)
@@ -102,7 +103,13 @@ def main() -> None:
     x0, y0, x1, y1 = bbox(a)
     pad = int((y1 - y0) * 0.04)
     full = im.crop((x0 - pad, y0 - pad, x1 + pad, y1 + pad))
-    mark = im.crop((mx0 - pad, my0 - pad, mx1 + pad, my1 + pad))
+    # Märket tas från Alvins ikonfil (bara kugghjulet), inte ur logotypen.
+    icon_im = load_rgba(ICON_SRC)
+    ia = np.asarray(icon_im)[..., 3]
+    ix0, iy0, ix1, iy1 = bbox(ia)
+    ipad = int((iy1 - iy0) * 0.04)
+    mark = icon_im.crop((ix0 - ipad, iy0 - ipad, ix1 + ipad, iy1 + ipad))
+    del mx0, my0, mx1, my1
     # Kvadratisk ram runt märket
     side = max(mark.width, mark.height)
     sq = Image.new("RGBA", (side, side), (0, 0, 0, 0))

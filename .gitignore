@@ -55,3 +55,6 @@ supabase/.env
 
 # stabil produktionskopia för lokal testning (NEXT_DIST_DIR)
 /.next-prod/
+
+# databasbackuper (scripts/backup.cjs)
+/backups/

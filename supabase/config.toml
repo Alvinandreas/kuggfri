@@ -254,6 +254,10 @@ otp_expiry = 3600
 subject = "Din inloggningslänk till Kuggfri"
 content_path = "./supabase/templates/magic-link.html"
 
+[auth.email.template.recovery]
+subject = "Välj ett nytt lösenord till Kuggfri"
+content_path = "./supabase/templates/recovery.html"
+
 [auth.email.template.confirmation]
 subject = "Bekräfta ditt konto på Kuggfri"
 content_path = "./supabase/templates/confirmation.html"

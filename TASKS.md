@@ -160,7 +160,7 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 - [x] Klartext i admins listor (KaTeX/markdown-syntax bort)
 - [x] E2E: admin-content (kategori-CRUD, omordning, kort-radering, export, examinatorrollen), glömt lösenord. Sviten är nu 40 tester
 - [x] Integritetspolicy och /om uppdaterade (öppen registrering, examinatorsvy, anonym statistik)
-- [ ] Belastningstest mot produktion (`scripts/load-test.cjs`)
+- [x] Belastningstest: 60 samtidiga klienter i 20 s mot kuggfri.com gav 0 fel, p50 1,1 s / p95 2,8 s på decksidan. Därefter cache på publikt innehåll (5 min, ogiltigförklaras vid adminändring). Full E2E 42/42 efteråt
 - [ ] **Alvin:** Hostinger-mejl + SMTP i Supabase (A–B), klistra in tre mallar (C), fråga Johan om kurskoden
 - [ ] **Alvin verifierar på 3001**, sedan push (migrationer 20260917000200 och 20260918000000 följer med)
 
@@ -169,7 +169,7 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 Måste (lansering till riktiga studenter):
 - [~] Egen SMTP via Hostingers fria e-post (100 mejl/dygn) + tre mallar med token_hash. Alvin gör dashboardstegen
 - [x] Glömt lösenord-flöde (fre 18 sep)
-- [ ] Belastning: många studenter samtidigt direkt efter föreläsningen (Supabase-gränser, RLS-frågornas kostnad, ev. cache på deck-sidan)
+- [x] Belastning testad och cache införd (fre 18 sep)
 - [ ] Kurskod i decket: MTM081 i appen, MTT085 i infobladet. Bekräfta med Johan/kurshemsidan och rätta
 - [x] Johan får ett konto: examinatorroll per deck byggd tor 17 sep kväll (se nedan). Kvar: Johan registrerar sig, Alvin lägger till adressen under Inställningar → Examinatorer
 - [ ] Integritetspolicy och /om uppdaterade för öppen registrering

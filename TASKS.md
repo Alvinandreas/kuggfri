@@ -5,7 +5,7 @@ Syfte: alltid veta vad som är klart, vad som pågår, vad som väntar och vad s
 
 Legend: `[x]` klart · `[ ]` att göra · `[~]` pågår · `[?]` väntar på Alvin · `[-]` skippat (med skäl)
 
-Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator) torsdag 17 sep 08:30.
+Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: samarbete spikat. Ny deadline: **presentation för studenterna tisdag 22 sep 10:00 på Johans föreläsning**, lansering direkt därefter. Helgen 19–20 sep är arbetshelg.
 
 ## Väntar på Alvin (blockerar)
 
@@ -119,7 +119,42 @@ Deadline: **demo-redo onsdag 16 sep 19:00**. Presentation för Johan (examinator
 
 ## Torsdag 17 sep
 
-- [ ] 08:30 presentation. Efteråt: skriv ner Johans önskemål här under "Tillkommit"
+- [x] 08:30 presentation, hela timmen gick åt (Johan fick avbryta för att han måste gå)
+
+## Mötet med Johan (tor 17 sep), resultat
+
+- Samarbete i kursen spikat. Alvin får använda Johans material i tjänsten.
+- Ingen begränsning till Chalmersadresser: vilken e-postadress som helst får registreras.
+- Johans enda mål: att studenterna lär sig så mycket som möjligt.
+- **Tisdag 22 sep 10:00: Alvin gästar Johans föreläsning** och presenterar tjänsten för tvåorna (proffsig presentation + livedemo). Kort därefter ska tjänsten vara redo att lanseras.
+- Johan föreslog själv amanuenslön 20 % i tre månader för arbetet (Alvin hade inte nämnt betalning).
+
+Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överlevererar på):
+1. Designen, gränssnittet och progressvisualiseringen på decksidan.
+2. Sessionsvyn: begränsad sessionsstorlek, sammanfattning med skattningar och "behöver mest arbete". Samma sak på adminsidan: han vill se vilka områden studenterna har svårt för, för att ändra kursen till nästa år. **Överleverans: uppföljningsrapporter för examinatorn** (aggregerad, anonymiserad statistik per kategori/kort).
+3. Full adminkontroll: redigera kort, kategorier, ordning, förhandsvisning.
+4. Obegränsat och gratis för studenterna, enkel delning.
+
+## Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)
+
+Måste (lansering till riktiga studenter):
+- [ ] Egen SMTP (Resend) i Supabase + mejlmallarna med token_hash, så att inloggningslänk och glömt-lösenord fungerar för alla adresser (Alvin skapar Resend-kontot och klistrar in nyckeln)
+- [ ] Glömt lösenord-flöde från inloggningssidan (kontrollera vad som finns, bygg det som saknas)
+- [ ] Belastning: många studenter samtidigt direkt efter föreläsningen (Supabase-gränser, RLS-frågornas kostnad, ev. cache på deck-sidan)
+- [ ] Kurskod i decket: MTM081 i appen, MTT085 i infobladet. Bekräfta med Johan/kurshemsidan och rätta
+- [ ] Johan får ett konto (admin eller reviewer-roll) så att han kan se rapporter och felanmälningar
+- [ ] Integritetspolicy och /om uppdaterade för öppen registrering
+- [ ] Full verify + mobiltest ljust/mörkt före lansering; kodfrysning måndag 21 sep kväll
+
+Bör (det Johan gillade mest):
+- [ ] Uppföljningsrapport för examinatorn i admin: per kategori och kort, andel låga skattningar, antal studenter, felrapporter; export (PDF/CSV). Aggregerat och anonymiserat, minsta gruppstorlek innan siffror visas
+- [ ] Presentation för studenterna: bildspel (bygg på docs/PRESENTATION.md och infobladet), demoscript, QR-kod till kuggfri.com/d/materialteknik på sista bilden, "lägg till på hemskärmen"-instruktion
+- [ ] Onboarding för nya studenter: första besöket förklarar lägena kort, gäst → konto utan att tappa progress (finns, verifiera)
+
+Kan:
+- [ ] Fler deck från Johans material (han har gett tillåtelse)
+- [ ] Reviewer-roll (Johan kommenterar kort utan full admin)
+
 
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 

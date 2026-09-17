@@ -3,16 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
+import { firstLine } from "@/lib/text/first-line";
 import { deleteCardAction, reorderCardsAction } from "@/lib/admin/actions";
 import type { CardRow } from "@/lib/supabase/database.types";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SortableList } from "./SortableList";
-
-function firstLine(text: string): string {
-  const line = text.split("\n").find((l) => l.trim().length > 0) ?? text;
-  return line.replace(/^[#*\-\s]+/, "").trim();
-}
 
 export function CardList({ deckId, cards }: { deckId: string; cards: CardRow[] }) {
   const router = useRouter();

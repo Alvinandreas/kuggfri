@@ -1,6 +1,7 @@
 import "server-only";
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { CardReportRow, CardRow, CategoryRow, DeckOverviewStats, DeckRow } from "@/lib/supabase/database.types";
+import type { CardRow, CategoryRow, DeckOverviewStats, DeckReportRow, DeckRow } from "@/lib/supabase/database.types";
 import { sortCardsByCategory } from "@/lib/content/queries";
 import { canEditDeck, getAdminContext } from "./access";
 
@@ -25,19 +26,22 @@ export async function getAllDecksForAdmin(): Promise<AdminDeckSummary[]> {
 
 export type AdminDeck = { deck: DeckRow; categories: CategoryRow[]; cards: CardRow[] };
 
-/** Decket med kategorier och kort, eller null om det inte finns eller inte får redigeras. */
-export async function getDeckForAdmin(id: string): Promise<AdminDeck | null> {
+/**
+ * Decket med kategorier och kort, eller null om det inte finns eller inte får redigeras.
+ * Memoiserad per request: layouten och sidan under den delar ett anrop.
+ */
+export const getDeckForAdmin = cache(async (id: string): Promise<AdminDeck | null> => {
   const ctx = await getAdminContext();
   if (!canEditDeck(ctx, id)) return null;
   const supabase = await createSupabaseServerClient();
-  const { data: deck } = await supabase.from("decks").select("*").eq("id", id).maybeSingle();
-  if (!deck) return null;
-  const [{ data: categories }, { data: cards }] = await Promise.all([
+  const [{ data: deck }, { data: categories }, { data: cards }] = await Promise.all([
+    supabase.from("decks").select("*").eq("id", id).maybeSingle(),
     supabase.from("categories").select("*").eq("deck_id", id).order("sort_order").order("title"),
     supabase.from("cards").select("*").eq("deck_id", id).order("sort_order").order("created_at"),
   ]);
+  if (!deck) return null;
   return { deck, categories: categories ?? [], cards: sortCardsByCategory(cards ?? [], categories ?? []) };
-}
+});
 
 export async function getCardForAdmin(id: string): Promise<CardRow | null> {
   const supabase = await createSupabaseServerClient();
@@ -75,53 +79,51 @@ export async function getDeckStats(deckId: string): Promise<DeckStats> {
   };
 }
 
-export type AdminReport = CardReportRow & { card: { id: string; front: string } | null };
+export type AdminReport = DeckReportRow;
 
-/** Alla felrapporter för kort i decket, nyast först. */
+/** Alla felrapporter för kort i decket, nyast först (deck_reports). */
 export async function getDeckReports(deckId: string): Promise<AdminReport[]> {
   const supabase = await createSupabaseServerClient();
-  const { data: cards } = await supabase.from("cards").select("id, front").eq("deck_id", deckId);
-  const byId = new Map((cards ?? []).map((c) => [c.id, c] as const));
-  if (byId.size === 0) return [];
-  const { data, error } = await supabase
-    .from("card_reports")
-    .select("*")
-    .in("card_id", [...byId.keys()])
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.rpc("deck_reports", { p_deck_id: deckId });
   if (error) throw error;
-  return (data ?? []).map((r) => ({ ...r, card: byId.get(r.card_id) ?? null }));
+  return data ?? [];
 }
 
-/** Antal öppna felrapporter i decket (för länken på deckets adminsida). */
-export async function countOpenReports(deckId: string): Promise<number> {
+/** Antal öppna felrapporter i decket. Memoiserad per request (flikraden och översikten). */
+export const countOpenReports = cache(async (deckId: string): Promise<number> => {
   const supabase = await createSupabaseServerClient();
-  const { data: cards } = await supabase.from("cards").select("id").eq("deck_id", deckId);
-  const ids = (cards ?? []).map((c) => c.id);
-  if (ids.length === 0) return 0;
-  const { count } = await supabase.from("card_reports").select("id", { count: "exact", head: true }).in("card_id", ids).eq("status", "open");
-  return count ?? 0;
-}
+  const { data, error } = await supabase.rpc("deck_open_report_count", { p_deck_id: deckId });
+  if (error) throw error;
+  return Number(data ?? 0);
+});
 
 /** Kursöversikten: aggregerad, anonym statistik i ett anrop (deck_stats_overview). */
 export async function getDeckOverviewStats(deckId: string): Promise<DeckOverviewStats> {
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("deck_stats_overview", { p_deck_id: deckId, p_days: 14 });
+  const { data, error } = await supabase.rpc("deck_stats_overview", { p_deck_id: deckId, p_weeks: 8 });
   if (error) throw error;
   const d = data as DeckOverviewStats;
+  const num = (v: unknown) => Number(v ?? 0);
   return {
-    students: Number(d.students ?? 0),
-    active_7d: Number(d.active_7d ?? 0),
-    reviews_14d: Number(d.reviews_14d ?? 0),
+    students: num(d.students),
+    active_7d: num(d.active_7d),
+    reviews_7d: num(d.reviews_7d),
     avg_rating: d.avg_rating === null || d.avg_rating === undefined ? null : Number(d.avg_rating),
-    days: (d.days ?? []).map((x) => ({ day: x.day, reviews: Number(x.reviews) })),
+    open_reports: num(d.open_reports),
+    rating_dist: (d.rating_dist ?? []).map((r) => ({ rating: num(r.rating), n: num(r.n) })),
+    progress_buckets: (d.progress_buckets ?? []).map((b) => ({ bucket: num(b.bucket), students: num(b.students) })),
+    weeks: (d.weeks ?? []).map((w) => ({ week: num(w.week), start: w.start, students: num(w.students), reviews: num(w.reviews) })),
     categories: (d.categories ?? []).map((c) => ({
       category_id: c.category_id,
-      learned: Number(c.learned),
-      partial: Number(c.partial),
-      studied: Number(c.studied),
-      students: Number(c.students),
+      students: num(c.students),
+      ratings: num(c.ratings),
+      avg: c.avg === null || c.avg === undefined ? null : Number(c.avg),
+      low: num(c.low),
+      learned: num(c.learned),
+      partial: num(c.partial),
+      studied: num(c.studied),
     })),
-    cards: (d.cards ?? []).map((c) => ({ ...c, ratings: Number(c.ratings), low: Number(c.low), avg: Number(c.avg) })),
+    cards: (d.cards ?? []).map((c) => ({ ...c, ratings: num(c.ratings), low: num(c.low), avg: Number(c.avg) })),
   };
 }
 

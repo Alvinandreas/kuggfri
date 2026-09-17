@@ -29,8 +29,10 @@ test.describe("admin", () => {
     // Första kompileringen av admin-sidan i dev-läge kan ta en stund.
     await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
-    // Kursöversikten: nyckeltal och kluriga frågor syns för admin.
+    // Kursöversikten: nyckeltal och kluriga frågor syns för admin. Titeln strömmas efter skelettet,
+    // så vänta in den innan axe körs.
     await expect(page.getByTestId("overview-students")).toBeVisible();
+    await expect(page).toHaveTitle(/Kursöversikt/);
     await expect(page.getByTestId("deck-tab-import")).toBeVisible();
     await expectNoSeriousA11yViolations(page);
     // Navigera direkt: på smala skärmar kan flikraden flytta sig medan listorna renderas.

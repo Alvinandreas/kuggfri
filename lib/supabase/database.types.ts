@@ -113,11 +113,27 @@ export type DeckExaminerRow = {
 export type DeckOverviewStats = {
   students: number;
   active_7d: number;
-  reviews_14d: number;
+  reviews_7d: number;
   avg_rating: number | null;
-  days: { day: string; reviews: number }[];
-  categories: { category_id: string; learned: number; partial: number; studied: number; students: number }[];
+  open_reports: number;
+  rating_dist: { rating: number; n: number }[];
+  /** bucket 0 = 0–20 % inlärda kort … 4 = 80–100 % */
+  progress_buckets: { bucket: number; students: number }[];
+  weeks: { week: number; start: string; students: number; reviews: number }[];
+  categories: { category_id: string; students: number; ratings: number; avg: number | null; low: number; learned: number; partial: number; studied: number }[];
   cards: { card_id: string; category_id: string | null; front: string; ratings: number; low: number; avg: number }[];
+};
+
+/** Rad från deck_reports(): felrapport med kortets framsida, utan user_id. */
+export type DeckReportRow = {
+  id: string;
+  card_id: string;
+  card_front: string;
+  message: string;
+  contact: string | null;
+  status: "open" | "resolved";
+  created_at: string;
+  resolved_at: string | null;
 };
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -221,7 +237,9 @@ export type Database = {
         Returns: { unique_users: number; total_reviews: number; avg_rating: number | null }[];
       };
       deck_stats_cards: { Args: { p_deck_id: string }; Returns: DeckStatsCardRow[] };
-      deck_stats_overview: { Args: { p_deck_id: string; p_days?: number }; Returns: DeckOverviewStats };
+      deck_stats_overview: { Args: { p_deck_id: string; p_weeks?: number }; Returns: DeckOverviewStats };
+      deck_reports: { Args: { p_deck_id: string }; Returns: DeckReportRow[] };
+      deck_open_report_count: { Args: { p_deck_id: string }; Returns: number };
       can_edit_deck: { Args: { p_deck_id: string }; Returns: boolean };
       list_deck_examiners: {
         Args: { p_deck_id: string };

@@ -3,17 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
+import { firstLine } from "@/lib/text/first-line";
 import { importCardsAction } from "@/lib/admin/actions";
 import { diffImport, type ExistingCard, type ExistingCategory } from "@/lib/import/diff";
 import { parseImport, type ImportParseResult } from "@/lib/import/parse-import";
 import { Button, LinkButton } from "@/components/ui/Button";
 
 type Props = { deckId: string; existingCards: ExistingCard[]; existingCategories: ExistingCategory[] };
-
-function firstLine(text: string): string {
-  const line = text.split("\n").find((l) => l.trim().length > 0) ?? text;
-  return line.replace(/^[#*\-\s]+/, "").trim();
-}
 
 function truncate(text: string, n = 120): string {
   return text.length > n ? `${text.slice(0, n)}…` : text;

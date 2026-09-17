@@ -587,16 +587,25 @@ describe("examinatorer (deck_examiners)", () => {
   it("examinatorn ser statistik och felrapporter bara för sitt deck", async () => {
     await user(db, examiner).query(`select * from public.deck_stats_summary($1)`, [draftDeck]);
     await user(db, examiner).query(`select * from public.deck_stats_cards($1)`, [draftDeck]);
-    const [o] = await user(db, examiner).query<{ o: { days: unknown[]; categories: unknown[] } }>(`select public.deck_stats_overview($1, 14) as o`, [draftDeck]);
-    expect(o?.o.days).toHaveLength(14);
+    const [o] = await user(db, examiner).query<{ o: { weeks: unknown[]; categories: unknown[]; rating_dist: unknown[]; progress_buckets: unknown[] } }>(`select public.deck_stats_overview($1, 8) as o`, [draftDeck]);
+    expect(o?.o.weeks).toHaveLength(8);
+    expect(o?.o.rating_dist).toHaveLength(5);
+    expect(o?.o.progress_buckets).toHaveLength(5);
     expect(Array.isArray(o?.o.categories)).toBe(true);
     await expectDenied(user(db, examiner).query(`select * from public.deck_stats_summary($1)`, [otherDeck]));
-    await expectDenied(user(db, examiner).query(`select public.deck_stats_overview($1, 14)`, [otherDeck]));
-    await expectDenied(user(db, alice).query(`select public.deck_stats_overview($1, 14)`, [draftDeck]));
+    await expectDenied(user(db, examiner).query(`select public.deck_stats_overview($1, 8)`, [otherDeck]));
+    await expectDenied(user(db, alice).query(`select public.deck_stats_overview($1, 8)`, [draftDeck]));
+    await expectDenied(user(db, alice).query(`select * from public.deck_reports($1)`, [draftDeck]));
+    await expectDenied(user(db, examiner).query(`select public.deck_open_report_count($1)`, [otherDeck]));
 
     await db.query(`insert into public.card_reports (card_id, message) values ($1, 'Rapport i examinatorns deck'), ($2, 'Rapport i annat deck')`, [draftCard, otherCard]);
     const seen = await user(db, examiner).query<{ message: string }>(`select message from public.card_reports order by message`);
     expect(seen.map((r) => r.message)).toEqual(["Rapport i examinatorns deck"]);
+    const viaRpc = await user(db, examiner).query<{ message: string; card_front: string }>(`select message, card_front from public.deck_reports($1)`, [draftDeck]);
+    expect(viaRpc.map((r) => r.message)).toEqual(["Rapport i examinatorns deck"]);
+    expect(viaRpc[0]?.card_front).toBe("Hemlig fråga");
+    const [cnt] = await user(db, examiner).query<{ n: number }>(`select public.deck_open_report_count($1) as n`, [draftDeck]);
+    expect(Number(cnt?.n)).toBe(1);
     await user(db, examiner).query(`update public.card_reports set status = 'resolved' where message = 'Rapport i annat deck'`);
     expect((await db.query<{ status: string }>(`select status from public.card_reports where message = 'Rapport i annat deck'`))[0]?.status).toBe("open");
   });
@@ -610,10 +619,12 @@ describe("examinatorer (deck_examiners)", () => {
 
   it("deck_stats_overview räknar rätt för admin", async () => {
     const [o] = await user(db, admin).query<{
-      o: { students: number; categories: { learned: number; studied: number }[]; cards: { ratings: number }[] };
-    }>(`select public.deck_stats_overview($1, 14) as o`, [publishedDeck]);
+      o: { students: number; open_reports: number; categories: { learned: number; studied: number; avg: number }[]; cards: { ratings: number }[]; progress_buckets: { students: number }[] };
+    }>(`select public.deck_stats_overview($1, 8) as o`, [publishedDeck]);
     expect(o?.o.students).toBeGreaterThanOrEqual(1);
     expect(o?.o.categories[0]?.studied).toBeGreaterThanOrEqual(1);
+    expect(o?.o.categories[0]?.avg).toBeGreaterThan(0);
     expect(o?.o.cards.some((c) => c.ratings >= 1)).toBe(true);
+    expect(o?.o.progress_buckets.reduce((s, b) => s + Number(b.students), 0)).toBe(Number(o?.o.students));
   });
 });

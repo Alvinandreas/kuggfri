@@ -1,6 +1,7 @@
 "use client";
 
 import { sv } from "@/lib/i18n/sv";
+import { firstLine } from "@/lib/text/first-line";
 import type { SessionSummary as Summary } from "@/lib/fsrs/session";
 import { SELF_RATINGS, type StudyMode } from "@/lib/progress/types";
 import { formatRelative } from "@/lib/time/format";
@@ -27,11 +28,6 @@ const barClass: Record<1 | 2 | 3 | 4 | 5, string> = {
   4: "bg-rate-4",
   5: "bg-rate-5",
 };
-
-function firstLine(text: string): string {
-  const line = text.split("\n").find((l) => l.trim().length > 0) ?? text;
-  return line.replace(/^[#*\-\s]+/, "").trim();
-}
 
 export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, deckSlug, onPrevious }: Props) {
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));

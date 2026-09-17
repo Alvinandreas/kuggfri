@@ -6,14 +6,10 @@ import { useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { deleteReportAction, setReportStatusAction } from "@/lib/admin/actions";
 import type { AdminReport } from "@/lib/admin/queries";
+import { firstLine } from "@/lib/text/first-line";
 import { formatDateTime } from "@/lib/time/format";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-
-function firstLine(text: string): string {
-  const line = text.split("\n").find((l) => l.trim().length > 0) ?? text;
-  return line.replace(/^[#*\-\s]+/, "").trim();
-}
 
 export function ReportList({ deckId, reports }: { deckId: string; reports: AdminReport[] }) {
   const router = useRouter();
@@ -56,13 +52,9 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
               </div>
               <p className="text-sm">
                 <span className="text-muted">{sv.admin.reportCard}: </span>
-                {r.card ? (
-                  <Link href={`/admin/deck/${deckId}/kort/${r.card.id}`} className="font-medium underline underline-offset-2 decoration-line-strong hover:decoration-fg">
-                    {firstLine(r.card.front)}
-                  </Link>
-                ) : (
-                  <span className="text-muted">–</span>
-                )}
+                <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="font-medium underline underline-offset-2 decoration-line-strong hover:decoration-fg">
+                  {firstLine(r.card_front)}
+                </Link>
               </p>
               <p className="whitespace-pre-wrap rounded-md bg-bg px-3 py-2 text-sm">{r.message}</p>
               <p className="text-sm text-muted">

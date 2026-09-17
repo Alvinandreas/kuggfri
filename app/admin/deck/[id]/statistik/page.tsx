@@ -2,16 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
+import { firstLine } from "@/lib/text/first-line";
 import { getDeckForAdmin, getDeckStats } from "@/lib/admin/queries";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 
 export const metadata: Metadata = { title: sv.admin.allCardsDetail };
-
-function firstLine(text: string): string {
-  const line = text.split("\n").find((l) => l.trim().length > 0) ?? text;
-  return line.replace(/^[#*\-\s]+/, "").trim();
-}
 
 /** Alla kort i detalj: snittskattning och repetitioner per kort, lägst först. */
 export default async function StatsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -36,7 +32,7 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
       </div>
       <dl className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border border-line bg-surface p-3">
-          <dt className="text-xs text-muted">{sv.admin.statsUsers}</dt>
+          <dt className="text-xs text-muted">{sv.admin.tileStudents}</dt>
           <dd className="mt-1 text-2xl font-semibold leading-none tabular-nums" data-testid="stats-users">
             {stats.uniqueUsers}
           </dd>

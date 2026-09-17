@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 
-export type BarPoint = { key: string; label: string; value: number };
+export type BarPoint = { key: string; label: string; value: number; /** Tailwind fill-klass för just den här stapeln. */ colorClass?: string; /** Extra rad i tooltipen. */ detail?: string };
 
 type Props = {
   points: BarPoint[];
@@ -11,6 +11,8 @@ type Props = {
   help?: string;
   /** Formaterar ett värde för tooltip och tabell. */
   formatValue: (v: number) => string;
+  /** Rubriken finns redan intill (t.ex. panelens rubrik): visa den bara för skärmläsare. */
+  hideTitle?: boolean;
 };
 
 const W = 440;
@@ -22,7 +24,7 @@ const PAD = { top: 12, right: 8, bottom: 26, left: 30 };
  * tunna staplar med 2 px mellanrum, rundad topp, tre stödlinjer,
  * hover-tooltip och en tabellvy för skärmläsare och den som föredrar siffror.
  */
-export function BarChart({ points, title, help, formatValue }: Props) {
+export function BarChart({ points, title, help, formatValue, hideTitle = false }: Props) {
   const [hover, setHover] = useState<number | null>(null);
   const titleId = useId();
 
@@ -34,12 +36,12 @@ export function BarChart({ points, title, help, formatValue }: Props) {
   const slot = innerW / Math.max(1, points.length);
   const barW = Math.max(4, slot - 2);
   const y = (v: number) => PAD.top + innerH - (v / top) * innerH;
-  // Högst sju datumetiketter, jämnt fördelade från första dagen.
-  const labelStep = Math.max(1, Math.ceil(points.length / 7));
+  // Upp till åtta etiketter visas alla, annars högst sju jämnt fördelade från första.
+  const labelStep = points.length <= 8 ? 1 : Math.ceil(points.length / 7);
 
   return (
     <figure className="grid gap-2">
-      <figcaption className="flex items-start justify-between gap-3">
+      <figcaption className={hideTitle ? "sr-only" : "flex items-start justify-between gap-3"}>
         <div>
           <span id={titleId} className="block text-sm font-medium">
             {title}
@@ -93,7 +95,7 @@ export function BarChart({ points, title, help, formatValue }: Props) {
                   {/* Osynlig, bredare träffyta */}
                   <rect x={PAD.left + i * slot} y={PAD.top} width={slot} height={innerH} fill="transparent" />
                   {p.value > 0 ? (
-                    <rect x={x} y={y(p.value)} width={barW} height={h} rx={3} className={active ? "fill-accent-hover" : "fill-chart-1"} />
+                    <rect x={x} y={y(p.value)} width={barW} height={h} rx={3} className={active ? "fill-accent-hover" : (p.colorClass ?? "fill-chart-1")} />
                   ) : (
                     <rect x={x} y={y(0) - 1} width={barW} height={1} className="fill-chart-grid" />
                   )}
@@ -113,6 +115,7 @@ export function BarChart({ points, title, help, formatValue }: Props) {
               style={{ left: `${((PAD.left + hover * slot + slot / 2) / W) * 100}%`, transform: "translateX(-50%)" }}
             >
               <span className="text-muted">{points[hover].label}</span> · {formatValue(points[hover].value)}
+              {points[hover].detail ? <span className="text-muted"> · {points[hover].detail}</span> : null}
             </div>
           ) : null}
         </div>

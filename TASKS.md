@@ -145,7 +145,9 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 - [x] Examinatorer hanteras i UI (Inställningar → Examinatorer, uppslag på e-post i databasen)
 - [x] sr-only-tabellerna i diagrammen gjorde mobilsidan bredare än skärmen (gällde även studentens decksida); rättat
 - [x] Pushat tor 17 sep 21:20 (commit 56450f0): migrationen i molnet, kuggfri.com uppdaterad, hela E2E-sviten 34/34, 173 enhetstester, testkopian på 3001 ombyggd
-- [ ] **Före lansering:** höj `MIN_CARD_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
+- [x] Tor 21:00–22:00, Alvins synpunkter: (1) inga skärmdumpar utan begäran, (2) ingen push förrän Alvin verifierat på 3001, (3) felrapporttexten säger "kursens examinator", (4) kursöversikten omgjord för examinatorn: fyra nyckeltal (studenter, aktiva 7 dagar med repetitioner, snittskattning, öppna rapporter), sedan Svåraste områdena (kategorier efter snittskattning, färg efter skattningsskalan), Kluriga frågor, Hur långt har studenterna kommit (fördelning av studenter per andel inlärda kort), Aktiva studenter per vecka (8 veckor), Så skattar studenterna sig (1–5), Senaste felrapporterna. `deck_stats_overview` v2 ger allt i ett anrop; (5) prestanda och städning: `getDeckForAdmin`/`countOpenReports` memoiserade per request (layout + sida delar anrop), tre parallella frågor i stället för seriella, felrapporter via `deck_reports`/`deck_open_report_count` i stället för id-listor, admin slipper examinatorslagningen, `loading.tsx` under decket så flikbyten känns omedelbara, delade `firstLine`/`StatTile`, LineChart borttagen, 40 döda i18n-nycklar borta
+- [ ] **Alvin verifierar på http://localhost:3001** (adminvyn, alla flikar, studentsidan) och säger "pusha"
+- [ ] **Före lansering:** höj `MIN_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
 
 ## Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)
 

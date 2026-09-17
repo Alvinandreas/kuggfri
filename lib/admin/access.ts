@@ -18,11 +18,12 @@ export const getAdminContext = cache(async (): Promise<AdminContext | null> => {
   const session = await getCurrentProfile();
   if (!session) return null;
   const isAdmin = session.profile?.is_admin === true;
+  if (isAdmin) return { userId: session.user.id, isAdmin: true, examinerDeckIds: [] };
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.from("deck_examiners").select("deck_id").eq("user_id", session.user.id);
   const examinerDeckIds = (data ?? []).map((r) => r.deck_id);
-  if (!isAdmin && examinerDeckIds.length === 0) return null;
-  return { userId: session.user.id, isAdmin, examinerDeckIds };
+  if (examinerDeckIds.length === 0) return null;
+  return { userId: session.user.id, isAdmin: false, examinerDeckIds };
 });
 
 export function canEditDeck(ctx: AdminContext | null, deckId: string): boolean {

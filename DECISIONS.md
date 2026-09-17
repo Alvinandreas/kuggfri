@@ -192,8 +192,15 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Kursöversikten** (`deck_stats_overview`, ett RPC-anrop) visar bara aggregat: antal studenter,
   aktiva, repetitioner per dag, kunskap per kategori (genomsnitt per student), kluriga frågor
   (andel skattningar 1–2 per kort). Inga user_id eller e-postadresser lämnar databasen.
-  `MIN_CARD_RATINGS` i CourseOverview.tsx är 1 under utvecklingsfasen och ska höjas (5) före
+  `MIN_RATINGS` i CourseOverview.tsx är 1 under utvecklingsfasen och ska höjas (5) före
   lansering så att ett enskilt svar inte kan läsas ut.
+- **Kursöversikten är examinatorns, inte studentens uppskalad** (Alvins synpunkt 17 sep kväll):
+  repetitioner per dag och radar ersattes av svåraste områdena (snittskattning per kategori),
+  fördelning av hur långt studenterna kommit, aktiva per vecka, skattningsfördelning och senaste
+  felrapporterna. Varje panel svarar på en fråga examinatorn faktiskt har inför föreläsning/tenta.
+- **Arbetssätt:** inga skärmdumpar utan begäran; ingen push till kuggfri.com förrän Alvin
+  verifierat på testkopian (3001). Felrapporter adresseras i UI:t till "kursens examinator";
+  admin ser dem också men det nämns inte för studenterna.
 - **Skydd mot felklick**: deck-radering kräver att titeln skrivs, avpublicering och radering av
   felrapport har bekräftelsedialog, opublicerat deck visar banderoll för redaktören, egen
   `app/error.tsx`.

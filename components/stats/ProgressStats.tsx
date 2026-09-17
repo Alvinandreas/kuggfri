@@ -6,6 +6,7 @@ import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { buildProgressStats } from "@/lib/stats/progress-stats";
 import { BarChart } from "./BarChart";
 import { RadarChart, RadarLegend, type RadarAxis } from "./RadarChart";
+import { StatTile } from "./StatTile";
 
 type Props = {
   cardIds: readonly string[];
@@ -33,10 +34,10 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
   return (
     <div className="grid gap-5">
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Tile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} tone="green" />
-        <Tile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} tone="navy" />
-        <Tile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
-        <Tile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
+        <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} tone="green" />
+        <StatTile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} tone="navy" />
+        <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
+        <StatTile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
       </dl>
 
       <p className="text-sm">
@@ -67,27 +68,6 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
       ) : (
         <p className="text-sm text-muted">{sv.stats.empty}</p>
       )}
-    </div>
-  );
-}
-
-type Tone = "green" | "navy" | "teal" | "violet";
-// Samma mjuka skala som kategoritaggarna: grön (accent), blå (tag-7), turkos (tag-5), violett (tag-8).
-const tones: Record<Tone, string> = {
-  green: "border-accent/40 bg-accent-soft/60",
-  navy: "border-tag-7 bg-tag-7/60 dark:bg-tag-7/35",
-  teal: "border-tag-5 bg-tag-5/60 dark:bg-tag-5/35",
-  violet: "border-tag-8 bg-tag-8/60 dark:bg-tag-8/35",
-};
-
-function Tile({ label, help, value, sub, tone }: { label: string; help?: string; value: string; sub: string; tone: Tone }) {
-  return (
-    <div className={`rounded-lg border p-3 ${tones[tone]}`}>
-      <dt className="text-xs text-muted" title={help}>
-        {label}
-      </dt>
-      <dd className="mt-1 text-2xl font-semibold leading-none tabular-nums">{value}</dd>
-      <dd className="mt-1 text-xs text-muted">{sub}</dd>
     </div>
   );
 }

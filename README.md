@@ -81,6 +81,15 @@ where id = (select id from auth.users where email = 'din@epost.se');
 Kolumnen `is_admin` kan bara ändras med databasrättigheter; en användare kan inte sätta den
 själv (testat i `tests/unit/db/rls.test.ts`). Därefter syns länken **Admin** i menyn.
 
+## Ge en examinator tillgång till sin kurs
+
+Admin behöver inte delas ut. Under deckets **Inställningar → Examinatorer** anger admin
+e-postadressen till ett registrerat konto; personen får då redigera innehåll, se kursöversikten
+(anonym statistik) och felrapporter för just det decket, men varken se andra deck, skapa eller ta
+bort deck eller utse andra examinatorer. Rättigheten ligger i tabellen `deck_examiners` och
+kontrolleras av `public.can_edit_deck()` i RLS-policyerna (testat i `tests/unit/db/rls.test.ts`).
+Länken **Admin** i menyn visas även för examinatorer och leder direkt till deras kurs.
+
 ## Importera innehåll
 
 I admin: öppna decket → **Importera**. Stöd för CSV och JSON med kolumnerna

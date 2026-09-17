@@ -31,7 +31,7 @@ export function CardList({ deckId, cards }: { deckId: string; cards: CardRow[] }
     });
   }
 
-  if (cards.length === 0) return <p className="text-muted">{sv.admin.importNothing}</p>;
+  if (cards.length === 0) return <p className="text-muted">{sv.admin.noCardsInCategory}</p>;
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-3" data-testid="admin-card-list">

@@ -70,7 +70,8 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
         </div>
       </figcaption>
 
-      <table className="sr-only">
+      <div className="sr-only">
+      <table>
         <thead>
           <tr>
             <th>{sv.deck.selectionCategory}</th>
@@ -90,6 +91,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
           ))}
         </tbody>
       </table>
+      </div>
       {(
         <div className="grid gap-3">
           <div className="relative">

@@ -8,6 +8,7 @@ import { deleteReportAction, setReportStatusAction } from "@/lib/admin/actions";
 import type { AdminReport } from "@/lib/admin/queries";
 import { formatDateTime } from "@/lib/time/format";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 function firstLine(text: string): string {
   const line = text.split("\n").find((l) => l.trim().length > 0) ?? text;
@@ -18,6 +19,7 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   function run(action: () => Promise<{ ok: boolean; error?: string }>) {
     setError(null);
@@ -75,7 +77,7 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
                 >
                   {open ? sv.admin.reportResolve : sv.admin.reportReopen}
                 </Button>
-                <Button size="sm" variant="danger" disabled={pending} onClick={() => run(() => deleteReportAction(r.id, deckId))}>
+                <Button size="sm" variant="danger" disabled={pending} onClick={() => setDeleting(r.id)}>
                   {sv.admin.reportDelete}
                 </Button>
               </div>
@@ -83,6 +85,20 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
           );
         })}
       </ul>
+      <ConfirmDialog
+        open={deleting !== null}
+        title={sv.admin.reportDelete}
+        body={sv.admin.reportDeleteConfirm}
+        danger
+        busy={pending}
+        onConfirm={() => {
+          const id = deleting;
+          if (!id) return;
+          run(() => deleteReportAction(id, deckId));
+          setDeleting(null);
+        }}
+        onCancel={() => setDeleting(null)}
+      />
     </div>
   );
 }

@@ -186,7 +186,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
             <Button onClick={confirm} disabled={pending || toImport === 0} data-testid="import-confirm">
               {toImport === 0 ? sv.admin.importNothing : sv.admin.importConfirm(toImport)}
             </Button>
-            <LinkButton href={`/admin/deck/${deckId}`} variant="secondary">
+            <LinkButton href={`/admin/deck/${deckId}/innehall`} variant="secondary">
               {sv.common.back}
             </LinkButton>
           </div>
@@ -201,7 +201,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
 
       {!diff ? (
         <div>
-          <LinkButton href={`/admin/deck/${deckId}`} variant="secondary" size="sm">
+          <LinkButton href={`/admin/deck/${deckId}/innehall`} variant="secondary" size="sm">
             {sv.common.back}
           </LinkButton>
         </div>

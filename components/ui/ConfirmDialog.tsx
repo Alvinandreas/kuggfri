@@ -13,6 +13,8 @@ type Props = {
   danger?: boolean;
   /** Om satt måste användaren skriva exakt detta ord för att bekräfta. */
   requireWord?: string;
+  /** Etikett för fältet ovan; standard: kontosidans text. */
+  requireWordLabel?: string;
   busy?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -30,6 +32,7 @@ export function ConfirmDialog({
   cancelLabel = sv.common.cancel,
   danger = false,
   requireWord,
+  requireWordLabel,
   busy = false,
   onConfirm,
   onCancel,
@@ -75,7 +78,7 @@ export function ConfirmDialog({
         </p>
         {requireWord ? (
           <label className="mt-4 block text-sm">
-            <span className="text-muted">{sv.account.deleteConfirmWord}</span>
+            <span className="text-muted">{requireWordLabel ?? sv.account.deleteConfirmWord}</span>
             <input
               value={word}
               onChange={(e) => setWord(e.target.value)}

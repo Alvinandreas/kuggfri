@@ -20,8 +20,8 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${data.deck.id}`} className="hover:text-fg">
-          {data.deck.title}
+        <Link href={`/admin/deck/${data.deck.id}/innehall`} className="hover:text-fg">
+          {sv.admin.tabContent}
         </Link>
         {" › "}
         <Link href={backHref} className="hover:text-fg">
@@ -29,10 +29,10 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
         </Link>
       </nav>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h2 className="text-xl font-semibold tracking-tight">
           {sv.admin.editCard}
           {index >= 0 ? <span className="ml-2 text-base font-normal text-muted">{sv.admin.cardPosition(index + 1, siblings.length)}</span> : null}
-        </h1>
+        </h2>
         <div className="flex gap-1 text-sm">
           {prev ? (
             <Link href={`/admin/deck/${data.deck.id}/kort/${prev.id}`} className="rounded-md border border-line-strong bg-surface px-3 py-1.5 hover:bg-surface-2">

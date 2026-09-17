@@ -36,20 +36,20 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${deck.id}`} className="hover:text-fg">
-          ← {deck.title}
+        <Link href={`/admin/deck/${deck.id}/innehall`} className="hover:text-fg">
+          ← {sv.admin.tabContent}
         </Link>
       </nav>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h2 className="text-xl font-semibold tracking-tight">
             {category ? (
               <CategoryTag title={category.title} colorIndex={colorIndex.get(category.id) ?? 0} size="lg" />
             ) : (
               sv.admin.uncategorized
             )}
-          </h1>
+          </h2>
           <p className="mt-2 text-sm text-muted">
             {sv.admin.cardCount(cards.length)}
             {inactive > 0 ? ` · ${sv.admin.inactiveCount(inactive)}` : ""}

@@ -22,8 +22,8 @@ export default async function NewCardPage({
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${data.deck.id}`} className="hover:text-fg">
-          {data.deck.title}
+        <Link href={`/admin/deck/${data.deck.id}/innehall`} className="hover:text-fg">
+          {sv.admin.tabContent}
         </Link>
         {category ? (
           <>
@@ -34,12 +34,12 @@ export default async function NewCardPage({
           </>
         ) : null}
       </nav>
-      <h1 className="text-2xl font-semibold tracking-tight">{sv.admin.newCard}</h1>
+      <h2 className="text-xl font-semibold tracking-tight">{sv.admin.newCard}</h2>
       <CardEditor
         deckId={data.deck.id}
         categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
         initialCategoryId={category?.id ?? null}
-        backHref={category ? backHref : `/admin/deck/${data.deck.id}`}
+        backHref={category ? backHref : `/admin/deck/${data.deck.id}/innehall`}
       />
     </div>
   );

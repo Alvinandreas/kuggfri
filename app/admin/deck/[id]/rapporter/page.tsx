@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin, getDeckReports } from "@/lib/admin/queries";
@@ -17,13 +16,8 @@ export default async function ReportsPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-2">
-        <Link href={`/admin/deck/${id}`} className="text-sm text-muted hover:text-fg">
-          ← {data.deck.title}
-        </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {sv.admin.reports}: {data.deck.title}
-        </h1>
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-1">
+        <h2 className="text-lg font-semibold">{sv.admin.reports}</h2>
         <p className="text-sm text-muted">{sv.admin.reportsHelp}</p>
       </div>
 

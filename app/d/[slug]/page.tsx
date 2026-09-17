@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { DeckOverview } from "@/components/study/DeckOverview";
+import { sv } from "@/lib/i18n/sv";
 
 type Params = Promise<{ slug: string }>;
 
@@ -18,6 +19,12 @@ export default async function DeckPage({ params }: { params: Params }) {
   if (!data) notFound();
 
   return (
+    <>
+      {!data.deck.is_published ? (
+        <p role="status" className="mb-6 rounded-lg border border-line-strong bg-surface-2 px-4 py-3 text-sm" data-testid="unpublished-banner">
+          {sv.admin.unpublishedBanner}
+        </p>
+      ) : null}
     <DeckOverview
       deck={{
         id: data.deck.id,
@@ -31,5 +38,6 @@ export default async function DeckPage({ params }: { params: Params }) {
       cards={data.cards.map((c) => ({ id: c.id, category_id: c.category_id, sort_order: c.sort_order }))}
       userId={user?.id ?? null}
     />
+    </>
   );
 }

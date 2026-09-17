@@ -33,11 +33,16 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/admin")) {
     let profile: { is_admin: boolean } | null = null;
+    let examinerDecks = 0;
     if (user) {
       const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
       profile = data;
+      if (!profile?.is_admin) {
+        const { count } = await supabase.from("deck_examiners").select("deck_id", { count: "exact", head: true }).eq("user_id", user.id);
+        examinerDecks = count ?? 0;
+      }
     }
-    const decision = decideAdminAccess(user, profile);
+    const decision = decideAdminAccess(user, profile, examinerDecks);
     if (decision.kind === "redirect-login") {
       const loginUrl = new URL("/logga-in", request.url);
       loginUrl.searchParams.set("next", pathname);

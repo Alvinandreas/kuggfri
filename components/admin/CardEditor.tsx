@@ -25,7 +25,7 @@ type Props = {
 
 /** Kortredigerare med live-förhandsvisning av markdown och KaTeX. */
 export function CardEditor({ deckId, categories, card, initialCategoryId = null, backHref }: Props) {
-  const closeHref = backHref ?? `/admin/deck/${deckId}`;
+  const closeHref = backHref ?? `/admin/deck/${deckId}/innehall`;
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [front, setFront] = useState(card?.front ?? "");

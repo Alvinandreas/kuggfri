@@ -24,10 +24,10 @@ test.describe("felrapporter", () => {
     const ctx = await browser.newContext();
     const admin = await ctx.newPage();
     try {
-      await login(admin, ADMIN_USER.email, ADMIN_USER.password, "/admin");
+      await login(admin, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
       await admin.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
-      await admin.getByRole("link", { name: /^Felrapporter/ }).click();
-      await expect(admin.getByRole("heading", { name: /^Felrapporter/ })).toBeVisible();
+      await admin.getByTestId("deck-tab-rapporter").click();
+      await expect(admin.getByRole("heading", { name: /^Felrapporter/ }).first()).toBeVisible();
 
       const row = admin.getByTestId("report-row").filter({ hasText: text });
       await expect(row).toBeVisible();
@@ -39,6 +39,7 @@ test.describe("felrapporter", () => {
       await expect(row.getByText("Åtgärdad", { exact: true })).toBeVisible();
 
       await row.getByRole("button", { name: "Ta bort" }).click();
+      await admin.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
       await expect(row).toHaveCount(0);
     } finally {
       await ctx.close();

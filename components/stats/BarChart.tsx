@@ -49,7 +49,8 @@ export function BarChart({ points, title, help, formatValue }: Props) {
       </figcaption>
 
       {/* Tabellen finns kvar för skärmläsare, osynlig för alla andra. */}
-      <table className="sr-only">
+      <div className="sr-only">
+      <table>
           <thead>
             <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
               <th className="py-1 pr-2 font-medium">{sv.stats.day}</th>
@@ -65,6 +66,7 @@ export function BarChart({ points, title, help, formatValue }: Props) {
             ))}
           </tbody>
         </table>
+      </div>
       {(
         <div className="relative">
           <svg

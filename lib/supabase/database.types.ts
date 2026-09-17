@@ -103,6 +103,23 @@ export type DeckStatsCardRow = {
   total_reps: number;
 };
 
+export type DeckExaminerRow = {
+  deck_id: string;
+  user_id: string;
+  created_at: string;
+};
+
+/** Svar från deck_stats_overview (jsonb). Bara aggregat, inga användar-id:n. */
+export type DeckOverviewStats = {
+  students: number;
+  active_7d: number;
+  reviews_14d: number;
+  avg_rating: number | null;
+  days: { day: string; reviews: number }[];
+  categories: { category_id: string; learned: number; partial: number; studied: number; students: number }[];
+  cards: { card_id: string; category_id: string | null; front: string; ratings: number; low: number; avg: number }[];
+};
+
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type Database = {
@@ -178,6 +195,12 @@ export type Database = {
         Update: Partial<ReviewLogRow>;
         Relationships: [];
       };
+      deck_examiners: {
+        Row: DeckExaminerRow;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       card_reports: {
         Row: CardReportRow;
         // Klienten får bara sätta dessa kolumner (kolumnrättigheter i databasen).
@@ -198,6 +221,14 @@ export type Database = {
         Returns: { unique_users: number; total_reviews: number; avg_rating: number | null }[];
       };
       deck_stats_cards: { Args: { p_deck_id: string }; Returns: DeckStatsCardRow[] };
+      deck_stats_overview: { Args: { p_deck_id: string; p_days?: number }; Returns: DeckOverviewStats };
+      can_edit_deck: { Args: { p_deck_id: string }; Returns: boolean };
+      list_deck_examiners: {
+        Args: { p_deck_id: string };
+        Returns: { user_id: string; email: string; display_name: string | null; created_at: string }[];
+      };
+      add_deck_examiner: { Args: { p_deck_id: string; p_email: string }; Returns: "added" | "exists" | "not_found" };
+      remove_deck_examiner: { Args: { p_deck_id: string; p_user_id: string }; Returns: number };
       reorder_cards: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
       reorder_categories: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
     };

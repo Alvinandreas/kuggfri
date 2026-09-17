@@ -1,17 +1,22 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { CardReportRow, CardRow, CategoryRow, DeckRow } from "@/lib/supabase/database.types";
+import type { CardReportRow, CardRow, CategoryRow, DeckOverviewStats, DeckRow } from "@/lib/supabase/database.types";
 import { sortCardsByCategory } from "@/lib/content/queries";
+import { canEditDeck, getAdminContext } from "./access";
 
 export type AdminDeckSummary = DeckRow & { cardCount: number };
 
-/** Alla deck, även opublicerade (RLS släpper igenom för admin). */
+/**
+ * Deck som den inloggade får redigera: admin ser alla (även opublicerade, RLS
+ * släpper igenom), en examinator bara sina.
+ */
 export async function getAllDecksForAdmin(): Promise<AdminDeckSummary[]> {
+  const ctx = await getAdminContext();
+  if (!ctx) return [];
   const supabase = await createSupabaseServerClient();
-  const [{ data: decks, error }, { data: cards }] = await Promise.all([
-    supabase.from("decks").select("*").order("sort_order").order("title"),
-    supabase.from("cards").select("deck_id"),
-  ]);
+  let query = supabase.from("decks").select("*").order("sort_order").order("title");
+  if (!ctx.isAdmin) query = query.in("id", ctx.examinerDeckIds);
+  const [{ data: decks, error }, { data: cards }] = await Promise.all([query, supabase.from("cards").select("deck_id")]);
   if (error) throw error;
   const counts = new Map<string, number>();
   for (const c of cards ?? []) counts.set(c.deck_id, (counts.get(c.deck_id) ?? 0) + 1);
@@ -20,7 +25,10 @@ export async function getAllDecksForAdmin(): Promise<AdminDeckSummary[]> {
 
 export type AdminDeck = { deck: DeckRow; categories: CategoryRow[]; cards: CardRow[] };
 
+/** Decket med kategorier och kort, eller null om det inte finns eller inte får redigeras. */
 export async function getDeckForAdmin(id: string): Promise<AdminDeck | null> {
+  const ctx = await getAdminContext();
+  if (!canEditDeck(ctx, id)) return null;
   const supabase = await createSupabaseServerClient();
   const { data: deck } = await supabase.from("decks").select("*").eq("id", id).maybeSingle();
   if (!deck) return null;
@@ -92,4 +100,39 @@ export async function countOpenReports(deckId: string): Promise<number> {
   if (ids.length === 0) return 0;
   const { count } = await supabase.from("card_reports").select("id", { count: "exact", head: true }).in("card_id", ids).eq("status", "open");
   return count ?? 0;
+}
+
+/** Kursöversikten: aggregerad, anonym statistik i ett anrop (deck_stats_overview). */
+export async function getDeckOverviewStats(deckId: string): Promise<DeckOverviewStats> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("deck_stats_overview", { p_deck_id: deckId, p_days: 14 });
+  if (error) throw error;
+  const d = data as DeckOverviewStats;
+  return {
+    students: Number(d.students ?? 0),
+    active_7d: Number(d.active_7d ?? 0),
+    reviews_14d: Number(d.reviews_14d ?? 0),
+    avg_rating: d.avg_rating === null || d.avg_rating === undefined ? null : Number(d.avg_rating),
+    days: (d.days ?? []).map((x) => ({ day: x.day, reviews: Number(x.reviews) })),
+    categories: (d.categories ?? []).map((c) => ({
+      category_id: c.category_id,
+      learned: Number(c.learned),
+      partial: Number(c.partial),
+      studied: Number(c.studied),
+      students: Number(c.students),
+    })),
+    cards: (d.cards ?? []).map((c) => ({ ...c, ratings: Number(c.ratings), low: Number(c.low), avg: Number(c.avg) })),
+  };
+}
+
+export type DeckExaminer = { user_id: string; email: string; display_name: string | null; created_at: string };
+
+/** Examinatorer för decket (bara admin får anropa funktionen; andra får tom lista). */
+export async function getDeckExaminers(deckId: string): Promise<DeckExaminer[]> {
+  const ctx = await getAdminContext();
+  if (!ctx?.isAdmin) return [];
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("list_deck_examiners", { p_deck_id: deckId });
+  if (error) throw error;
+  return data ?? [];
 }

@@ -12,9 +12,7 @@ export default async function ImportPage({ params }: { params: Promise<{ id: str
   if (!data) notFound();
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        {sv.admin.importTitle}: {data.deck.title}
-      </h1>
+      <h2 className="text-lg font-semibold">{sv.admin.importTitle}</h2>
       <ImportPanel
         deckId={data.deck.id}
         existingCards={data.cards.map((c) => ({

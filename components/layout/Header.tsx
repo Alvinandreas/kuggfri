@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import { getCurrentProfile } from "@/lib/supabase/server";
+import { getAdminContext } from "@/lib/admin/access";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Logo } from "@/components/layout/Logo";
 
 export async function Header() {
-  const session = await getCurrentProfile();
-  const isAdmin = session?.profile?.is_admin === true;
+  const [session, adminCtx] = await Promise.all([getCurrentProfile(), getAdminContext()]);
+  const isAdmin = adminCtx !== null;
 
   return (
     <header className="border-b border-line bg-bg/90 backdrop-blur">

@@ -516,3 +516,104 @@ describe("funktioner", () => {
     expect(rows.length).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe("examinatorer (deck_examiners)", () => {
+  let examiner: string;
+  let otherDeck: string;
+  let otherCard: string;
+
+  beforeAll(async () => {
+    examiner = await createUser(db, "examinator@chalmers.se", { displayName: "Johan" });
+    const [d] = await db.query<{ id: string }>(`insert into public.decks (slug, title, is_published) values ('annan-kurs', 'Annan kurs', false) returning id`);
+    otherDeck = d!.id;
+    const [c] = await db.query<{ id: string }>(`insert into public.cards (deck_id, front, back) values ($1, 'Annan fråga', 'Annat svar') returning id`, [otherDeck]);
+    otherCard = c!.id;
+  });
+
+  it("bara admin kan lägga till och lista examinatorer, och uppslaget sker på e-post", async () => {
+    await expectDenied(user(db, alice).query(`select public.add_deck_examiner($1, 'examinator@chalmers.se')`, [draftDeck]));
+    await expectDenied(user(db, alice).query(`select * from public.list_deck_examiners($1)`, [draftDeck]));
+    const [missing] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, 'finns-inte@example.com') as r`, [draftDeck]);
+    expect(missing?.r).toBe("not_found");
+    const [added] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, ' Examinator@Chalmers.se ') as r`, [draftDeck]);
+    expect(added?.r).toBe("added");
+    const [again] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, 'examinator@chalmers.se') as r`, [draftDeck]);
+    expect(again?.r).toBe("exists");
+    const list = await user(db, admin).query<{ email: string; display_name: string }>(`select * from public.list_deck_examiners($1)`, [draftDeck]);
+    expect(list.map((x) => x.email)).toEqual(["examinator@chalmers.se"]);
+    expect(list[0]?.display_name).toBe("Johan");
+    // Examinatorn ser sin egen rad, inte andras; ingen kan skriva direkt i tabellen.
+    expect(await user(db, examiner).query(`select deck_id from public.deck_examiners`)).toHaveLength(1);
+    expect(await user(db, alice).query(`select deck_id from public.deck_examiners`)).toHaveLength(0);
+    await expectDenied(user(db, examiner).query(`insert into public.deck_examiners (deck_id, user_id) values ($1, $2)`, [otherDeck, examiner]), /permission denied/i);
+  });
+
+  it("can_edit_deck: sant för admin och för examinatorn på sitt deck, annars falskt", async () => {
+    const q = async (who: ReturnType<typeof user>, deck: string) => (await who.query<{ ok: boolean }>(`select public.can_edit_deck($1) as ok`, [deck]))[0]?.ok;
+    expect(await q(user(db, examiner), draftDeck)).toBe(true);
+    expect(await q(user(db, examiner), otherDeck)).toBe(false);
+    expect(await q(user(db, alice), draftDeck)).toBe(false);
+    expect(await q(user(db, admin), otherDeck)).toBe(true);
+  });
+
+  it("examinatorn ser och redigerar sitt (opublicerade) deck men inte andra deck", async () => {
+    expect(await user(db, examiner).query(`select id from public.decks where id = $1`, [draftDeck])).toHaveLength(1);
+    expect(await user(db, examiner).query(`select id from public.decks where id = $1`, [otherDeck])).toHaveLength(0);
+    expect(await user(db, examiner).query(`select id from public.cards where id = $1`, [draftCard])).toHaveLength(1);
+    expect(await user(db, examiner).query(`select id from public.cards where id = $1`, [otherCard])).toHaveLength(0);
+    await user(db, examiner).query(`update public.decks set description = 'Ändrad av examinatorn' where id = $1`, [draftDeck]);
+    expect((await db.query<{ description: string }>(`select description from public.decks where id = $1`, [draftDeck]))[0]?.description).toBe("Ändrad av examinatorn");
+    await user(db, examiner).query(`update public.cards set back = 'Nytt svar' where id = $1`, [draftCard]);
+    expect((await db.query<{ back: string }>(`select back from public.cards where id = $1`, [draftCard]))[0]?.back).toBe("Nytt svar");
+    await user(db, examiner).query(`insert into public.categories (deck_id, title) values ($1, 'Examinatorns kategori')`, [draftDeck]);
+    await expectDenied(user(db, examiner).query(`insert into public.categories (deck_id, title) values ($1, 'Smyg')`, [otherDeck]));
+    const [created] = await user(db, examiner).query<{ id: string }>(`insert into public.cards (deck_id, front, back) values ($1, 'Examinatorns kort', 'Svar') returning id`, [draftDeck]);
+    await expectDenied(user(db, examiner).query(`insert into public.cards (deck_id, front, back) values ($1, 'Smyg', 'x')`, [otherDeck]));
+    // Andras kort: uppdatering och radering träffar 0 rader.
+    await user(db, examiner).query(`update public.cards set back = 'Hackat' where id = $1`, [otherCard]);
+    expect((await db.query<{ back: string }>(`select back from public.cards where id = $1`, [otherCard]))[0]?.back).toBe("Annat svar");
+    await user(db, examiner).query(`delete from public.cards where id = $1`, [otherCard]);
+    expect(await db.query(`select 1 from public.cards where id = $1`, [otherCard])).toHaveLength(1);
+    await user(db, examiner).query(`delete from public.cards where id = $1`, [created!.id]);
+    expect(await db.query(`select 1 from public.cards where id = $1`, [created!.id])).toHaveLength(0);
+  });
+
+  it("examinatorn kan varken skapa eller ta bort deck", async () => {
+    await expectDenied(user(db, examiner).query(`insert into public.decks (slug, title) values ('nytt', 'Nytt')`));
+    await user(db, examiner).query(`delete from public.decks where id = $1`, [draftDeck]);
+    expect(await db.query(`select 1 from public.decks where id = $1`, [draftDeck])).toHaveLength(1);
+  });
+
+  it("examinatorn ser statistik och felrapporter bara för sitt deck", async () => {
+    await user(db, examiner).query(`select * from public.deck_stats_summary($1)`, [draftDeck]);
+    await user(db, examiner).query(`select * from public.deck_stats_cards($1)`, [draftDeck]);
+    const [o] = await user(db, examiner).query<{ o: { days: unknown[]; categories: unknown[] } }>(`select public.deck_stats_overview($1, 14) as o`, [draftDeck]);
+    expect(o?.o.days).toHaveLength(14);
+    expect(Array.isArray(o?.o.categories)).toBe(true);
+    await expectDenied(user(db, examiner).query(`select * from public.deck_stats_summary($1)`, [otherDeck]));
+    await expectDenied(user(db, examiner).query(`select public.deck_stats_overview($1, 14)`, [otherDeck]));
+    await expectDenied(user(db, alice).query(`select public.deck_stats_overview($1, 14)`, [draftDeck]));
+
+    await db.query(`insert into public.card_reports (card_id, message) values ($1, 'Rapport i examinatorns deck'), ($2, 'Rapport i annat deck')`, [draftCard, otherCard]);
+    const seen = await user(db, examiner).query<{ message: string }>(`select message from public.card_reports order by message`);
+    expect(seen.map((r) => r.message)).toEqual(["Rapport i examinatorns deck"]);
+    await user(db, examiner).query(`update public.card_reports set status = 'resolved' where message = 'Rapport i annat deck'`);
+    expect((await db.query<{ status: string }>(`select status from public.card_reports where message = 'Rapport i annat deck'`))[0]?.status).toBe("open");
+  });
+
+  it("admin tar bort examinatorn, som därefter inte ser decket", async () => {
+    await expectDenied(user(db, examiner).query(`select public.remove_deck_examiner($1, $2)`, [draftDeck, examiner]));
+    const [n] = await user(db, admin).query<{ n: number }>(`select public.remove_deck_examiner($1, $2) as n`, [draftDeck, examiner]);
+    expect(n?.n).toBe(1);
+    expect(await user(db, examiner).query(`select id from public.decks where id = $1`, [draftDeck])).toHaveLength(0);
+  });
+
+  it("deck_stats_overview räknar rätt för admin", async () => {
+    const [o] = await user(db, admin).query<{
+      o: { students: number; categories: { learned: number; studied: number }[]; cards: { ratings: number }[] };
+    }>(`select public.deck_stats_overview($1, 14) as o`, [publishedDeck]);
+    expect(o?.o.students).toBeGreaterThanOrEqual(1);
+    expect(o?.o.categories[0]?.studied).toBeGreaterThanOrEqual(1);
+    expect(o?.o.cards.some((c) => c.ratings >= 1)).toBe(true);
+  });
+});

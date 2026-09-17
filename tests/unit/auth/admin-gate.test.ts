@@ -20,6 +20,12 @@ describe("decideAdminAccess", () => {
   it("admin släpps in", () => {
     expect(decideAdminAccess({ id: "u1" }, { is_admin: true })).toEqual({ kind: "ok" });
   });
+
+  it("examinator (minst ett deck) släpps in utan att vara admin", () => {
+    expect(decideAdminAccess({ id: "u1" }, { is_admin: false }, 1)).toEqual({ kind: "ok" });
+    expect(decideAdminAccess({ id: "u1" }, null, 2)).toEqual({ kind: "ok" });
+    expect(decideAdminAccess({ id: "u1" }, { is_admin: false }, 0)).toEqual({ kind: "forbidden" });
+  });
 });
 
 describe("forbiddenHtml", () => {

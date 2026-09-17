@@ -11,11 +11,12 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 const inputClass = "h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg";
 const textareaClass = "w-full rounded-md border border-line-strong bg-surface px-3 py-2 text-fg";
 
-export function DeckForm({ deck }: { deck?: DeckRow }) {
+export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete?: boolean }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmUnpublish, setConfirmUnpublish] = useState(false);
   const [published, setPublished] = useState(deck?.is_published ?? false);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -40,23 +41,30 @@ export function DeckForm({ deck }: { deck?: DeckRow }) {
     });
   }
 
-  function togglePublish() {
+  function setPublishedTo(next: boolean) {
     if (!deck) return;
-    const next = !published;
     startTransition(async () => {
       const result = await setDeckPublishedAction(deck.id, next);
       if (result.ok) {
         setPublished(next);
+        setMessage({ ok: true, text: next ? sv.admin.publishedNow : sv.admin.unpublishedNow });
         router.refresh();
       } else setMessage({ ok: false, text: result.error });
+      setConfirmUnpublish(false);
     });
+  }
+
+  function togglePublish() {
+    if (!deck) return;
+    if (published) setConfirmUnpublish(true);
+    else setPublishedTo(true);
   }
 
   function onDelete() {
     if (!deck) return;
     startTransition(async () => {
       const result = await deleteDeckAction(deck.id);
-      if (result.ok) router.push("/admin");
+      if (result.ok) router.push("/admin/deck");
       else setMessage({ ok: false, text: result.error });
       setConfirmDelete(false);
     });
@@ -105,23 +113,39 @@ export function DeckForm({ deck }: { deck?: DeckRow }) {
             </Button>
             <span className={`text-sm ${published ? "text-accent" : "text-muted"}`}>{published ? sv.admin.published : sv.admin.unpublished}</span>
             <span className="flex-1" />
-            <Button type="button" variant="danger" size="sm" onClick={() => setConfirmDelete(true)} disabled={pending}>
-              {sv.admin.deleteDeck}
-            </Button>
+            {canDelete ? (
+              <Button type="button" variant="danger" size="sm" onClick={() => setConfirmDelete(true)} disabled={pending}>
+                {sv.admin.deleteDeck}
+              </Button>
+            ) : null}
           </>
         ) : null}
       </div>
 
       {deck ? (
-        <ConfirmDialog
-          open={confirmDelete}
-          title={sv.admin.deleteDeck}
-          body={sv.admin.deleteDeckConfirm(deck.title)}
-          danger
-          busy={pending}
-          onConfirm={onDelete}
-          onCancel={() => setConfirmDelete(false)}
-        />
+        <>
+          <ConfirmDialog
+            open={confirmDelete}
+            title={sv.admin.deleteDeck}
+            body={sv.admin.deleteDeckConfirm(deck.title)}
+            danger
+            requireWord={deck.title}
+            requireWordLabel={sv.admin.deleteDeckWord(deck.title)}
+            busy={pending}
+            onConfirm={onDelete}
+            onCancel={() => setConfirmDelete(false)}
+          />
+          <ConfirmDialog
+            open={confirmUnpublish}
+            title={sv.admin.unpublishTitle}
+            body={sv.admin.unpublishConfirm}
+            confirmLabel={sv.admin.unpublish}
+            danger
+            busy={pending}
+            onConfirm={() => setPublishedTo(false)}
+            onCancel={() => setConfirmUnpublish(false)}
+          />
+        </>
       ) : null}
     </form>
   );

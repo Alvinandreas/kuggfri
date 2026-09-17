@@ -179,3 +179,21 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
   mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
   till före lansering till studenter, se docs/DEPLOY.md 3c.
+
+## Beslut 2026-09-17, efter mötet med Johan
+
+- **Examinatorroll per deck** (`deck_examiners`, `can_edit_deck()`). Admin är global; en examinator
+  ser och redigerar bara sina deck. Skapa/ta bort deck och utse examinatorer är admin-only. Valt i
+  stället för att ge Johan full admin, eftersom tjänsten ska kunna hosta flera kurser med olika
+  examinatorer utan att de ser varandras innehåll eller statistik.
+- **Adminvyn är deck-centrerad**: `/admin` går direkt till kursen när användaren bara har en,
+  decket har flikarna Översikt, Innehåll, Felrapporter, Importera, Inställningar. Listan över alla
+  deck finns på `/admin/deck` (bara admin ser "Alla deck"/"Nytt deck").
+- **Kursöversikten** (`deck_stats_overview`, ett RPC-anrop) visar bara aggregat: antal studenter,
+  aktiva, repetitioner per dag, kunskap per kategori (genomsnitt per student), kluriga frågor
+  (andel skattningar 1–2 per kort). Inga user_id eller e-postadresser lämnar databasen.
+  `MIN_CARD_RATINGS` i CourseOverview.tsx är 1 under utvecklingsfasen och ska höjas (5) före
+  lansering så att ett enskilt svar inte kan läsas ut.
+- **Skydd mot felklick**: deck-radering kräver att titeln skrivs, avpublicering och radering av
+  felrapport har bekräftelsedialog, opublicerat deck visar banderoll för redaktören, egen
+  `app/error.tsx`.

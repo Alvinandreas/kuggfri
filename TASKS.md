@@ -135,6 +135,17 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 3. Full adminkontroll: redigera kort, kategorier, ordning, förhandsvisning.
 4. Obegränsat och gratis för studenterna, enkel delning.
 
+## Torsdag 17 sep kväll: adminvyn inför att Johan får tillgång
+
+- [x] Genomgång av adminflödet (kod + klick): rapport i chatten 19:45
+- [x] Examinatorroll per deck (migration `20260917000000_examiners.sql`): examinatorn ser bara sina deck, kan inte skapa/ta bort deck eller utse andra. Middleware, layout, actions och queries kontrollerar; RLS avgör i botten
+- [x] Ny adminstruktur: `/admin` → kursen direkt när man bara har en; flikar Översikt / Innehåll / Felrapporter (antal) / Importera / Inställningar; `/admin/deck` listar alla (admin)
+- [x] Kursöversikt för examinatorn: fyra nyckeltal, repetitioner per dag (alla studenter), radar per kategori (snitt per student), tabell per kategori med staplar, "Kluriga frågor just nu" med andel 1–2 och länk till kortet, "Alla kort i detalj". Allt anonymt via `deck_stats_overview`
+- [x] Skydd: deck-radering kräver titeln, bekräftelse vid avpublicering och vid radering av felrapport, banderoll på opublicerat deck, egen felsida, tomtext i tom kategori rättad, dubbellänken i adminmenyn borta
+- [x] Examinatorer hanteras i UI (Inställningar → Examinatorer, uppslag på e-post i databasen)
+- [x] sr-only-tabellerna i diagrammen gjorde mobilsidan bredare än skärmen (gällde även studentens decksida); rättat
+- [ ] **Före lansering:** höj `MIN_CARD_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
+
 ## Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)
 
 Måste (lansering till riktiga studenter):
@@ -142,7 +153,7 @@ Måste (lansering till riktiga studenter):
 - [ ] Glömt lösenord-flöde från inloggningssidan (kontrollera vad som finns, bygg det som saknas)
 - [ ] Belastning: många studenter samtidigt direkt efter föreläsningen (Supabase-gränser, RLS-frågornas kostnad, ev. cache på deck-sidan)
 - [ ] Kurskod i decket: MTM081 i appen, MTT085 i infobladet. Bekräfta med Johan/kurshemsidan och rätta
-- [ ] Johan får ett konto (admin eller reviewer-roll) så att han kan se rapporter och felanmälningar
+- [x] Johan får ett konto: examinatorroll per deck byggd tor 17 sep kväll (se nedan). Kvar: Johan registrerar sig, Alvin lägger till adressen under Inställningar → Examinatorer
 - [ ] Integritetspolicy och /om uppdaterade för öppen registrering
 - [ ] Full verify + mobiltest ljust/mörkt före lansering; kodfrysning måndag 21 sep kväll
 
@@ -153,7 +164,7 @@ Bör (det Johan gillade mest):
 
 Kan:
 - [ ] Fler deck från Johans material (han har gett tillåtelse)
-- [ ] Reviewer-roll (Johan kommenterar kort utan full admin)
+- [x] Examinatorroll (ersätter reviewer-rollen): full redigering av eget deck, inget annat
 
 
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
@@ -169,7 +180,7 @@ Kan:
 - [ ] Byte av e-postadress på kontosidan (`supabase.auth.updateUser`)
 - [ ] Paginering eller sök i admin-kortlistan när deck blir större än ~300 kort
 - [ ] Redirect-tabell för gamla slugs om ett deck byter slug
-- [ ] Reviewer-roll: låta Johan kommentera kort utan full admin (kräver ny tabell + RLS)
+- [x] Examinatorroll per deck (tor 17 sep): tabell `deck_examiners`, `can_edit_deck()` i alla innehållspolicyer, admin-UI under Inställningar, 7 nya RLS-tester
 - [x] "Rapportera fel på kortet"-knapp för studenter: tabell `card_reports` med RLS (6 nya RLS-tester), dialog i studieläget (även gäster), adminsida /admin/deck/[id]/rapporter med åtgärda/öppna igen/ta bort, länk med antal öppna på deckets adminsida, E2E-test, integritetspolicyn uppdaterad. Migration pushad till molnet (ons 21:30)
 - [ ] Fler deck från Alvins övriga Brainscape-set (samma seed-manifest-format)
 

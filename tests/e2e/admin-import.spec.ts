@@ -15,7 +15,7 @@ test.describe("admin", () => {
   });
 
   test("6. admin importerar en CSV och korten dyker upp i decket", async ({ page }) => {
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin");
+    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
     await expect(page.getByRole("heading", { name: "Deck" })).toBeVisible();
     await expectNoSeriousA11yViolations(page);
 
@@ -24,13 +24,16 @@ test.describe("admin", () => {
     const totalBefore = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
     expect(totalBefore).toBeGreaterThan(0);
 
-    await page.goto("/admin");
+    await page.goto("/admin/deck");
     await page.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
     // Första kompileringen av admin-sidan i dev-läge kan ta en stund.
     await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
-    await expect(page.getByRole("link", { name: "Importera" })).toBeVisible();
-    // Navigera direkt: på smala skärmar kan knappraden flytta sig medan listorna renderas.
+    // Kursöversikten: nyckeltal och kluriga frågor syns för admin.
+    await expect(page.getByTestId("overview-students")).toBeVisible();
+    await expect(page.getByTestId("deck-tab-import")).toBeVisible();
+    await expectNoSeriousA11yViolations(page);
+    // Navigera direkt: på smala skärmar kan flikraden flytta sig medan listorna renderas.
     await page.goto(`${page.url()}/import`);
     await expect(page.getByRole("heading", { name: /Importera kort/ })).toBeVisible();
 
@@ -54,7 +57,7 @@ test.describe("admin", () => {
 
     // Korten syns i admin: kategorin på deckets sida, sedan kortlistan i kategorin.
     const deckAdminUrl = page.url().replace(/\/import$/, "");
-    await page.goto(deckAdminUrl);
+    await page.goto(`${deckAdminUrl}/innehall`);
     // Hela raden är en länk; tryck på titeln (till vänster), inte radens mitt där knapparna kan ligga på smal skärm.
     await page.getByTestId("admin-category-list").getByRole("link", { name: "E2E-kategori", exact: true }).click({ position: { x: 24, y: 16 } });
     await page.waitForURL(/\/kategori\/[0-9a-f-]{36}$/);
@@ -92,26 +95,37 @@ test.describe("admin", () => {
     const hidden = await visitor.request.get(`/d/${slug}`);
     expect(hidden.status()).toBe(404);
 
+    await page.goto(`${deckAdminUrl}/installningar`);
     await page.getByTestId("deck-publish").click();
-    await expect(page.getByText("Publicerat", { exact: true })).toBeVisible();
+    await expect(page.getByText("Decket är publicerat och synligt för studenterna.")).toBeVisible();
     await expect.poll(async () => (await visitor.request.get(`/d/${slug}`)).status(), { timeout: 15_000 }).toBe(200);
     await visitor.close();
 
     // Lägg till ett kort med förhandsvisning.
-    await page.goto(deckAdminUrl);
-    await page.getByRole("link", { name: "Nytt kort" }).click();
+    await page.goto(`${deckAdminUrl}/innehall`);
+    await page.getByRole("link", { name: "Nytt kort", exact: true }).click();
     await page.getByTestId("card-front").fill("Vad är $\\sigma = E \\varepsilon$?");
     await page.getByTestId("card-back").fill("Hookes lag.\n\n* Spänning\n* Töjning");
     await expect(page.locator(".katex").first()).toBeVisible();
     await page.getByTestId("card-save").click();
     await page.waitForURL(/\/kort\/[0-9a-f-]{36}$/);
 
-    // Ta bort decket.
-    await page.goto("/admin");
-    await page.getByRole("link", { name: title, exact: true }).click();
+    // Avpublicera kräver bekräftelse; opublicerat deck visar banderoll för redaktören.
+    await page.goto(`${deckAdminUrl}/installningar`);
+    await page.getByTestId("deck-publish").click();
+    await page.getByRole("dialog").getByRole("button", { name: "Avpublicera" }).click();
+    await expect(page.getByText("Decket är avpublicerat.")).toBeVisible();
+    await page.goto(`/d/${slug}`);
+    await expect(page.getByTestId("unpublished-banner")).toBeVisible();
+
+    // Ta bort decket: kräver att titeln skrivs in.
+    await page.goto(`${deckAdminUrl}/installningar`);
     await page.getByRole("button", { name: "Ta bort deck" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
-    await page.waitForURL(/\/admin$/);
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByRole("button", { name: "Bekräfta" })).toBeDisabled();
+    await dialog.getByRole("textbox").fill(title);
+    await dialog.getByRole("button", { name: "Bekräfta" }).click();
+    await page.waitForURL(/\/admin\/deck$/);
     await expect(page.getByRole("link", { name: title, exact: true })).toHaveCount(0);
   });
 });

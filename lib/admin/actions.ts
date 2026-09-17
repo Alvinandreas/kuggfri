@@ -1,9 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { LIMITS } from "@/lib/admin/limits";
+import { CONTENT_TAG } from "@/lib/content/queries";
 import { sv } from "@/lib/i18n/sv";
 import { diffImport } from "@/lib/import/diff";
 import type { ImportCard } from "@/lib/import/parse-import";
@@ -42,6 +43,7 @@ function fail(error: unknown): ActionResult<never> {
 }
 
 function revalidateDeck(deckId: string, slug?: string) {
+  revalidateTag(CONTENT_TAG);
   revalidatePath("/admin");
   revalidatePath("/admin/deck");
   revalidatePath(`/admin/deck/${deckId}`, "layout");
@@ -120,6 +122,7 @@ export async function deleteDeckAction(id: string): Promise<ActionResult> {
     const { supabase } = await requireAdmin();
     const { error } = await supabase.from("decks").delete().eq("id", id);
     if (error) return fail(error);
+    revalidateTag(CONTENT_TAG);
     revalidatePath("/admin");
     revalidatePath("/admin/deck");
     revalidatePath("/");

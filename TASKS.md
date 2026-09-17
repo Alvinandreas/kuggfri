@@ -149,11 +149,26 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 - [ ] **Alvin verifierar på http://localhost:3001** (adminvyn, alla flikar, studentsidan) och säger "pusha"
 - [ ] **Före lansering:** höj `MIN_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
 
+## Fredag 18 sep (natt): robusthet inför lansering
+
+- [x] Backup: `scripts/backup.cjs` nattligen 03:30 (Windows-uppgift "Kuggfri backup"), verifierad återställning med `scripts/restore-test.cjs`, recept i docs/BACKUP.md. Inget lösenord behövs: CLI:ts lagrade projektuppgifter används
+- [x] Examinatorer kan förberedas innan kontot finns (`deck_examiner_invites`, kopplas i `handle_new_user`). Johan och Alvins testkonto kopplade automatiskt
+- [x] Glömt lösenord: `/glomt-losenord`, återställningslänk med token_hash (`supabase/templates/recovery.html`), landar på Konto med lösenordsbytet markerat. E2E via Mailpit
+- [x] Import i en transaktion (`import_cards`), längdgränser i databasen och servern med begripliga fel, maxLength i formulären
+- [x] Kursöversikten visar per kategori/kort först när minst 5 studenter skattat (`MIN_STUDENTS`)
+- [x] Kort utan kategori syns och kan väljas som "Utan kategori" på studentsidan
+- [x] Klartext i admins listor (KaTeX/markdown-syntax bort)
+- [x] E2E: admin-content (kategori-CRUD, omordning, kort-radering, export, examinatorrollen), glömt lösenord. Sviten är nu 40 tester
+- [x] Integritetspolicy och /om uppdaterade (öppen registrering, examinatorsvy, anonym statistik)
+- [ ] Belastningstest mot produktion (`scripts/load-test.cjs`)
+- [ ] **Alvin:** Hostinger-mejl + SMTP i Supabase (A–B), klistra in tre mallar (C), fråga Johan om kurskoden
+- [ ] **Alvin verifierar på 3001**, sedan push (migrationer 20260917000200 och 20260918000000 följer med)
+
 ## Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)
 
 Måste (lansering till riktiga studenter):
-- [ ] Egen SMTP (Resend) i Supabase + mejlmallarna med token_hash, så att inloggningslänk och glömt-lösenord fungerar för alla adresser (Alvin skapar Resend-kontot och klistrar in nyckeln)
-- [ ] Glömt lösenord-flöde från inloggningssidan (kontrollera vad som finns, bygg det som saknas)
+- [~] Egen SMTP via Hostingers fria e-post (100 mejl/dygn) + tre mallar med token_hash. Alvin gör dashboardstegen
+- [x] Glömt lösenord-flöde (fre 18 sep)
 - [ ] Belastning: många studenter samtidigt direkt efter föreläsningen (Supabase-gränser, RLS-frågornas kostnad, ev. cache på deck-sidan)
 - [ ] Kurskod i decket: MTM081 i appen, MTT085 i infobladet. Bekräfta med Johan/kurshemsidan och rätta
 - [x] Johan får ett konto: examinatorroll per deck byggd tor 17 sep kväll (se nedan). Kvar: Johan registrerar sig, Alvin lägger till adressen under Inställningar → Examinatorer

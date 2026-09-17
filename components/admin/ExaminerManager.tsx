@@ -24,9 +24,8 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
     startTransition(async () => {
       const result = await addExaminerAction(deckId, email);
       if (!result.ok) return setMessage({ ok: false, text: result.error });
-      if (result.data.status === "not_found") return setMessage({ ok: false, text: sv.admin.examinerNotFound });
       if (result.data.status === "exists") return setMessage({ ok: false, text: sv.admin.examinerExists });
-      setMessage({ ok: true, text: sv.admin.examinerAdded });
+      setMessage({ ok: true, text: result.data.status === "invited" ? sv.admin.examinerInvited : sv.admin.examinerAdded });
       setEmail("");
       router.refresh();
     });
@@ -36,7 +35,7 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
     const target = removing;
     if (!target) return;
     startTransition(async () => {
-      const result = await removeExaminerAction(deckId, target.user_id);
+      const result = await removeExaminerAction(deckId, target.user_id ? { userId: target.user_id } : { email: target.email });
       if (!result.ok) setMessage({ ok: false, text: result.error });
       else setMessage(null);
       setRemoving(null);
@@ -51,10 +50,11 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
       ) : (
         <ul className="grid grid-cols-[minmax(0,1fr)] gap-2" data-testid="examiner-list">
           {examiners.map((x) => (
-            <li key={x.user_id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-bg px-3 py-2 text-sm">
+            <li key={x.user_id ?? x.email} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-bg px-3 py-2 text-sm">
               <div className="min-w-0">
                 <span className="font-medium">{x.display_name ? `${x.display_name} · ` : ""}</span>
                 <span className="break-all">{x.email}</span>
+                {x.pending ? <span className="ml-2 rounded-full bg-surface-2 px-2 py-0.5 text-xs text-muted">{sv.admin.examinerPending}</span> : null}
                 <span className="block text-xs text-muted">{formatDateTime(x.created_at)}</span>
               </div>
               <Button size="sm" variant="secondary" disabled={pending} onClick={() => setRemoving(x)}>

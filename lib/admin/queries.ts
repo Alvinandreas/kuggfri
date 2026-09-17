@@ -127,7 +127,8 @@ export async function getDeckOverviewStats(deckId: string): Promise<DeckOverview
   };
 }
 
-export type DeckExaminer = { user_id: string; email: string; display_name: string | null; created_at: string };
+/** pending = väntar på att personen registrerar sig (user_id är då null). */
+export type DeckExaminer = { user_id: string | null; email: string; display_name: string | null; created_at: string; pending: boolean };
 
 /** Examinatorer för decket (bara admin får anropa funktionen; andra får tom lista). */
 export async function getDeckExaminers(deckId: string): Promise<DeckExaminer[]> {

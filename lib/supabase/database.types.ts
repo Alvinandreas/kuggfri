@@ -243,9 +243,10 @@ export type Database = {
       can_edit_deck: { Args: { p_deck_id: string }; Returns: boolean };
       list_deck_examiners: {
         Args: { p_deck_id: string };
-        Returns: { user_id: string; email: string; display_name: string | null; created_at: string }[];
+        Returns: { user_id: string | null; email: string; display_name: string | null; created_at: string; pending: boolean }[];
       };
-      add_deck_examiner: { Args: { p_deck_id: string; p_email: string }; Returns: "added" | "exists" | "not_found" };
+      add_deck_examiner: { Args: { p_deck_id: string; p_email: string }; Returns: "added" | "exists" | "invited" };
+      remove_deck_examiner_invite: { Args: { p_deck_id: string; p_email: string }; Returns: number };
       remove_deck_examiner: { Args: { p_deck_id: string; p_user_id: string }; Returns: number };
       reorder_cards: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
       reorder_categories: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };

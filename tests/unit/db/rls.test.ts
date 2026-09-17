@@ -533,13 +533,18 @@ describe("examinatorer (deck_examiners)", () => {
   it("bara admin kan lägga till och lista examinatorer, och uppslaget sker på e-post", async () => {
     await expectDenied(user(db, alice).query(`select public.add_deck_examiner($1, 'examinator@chalmers.se')`, [draftDeck]));
     await expectDenied(user(db, alice).query(`select * from public.list_deck_examiners($1)`, [draftDeck]));
-    const [missing] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, 'finns-inte@example.com') as r`, [draftDeck]);
-    expect(missing?.r).toBe("not_found");
+    const [invited] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, ' Kommande@Example.com ') as r`, [draftDeck]);
+    expect(invited?.r).toBe("invited");
+    const [invitedAgain] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, 'kommande@example.com') as r`, [draftDeck]);
+    expect(invitedAgain?.r).toBe("exists");
+    const pending = await user(db, admin).query<{ email: string; pending: boolean; user_id: string | null }>(`select * from public.list_deck_examiners($1) where pending`, [draftDeck]);
+    expect(pending.map((x) => [x.email, x.user_id])).toEqual([["kommande@example.com", null]]);
+    await expectDenied(user(db, alice).query(`select * from public.deck_examiner_invites`), /permission denied/i);
     const [added] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, ' Examinator@Chalmers.se ') as r`, [draftDeck]);
     expect(added?.r).toBe("added");
     const [again] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, 'examinator@chalmers.se') as r`, [draftDeck]);
     expect(again?.r).toBe("exists");
-    const list = await user(db, admin).query<{ email: string; display_name: string }>(`select * from public.list_deck_examiners($1)`, [draftDeck]);
+    const list = await user(db, admin).query<{ email: string; display_name: string }>(`select * from public.list_deck_examiners($1) where not pending`, [draftDeck]);
     expect(list.map((x) => x.email)).toEqual(["examinator@chalmers.se"]);
     expect(list[0]?.display_name).toBe("Johan");
     // Examinatorn ser sin egen rad, inte andras; ingen kan skriva direkt i tabellen.
@@ -608,6 +613,21 @@ describe("examinatorer (deck_examiners)", () => {
     expect(Number(cnt?.n)).toBe(1);
     await user(db, examiner).query(`update public.card_reports set status = 'resolved' where message = 'Rapport i annat deck'`);
     expect((await db.query<{ status: string }>(`select status from public.card_reports where message = 'Rapport i annat deck'`))[0]?.status).toBe("open");
+  });
+
+  it("en väntande inbjudan kopplas automatiskt när kontot registreras, och kan tas bort i förväg", async () => {
+    const newcomer = await createUser(db, "Kommande@example.com");
+    expect(await db.query(`select 1 from public.deck_examiners where deck_id = $1 and user_id = $2`, [draftDeck, newcomer])).toHaveLength(1);
+    expect(await db.query(`select 1 from public.deck_examiner_invites where email = 'kommande@example.com'`)).toHaveLength(0);
+    expect(await user(db, newcomer).query(`select id from public.decks where id = $1`, [draftDeck])).toHaveLength(1);
+    await user(db, admin).query(`select public.remove_deck_examiner($1, $2)`, [draftDeck, newcomer]);
+
+    await user(db, admin).query(`select public.add_deck_examiner($1, 'annan@example.com')`, [draftDeck]);
+    await expectDenied(user(db, alice).query(`select public.remove_deck_examiner_invite($1, 'annan@example.com')`, [draftDeck]));
+    const [n] = await user(db, admin).query<{ n: number }>(`select public.remove_deck_examiner_invite($1, 'annan@example.com') as n`, [draftDeck]);
+    expect(n?.n).toBe(1);
+    const other = await createUser(db, "annan@example.com");
+    expect(await db.query(`select 1 from public.deck_examiners where user_id = $1`, [other])).toHaveLength(0);
   });
 
   it("admin tar bort examinatorn, som därefter inte ser decket", async () => {

@@ -366,7 +366,7 @@ export async function deleteReportAction(id: string, deckId: string): Promise<Ac
 // Examinatorer (bara admin)
 // ---------------------------------------------------------------------------
 
-export async function addExaminerAction(deckId: string, email: string): Promise<ActionResult<{ status: "added" | "exists" | "not_found" }>> {
+export async function addExaminerAction(deckId: string, email: string): Promise<ActionResult<{ status: "added" | "exists" | "invited" }>> {
   try {
     const { supabase } = await requireAdmin();
     const e = email.trim();
@@ -380,10 +380,14 @@ export async function addExaminerAction(deckId: string, email: string): Promise<
   }
 }
 
-export async function removeExaminerAction(deckId: string, userId: string): Promise<ActionResult> {
+/** Tar bort ett kopplat konto (userId) eller en väntande inbjudan (email). */
+export async function removeExaminerAction(deckId: string, target: { userId: string } | { email: string }): Promise<ActionResult> {
   try {
     const { supabase } = await requireAdmin();
-    const { error } = await supabase.rpc("remove_deck_examiner", { p_deck_id: deckId, p_user_id: userId });
+    const { error } =
+      "userId" in target
+        ? await supabase.rpc("remove_deck_examiner", { p_deck_id: deckId, p_user_id: target.userId })
+        : await supabase.rpc("remove_deck_examiner_invite", { p_deck_id: deckId, p_email: target.email });
     if (error) return fail(error);
     revalidatePath(`/admin/deck/${deckId}/installningar`);
     return { ok: true, data: undefined };

@@ -7,6 +7,7 @@ import {
   selectCardIds,
   serializeSelection,
   trickyCards,
+  UNCATEGORIZED_ID,
   type SelectableCard,
 } from "@/lib/study/selection";
 import { reviewCard } from "@/lib/fsrs/scheduler";
@@ -127,5 +128,19 @@ describe("categoryStats", () => {
     ]);
     expect(learnedRatio(stats[0]!)).toBe(0.5);
     expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0 })).toBe(1);
+  });
+});
+
+describe("kort utan kategori", () => {
+  it("väljs via UNCATEGORIZED_ID och räknas i statistiken när id:t finns med", () => {
+    expect(filterCards(cards, {}, { kind: "categories", categoryIds: [UNCATEGORIZED_ID] }).map((c) => c.id)).toEqual(["d"]);
+    expect(filterCards(cards, {}, { kind: "categories", categoryIds: ["k1"] }).map((c) => c.id)).toEqual(["a", "b"]);
+    const stats = categoryStats(cards, {}, ["k1", UNCATEGORIZED_ID]);
+    expect(stats.map((s) => [s.categoryId, s.total])).toEqual([
+      ["k1", 2],
+      [UNCATEGORIZED_ID, 1],
+    ]);
+    // Utan id:t ignoreras korten som tidigare.
+    expect(categoryStats(cards, {}, ["k1"]).map((s) => s.total)).toEqual([2]);
   });
 });

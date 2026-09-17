@@ -59,6 +59,7 @@ export const sv = {
     selection: "Urval",
     selectionAll: "Hela decket",
     selectionCategory: "Kategori",
+    uncategorized: "Utan kategori",
     categoriesHelp: "Kryssa i kategorier för att plugga just dem. Klicka på namnet för att välja bara den.",
     selectAll: "Välj alla",
     selectNone: "Avmarkera",
@@ -463,12 +464,13 @@ export const sv = {
     teachersPoints: [
       "Innehållet ägs av kursen. Alla kort kan exporteras när som helst som en vanlig fil, ingen inlåsning.",
       "Studenterna rapporterar fel direkt från kortet. Rapporterna samlas per deck med länk rakt in i kortet, så granskningen görs där felet finns.",
-      "Statistiken visar vilka kort som får lägst självskattning, alltså de som antingen är svåra eller otydligt formulerade. Det är en färdig lista att titta på efter varje tentaperiod.",
+      "Kursansvarig får en egen examinatorsvy med kursöversikt: svåraste områdena, kluriga frågor, hur långt studenterna kommit och hur många som repeterar varje vecka. Allt är sammanställt och anonymt, och visas först när minst fem studenter skattat.",
+      "Examinatorn redigerar innehållet själv: kort, kategorier och ordning, med förhandsvisning. Rätten gäller bara den egna kursen.",
       "Redigering sker i webbläsaren med förhandsvisning av formler och formatering. Import från CSV eller JSON visar vad som ändras innan något sparas.",
       "Inga kostnader, ingen reklam, ingen spårning. Studenter kan plugga helt utan konto. Data för den som skapar konto lagras inom EU.",
     ],
     teachersOutro:
-      "Vill du granska, påverka eller lägga till innehåll i ett deck för din kurs? Hör av dig till den som sammanställt decket, se krediteringen ovan.",
+      "Vill du använda Kuggfri i din kurs, med egen examinatorsvy? Hör av dig till den som sammanställt decket, se krediteringen ovan.",
     privacy: "Integritet",
     privacyBody:
       "Vi samlar inte in något utöver e-post, valfritt visningsnamn och studieprogress för den som väljer att skapa konto. Läs mer i integritetspolicyn.",

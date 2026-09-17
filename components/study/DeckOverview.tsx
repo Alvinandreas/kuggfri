@@ -15,6 +15,7 @@ import {
   trickyCards,
   type SelectableCard,
   type Selection,
+  UNCATEGORIZED_ID,
 } from "@/lib/study/selection";
 import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
@@ -52,7 +53,12 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const [copied, setCopied] = useState(false);
 
   const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
-  const colorIndex = useMemo(() => categoryColorIndex(categories), [categories]);
+  // Kort utan kategori får en egen rad ("Utan kategori") så att de aldrig försvinner ur urvalet.
+  const tableCategories = useMemo(
+    () => (cards.some((c) => c.category_id === null) ? [...categories, { id: UNCATEGORIZED_ID, title: sv.deck.uncategorized }] : categories),
+    [cards, categories],
+  );
+  const colorIndex = useMemo(() => categoryColorIndex(tableCategories), [tableCategories]);
 
   const reload = useCallback(async () => {
     if (!store) return;
@@ -79,18 +85,18 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
       categoryStats(
         cards,
         progress ?? {},
-        categories.map((c) => c.id),
+        tableCategories.map((c) => c.id),
       ),
-    [cards, progress, categories],
+    [cards, progress, tableCategories],
   );
   const sortedCategories = useMemo(() => {
     const byId = new Map(perCategory.map((s) => [s.categoryId, s] as const));
-    const list = categories.map((c) => ({ ...c, stats: byId.get(c.id)! }));
+    const list = tableCategories.map((c) => ({ ...c, stats: byId.get(c.id)! }));
     if (sortMode === "learned") {
       list.sort((a, b) => learnedRatio(a.stats) - learnedRatio(b.stats) || a.title.localeCompare(b.title, "sv"));
     }
     return list;
-  }, [categories, perCategory, sortMode]);
+  }, [tableCategories, perCategory, sortMode]);
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
@@ -99,7 +105,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
-      return categories.filter((c) => next.has(c.id)).map((c) => c.id);
+      return tableCategories.filter((c) => next.has(c.id)).map((c) => c.id);
     });
   }
 
@@ -261,9 +267,9 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                   <th scope="col" className="w-12 py-3 pl-4 pr-2 align-middle">
                     <input
                       type="checkbox"
-                      aria-label={selectedSet.size === categories.length ? sv.deck.selectNone : sv.deck.selectAll}
-                      checked={selectedSet.size === categories.length && categories.length > 0}
-                      onChange={(e) => setSelectedIds(e.target.checked ? categories.map((c) => c.id) : [])}
+                      aria-label={selectedSet.size === tableCategories.length ? sv.deck.selectNone : sv.deck.selectAll}
+                      checked={selectedSet.size === tableCategories.length && tableCategories.length > 0}
+                      onChange={(e) => setSelectedIds(e.target.checked ? tableCategories.map((c) => c.id) : [])}
                       className="h-4 w-4 accent-[var(--accent)]"
                     />
                   </th>

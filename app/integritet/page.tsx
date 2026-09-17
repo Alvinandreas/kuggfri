@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <article className="prose-body mx-auto grid max-w-[44rem] gap-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">{sv.privacy.title}</h1>
-        <p className="mt-2 text-sm text-muted">Senast uppdaterad: 11 september 2026</p>
+        <p className="mt-2 text-sm text-muted">Senast uppdaterad: 18 september 2026</p>
       </header>
 
       <section>
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Vilka uppgifter vi behandlar</h2>
         <p>Du kan använda Kuggfri helt utan konto. Då lämnar du inga personuppgifter till oss alls.</p>
-        <p>Om du väljer att skapa ett konto behandlar vi följande:</p>
+        <p>Vem som helst kan skapa ett konto med valfri e-postadress. Om du väljer att göra det behandlar vi följande:</p>
         <ul>
           <li>
             <strong>E-postadress.</strong> Används för inloggning (lösenord eller inloggningslänk) och för att
@@ -46,8 +46,14 @@ export default function PrivacyPage() {
         <p>
           <strong>Felrapporter.</strong> Om du rapporterar ett fel på ett kort sparar vi din text, vilket kort
           det gäller, tidpunkten och, om du är inloggad, vilket konto rapporten kom från. Du kan frivilligt
-          lämna en e-postadress för svar. Rapporten tas bort när den är åtgärdad eller när du raderar ditt
-          konto kopplas den bort från dig.
+          lämna en e-postadress för svar. Rapporten visas för kursens examinator och för den som driver
+          Kuggfri. Den tas bort när den är åtgärdad, och när du raderar ditt konto kopplas den bort från dig.
+        </p>
+        <p>
+          <strong>Sammanställd statistik till kursen.</strong> Kursens examinator ser en kursöversikt med
+          sammanställd statistik: antal studenter, genomsnittliga skattningar per kategori och kort och hur
+          många som repeterat per vecka. Statistiken är anonym: inga namn, e-postadresser eller enskilda
+          studenters svar visas, och siffror per kort visas först när minst fem studenter har skattat kortet.
         </p>
         <p>Vi samlar inte in namn, personnummer, telefonnummer, IP-adress för profilering eller något annat.</p>
       </section>

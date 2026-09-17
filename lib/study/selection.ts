@@ -8,6 +8,12 @@ export type Selection = { kind: "all" } | { kind: "categories"; categoryIds: str
 
 export type SelectableCard = { id: string; category_id: string | null; sort_order: number };
 
+/**
+ * Pseudo-id för kort som saknar kategori. Låter studenten välja och se statistik för dem
+ * precis som för en riktig kategori (samma id används i adminens URL:er).
+ */
+export const UNCATEGORIZED_ID = "ingen";
+
 /** Från URL-parametern `urval`: "all", "low" eller "kategori:<id>[,<id>...]". */
 export function parseSelection(raw: string | string[] | undefined): Selection {
   const value = Array.isArray(raw) ? raw[0] : raw;
@@ -41,7 +47,7 @@ export function filterCards(cards: readonly SelectableCard[], progress: Progress
       return [...cards];
     case "categories": {
       const wanted = new Set(selection.categoryIds);
-      return cards.filter((c) => c.category_id !== null && wanted.has(c.category_id));
+      return cards.filter((c) => wanted.has(c.category_id ?? UNCATEGORIZED_ID));
     }
     case "low":
       return cards.filter((c) => {
@@ -120,14 +126,13 @@ export type CategoryStats = {
   partial: number;
 };
 
-/** Statistik per kategori ur progressen. Kort utan kategori ignoreras. */
+/** Statistik per kategori ur progressen. Kort utan kategori räknas till UNCATEGORIZED_ID om det id:t finns med. */
 export function categoryStats(cards: readonly SelectableCard[], progress: ProgressMap, categoryIds: readonly string[]): CategoryStats[] {
   const byId = new Map<string, CategoryStats>(
     categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0 }]),
   );
   for (const card of cards) {
-    if (!card.category_id) continue;
-    const s = byId.get(card.category_id);
+    const s = byId.get(card.category_id ?? UNCATEGORIZED_ID);
     if (!s) continue;
     s.total++;
     const p = progress[card.id];

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
-import { sendMagicLinkAction, signInWithPasswordAction, signUpAction, type AuthResult } from "@/lib/auth/actions";
+import { sendMagicLinkAction, sendPasswordResetAction, signInWithPasswordAction, signUpAction, type AuthResult } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/Button";
 
 const inputClass = "h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg";
@@ -82,7 +82,9 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
           <button type="button" onClick={() => setUseLink(true)} className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.magicLink}
           </button>
-          <p className="text-xs text-muted">{sv.auth.forgotHint}</p>
+          <Link href="/glomt-losenord" className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
+            {sv.auth.forgotLink}
+          </Link>
         </form>
       )}
 
@@ -127,6 +129,32 @@ export function RegisterForm({ next }: { next: string }) {
         {sv.auth.hasAccount}{" "}
         <Link href={`/logga-in?next=${encodeURIComponent(next)}`} className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
           {sv.auth.login}
+        </Link>
+      </p>
+    </div>
+  );
+}
+
+export function ForgotPasswordForm() {
+  const [state, action, pending] = useActionState((prev: AuthResult | null, fd: FormData) => run(sendPasswordResetAction, prev, fd), null);
+
+  return (
+    <div className="mx-auto grid max-w-md gap-6">
+      <h1 className="text-2xl font-semibold tracking-tight">{sv.auth.forgotTitle}</h1>
+      <form action={action} className="grid gap-4">
+        <p className="text-sm text-muted">{sv.auth.forgotHelp}</p>
+        <label className="grid gap-1 text-sm">
+          <span>{sv.auth.email}</span>
+          <input name="email" type="email" required autoComplete="email" className={inputClass} data-testid="forgot-email" />
+        </label>
+        <Message result={state} />
+        <Button type="submit" disabled={pending || state?.ok === true} data-testid="forgot-submit">
+          {sv.auth.forgotSend}
+        </Button>
+      </form>
+      <p className="text-sm text-muted">
+        <Link href="/logga-in" className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
+          {sv.auth.backToLogin}
         </Link>
       </p>
     </div>

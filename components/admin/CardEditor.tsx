@@ -69,15 +69,15 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
         <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
           <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.front}</span>
-            <textarea value={front} onChange={(e) => setFront(e.target.value)} rows={5} required className={textareaClass} data-testid="card-front" />
+            <textarea value={front} onChange={(e) => setFront(e.target.value)} rows={5} required maxLength={5000} className={textareaClass} data-testid="card-front" />
           </label>
           <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.back}</span>
-            <textarea value={back} onChange={(e) => setBack(e.target.value)} rows={12} required className={textareaClass} data-testid="card-back" />
+            <textarea value={back} onChange={(e) => setBack(e.target.value)} rows={12} required maxLength={20000} className={textareaClass} data-testid="card-back" />
           </label>
           <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             <span>{sv.admin.hint}</span>
-            <input value={hint} onChange={(e) => setHint(e.target.value)} className="h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg" />
+            <input value={hint} onChange={(e) => setHint(e.target.value)} maxLength={500} className="h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg" />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">

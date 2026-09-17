@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type DeckRef = { id: string; slug: string; title: string };
-type Props = { userId: string; email: string; displayName: string; decks: DeckRef[] };
+type Props = { userId: string; email: string; displayName: string; decks: DeckRef[]; /** Efter återställningslänk: lyft fram lösenordsbytet. */ focusPassword?: boolean };
 type Pending = { kind: "delete" } | { kind: "resetAll" } | { kind: "resetSchedule" } | { kind: "resetDeck"; deck: DeckRef };
 
-export function AccountPanel({ userId, email, displayName, decks }: Props) {
+export function AccountPanel({ userId, email, displayName, decks, focusPassword = false }: Props) {
   const [nameState, nameAction, namePending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateDisplayNameAction(fd),
     null,
@@ -95,10 +95,18 @@ export function AccountPanel({ userId, email, displayName, decks }: Props) {
         </form>
       </section>
 
-      <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-labelledby="losenord-rubrik">
+      <section
+        className={`grid gap-3 rounded-lg border bg-surface p-5 ${focusPassword ? "border-accent ring-2 ring-accent/30" : "border-line"}`}
+        aria-labelledby="losenord-rubrik"
+      >
         <h2 id="losenord-rubrik" className="text-lg font-semibold">
           {sv.account.passwordTitle}
         </h2>
+        {focusPassword ? (
+          <p role="status" className="rounded-md bg-accent-soft px-3 py-2 text-sm" data-testid="set-new-password-banner">
+            {sv.account.setNewPasswordBanner}
+          </p>
+        ) : null}
         <p className="text-sm text-muted">{sv.account.passwordHelp}</p>
         {/* Nyckeln byts vid lyckad ändring så att fältet töms. */}
         <form action={passwordAction} className="grid gap-2" key={passwordState?.ok ? "saved" : "edit"}>
@@ -113,6 +121,7 @@ export function AccountPanel({ userId, email, displayName, decks }: Props) {
               required
               minLength={8}
               autoComplete="new-password"
+              autoFocus={focusPassword}
               className="h-11 w-full rounded-md border border-line-strong bg-bg px-3 text-fg"
             />
             <Button type="submit" variant="secondary" disabled={passwordPending} data-testid="save-password">

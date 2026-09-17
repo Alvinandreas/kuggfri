@@ -95,6 +95,25 @@ export async function sendMagicLinkAction(formData: FormData): Promise<AuthResul
   return { ok: true, message: sv.auth.magicLinkSent };
 }
 
+/**
+ * Glömt lösenord: mejlar en återställningslänk (mallen "Reset Password" med token_hash).
+ * Länken loggar in via /auth/confirm och leder till lösenordsbytet under Konto.
+ * Svaret är detsamma oavsett om adressen finns, så att konton inte kan listas.
+ */
+export async function sendPasswordResetAction(formData: FormData): Promise<AuthResult> {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!email) return { ok: false, error: sv.auth.invalidEmail };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent("/konto?byt-losenord=1")}`,
+  });
+  if (error) {
+    const message = authErrorMessage(error, sv.auth.error);
+    if (message === sv.auth.rateLimited || message === sv.auth.invalidEmail) return { ok: false, error: message };
+  }
+  return { ok: true, message: sv.auth.forgotSent };
+}
+
 export async function updatePasswordAction(formData: FormData): Promise<AuthResult> {
   const password = String(formData.get("password") ?? "");
   if (password.length < 8) return { ok: false, error: sv.auth.weakPassword };

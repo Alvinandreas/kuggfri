@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {
+  latestMailText,
   DECK_SLUG,
   expectNoSeriousA11yViolations,
   login,
@@ -134,6 +135,37 @@ test.describe("konto", () => {
     await page.getByTestId("save-password").click();
     await expect(page.getByRole("status").filter({ hasText: "Lösenordet är bytt." })).toBeVisible();
 
+    await page.getByRole("button", { name: "Logga ut" }).click();
+    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+    await login(page, email, newPassword, "/konto");
+    await expect(page.getByRole("heading", { name: "Ditt konto" })).toBeVisible();
+  });
+
+  test("glömt lösenord: länken i mejlet loggar in och det nya lösenordet fungerar", async ({ page }) => {
+    const email = uniqueEmail("glomt");
+    const newPassword = "aterstallt-losenord-789";
+    await register(page, email, PASSWORD, "/");
+    await page.getByRole("button", { name: "Logga ut" }).click();
+    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+
+    await page.goto("/logga-in");
+    await page.getByRole("link", { name: "Glömt lösenordet?" }).click();
+    await expect(page).toHaveURL(/\/glomt-losenord$/);
+    await page.getByTestId("forgot-email").fill(email);
+    await page.getByTestId("forgot-submit").click();
+    await expect(page.getByRole("status").filter({ hasText: /skickat en länk/ })).toBeVisible();
+
+    const mail = await latestMailText(email);
+    const match = /href="([^"]*token_hash=[^"]*type=recovery[^"]*)"/.exec(mail) ?? /(https?:\/\/\S*token_hash=\S*type=recovery\S*)/.exec(mail);
+    expect(match, "återställningslänk i mejlet").not.toBeNull();
+    const link = match![1]!.replace(/&amp;/g, "&");
+    await page.goto(link);
+    await expect(page).toHaveURL(/\/konto\?byt-losenord=1/);
+    await expect(page.getByTestId("set-new-password-banner")).toBeVisible();
+
+    await page.locator('input[name="password"]').fill(newPassword);
+    await page.getByTestId("save-password").click();
+    await expect(page.getByRole("status").filter({ hasText: "Lösenordet är bytt." })).toBeVisible();
     await page.getByRole("button", { name: "Logga ut" }).click();
     await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
     await login(page, email, newPassword, "/konto");

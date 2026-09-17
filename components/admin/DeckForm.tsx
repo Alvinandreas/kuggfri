@@ -75,7 +75,7 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.deckTitle}</span>
-          <input name="title" required defaultValue={deck?.title ?? ""} className={inputClass} data-testid="deck-title" />
+          <input name="title" required maxLength={200} defaultValue={deck?.title ?? ""} className={inputClass} data-testid="deck-title" />
         </label>
         <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.slug}</span>
@@ -84,16 +84,16 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
         </label>
         <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.courseCode}</span>
-          <input name="course_code" defaultValue={deck?.course_code ?? ""} className={inputClass} />
+          <input name="course_code" maxLength={50} defaultValue={deck?.course_code ?? ""} className={inputClass} />
         </label>
       </div>
       <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
         <span>{sv.admin.description}</span>
-        <textarea name="description" rows={2} defaultValue={deck?.description ?? ""} className={textareaClass} />
+        <textarea name="description" rows={2} maxLength={2000} defaultValue={deck?.description ?? ""} className={textareaClass} />
       </label>
       <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
         <span>{sv.admin.sourceCredit}</span>
-        <textarea name="source_credit" rows={3} defaultValue={deck?.source_credit ?? ""} className={textareaClass} />
+        <textarea name="source_credit" rows={3} maxLength={2000} defaultValue={deck?.source_credit ?? ""} className={textareaClass} />
       </label>
 
       {message ? (

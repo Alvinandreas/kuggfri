@@ -151,7 +151,7 @@ function CategoryRowView({
         }}
         className="flex items-center gap-2"
       >
-        <input value={title} onChange={(e) => setTitle(e.target.value)} aria-label={sv.admin.categoryTitle} className={inputClass} autoFocus />
+        <input value={title} onChange={(e) => setTitle(e.target.value)} aria-label={sv.admin.categoryTitle} maxLength={200} className={inputClass} autoFocus />
         <Button type="submit" variant="secondary" size="sm" disabled={pending || !title.trim()} className="shrink-0 whitespace-nowrap">
           {sv.common.save}
         </Button>

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
+import { LIMITS } from "@/lib/admin/limits";
 import { sv } from "@/lib/i18n/sv";
 import { diffImport } from "@/lib/import/diff";
 import type { ImportCard } from "@/lib/import/parse-import";
@@ -10,6 +11,10 @@ import type { ImportCard } from "@/lib/import/parse-import";
 export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+function tooLong(field: string, value: string, max: number): ActionResult<never> | null {
+  return value.length > max ? { ok: false, error: sv.admin.tooLong(field, max) } : null;
+}
 
 /**
  * Hämtar en klient och verifierar server-side att användaren är global admin
@@ -64,6 +69,12 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
   try {
     const { supabase } = input.id ? await requireEditor(input.id) : await requireAdmin();
     const slug = input.slug.trim().toLowerCase();
+    const long =
+      tooLong(sv.admin.deckTitle, input.title.trim(), LIMITS.title) ??
+      tooLong(sv.admin.description, input.description, LIMITS.description) ??
+      tooLong(sv.admin.courseCode, input.course_code, LIMITS.courseCode) ??
+      tooLong(sv.admin.sourceCredit, input.source_credit, LIMITS.sourceCredit);
+    if (long) return long;
     const title = input.title.trim();
     if (!SLUG_RE.test(slug)) return { ok: false, error: sv.admin.invalidSlug };
     if (!title) return { ok: false, error: sv.common.required };
@@ -127,6 +138,8 @@ export async function createCategoryAction(deckId: string, title: string): Promi
     const { supabase } = await requireEditor(deckId);
     const t = title.trim();
     if (!t) return { ok: false, error: sv.common.required };
+    const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
+    if (long) return long;
     const { data: existing } = await supabase.from("categories").select("sort_order").eq("deck_id", deckId).order("sort_order", { ascending: false }).limit(1);
     const sort_order = (existing?.[0]?.sort_order ?? -1) + 1;
     const { data, error } = await supabase.from("categories").insert({ deck_id: deckId, title: t, sort_order }).select("id").single();
@@ -143,6 +156,8 @@ export async function updateCategoryAction(id: string, deckId: string, title: st
     const { supabase } = await requireEditor(deckId);
     const t = title.trim();
     if (!t) return { ok: false, error: sv.common.required };
+    const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
+    if (long) return long;
     const { error } = await supabase.from("categories").update({ title: t }).eq("id", id);
     if (error) return fail(error);
     revalidateDeck(deckId);
@@ -196,6 +211,8 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult<{ i
     const front = input.front.trim();
     const back = input.back.trim();
     if (!front || !back) return { ok: false, error: sv.common.required };
+    const long = tooLong(sv.admin.front, front, LIMITS.front) ?? tooLong(sv.admin.back, back, LIMITS.back) ?? tooLong(sv.admin.hint, input.hint.trim(), LIMITS.hint);
+    if (long) return long;
     const values = {
       category_id: input.category_id || null,
       front,
@@ -268,48 +285,18 @@ export async function importCardsAction(deckId: string, cards: ImportCard[]): Pr
     const categories = existingCategories ?? [];
     const diff = diffImport(cards, existingCards ?? [], categories);
 
-    // Nya kategorier
-    const categoryIdByTitle = new Map(categories.map((c) => [c.title.trim().toLowerCase(), c.id] as const));
-    let nextCategoryOrder = Math.max(-1, ...categories.map((c) => c.sort_order)) + 1;
-    for (const title of diff.newCategories) {
-      const { data, error } = await supabase
-        .from("categories")
-        .insert({ deck_id: deckId, title, sort_order: nextCategoryOrder++ })
-        .select("id")
-        .single();
-      if (error) return fail(error);
-      categoryIdByTitle.set(title.trim().toLowerCase(), data.id);
+    // Allt skrivs i en transaktion i databasen (import_cards). RLS avgör rättigheten.
+    const { data: result, error } = await supabase.rpc("import_cards", {
+      p_deck_id: deckId,
+      p_new_categories: diff.newCategories,
+      p_create: diff.create.map((c) => ({ front: c.front, back: c.back, hint: c.hint, category: c.category, sort_order: c.sort_order })),
+      p_update: diff.update.map((u) => ({ id: u.id, back: u.after.back, hint: u.after.hint, category: u.after.category, sort_order: u.after.sort_order })),
+    });
+    if (error) {
+      console.error("[import]", error.message);
+      return { ok: false, error: error.message === "forbidden" ? sv.common.forbiddenBody : sv.admin.importFailed };
     }
-    const categoryId = (title: string | null) => (title ? (categoryIdByTitle.get(title.trim().toLowerCase()) ?? null) : null);
-
-    // Nya kort
-    let nextSort = Math.max(-1, ...(existingCards ?? []).map((c) => c.sort_order)) + 1;
-    if (diff.create.length > 0) {
-      const rows = diff.create.map((c) => ({
-        deck_id: deckId,
-        category_id: categoryId(c.category),
-        front: c.front,
-        back: c.back,
-        hint: c.hint,
-        sort_order: c.sort_order ?? nextSort++,
-      }));
-      const { error } = await supabase.from("cards").insert(rows);
-      if (error) return fail(error);
-    }
-
-    // Uppdaterade kort
-    for (const u of diff.update) {
-      const { error } = await supabase
-        .from("cards")
-        .update({
-          back: u.after.back,
-          hint: u.after.hint,
-          category_id: categoryId(u.after.category),
-          sort_order: u.after.sort_order,
-        })
-        .eq("id", u.id);
-      if (error) return fail(error);
-    }
+    void result;
 
     revalidateDeck(deckId);
     return {

@@ -81,3 +81,19 @@ export async function seenCountText(page: Page): Promise<string | null> {
   if (await seen.isVisible({ timeout: 5000 }).catch(() => false)) return seen.textContent();
   return null;
 }
+
+/** Senaste mejlet till adressen i Mailpit (lokala Supabase-stacken), som klartext. */
+export async function latestMailText(email: string, timeoutMs = 20_000): Promise<string> {
+  const base = process.env.MAILPIT_URL ?? "http://127.0.0.1:54324";
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const list = (await (await fetch(`${base}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`)).json()) as { messages?: { ID: string }[] };
+    const id = list.messages?.[0]?.ID;
+    if (id) {
+      const msg = (await (await fetch(`${base}/api/v1/message/${id}`)).json()) as { Text?: string; HTML?: string };
+      return msg.HTML || msg.Text || "";
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`Inget mejl till ${email} inom ${timeoutMs} ms`);
+}

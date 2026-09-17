@@ -21,8 +21,8 @@ type Props = {
   openReports: DeckReportRow[];
 };
 
-/** Så många skattningar ett kort eller en kategori behöver innan det rangordnas. Höj till 5 vid lansering. */
-export const MIN_RATINGS = 1;
+/** Så många studenter som måste ha skattat ett kort eller en kategori innan den rangordnas: ingen enskild students svar ska kunna läsas ut. */
+export const MIN_STUDENTS = 5;
 
 const ratingFill: Record<number, string> = { 1: "bg-rate-1", 2: "bg-rate-2", 3: "bg-rate-3", 4: "bg-rate-4", 5: "bg-rate-5" };
 const ratingFillSvg: Record<number, string> = { 1: "fill-rate-1", 2: "fill-rate-2", 3: "fill-rate-3", 4: "fill-rate-4", 5: "fill-rate-5" };
@@ -44,9 +44,11 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
   const students = stats.students;
 
   const hardest = stats.categories
-    .filter((c) => c.ratings >= MIN_RATINGS && c.avg !== null && titleOf.has(c.category_id))
+    .filter((c) => c.students >= MIN_STUDENTS && c.avg !== null && titleOf.has(c.category_id))
     .sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0));
-  const tricky = stats.cards.filter((c) => c.low > 0 && c.ratings >= MIN_RATINGS).slice(0, 8);
+  // Per kort är antalet skattningar = antalet studenter (en progressrad per student och kort).
+  const tricky = stats.cards.filter((c) => c.low > 0 && c.ratings >= MIN_STUDENTS).slice(0, 8);
+  const belowThreshold = stats.cards.length > 0 && stats.cards.every((c) => c.ratings < MIN_STUDENTS);
   const totalRatings = stats.rating_dist.reduce((s, r) => s + r.n, 0);
 
   return (
@@ -72,7 +74,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
         <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
           <Panel id="svarast" title={sv.admin.hardest} help={sv.admin.hardestHelp}>
             {hardest.length === 0 ? (
-              <p className="text-sm text-muted">{sv.admin.hardestNone}</p>
+              <p className="text-sm text-muted">{belowThreshold ? sv.admin.thresholdNote(MIN_STUDENTS) : sv.admin.hardestNone}</p>
             ) : (
               <HorizontalBars
                 ariaLabel={sv.admin.hardest}
@@ -94,7 +96,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
 
           <Panel id="kluriga" title={sv.admin.tricky} help={sv.admin.trickyHelp}>
             {tricky.length === 0 ? (
-              <p className="text-sm text-muted">{sv.admin.trickyNone}</p>
+              <p className="text-sm text-muted">{belowThreshold ? sv.admin.thresholdNote(MIN_STUDENTS) : sv.admin.trickyNone}</p>
             ) : (
               <table className="w-full text-sm" data-testid="tricky-table">
                 <thead>

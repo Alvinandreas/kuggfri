@@ -248,6 +248,15 @@ export type Database = {
       add_deck_examiner: { Args: { p_deck_id: string; p_email: string }; Returns: "added" | "exists" | "invited" };
       remove_deck_examiner_invite: { Args: { p_deck_id: string; p_email: string }; Returns: number };
       remove_deck_examiner: { Args: { p_deck_id: string; p_user_id: string }; Returns: number };
+      import_cards: {
+        Args: {
+          p_deck_id: string;
+          p_new_categories: string[];
+          p_create: { front: string; back: string; hint: string | null; category: string | null; sort_order: number | null }[];
+          p_update: { id: string; back: string; hint: string | null; category: string | null; sort_order: number | null }[];
+        };
+        Returns: { created: number; updated: number };
+      };
       reorder_cards: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
       reorder_categories: { Args: { p_deck_id: string; p_ids: string[] }; Returns: number };
     };

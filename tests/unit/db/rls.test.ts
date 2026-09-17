@@ -583,6 +583,36 @@ describe("examinatorer (deck_examiners)", () => {
     expect(await db.query(`select 1 from public.cards where id = $1`, [created!.id])).toHaveLength(0);
   });
 
+  it("import_cards skriver allt i en transaktion och rullar tillbaka vid fel", async () => {
+    const ok = await user(db, examiner).query<{ r: { created: number; updated: number } }>(
+      `select public.import_cards($1, array['Importerad kategori'], $2::jsonb, $3::jsonb) as r`,
+      [draftDeck, JSON.stringify([{ front: "Importfråga 1", back: "Svar 1", hint: null, category: "Importerad kategori", sort_order: null }]), JSON.stringify([{ id: draftCard, back: "Uppdaterat via import", hint: "tips", category: null, sort_order: null }])],
+    );
+    expect(ok[0]?.r).toEqual({ created: 1, updated: 1 });
+    const cat = await db.query<{ id: string }>(`select id from public.categories where deck_id = $1 and title = 'Importerad kategori'`, [draftDeck]);
+    expect(cat).toHaveLength(1);
+    const card = await db.query<{ category_id: string; back: string }>(`select category_id, back from public.cards where front = 'Importfråga 1'`);
+    expect(card[0]?.category_id).toBe(cat[0]?.id);
+    expect((await db.query<{ back: string; hint: string }>(`select back, hint from public.cards where id = $1`, [draftCard]))[0]).toEqual({ back: "Uppdaterat via import", hint: "tips" });
+
+    // Andra kortet i samma anrop bryter mot längdgränsen: ingenting av anropet ska finnas kvar.
+    const before = await db.query(`select 1 from public.cards where deck_id = $1`, [draftDeck]);
+    await expectDenied(
+      user(db, examiner).query(`select public.import_cards($1, array['Halv kategori'], $2::jsonb, '[]'::jsonb)`, [
+        draftDeck,
+        JSON.stringify([
+          { front: "Giltigt kort", back: "x", hint: null, category: null, sort_order: null },
+          { front: "y".repeat(6000), back: "x", hint: null, category: null, sort_order: null },
+        ]),
+      ]),
+      /check|violates/i,
+    );
+    expect(await db.query(`select 1 from public.cards where deck_id = $1`, [draftDeck])).toHaveLength(before.length);
+    expect(await db.query(`select 1 from public.categories where title = 'Halv kategori'`)).toHaveLength(0);
+    // Inte i andras deck.
+    await expectDenied(user(db, examiner).query(`select public.import_cards($1, array[]::text[], '[]'::jsonb, '[]'::jsonb)`, [otherDeck]));
+  });
+
   it("examinatorn kan varken skapa eller ta bort deck", async () => {
     await expectDenied(user(db, examiner).query(`insert into public.decks (slug, title) values ('nytt', 'Nytt')`));
     await user(db, examiner).query(`delete from public.decks where id = $1`, [draftDeck]);

@@ -144,6 +144,7 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 - [x] Skydd: deck-radering kräver titeln, bekräftelse vid avpublicering och vid radering av felrapport, banderoll på opublicerat deck, egen felsida, tomtext i tom kategori rättad, dubbellänken i adminmenyn borta
 - [x] Examinatorer hanteras i UI (Inställningar → Examinatorer, uppslag på e-post i databasen)
 - [x] sr-only-tabellerna i diagrammen gjorde mobilsidan bredare än skärmen (gällde även studentens decksida); rättat
+- [x] Pushat tor 17 sep 21:20 (commit 56450f0): migrationen i molnet, kuggfri.com uppdaterad, hela E2E-sviten 34/34, 173 enhetstester, testkopian på 3001 ombyggd
 - [ ] **Före lansering:** höj `MIN_CARD_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
 
 ## Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)

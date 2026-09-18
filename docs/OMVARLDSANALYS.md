@@ -14,8 +14,8 @@ streak med frysningar, tentadatum, skattningssemantik, fuzz, förstabesök, tang
 "uppskattad kunskap" ur Fas 2) är byggda lokalt, se TASKS.md. Senare samma dag: utkorg (ingen
 repetition tappas), aktiveringsmått i kursöversikten (Fas 1.9), provtenta och "Kan nu" per
 kategori (Fas 2.1–2.2), påminnelser via mejl (2.4) och examinatorns veckobrev (2.7). Kvar i Fas 1:
-fullt offlineläge med service worker. Kvar i Fas 2: kalibreringsexperimentet och den delbara
-beredskapsbilden.
+fullt offlineläge med service worker. Senare på kvällen även kalibreringsexperimentet (2.3) och den
+delbara beredskapsbilden (2.5): Fas 2 är därmed byggd i sin helhet, kvar att sätta i drift är SMTP.
 
 ---
 

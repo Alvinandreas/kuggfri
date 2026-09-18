@@ -287,3 +287,14 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **SMTP via egna miljövariabler** (`SMTP_*`, `EMAIL_FROM`, nodemailer). Utan dem skickas inget och
   cron-svaret säger `configured: false`; deploy före konfiguration är ofarlig. Steg för Alvin i
   docs/DEPLOY.md 3d.
+
+## Beslut 2026-09-19, omgång fyra (kalibrering och delbar beredskap)
+
+- **Kalibreringsexperimentet** (OMVARLDSANALYS princip 4, hypercorrection): vänds ett tidigare
+  sett kort inom 2,5 sekunder och skattas 1–2 räknas det som "säker men fel". Då stannar kortet
+  2,3 sekunder längre med svaret synligt och en rad ber om en omläsning. Ingen extra knapp, inget
+  sparas, gäller aldrig nya kort (de vänds snabbt för att man inte vet). Utvärderas efter tentan:
+  om studenterna upplever det som tjat tas det bort.
+- **Delbar beredskapsbild**: "Dela din beredskap" under progressen ritar "Jag kan 64 % av
+  Materialteknik" som PNG i webbläsaren (canvas), delar via Web Share på mobil, laddar annars ned.
+  Inget skickas till servern. Andelen är FSRS-uppskattningen, inte streaken.

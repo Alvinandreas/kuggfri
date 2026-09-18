@@ -58,6 +58,11 @@ type SessionPlan = {
   finalReview: boolean;
 };
 
+/** Under så här många ms från visning till vändning räknas vändningen som "säker". */
+export const CONFIDENT_FLIP_MS = 2500;
+/** Så länge stannar ett säkert-men-fel-kort innan nästa visas. */
+export const CONFIDENT_STAY_MS = 2600;
+
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   const tag = target.tagName;
@@ -80,6 +85,10 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   const [queued, setQueued] = useState(0);
   const startedAt = useRef(new Date());
   const loggedRef = useRef(false);
+  /** När aktuellt kort visades och när det vändes första gången (kalibrering). */
+  const shownAt = useRef<number>(Date.now());
+  const flippedAt = useRef<number | null>(null);
+  const [confidentWrong, setConfidentWrong] = useState(false);
 
   const cardsById = useMemo(() => new Map(cards.map((c) => [c.id, c] as const)), [cards]);
   const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
@@ -150,6 +159,9 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   // Nytt kort: dölj ledtråd, meddela skärmläsare.
   useEffect(() => {
     setShowHint(false);
+    shownAt.current = Date.now();
+    flippedAt.current = null;
+    setConfidentWrong(false);
     if (session && !session.finished && currentId) {
       setAnnounce(sv.study.cardAnnounce(session.position + 1, session.order.length));
     }
@@ -161,6 +173,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     if (!card || !cardKey) return;
     setFlippedKey((prev) => {
       const next = prev === cardKey ? null : cardKey;
+      if (next && flippedAt.current === null) flippedAt.current = Date.now();
       setAnnounce(next ? sv.study.flippedAnnounce : sv.study.front);
       return next;
     });
@@ -194,13 +207,22 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         .catch(() => {
           // Historik är inte kritisk.
         });
-      setAnnounce(sv.study.ratedAnnounce(rating));
+      // Kalibrering (hypercorrection): vändes kortet snabbt men skattades 1–2 var studenten
+      // sannolikt säker på fel svar. Då stannar kortet längre och en rad ber om en omläsning.
+      const timeToFlip = flippedAt.current === null ? Infinity : flippedAt.current - shownAt.current;
+      // Bara kort som setts förut: ett nytt kort vänds snabbt för att man inte vet, inte för att man är säker.
+      const confident = rating <= 2 && timeToFlip < CONFIDENT_FLIP_MS && (progress[card.id]?.state ?? 0) !== 0;
+      setConfidentWrong(confident);
+      setAnnounce(confident ? `${sv.study.ratedAnnounce(rating)} ${sv.study.confidentWrong}` : sv.study.ratedAnnounce(rating));
       // Stämpla kortet, låt det glida ut, och visa först därefter nästa kort (på framsidan).
       setFeedback(rating);
-      feedbackTimer.current = setTimeout(() => {
-        setFeedback(null);
-        setSession((s) => (s ? rateCurrent(s, rating) : s));
-      }, 960);
+      feedbackTimer.current = setTimeout(
+        () => {
+          setFeedback(null);
+          setSession((s) => (s ? rateCurrent(s, rating) : s));
+        },
+        confident ? CONFIDENT_STAY_MS : 960,
+      );
     },
     [session, card, flipped, store, progress, mode, feedback, schedule],
   );
@@ -390,6 +412,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           flipped={flipped}
           showHint={showHint}
           feedback={feedback}
+          confidentWrong={confidentWrong}
           onFlip={flip}
           onToggleHint={() => setShowHint((v) => !v)}
           onSwipeLeft={onSwipeLeft}

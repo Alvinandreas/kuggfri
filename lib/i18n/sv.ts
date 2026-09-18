@@ -134,6 +134,10 @@ export const sv = {
     knowledgeNow: (share: number, reviewed: number) =>
       `Uppskattad kunskap just nu: ${share} % av korten (baserat på ${reviewed} repeterade kort).`,
     knowledgeNowEmpty: "Uppskattad kunskap visas efter första passet.",
+    shareReadiness: "Dela din beredskap",
+    shareReadinessHelp: "En bild med hur stor andel av kursen du kan just nu. Skapas i din webbläsare, inget skickas till oss.",
+    shareReadinessDone: "Bilden är sparad.",
+    shareReadinessShared: "Delad.",
   },
   stats: {
     title: "Din progress",
@@ -195,6 +199,7 @@ export const sv = {
     saveError: "Kunde inte spara skattningen. Kontrollera anslutningen.",
     queued: (n: number) => (n === 1 ? "1 skattning väntar på anslutning och skickas automatiskt." : `${n} skattningar väntar på anslutning och skickas automatiskt.`),
     examProgress: (i: number, total: number) => `Fråga ${i} av ${total}`,
+    confidentWrong: "Snabbt vänt, lågt skattat. Precis sådana kort fastnar bäst nu: läs svaret en gång till.",
   },
   summary: {
     title: "Sessionen är klar",

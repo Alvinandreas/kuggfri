@@ -279,6 +279,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                 progress={progress}
                 reviews={reviews}
                 weekdaysOnly={prefs.weekdaysOnly}
+                deck={{ title: deck.title, slug: deck.slug }}
                 categories={categories.map((c) => {
                   const s = perCategory.find((p) => p.categoryId === c.id);
                   return { id: c.id, title: c.title, total: s?.total ?? 0, partial: s?.partial ?? 0, learned: s?.learned ?? 0 };

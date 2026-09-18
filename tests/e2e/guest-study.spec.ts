@@ -95,3 +95,44 @@ test.describe("gäst", () => {
     await expectNoSeriousA11yViolations(page);
   });
 });
+
+test.describe("dosering", () => {
+  test("första passet slutar efter dagsmålet med 'Klar för i dag' och erbjuder fler nya kort", async ({ page }) => {
+    await page.goto(`/d/${DECK_SLUG}`);
+    // Förstabesöksrutan och sessionsplanen: 20 nya kort, tidsuppskattning.
+    await expect(page.getByTestId("first-visit")).toBeVisible();
+    await expect(page.getByTestId("start-info")).toContainText("20 nya kort");
+    await expect(page.getByTestId("start-info")).toContainText("cirka 5 min");
+
+    await page.getByTestId("start-session").click();
+    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
+
+    // Vänt kort visar intervall per skattning i schemalagt läge.
+    await page.getByTestId("flip").click();
+    await expect(page.getByTestId("rate-4")).toContainText(/om \d+ dagar|i morgon/);
+    // Tillbaka till framsidan så att hjälpfunktionen kan vända själv.
+    await page.getByTestId("flip").click();
+    await expect(page.getByTestId("flashcard")).toHaveAttribute("data-flipped", "false");
+
+    for (let i = 0; i < 20; i++) {
+      if (await page.getByTestId("session-summary").isVisible()) break;
+      await rateCurrentCard(page, i % 2 === 0 ? 4 : 5);
+    }
+    const summary = page.getByTestId("session-summary");
+    await expect(summary).toBeVisible();
+    await expect(summary).toHaveAttribute("data-done", "true");
+    await expect(summary.getByRole("heading", { level: 1 })).toHaveText("Klar för i dag");
+    await expect(page.getByTestId("today-tiles")).toContainText("Dagar i rad");
+    await expect(page.getByTestId("continue-new")).toContainText("Ta 20 nya kort till");
+    await expectNoSeriousA11yViolations(page);
+
+    // Deck-sidan: dagsmålet är nått, men fler nya kort kan tas frivilligt.
+    await page.goto(`/d/${DECK_SLUG}`);
+    await expect(page.getByTestId("start-info")).toHaveText("Klar för i dag");
+    await expect(page.getByTestId("start-more")).toContainText("Ta 20 nya kort till");
+    await expect(page.getByTestId("knowledge-now")).toContainText("baserat på 20 repeterade kort");
+    await page.getByTestId("start-more").click();
+    await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
+  });
+});

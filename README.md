@@ -9,8 +9,9 @@ byggt från de Brainscape-set som redan använts av två årskullar.
 - ts-fsrs för schemalagd repetition, KaTeX för matte
 - Vitest (enhetstester, RLS-tester) och Playwright (E2E med axe)
 
-Läs också [PLAN.md](PLAN.md), [DECISIONS.md](DECISIONS.md), [BLOCKERS.md](BLOCKERS.md) och
-[SUMMARY.md](SUMMARY.md).
+Läs också [PLAN.md](PLAN.md), [DECISIONS.md](DECISIONS.md), [BLOCKERS.md](BLOCKERS.md),
+[SUMMARY.md](SUMMARY.md), omvärldsanalysen och arbetsplanen i [docs/OMVARLDSANALYS.md](docs/OMVARLDSANALYS.md)
+samt återställningsrutinen i [docs/ATERSTALLNING.md](docs/ATERSTALLNING.md) (den ersätter kodfrysning).
 
 ## Starta lokalt
 
@@ -89,6 +90,19 @@ personens e-postadress (kontot behöver inte finnas än: rätten kopplas automat
 bort deck eller utse andra examinatorer. Rättigheten ligger i tabellen `deck_examiners` (väntande i `deck_examiner_invites`) och
 kontrolleras av `public.can_edit_deck()` i RLS-policyerna (testat i `tests/unit/db/rls.test.ts`).
 Länken **Admin** i menyn visas även för examinatorer och leder direkt till deras kurs.
+
+## Tentadatum, dosering och streak
+
+Under deckets **Inställningar** kan examinatorn ange ett tentadatum. Då ser schemat till att inget
+kort skjuts förbi tentan, att alla nya kort är introducerade fyra dagar före (öppet "ikappläge" om
+det kräver fler nya kort per dag än studentens dagsmål) och att de sista två dagarna blir en
+slutrepetition av allt, svagast först. Utan tentadatum gäller det vanliga långsiktiga schemat.
+
+Studenten får 20 nya kort per dag som standard (valbart 10/20/40 på decksidan, sparas i
+webbläsaren under `kuggfri:prefs:v1`); förfallna kort kommer alltid med. Sessionen slutar med
+"Klar för i dag" när inget förfallet finns kvar, med möjlighet att ta fler nya kort. Streaken
+tål enstaka missade dagar (två frysningar, en ny var sjunde aktiva dag) och kan undanta helger.
+Logiken ligger i `lib/study/plan.ts` och `lib/stats/progress-stats.ts` och är enhetstestad.
 
 ## Importera innehåll
 

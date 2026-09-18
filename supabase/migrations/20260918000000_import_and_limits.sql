@@ -88,3 +88,14 @@ $$;
 
 revoke execute on function public.import_cards(uuid, text[], jsonb, jsonb) from public, anon;
 grant execute on function public.import_cards(uuid, text[], jsonb, jsonb) to authenticated;
+
+-- ÅNGRA (se docs/ATERSTALLNING.md)
+-- drop function if exists public.import_cards(uuid, text[], jsonb, jsonb);
+-- alter table public.decks
+--   drop constraint if exists decks_description_length,
+--   drop constraint if exists decks_course_code_length,
+--   drop constraint if exists decks_source_credit_length;
+-- alter table public.cards
+--   drop constraint if exists cards_front_length,
+--   drop constraint if exists cards_back_length,
+--   drop constraint if exists cards_hint_length;

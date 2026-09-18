@@ -1314,6 +1314,22 @@ revoke execute on function public.remove_deck_examiner_invite(uuid, text) from p
 grant execute on function public.list_deck_examiners(uuid) to authenticated;
 grant execute on function public.remove_deck_examiner_invite(uuid, text) to authenticated;
 
+-- ÅNGRA (se docs/ATERSTALLNING.md). Återställer handle_new_user och list_deck_examiners till
+-- versionerna i 20260917000000_examiners.sql och tar bort inbjudningstabellen.
+-- drop function if exists public.remove_deck_examiner_invite(uuid, text);
+-- drop function if exists public.add_deck_examiner(uuid, text);
+-- drop function if exists public.list_deck_examiners(uuid);
+-- create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path = public as $$
+-- begin
+--   insert into public.profiles (id, display_name)
+--   values (new.id, nullif(trim(coalesce(new.raw_user_meta_data ->> 'display_name', '')), ''))
+--   on conflict (id) do nothing;
+--   return new;
+-- end;
+-- $$;
+-- drop table if exists public.deck_examiner_invites;
+-- (list_deck_examiners och add_deck_examiner återskapas från 20260917000000_examiners.sql.)
+
 -- ===== supabase/migrations/20260918000000_import_and_limits.sql =====
 -- Import i en transaktion och rimliga längdgränser.
 --
@@ -1405,6 +1421,29 @@ $$;
 
 revoke execute on function public.import_cards(uuid, text[], jsonb, jsonb) from public, anon;
 grant execute on function public.import_cards(uuid, text[], jsonb, jsonb) to authenticated;
+
+-- ÅNGRA (se docs/ATERSTALLNING.md)
+-- drop function if exists public.import_cards(uuid, text[], jsonb, jsonb);
+-- alter table public.decks
+--   drop constraint if exists decks_description_length,
+--   drop constraint if exists decks_course_code_length,
+--   drop constraint if exists decks_source_credit_length;
+-- alter table public.cards
+--   drop constraint if exists cards_front_length,
+--   drop constraint if exists cards_back_length,
+--   drop constraint if exists cards_hint_length;
+
+-- ===== supabase/migrations/20260919000000_exam_date.sql =====
+-- Tentadatum per deck. Styr schemaläggningen för studenten: alla kort hinner förfalla minst en
+-- gång före tentan, och nya kort doseras så att hela decket är sett i god tid.
+-- Expanderande ändring: bara en nullable kolumn, gammal kod ignorerar den.
+
+alter table public.decks add column exam_date date;
+
+comment on column public.decks.exam_date is 'Kursens tentadatum (valfritt). Styr intervalltak och dosering av nya kort i schemalagd repetition.';
+
+-- ÅNGRA (se docs/ATERSTALLNING.md)
+-- alter table public.decks drop column if exists exam_date;
 
 -- ===== supabase/seed.sql =====
 -- GENERERAD FIL. Ändra inte här; ändra i seed/ och kör `npm run seed:build`.

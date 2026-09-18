@@ -204,3 +204,41 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Skydd mot felklick**: deck-radering kräver att titeln skrivs, avpublicering och radering av
   felrapport har bekräftelsedialog, opublicerat deck visar banderoll för redaktören, egen
   `app/error.tsx`.
+
+## Beslut 2026-09-19, efter omvärldsanalysen (docs/OMVARLDSANALYS.md)
+
+- **Ingen kodfrysning, i stället återställningsrutin** (`docs/ATERSTALLNING.md`): git-taggen
+  `v1-lansering` markerar produktionsläget inför lanseringen, Vercel "Promote to Production" rullar
+  tillbaka koden på en minut, migrationer är expanderande (bara lägga till) och har en kommenterad
+  ÅNGRA-sektion, backup + återställningstest före varje migration.
+- **Dosering: 20 nya kort per dag som standard** (`lib/study/plan.ts`, `DEFAULT_DAILY_NEW`), valbart
+  10/20/40 under "Nya kort per dag" på decksidan (sparas i `kuggfri:prefs:v1` per enhet). Förfallna
+  kort kommer alltid med. Skälet: första sessionen var 144 kort, samma "backlog-ångest" som 82 % av
+  läkarstudenter rapporterar om Anki. Sammanfattningen säger "Klar för i dag" när inget förfallet
+  finns kvar och dagsmålet är nått, med länk "Ta N nya kort till" (URL-parametern `nya=N`) för den
+  som vill mer. Två sessioner samma dag delar dagsmålet (räknas ur historiken).
+- **Tentadatum per deck** (`decks.exam_date`, sätts av examinatorn under Inställningar). Styr tre
+  saker: intervalltak så att inget kort skjuts förbi tentan (`maxInterval = dagar kvar − 3`, eftersom
+  ts-fsrs lägger Good/Easy en–två dagar över taket), dosering så att alla nya kort är introducerade
+  fyra dagar före tentan (öppet "ikappläge" om det kräver mer än dagsmålet, aldrig tyst
+  omschemaläggning), och slutrepetition de sista två dagarna (alla kort i urvalet, lägst
+  återkallelsesannolikhet först). Efter tentan fortsätter schemat långsiktigt. Ingen
+  studentöverstyrning ännu.
+- **Streak med frysningar** (`computeStreak` i `lib/stats/progress-stats.ts`): två frysningar,
+  påfyllning var sjunde aktiva dag, i dag räknas aldrig som missad förrän dagen är slut, valfritt
+  "vardagar" som undantar helger. Allt beräknas ur historiken (fungerar för gäster, kan inte gå
+  sönder av synk). Ingen notis om att streaken "är i fara".
+- **Skattningsskalan behåller fem knappar men blir ärlig:** etiketterna är nu "Inte alls / Nästan /
+  Med möda / Bra / Direkt" (3 är ett godkänt i FSRS, "Sådär" lät som ett underkänt) och i schemalagt
+  läge visar varje knapp när kortet kommer tillbaka. Mappningen 1,2→Again, 3→Hard, 4→Good, 5→Easy
+  är oförändrad; ändras först om studenttestet första veckan visar att 3 missbrukas.
+- **Fuzz på i FSRS** (`enable_fuzz: true`): intervallen sprids några procent så att kort som lärts in
+  samma dag inte förfaller i klump. Deterministiskt per kort.
+- **"Uppskattad kunskap just nu"** (summa av FSRS-återkallelsesannolikheter) visas på decksidan och
+  i sammanfattningen, med "baserat på N repeterade kort". Ersätter inte "Inlärda" än, men är det
+  ärligare måttet (studenter läser "kort sedda" som "kort inlärda").
+- **QR-kod** på decksidan (biblioteket `qrcode`, renderas som SVG i webbläsaren först vid klick).
+- **Rörelse:** kortvändningen 260 ms med ease-out (var 420 ms), kortinträde 180 ms. Stämpeln vid
+  skattning är kvar oförändrad (Alvins val i runda 3–8). En enda lugn animation vid "Klar för i dag".
+- **`npm run db:types` skriver över den handskrivna typfilen** (`lib/supabase/database.types.ts`)
+  med råformatet; nya kolumner läggs till för hand. Noterat i filens huvud.

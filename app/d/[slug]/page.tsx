@@ -33,6 +33,7 @@ export default async function DeckPage({ params }: { params: Params }) {
         description: data.deck.description,
         course_code: data.deck.course_code,
         source_credit: data.deck.source_credit,
+        exam_date: data.deck.exam_date,
       }}
       categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
       cards={data.cards.map((c) => ({ id: c.id, category_id: c.category_id, sort_order: c.sort_order }))}

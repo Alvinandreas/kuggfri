@@ -17,6 +17,8 @@ test.describe("admin", () => {
   test("6. admin importerar en CSV och korten dyker upp i decket", async ({ page }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
     await expect(page.getByRole("heading", { name: "Deck" })).toBeVisible();
+    // Titeln strömmas efter skelettet i dev-läge; vänta in den innan axe körs.
+    await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
 
     // Antal kort före import (publik sida).
@@ -64,6 +66,7 @@ test.describe("admin", () => {
     await page.getByTestId("admin-category-list").getByRole("link", { name: "E2E-kategori", exact: true }).click({ position: { x: 24, y: 16 } });
     await page.waitForURL(/\/kategori\/[0-9a-f-]{36}$/);
     await expect(page.getByTestId("admin-card-list").getByText(unique, { exact: true })).toBeVisible();
+    await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
 
     // Och i det publika decket.

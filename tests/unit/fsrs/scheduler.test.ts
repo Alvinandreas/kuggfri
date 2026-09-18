@@ -1,14 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { Rating } from "ts-fsrs";
 import {
+  buildFinalReviewQueue,
   buildFsrsQueue,
   countDueBy,
+  estimateKnowledge,
   isDue,
   newProgress,
   nextDueDate,
+  previewIntervals,
   queueStats,
   ratingToGrade,
   resetScheduleKeepRating,
+  retrievability,
   reviewCard,
 } from "@/lib/fsrs/scheduler";
 import { applyRating } from "@/lib/fsrs/apply-rating";
@@ -159,5 +163,58 @@ describe("applyRating – fri och slumpad repetition rör inte progressen", () =
     expect(next).not.toBeNull();
     expect(next?.self_rating).toBe(1);
     expect(JSON.stringify(progress)).toBe(snapshot);
+  });
+});
+
+describe("dosering, intervalltak och förhandsvisning", () => {
+  it("begränsar antalet nya kort i kön men aldrig de förfallna", () => {
+    const progress: ProgressMap = {};
+    for (const id of ["d1", "d2"]) progress[id] = { ...reviewCard(id, undefined, 4, new Date(NOW.getTime() - 30 * DAY)) };
+    const queue = buildFsrsQueue(["d1", "d2", "n1", "n2", "n3", "n4"], progress, NOW, () => 0.5, { maxNew: 2 });
+    expect(queue.slice(0, 2).sort()).toEqual(["d1", "d2"]);
+    expect(queue).toHaveLength(4);
+    expect(buildFsrsQueue(["n1", "n2"], {}, NOW, Math.random, { maxNew: 0 })).toEqual([]);
+    expect(buildFsrsQueue(["n1", "n2"], {}, NOW)).toHaveLength(2);
+  });
+
+  it("intervalltaket håller korten inom tiden till tentan", () => {
+    const first = reviewCard("k", undefined, 4, NOW);
+    const later = new Date(NOW.getTime() + 3 * DAY);
+    const free = reviewCard("k", first, 5, later);
+    const capped = reviewCard("k", first, 5, later, { maxInterval: 6 });
+    expect(free.scheduled_days).toBeGreaterThan(8);
+    // ts-fsrs håller Again < Hard < Good < Easy med en dags mellanrum: Easy hamnar högst två dagar över taket.
+    expect(capped.scheduled_days).toBeLessThanOrEqual(8);
+    expect(reviewCard("k", first, 4, later, { maxInterval: 6 }).scheduled_days).toBeLessThanOrEqual(7);
+    expect(reviewCard("k", first, 3, later, { maxInterval: 6 }).scheduled_days).toBeLessThanOrEqual(6);
+  });
+
+  it("förhandsvisar intervallen i samma ordning som skattningarna", () => {
+    const p = previewIntervals("k", undefined, NOW);
+    const t = (r: 1 | 2 | 3 | 4 | 5) => p[r].getTime();
+    expect(t(1)).toBe(t(2));
+    expect(t(2)).toBeLessThan(t(3));
+    expect(t(3)).toBeLessThan(t(4));
+    expect(t(4)).toBeLessThan(t(5));
+    // Förhandsvisningen stämmer med vad en riktig skattning ger.
+    expect(reviewCard("k", undefined, 4, NOW).due).toBe(p[4].toISOString());
+  });
+
+  it("återkallelsesannolikhet: 0 för nya kort, 1 direkt efter repetition, sjunker sedan", () => {
+    expect(retrievability(undefined, NOW)).toBe(0);
+    const p = reviewCard("k", undefined, 4, NOW);
+    expect(retrievability(p, NOW)).toBe(1);
+    const week = retrievability(p, new Date(NOW.getTime() + 7 * DAY));
+    expect(week).toBeLessThan(1);
+    expect(week).toBeGreaterThan(0.5);
+    const est = estimateKnowledge(["k", "x"], { k: p }, NOW);
+    expect(est).toEqual({ known: 1, share: 0.5, reviewed: 1, total: 2 });
+  });
+
+  it("slutrepetitionen tar alla kort, svagast först", () => {
+    const strong = reviewCard("s", undefined, 5, NOW);
+    const weak = reviewCard("w", undefined, 4, new Date(NOW.getTime() - 20 * DAY));
+    const queue = buildFinalReviewQueue(["s", "w", "n"], { s: strong, w: weak }, NOW, () => 0.5);
+    expect(queue).toEqual(["n", "w", "s"]);
   });
 });

@@ -185,7 +185,28 @@ Kan:
 - [x] Examinatorroll (ersätter reviewer-rollen): full redigering av eget deck, inget annat
 
 
+## Lördag 19 sep (natt): omvärldsanalysens Fas 0–1, kodfrysningen ersatt av återställningsrutin
+
+Alvin gav fri hand ("kör på, bygg så mycket du orkar"). Allt lokalt, ej pushat.
+
+- [x] Git-tagg `v1-lansering` på produktionscommiten (pushad, bara taggen). `docs/ATERSTALLNING.md`: Vercel-återställning på en minut, expanderande migrationer med ÅNGRA-sektion, backup före migration, deployrutin. ÅNGRA-sektioner i de två opushade migrationerna
+- [x] Migration `20260919000000_exam_date.sql` (decks.exam_date, applicerad lokalt), tentadatum i deckets inställningar i admin
+- [x] Dosering: 20 nya kort per session/dag (valbart 10/20/40), förfallna alltid med, "N att repetera + M nya kort · cirka X min" under Starta, "Klar för i dag"-sammanfattning med tre nyckeltal och "Ta N nya kort till"
+- [x] Tentaplan: intervalltak, ikappläge (synligt), slutrepetition sista två dagarna, tentarad på decksidan, banderoll i sessionen
+- [x] Streak med två frysningar (påfylls var sjunde aktiva dag), "vardagar"-val; visas i progress och sammanfattning
+- [x] Skattningsknappar: nya etiketter (Nästan / Med möda / Direkt) och intervalltext per knapp i schemalagt läge. Fuzz på
+- [x] "Uppskattad kunskap just nu" (FSRS-sannolikheter) på decksidan och i sammanfattningen
+- [x] Förstabesöksruta i stället för "Du har inte pluggat…", tangentbordshjälp under knapparna (bara på enheter med mus), QR-kod under Dela
+- [x] Rörelse: vändning 260 ms, inträde 180 ms, lugn "klar"-animation
+- [x] Tester: 25 nya enhetstester (dosering, tentaplan, streak, förhandsvisning, kunskap, inställningar), nytt E2E-test för dosering och "Klar för i dag". Unit 191 gröna, E2E 42 gröna före det nya testet
+- [x] Testkopian på 3001 ombyggd
+- [ ] **Alvin verifierar på http://localhost:3001**: decksidan (förstabesöksrutan, Starta-raden, "Nya kort per dag", QR), en session (intervall på knapparna, "Klar för i dag"), admin → Inställningar → Tentadatum. Sedan "pusha" (migrationen `20260919000000` följer med: `supabase db push` före `git push`, se ATERSTALLNING.md)
+- [ ] Sätt tentadatum för Materialteknik i admin när Johan bekräftat datumet
+- [ ] Övning av återställningen i Vercel tillsammans (fram och tillbaka), datum antecknas i ATERSTALLNING.md
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
+
+- [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte
 
 - [?] **Alvin (5 min): klistra in mejlmallarna i Supabase** (Authentication → Emails → Magic Link och Confirm signup, innehåll från `supabase/templates/`) och lägg till `https://kuggfri.com/**` + `https://kuggfri.vercel.app/**` under Redirect URLs. Exakta steg i docs/DEPLOY.md 3b. Utan detta fungerar inloggningslänken bara i samma webbläsare som beställde den
 - [x] Inloggningslänk fungerar på alla enheter: egna mallar med `token_hash` (tis 00:10). Testat lokalt utan cookies mot Mailpit: länken loggar in, förbrukad länk ger felsidan

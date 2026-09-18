@@ -118,3 +118,19 @@ revoke execute on function public.list_deck_examiners(uuid) from public, anon;
 revoke execute on function public.remove_deck_examiner_invite(uuid, text) from public, anon;
 grant execute on function public.list_deck_examiners(uuid) to authenticated;
 grant execute on function public.remove_deck_examiner_invite(uuid, text) to authenticated;
+
+-- ÅNGRA (se docs/ATERSTALLNING.md). Återställer handle_new_user och list_deck_examiners till
+-- versionerna i 20260917000000_examiners.sql och tar bort inbjudningstabellen.
+-- drop function if exists public.remove_deck_examiner_invite(uuid, text);
+-- drop function if exists public.add_deck_examiner(uuid, text);
+-- drop function if exists public.list_deck_examiners(uuid);
+-- create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path = public as $$
+-- begin
+--   insert into public.profiles (id, display_name)
+--   values (new.id, nullif(trim(coalesce(new.raw_user_meta_data ->> 'display_name', '')), ''))
+--   on conflict (id) do nothing;
+--   return new;
+-- end;
+-- $$;
+-- drop table if exists public.deck_examiner_invites;
+-- (list_deck_examiners och add_deck_examiner återskapas från 20260917000000_examiners.sql.)

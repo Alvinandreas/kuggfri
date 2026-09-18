@@ -40,11 +40,12 @@ type LinkButtonProps = {
   className?: string;
   children: ReactNode;
   prefetch?: boolean;
+  "data-testid"?: string;
 };
 
-export function LinkButton({ href, variant = "primary", size = "md", className = "", children, prefetch }: LinkButtonProps) {
+export function LinkButton({ href, variant = "primary", size = "md", className = "", children, prefetch, ...rest }: LinkButtonProps) {
   return (
-    <Link href={href} prefetch={prefetch} className={buttonClass(variant, size, className)}>
+    <Link href={href} prefetch={prefetch} className={buttonClass(variant, size, className)} {...rest}>
       {children}
     </Link>
   );

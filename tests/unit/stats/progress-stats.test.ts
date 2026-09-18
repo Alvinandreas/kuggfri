@@ -44,13 +44,55 @@ describe("buildProgressStats", () => {
     expect(s.series.every((p) => p.seen === 2 && p.learned === 2 && p.reviews === 0)).toBe(true);
   });
 
-  it("räknar streak bakåt från i dag, eller från i går om inget gjorts i dag", () => {
+  it("räknar streak med frysningar: en missad dag bryter inte, i dag räknas inte som missad", () => {
+    // Aktiv dag 4, 2, 1, 0 (i dag); dag 3 missad men täckt av en frysning.
     const withToday = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: [rev("a", 4, 0), rev("a", 4, 1), rev("a", 4, 2), rev("a", 4, 4)], now: NOW });
-    expect(withToday.streak).toBe(3);
+    expect(withToday.streak).toBe(4);
+    expect(withToday.freezesLeft).toBe(1);
     const withoutToday = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: [rev("a", 4, 1), rev("a", 4, 2)], now: NOW });
     expect(withoutToday.streak).toBe(2);
-    const broken = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: [rev("a", 4, 2)], now: NOW });
+    expect(withoutToday.freezesLeft).toBe(2);
+    // Två frysningar räcker till två missade dagar; tredje missen nollställer.
+    const twoMissed = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: [rev("a", 4, 3)], now: NOW });
+    expect(twoMissed.streak).toBe(1);
+    expect(twoMissed.freezesLeft).toBe(0);
+    expect(twoMissed.freezeUsedRecently).toBe(true);
+    const broken = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: [rev("a", 4, 4)], now: NOW });
     expect(broken.streak).toBe(0);
+  });
+
+  it("fyller på en frysning var sjunde aktiva dag, och tre missade dagar i rad nollställer", () => {
+    // 14 aktiva dagar (dag 17–4), sedan dag 3, 2, 1 missade: två frysningar räcker inte till tre.
+    const days = Array.from({ length: 14 }, (_, i) => rev("a", 4, i + 4));
+    const s = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: days, now: NOW });
+    expect(s.streak).toBe(0);
+    // Bara två missade: frysningarna (påfyllda var sjunde dag, tak 2) håller streaken.
+    const twoMissed = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: Array.from({ length: 14 }, (_, i) => rev("a", 4, i + 3)), now: NOW });
+    expect(twoMissed.streak).toBe(14);
+    expect(twoMissed.freezesLeft).toBe(0);
+  });
+
+  it("kan undanta helger från streaken", () => {
+    // NOW är måndag 14 sep 2026. Aktiv tis–fre (dag 6–3), helgen (dag 2–1) missad.
+    const reviews = [rev("a", 4, 6), rev("a", 4, 5), rev("a", 4, 4), rev("a", 4, 3)];
+    const weekdays = buildProgressStats({ cardIds: ["a"], progress: {}, reviews, now: NOW, weekdaysOnly: true });
+    expect(weekdays.streak).toBe(4);
+    expect(weekdays.freezesLeft).toBe(2);
+    const all = buildProgressStats({ cardIds: ["a"], progress: {}, reviews, now: NOW });
+    expect(all.streak).toBe(4);
+    expect(all.freezesLeft).toBe(0);
+    // En missad vardag (fredag) kostar en frysning även i vardagsläget.
+    const missedFriday = buildProgressStats({ cardIds: ["a"], progress: {}, reviews: [rev("a", 4, 4), rev("a", 4, 1)], now: NOW, weekdaysOnly: true });
+    expect(missedFriday.streak).toBe(2);
+    expect(missedFriday.freezesLeft).toBe(1);
+  });
+
+  it("uppskattar kunskap just nu ur FSRS", () => {
+    const progress: ProgressMap = { a: reviewCard("a", undefined, 5, NOW), b: reviewCard("b", undefined, 4, NOW) };
+    const s = buildProgressStats({ cardIds: ["a", "b", "c"], progress, reviews: [], now: NOW });
+    expect(s.knowledge.reviewed).toBe(2);
+    expect(s.knowledge.known).toBeCloseTo(2, 5);
+    expect(s.knowledge.share).toBeCloseTo(2 / 3, 5);
   });
 
   it("snitt senaste 7 dagarna och nuläge ur progressen", () => {

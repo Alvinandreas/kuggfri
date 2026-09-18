@@ -1,6 +1,6 @@
 /**
  * Typer för databasen. Håll i synk med supabase/migrations.
- * Kan regenereras med `npm run db:types` när Supabase körs lokalt.
+ * OBS: `npm run db:types` skriver över den här handskrivna filen med råformatet; lägg till nya kolumner för hand i stället.
  */
 export type Json =
   | string
@@ -24,6 +24,8 @@ export type DeckRow = {
   description: string | null;
   course_code: string | null;
   source_credit: string | null;
+  /** Tentadatum YYYY-MM-DD, valfritt. */
+  exam_date: string | null;
   is_published: boolean;
   sort_order: number;
   created_at: string;
@@ -155,6 +157,7 @@ export type Database = {
           | "description"
           | "course_code"
           | "source_credit"
+          | "exam_date"
           | "is_published"
           | "sort_order"
           | "created_at"

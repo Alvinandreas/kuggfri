@@ -202,7 +202,9 @@ body {
 .flip-inner {
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Under 300 ms och ease-out: vändningen sker hundratals gånger per session och ska kännas
+     omedelbar, inte som en effekt (docs/OMVARLDSANALYS.md, princip 9). */
+  transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .flip-inner[data-flipped="true"] {
   transform: rotateY(180deg);
@@ -320,7 +322,39 @@ body {
   }
 }
 .card-enter {
-  animation: card-enter 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: card-enter 180ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* "Klar för i dag": en enda, lugn firandeanimation vid sessionens slut. */
+@keyframes done-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes done-mark {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.done-pop {
+  animation: done-pop 320ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.done-mark {
+  animation: done-mark 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 120ms both;
 }
 /* Stämpeln visas först (ca 0,7 s), sedan glider kortet ut åt vänster. */
 .card-leave {

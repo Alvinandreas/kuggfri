@@ -16,14 +16,16 @@ type Props = {
   dueText: string;
   /** Per kategori, i deckets ordning: underlag för radardiagrammet. */
   categories: { id: string; title: string; total: number; partial: number; learned: number }[];
+  /** Helger räknas inte som missade dagar i streaken. */
+  weekdaysOnly?: boolean;
 };
 
 /**
  * Din progress: fyra nyckeltal, repetitioner per dag och ackumulerad kunskap.
  * Data-testid seen-count och due-info används av E2E-testerna.
  */
-export function ProgressStats({ cardIds, progress, reviews, dueText, categories }: Props) {
-  const stats = useMemo(() => buildProgressStats({ cardIds, progress, reviews }), [cardIds, progress, reviews]);
+export function ProgressStats({ cardIds, progress, reviews, dueText, categories, weekdaysOnly = false }: Props) {
+  const stats = useMemo(() => buildProgressStats({ cardIds, progress, reviews, weekdaysOnly }), [cardIds, progress, reviews, weekdaysOnly]);
   const [axisHover, setAxisHover] = useState<number | null>(null);
   const axes: RadarAxis[] = useMemo(
     () => categories.map((c, i) => ({ key: c.id, label: c.title, colorIndex: i, total: c.total, partial: c.partial, learned: c.learned })),
@@ -35,7 +37,13 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
     <div className="grid gap-5">
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} tone="green" />
-        <StatTile label={sv.stats.streak} help={sv.stats.streakHelp} value={`${stats.streak}`} sub={sv.stats.days(stats.streak)} tone="navy" />
+        <StatTile
+          label={sv.stats.streak}
+          help={sv.stats.streakHelp}
+          value={`${stats.streak}`}
+          sub={stats.freezeUsedRecently ? sv.summary.freezeUsed : sv.summary.freezesLeft(stats.freezesLeft)}
+          tone="navy"
+        />
         <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
         <StatTile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
       </dl>
@@ -46,6 +54,11 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories 
         </span>
         <span className="text-muted"> · </span>
         <span data-testid="due-info">{dueText}</span>
+      </p>
+      <p className="text-sm text-muted" data-testid="knowledge-now">
+        {stats.knowledge.reviewed === 0
+          ? sv.deck.knowledgeNowEmpty
+          : sv.deck.knowledgeNow(Math.round(stats.knowledge.share * 100), stats.knowledge.reviewed)}
       </p>
 
       {stats.hasReviews ? (

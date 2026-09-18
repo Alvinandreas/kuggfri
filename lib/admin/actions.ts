@@ -64,8 +64,12 @@ export type DeckInput = {
   title: string;
   description: string;
   course_code: string;
+  /** YYYY-MM-DD eller tom sträng. */
+  exam_date?: string;
   source_credit: string;
 };
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ id: string }>> {
   try {
@@ -80,12 +84,15 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
     const title = input.title.trim();
     if (!SLUG_RE.test(slug)) return { ok: false, error: sv.admin.invalidSlug };
     if (!title) return { ok: false, error: sv.common.required };
+    const examDate = (input.exam_date ?? "").trim();
+    if (examDate && !DATE_RE.test(examDate)) return { ok: false, error: sv.admin.invalidDate };
 
     const values = {
       slug,
       title,
       description: input.description.trim() || null,
       course_code: input.course_code.trim() || null,
+      exam_date: examDate || null,
       source_credit: input.source_credit.trim() || null,
     };
 

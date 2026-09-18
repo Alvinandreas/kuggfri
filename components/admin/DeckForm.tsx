@@ -29,6 +29,7 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
         title: String(fd.get("title") ?? ""),
         description: String(fd.get("description") ?? ""),
         course_code: String(fd.get("course_code") ?? ""),
+        exam_date: String(fd.get("exam_date") ?? ""),
         source_credit: String(fd.get("source_credit") ?? ""),
       });
       if (result.ok) {
@@ -85,6 +86,11 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
         <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
           <span>{sv.admin.courseCode}</span>
           <input name="course_code" maxLength={50} defaultValue={deck?.course_code ?? ""} className={inputClass} />
+        </label>
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
+          <span>{sv.admin.examDate}</span>
+          <input name="exam_date" type="date" defaultValue={deck?.exam_date ?? ""} className={inputClass} data-testid="deck-exam-date" />
+          <span className="text-xs text-muted">{sv.admin.examDateHelp}</span>
         </label>
       </div>
       <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">

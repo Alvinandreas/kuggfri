@@ -1,4 +1,4 @@
-import { newProgress, reviewCard } from "./scheduler";
+import { newProgress, reviewCard, type ScheduleOptions } from "./scheduler";
 import type { CardProgress, ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
 
 /**
@@ -14,11 +14,13 @@ export function applyRating(input: {
   rating: SelfRating;
   progress: ProgressMap;
   now?: Date;
+  /** Schemalagt läge: intervalltak (t.ex. dagar till tentan). */
+  schedule?: ScheduleOptions;
 }): CardProgress | null {
   const now = input.now ?? new Date();
   switch (input.mode) {
     case "fsrs":
-      return reviewCard(input.cardId, input.progress[input.cardId], input.rating, now);
+      return reviewCard(input.cardId, input.progress[input.cardId], input.rating, now, input.schedule);
     case "tricky": {
       const previous = input.progress[input.cardId] ?? newProgress(input.cardId, now);
       return { ...previous, self_rating: input.rating, last_review: now.toISOString() };

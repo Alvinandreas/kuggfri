@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { applyRating } from "@/lib/fsrs/apply-rating";
-import { countDueBy, nextDueDate } from "@/lib/fsrs/scheduler";
+import { countDueBy, nextDueDate, previewIntervals, queueStats, type ScheduleOptions } from "@/lib/fsrs/scheduler";
 import {
   canGoPrevious,
   createSession,
@@ -16,16 +16,19 @@ import {
   summarize,
   type SessionState,
 } from "@/lib/fsrs/session";
-import type { ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
+import { SELF_RATINGS, type ProgressMap, type ReviewEntry, type SelfRating, type StudyMode } from "@/lib/progress/types";
+import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
-import { selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
-import { endOfDay } from "@/lib/time/format";
+import { filterCards, selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
+import { examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
+import { buildProgressStats, countIntroducedToday } from "@/lib/stats/progress-stats";
+import { endOfDay, formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Flashcard } from "./Flashcard";
 import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
-import { SessionSummary } from "./SessionSummary";
+import { SessionSummary, type TodaySummary } from "./SessionSummary";
 
 export type StudyCard = {
   id: string;
@@ -37,12 +40,22 @@ export type StudyCard = {
 };
 
 type Props = {
-  deck: { id: string; slug: string; title: string };
+  deck: { id: string; slug: string; title: string; exam_date: string | null };
   categories: { id: string; title: string }[];
   cards: StudyCard[];
   mode: StudyMode;
   selection: Selection;
   userId: string | null;
+  /** Uttryckligt antal nya kort för den här sessionen (från "Ta N nya kort till"), utöver dagsmålet. */
+  extraNew: number | null;
+};
+
+type SessionPlan = {
+  phase: ExamPhase;
+  plan: NewCardPlan;
+  /** Tak på nya kort som sessionen byggdes med. */
+  maxNew: number | undefined;
+  finalReview: boolean;
 };
 
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -51,10 +64,13 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }
 
-export function StudySession({ deck, categories, cards, mode, selection, userId }: Props) {
+export function StudySession({ deck, categories, cards, mode, selection, userId, extraNew }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
+  const [reviews, setReviews] = useState<ReviewEntry[]>([]);
+  const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [session, setSession] = useState<SessionState | null>(null);
+  const [sessionPlan, setSessionPlan] = useState<SessionPlan | null>(null);
   /** Nyckel (kort + position) för det kort som är vänt. Ett nytt kort börjar alltid på framsidan. */
   const [flippedKey, setFlippedKey] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
@@ -72,33 +88,56 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   );
   const colorIndex = useMemo(() => categoryColorIndex(categories), [categories]);
 
-  // Ladda progress och bygg kön en gång per lager/läge/urval. Kortlistan läses
+  // Ladda progress och historik och bygg kön en gång per lager/läge/urval. Kortlistan läses
   // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
   const cardsRef = useRef(cards);
   cardsRef.current = cards;
-  const selectionKey = `${mode}|${serializeSelection(selection)}`;
+  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}`;
   useEffect(() => {
     if (!store) return;
     let cancelled = false;
     (async () => {
       const ids = cardsRef.current.map((c) => c.id);
       let loaded: ProgressMap = {};
+      let history: ReviewEntry[] = [];
       try {
-        loaded = await store.load(ids);
+        [loaded, history] = await Promise.all([store.load(ids), store.loadReviews(ids)]);
       } catch {
         loaded = {};
+        history = [];
       }
       if (cancelled) return;
+      const now = new Date();
+      const currentPrefs = readPrefs(window.localStorage);
+      const phase = examPhase(parseExamDate(deck.exam_date), now);
+      const inSelection = filterCards(cardsRef.current, loaded, selection);
+      const newRemaining = inSelection.filter((c) => !loaded[c.id] || loaded[c.id]?.state === 0).length;
+      const plan = planNewCards({
+        newRemaining,
+        introducedToday: countIntroducedToday(history, now),
+        dailyGoal: currentPrefs.dailyNew,
+        phase,
+      });
+      const finalReview = mode === "fsrs" && phase.kind === "final";
+      const maxNew = mode === "fsrs" && !finalReview ? (extraNew ?? plan.limit) : undefined;
+      const order = selectCardIds({ cards: cardsRef.current, progress: loaded, mode, selection, now, maxNew, finalReview });
+      setPrefs(currentPrefs);
       setProgress(loaded);
-      const order = selectCardIds({ cards: cardsRef.current, progress: loaded, mode, selection });
+      setReviews(history);
+      setSessionPlan({ phase, plan, maxNew, finalReview });
       setSession(createSession(order, mode));
     })();
     return () => {
       cancelled = true;
     };
-    // selection ingår via selectionKey.
+    // selection och extraNew ingår via selectionKey.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store, mode, selectionKey]);
+  }, [store, mode, selectionKey, deck.exam_date]);
+
+  const schedule = useMemo<ScheduleOptions | undefined>(
+    () => (sessionPlan?.phase.kind === "upcoming" ? { maxInterval: sessionPlan.phase.maxInterval } : undefined),
+    [sessionPlan],
+  );
 
   const currentId = session ? currentCardId(session) : null;
   const card = currentId ? (cardsById.get(currentId) ?? null) : null;
@@ -136,13 +175,16 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
     (rating: SelfRating) => {
       if (!session || session.finished || !card || !flipped || !store || !progress) return;
       if (feedback !== null) return; // Ett kort i taget: vänta tills kvittensen är klar.
-      const next = applyRating({ mode, cardId: card.id, rating, progress });
+      const now = new Date();
+      const next = applyRating({ mode, cardId: card.id, rating, progress, now, schedule });
       if (next) {
         setProgress((p) => ({ ...(p ?? {}), [card.id]: next }));
         store.save(next).catch(() => setSaveError(true));
       }
       // Historiken loggas i alla lägen (underlag för statistiken); progressen rörs bara enligt applyRating.
-      store.logReview({ card_id: card.id, rating, mode, reviewed_at: new Date().toISOString() }).catch(() => {
+      const entry: ReviewEntry = { card_id: card.id, rating, mode, reviewed_at: now.toISOString() };
+      setReviews((r) => [...r, entry]);
+      store.logReview(entry).catch(() => {
         // Historik är inte kritisk.
       });
       setAnnounce(sv.study.ratedAnnounce(rating));
@@ -153,7 +195,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         setSession((s) => (s ? rateCurrent(s, rating) : s));
       }, 960);
     },
-    [session, card, flipped, store, progress, mode, feedback],
+    [session, card, flipped, store, progress, mode, feedback, schedule],
   );
 
   const next = useCallback(() => setSession((s) => (s ? skipCurrent(s) : s)), []);
@@ -214,6 +256,16 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
 
   const canRate = flipped && !!card && feedback === null;
 
+  // Intervalltext per skattning, bara i schemalagt läge och bara när kortet är vänt.
+  const intervals = useMemo(() => {
+    if (mode !== "fsrs" || !flipped || !card || !progress) return null;
+    const now = new Date();
+    const dates = previewIntervals(card.id, progress[card.id], now, schedule);
+    const result = {} as Record<SelfRating, string>;
+    for (const r of SELF_RATINGS) result[r] = formatRelative(dates[r], now);
+    return result;
+  }, [mode, flipped, card, progress, schedule]);
+
   const onSwipeLeft = useCallback(() => {
     if (canRate) rate(1);
     else next();
@@ -223,7 +275,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
     else previous();
   }, [canRate, rate, previous]);
 
-  if (!session || !progress) {
+  if (!session || !progress || !sessionPlan) {
     return (
       <p role="status" className="py-16 text-center text-muted">
         {sv.study.loading}
@@ -246,11 +298,31 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
 
   if (session.finished) {
     const summary = summarize(session);
+    const now = new Date();
     let nextDue: { date: Date; count: number } | null = null;
+    let today: TodaySummary | null = null;
     if (mode === "fsrs") {
-      const now = new Date();
       const date = nextDueDate(cardIds, progress, now);
       if (date) nextDue = { date, count: countDueBy(cardIds, progress, endOfDay(date), now) };
+      const stats = buildProgressStats({ cardIds, progress, reviews, now, weekdaysOnly: prefs.weekdaysOnly });
+      const inSelection = filterCards(cards, progress, selection).map((c) => c.id);
+      const q = queueStats(inSelection, progress, now);
+      const done = q.due === 0 && (q.new === 0 || !sessionPlan.finalReview);
+      const continueCount = Math.min(prefs.dailyNew, q.new);
+      today = {
+        reviewsToday: stats.reviewsToday,
+        streak: stats.streak,
+        freezesLeft: stats.freezesLeft,
+        freezeUsedRecently: stats.freezeUsedRecently,
+        known: Math.round(stats.knowledge.known),
+        total: stats.totalCards,
+        done,
+        continueHref:
+          continueCount > 0 && !sessionPlan.finalReview
+            ? `/d/${deck.slug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(selection))}&nya=${continueCount}`
+            : null,
+        continueCount,
+      };
     }
     return (
       <SessionSummary
@@ -260,6 +332,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
         colorIndex={colorIndex}
         mode={mode}
         nextDue={nextDue}
+        today={today}
         deckSlug={deck.slug}
         onPrevious={canGoPrevious(session) ? previous : undefined}
       />
@@ -267,6 +340,14 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
   }
 
   const progressPct = total === 0 ? 0 : Math.round((position / total) * 100);
+  const banner =
+    mode !== "fsrs"
+      ? null
+      : sessionPlan.finalReview && sessionPlan.phase.kind === "final"
+        ? sv.study.finalReviewBanner(sessionPlan.phase.daysLeft)
+        : sessionPlan.plan.catchUp && sessionPlan.plan.neededPerDay !== null && extraNew === null
+          ? sv.study.catchUpBanner(sessionPlan.plan.neededPerDay)
+          : null;
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-4">
@@ -284,6 +365,11 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
       <div className="h-1 overflow-hidden rounded bg-surface-2" aria-hidden="true">
         <div className="h-full rounded bg-accent transition-[width]" style={{ width: `${progressPct}%` }} />
       </div>
+      {banner ? (
+        <p className="rounded-md bg-accent-soft px-3 py-2 text-center text-sm" data-testid="session-banner">
+          {banner}
+        </p>
+      ) : null}
 
       {card ? (
         <Flashcard
@@ -317,7 +403,10 @@ export function StudySession({ deck, categories, cards, mode, selection, userId 
       </div>
 
       <div className="lg:mx-auto lg:w-full lg:max-w-xl">
-        <RatingButtons disabled={!canRate} onRate={rate} />
+        <RatingButtons disabled={!canRate} onRate={rate} intervals={intervals} />
+        <p className="mt-2 hidden text-center text-xs text-muted [@media(hover:hover)]:block" aria-hidden="true">
+          {sv.study.keyboardHelp}
+        </p>
       </div>
 
       {card ? (

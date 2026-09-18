@@ -1,7 +1,7 @@
 /**
  * Urval av kort för en session. Ren modul.
  */
-import { buildFsrsQueue, shuffleIds } from "@/lib/fsrs/scheduler";
+import { buildFinalReviewQueue, buildFsrsQueue, shuffleIds } from "@/lib/fsrs/scheduler";
 import { isTricky, type ProgressMap, type StudyMode } from "@/lib/progress/types";
 
 export type Selection = { kind: "all" } | { kind: "categories"; categoryIds: string[] } | { kind: "low" };
@@ -95,6 +95,10 @@ export function selectCardIds(input: {
   selection: Selection;
   now?: Date;
   random?: () => number;
+  /** Schemalagt läge: tak på nya kort i sessionen (dosering). Undefined = inget tak. */
+  maxNew?: number;
+  /** Schemalagt läge de sista dagarna före tentan: alla kort, svagast först. */
+  finalReview?: boolean;
 }): string[] {
   const random = input.random ?? Math.random;
   const ordered = [...input.cards].sort((a, b) => a.sort_order - b.sort_order);
@@ -103,7 +107,9 @@ export function selectCardIds(input: {
   }
   const filtered = filterCards(ordered, input.progress, input.selection);
   if (input.mode === "fsrs") {
-    return buildFsrsQueue(filtered.map((c) => c.id), input.progress, input.now ?? new Date(), random);
+    const ids = filtered.map((c) => c.id);
+    if (input.finalReview) return buildFinalReviewQueue(ids, input.progress, input.now ?? new Date(), random);
+    return buildFsrsQueue(ids, input.progress, input.now ?? new Date(), random, { maxNew: input.maxNew });
   }
   if (input.mode === "tricky") {
     return orderByWeakness(trickyCards(filtered, input.progress).map((c) => c.id), input.progress, random);

@@ -51,7 +51,7 @@ test.describe("konto", () => {
     await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
 
     await page.goto(`/d/${DECK_SLUG}`);
-    await expect(page.getByText("Du har inte pluggat det här decket ännu.")).toBeVisible();
+    await expect(page.getByTestId("first-visit")).toBeVisible();
     await expect(page.getByTestId("seen-count")).toHaveCount(0);
   });
 
@@ -62,7 +62,7 @@ test.describe("konto", () => {
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
     await page.reload();
-    await expect(page.getByText("Du har inte pluggat det här decket ännu.")).toBeVisible();
+    await expect(page.getByTestId("first-visit")).toBeVisible();
   });
 
   test("nollställ schemat behåller skattningarna", async ({ page }) => {

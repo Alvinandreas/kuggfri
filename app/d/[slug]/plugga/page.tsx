@@ -24,11 +24,15 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const rawMode = Array.isArray(query.mode) ? query.mode[0] : query.mode;
   const mode: StudyMode = isStudyMode(rawMode) ? rawMode : "fsrs";
   const selection = parseSelection(query.urval);
+  const rawExtra = Array.isArray(query.nya) ? query.nya[0] : query.nya;
+  const parsedExtra = rawExtra ? Number.parseInt(rawExtra, 10) : Number.NaN;
+  const extraNew = Number.isFinite(parsedExtra) && parsedExtra > 0 ? Math.min(200, parsedExtra) : null;
 
   return (
     <StudySession
-      key={`${mode}-${JSON.stringify(selection)}`}
-      deck={{ id: data.deck.id, slug: data.deck.slug, title: data.deck.title }}
+      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}`}
+      deck={{ id: data.deck.id, slug: data.deck.slug, title: data.deck.title, exam_date: data.deck.exam_date }}
+      extraNew={extraNew}
       categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
       cards={data.cards.map((c) => ({
         id: c.id,

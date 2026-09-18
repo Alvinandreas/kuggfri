@@ -114,6 +114,34 @@ per månad).
 
 API-nyckeln är en hemlighet: klistra in den i Supabase-dashboarden, aldrig i repot eller i chatten.
 
+## 3d. Påminnelser och veckobrev (mejl från appen)
+
+Studenter kan slå på en daglig påminnelse under Konto, och examinatorer får ett veckobrev på
+måndagar. Skickas av `/api/cron/daily`, som Vercel anropar varje dag 16:00 UTC (17–18 svensk tid)
+enligt `vercel.json`. Utan miljövariablerna nedan svarar jobbet "configured: false" och skickar
+ingenting, så det är ofarligt att deploya före konfigurationen.
+
+I Vercel → Project → Settings → Environment Variables (Production):
+
+| Variabel | Värde |
+|---|---|
+| `SMTP_HOST` | `smtp.hostinger.com` (samma konto som i 3c) |
+| `SMTP_PORT` | `465` |
+| `SMTP_USER` | mejladressen, t.ex. `hej@kuggfri.com` |
+| `SMTP_PASS` | lösenordet |
+| `EMAIL_FROM` | `Kuggfri <hej@kuggfri.com>` |
+| `CRON_SECRET` | en lång slumpsträng (Vercel skickar den som Bearer-token till cron-jobbet) |
+| `SUPABASE_SERVICE_ROLE_KEY` | från Supabase → Project Settings → API (bara här, aldrig `NEXT_PUBLIC_`) |
+
+Testa manuellt (ersätt hemligheten):
+
+```bash
+curl -H "Authorization: Bearer <CRON_SECRET>" "https://kuggfri.com/api/cron/daily?digest=1"
+```
+
+Svaret visar antal skickade påminnelser och veckobrev och eventuella fel. Hobby-planen i Vercel
+tillåter ett cron-anrop per dag, därför skickas allt vid samma klockslag.
+
 ## 4. Claude gör (när ovanstående finns)
 
 - `supabase db push` (eller SQL-filen), kontroll att RLS och seed finns i molnet.

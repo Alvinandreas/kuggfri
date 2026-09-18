@@ -263,3 +263,27 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   repetitioner första dagen, och andel som repeterade igen inom tre dagar (räknas bara för dem vars
   första dag ligger minst tre dagar tillbaka). Beräknas i `deck_stats_overview` ur `review_log`,
   aggregerat, inga id:n. Det är planens aktiveringsmått, utan tredjepartsanalys.
+
+## Beslut 2026-09-19, omgång tre (mejl: påminnelser och veckobrev)
+
+- **Påminnelser via mejl är opt-in** (`profiles.reminder_email`, kryssruta under Konto → Mejl) och
+  följer analysens regler: högst ett mejl per dag, bara när det finns förfallna kort, tystnad efter
+  tentan, innehåll med värde ("14 kort, cirka 4 min. Tentan om 9 dagar."), aldrig skuld. Efter 14
+  påminnelser utan en enda repetition skickas ett sista mejl ("Vi slutar skicka påminnelser") och
+  valet stängs av. Det är Duolingos mest effektiva mall, utan öppningsspårning: vi vet bara om
+  studenten repeterat, inte om mejlet öppnats.
+- **Veckobrev till examinatorer** (`profiles.digest_email`, på som standard för examinatorer och
+  admin, kan stängas av under Konto): måndag morgon med aktiva studenter, nya, repetitioner,
+  snittskattning, tre svåraste områdena, fem kluriga frågor och öppna felrapporter. Samma
+  anonymitetsgräns som kursöversikten (`MIN_STUDENTS`, nu i `lib/admin/thresholds.ts`).
+- **Ett dagligt cron-anrop** (`/api/cron/daily`, Vercel cron 16:00 UTC, skyddat med `CRON_SECRET`)
+  skickar båda; veckobrevet bara på måndagar (Europe/Stockholm) eller med `?digest=1`. Vercel
+  Hobby tillåter ett anrop per dag, därför kan studenten inte välja klockslag.
+- **Mottagare hämtas med service role** via tre `security definer`-funktioner som kräver
+  `auth.role() = 'service_role'` (eller redaktörsrätt för `deck_digest`). Nyckeln finns bara som
+  servermiljövariabel i Vercel, aldrig i webbläsaren. `email_log` (vad som skickats till vem och när)
+  är stängd för alla utom service role och gör att inget skickas dubbelt; den nämns i
+  integritetspolicyn.
+- **SMTP via egna miljövariabler** (`SMTP_*`, `EMAIL_FROM`, nodemailer). Utan dem skickas inget och
+  cron-svaret säger `configured: false`; deploy före konfiguration är ofarlig. Steg för Alvin i
+  docs/DEPLOY.md 3d.

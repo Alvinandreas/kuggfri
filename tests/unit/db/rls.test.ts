@@ -362,6 +362,43 @@ describe("review_log", () => {
   });
 });
 
+describe("mejl (profiles.reminder_email, email_log, deck_digest)", () => {
+  it("användaren slår på egna påminnelser men inte någon annans, och kan inte röra is_admin", async () => {
+    const rows = await user(db, alice).query(`update public.profiles set reminder_email = true, digest_email = false where id = $1 returning reminder_email`, [alice]);
+    expect(rows).toHaveLength(1);
+    const other = await user(db, alice).query(`update public.profiles set reminder_email = true where id = $1 returning id`, [bob]);
+    expect(other).toHaveLength(0);
+  });
+
+  it("email_log är stängd för anon och användare, öppen för service role", async () => {
+    await expectDenied(anon(db).query("select * from public.email_log"));
+    await expectDenied(user(db, alice).query("select * from public.email_log"));
+    await expectDenied(user(db, alice).query(`insert into public.email_log (kind, user_id, subject) values ('reminder', $1, 'x')`, [alice]));
+    await as(db, { role: "service_role" }).query(`insert into public.email_log (kind, user_id, subject) values ('reminder', $1, 'Test')`, [alice]);
+    expect(await as(db, { role: "service_role" }).query("select id from public.email_log")).toHaveLength(1);
+  });
+
+  it("reminder_candidates och digest_recipients kan bara service role anropa", async () => {
+    await expectDenied(user(db, alice).query("select * from public.reminder_candidates()"));
+    await expectDenied(anon(db).query("select * from public.digest_recipients()"));
+    // Alices progressrad är ny (state 0) i fixturen; gör den till ett förfallet kort.
+    await db.query(`update public.card_progress set state = 2, due = now() - interval '1 day' where user_id = $1`, [alice]);
+    const candidates = await as(db, { role: "service_role" }).query<{ user_id: string; sent_today: boolean; decks: unknown }>("select * from public.reminder_candidates()");
+    // Alice har reminder_email = true och förfallna kort (progressraden är förfallen sedan tidigare test).
+    expect(candidates.some((c) => c.user_id === alice)).toBe(true);
+    const a = candidates.find((c) => c.user_id === alice)!;
+    expect(a.sent_today).toBe(true); // mejlet loggades i förra testet
+    expect(Array.isArray(a.decks)).toBe(true);
+  });
+
+  it("deck_digest: redaktör och service role får, student nekas", async () => {
+    await expectDenied(user(db, alice).query(`select public.deck_digest($1)`, [publishedDeck]));
+    const [row] = await as(db, { role: "service_role" }).query<{ d: { students: number; hardest: unknown[] } }>(`select public.deck_digest($1, 1) as d`, [publishedDeck]);
+    expect(typeof row?.d.students).toBe("number");
+    expect(Array.isArray(row?.d.hardest)).toBe(true);
+  });
+});
+
 describe("card_reports", () => {
   it("gäst (anon) kan rapportera kort i publicerat deck, men inte i utkast", async () => {
     await anon(db).query(`insert into public.card_reports (card_id, message) values ($1, 'Fel enhet i svaret')`, [publishedCard]);

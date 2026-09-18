@@ -31,7 +31,10 @@ export default function PrivacyPage() {
         <ul>
           <li>
             <strong>E-postadress.</strong> Används för inloggning (lösenord eller inloggningslänk) och för att
-            kunna nå dig om ditt konto. Vi skickar inga nyhetsbrev.
+            kunna nå dig om ditt konto. Vi skickar inga nyhetsbrev. Om du själv slår på påminnelser under
+            Konto skickar vi högst ett mejl per dag när du har kort att repetera, och sparar vilken dag ett
+            sådant mejl gick i väg så att inget skickas dubbelt. Examinatorer kan på samma sätt välja ett
+            veckobrev med kursens sammanställda statistik.
           </li>
           <li>
             <strong>Visningsnamn (valfritt).</strong> Ett namn du själv väljer. Det visas bara för dig.

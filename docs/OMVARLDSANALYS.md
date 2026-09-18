@@ -13,7 +13,9 @@ Dokumentet är skrivet för att kunna läsas fristående av Alvin, och i ett sen
 streak med frysningar, tentadatum, skattningssemantik, fuzz, förstabesök, tangentbord, QR-kod, samt
 "uppskattad kunskap" ur Fas 2) är byggda lokalt, se TASKS.md. Senare samma dag: utkorg (ingen
 repetition tappas), aktiveringsmått i kursöversikten (Fas 1.9), provtenta och "Kan nu" per
-kategori (Fas 2.1–2.2). Kvar i Fas 1: fullt offlineläge med service worker.
+kategori (Fas 2.1–2.2), påminnelser via mejl (2.4) och examinatorns veckobrev (2.7). Kvar i Fas 1:
+fullt offlineläge med service worker. Kvar i Fas 2: kalibreringsexperimentet och den delbara
+beredskapsbilden.
 
 ---
 

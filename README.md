@@ -109,6 +109,12 @@ visar resultatet i procent; det rör inte schemat. För inloggade köas skrivnin
 (tappad anslutning) i en utkorg i webbläsaren (`kuggfri:outbox:v1`) och skickas automatiskt när
 nätet är tillbaka.
 
+**Påminnelser och veckobrev.** Studenter kan under Konto slå på en daglig påminnelse (bara när kort
+är förfallna, inget efter tentan, stopp efter två veckor utan repetition). Examinatorer får ett
+veckobrev på måndagar med kursens sammanställda statistik. Båda skickas av `/api/cron/daily`
+(Vercel cron, `CRON_SECRET`) via egen SMTP; miljövariablerna står i `.env.example` och
+docs/DEPLOY.md 3d. Utan dem skickas inget.
+
 ## Importera innehåll
 
 I admin: öppna decket → **Importera**. Stöd för CSV och JSON med kolumnerna

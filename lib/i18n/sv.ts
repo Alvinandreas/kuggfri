@@ -296,6 +296,13 @@ export const sv = {
     deleteConfirm:
       "Allt som hör till kontot raderas permanent: e-post, visningsnamn, progress och sessioner.",
     deleteConfirmWord: "Skriv RADERA för att bekräfta.",
+    remindersTitle: "Mejl",
+    remindersHelp: "Inga nyhetsbrev. Bara det du själv slår på här.",
+    reminderEmail: "Påminn mig när jag har kort att repetera",
+    reminderEmailHelp:
+      "Högst ett mejl per dag, sent på eftermiddagen, bara när det finns förfallna kort och inget efter tentan. Har du inte repeterat på två veckor slutar vi skicka.",
+    digestEmail: "Veckobrev om kursen (examinator)",
+    digestEmailHelp: "Måndag morgon: aktiva studenter, svåraste områdena, kluriga frågor och felrapporter. Sammanställt och anonymt.",
     resetTitle: "Nollställ progress",
     resetHelp: "Nollställ ett enskilt deck, bara schemat, eller allt. Går inte att ångra.",
     resetDeckNamed: (title: string) => `Nollställ ”${title}”`,

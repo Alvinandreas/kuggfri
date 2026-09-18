@@ -143,6 +143,21 @@ export async function updateDisplayNameAction(formData: FormData): Promise<AuthR
   return { ok: true, message: sv.account.saved };
 }
 
+/** Kryssrutorna under Konto → Påminnelser. Bara egna raden (RLS) och bara dessa två kolumner (kolumnrättighet). */
+export async function updateEmailPrefsAction(formData: FormData): Promise<AuthResult> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: sv.auth.error };
+  const values: { reminder_email: boolean; digest_email?: boolean } = { reminder_email: formData.get("reminder_email") === "on" };
+  if (formData.has("digest_form")) values.digest_email = formData.get("digest_email") === "on";
+  const { error } = await supabase.from("profiles").update(values).eq("id", user.id);
+  if (error) return { ok: false, error: sv.errors.generic };
+  revalidatePath("/konto");
+  return { ok: true, message: sv.account.saved };
+}
+
 export async function deleteAccountAction(): Promise<AuthResult> {
   const supabase = await createSupabaseServerClient();
   const {

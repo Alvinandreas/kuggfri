@@ -2,18 +2,33 @@
 
 import { useActionState, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
-import { deleteAccountAction, updateDisplayNameAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
+import { deleteAccountAction, updateDisplayNameAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type DeckRef = { id: string; slug: string; title: string };
-type Props = { userId: string; email: string; displayName: string; decks: DeckRef[]; /** Efter återställningslänk: lyft fram lösenordsbytet. */ focusPassword?: boolean };
+type Props = {
+  userId: string;
+  email: string;
+  displayName: string;
+  decks: DeckRef[];
+  /** Efter återställningslänk: lyft fram lösenordsbytet. */
+  focusPassword?: boolean;
+  reminderEmail?: boolean;
+  digestEmail?: boolean;
+  /** Examinatorer och admin ser även veckobrevets kryssruta. */
+  isExaminer?: boolean;
+};
 type Pending = { kind: "delete" } | { kind: "resetAll" } | { kind: "resetSchedule" } | { kind: "resetDeck"; deck: DeckRef };
 
-export function AccountPanel({ userId, email, displayName, decks, focusPassword = false }: Props) {
+export function AccountPanel({ userId, email, displayName, decks, focusPassword = false, reminderEmail = false, digestEmail = true, isExaminer = false }: Props) {
   const [nameState, nameAction, namePending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateDisplayNameAction(fd),
+    null,
+  );
+  const [prefsState, prefsAction, prefsPending] = useActionState(
+    async (_prev: AuthResult | null, fd: FormData) => updateEmailPrefsAction(fd),
     null,
   );
   const [passwordState, passwordAction, passwordPending] = useActionState(
@@ -132,6 +147,44 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
           {passwordState ? (
             <p role="status" className={`text-sm ${passwordState.ok ? "text-accent" : "text-danger"}`}>
               {passwordState.ok ? passwordState.message : passwordState.error}
+            </p>
+          ) : null}
+        </form>
+      </section>
+
+      <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-labelledby="paminnelser-rubrik">
+        <h2 id="paminnelser-rubrik" className="text-lg font-semibold">
+          {sv.account.remindersTitle}
+        </h2>
+        <p className="text-sm text-muted">{sv.account.remindersHelp}</p>
+        <form action={prefsAction} className="grid gap-3">
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" name="reminder_email" defaultChecked={reminderEmail} className="mt-1 h-4 w-4 accent-[var(--accent)]" data-testid="reminder-email" />
+            <span>
+              <span className="block">{sv.account.reminderEmail}</span>
+              <span className="block text-xs text-muted">{sv.account.reminderEmailHelp}</span>
+            </span>
+          </label>
+          {isExaminer ? (
+            <>
+              <input type="hidden" name="digest_form" value="1" />
+              <label className="flex items-start gap-2 text-sm">
+                <input type="checkbox" name="digest_email" defaultChecked={digestEmail} className="mt-1 h-4 w-4 accent-[var(--accent)]" data-testid="digest-email" />
+                <span>
+                  <span className="block">{sv.account.digestEmail}</span>
+                  <span className="block text-xs text-muted">{sv.account.digestEmailHelp}</span>
+                </span>
+              </label>
+            </>
+          ) : null}
+          <div>
+            <Button type="submit" variant="secondary" size="sm" disabled={prefsPending} data-testid="save-email-prefs">
+              {sv.account.save}
+            </Button>
+          </div>
+          {prefsState ? (
+            <p role="status" className={`text-sm ${prefsState.ok ? "text-accent" : "text-danger"}`}>
+              {prefsState.ok ? prefsState.message : prefsState.error}
             </p>
           ) : null}
         </form>

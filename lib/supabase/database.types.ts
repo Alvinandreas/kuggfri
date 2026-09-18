@@ -14,7 +14,35 @@ export type ProfileRow = {
   id: string;
   display_name: string | null;
   is_admin: boolean;
+  /** Daglig påminnelse via mejl när kort är förfallna (opt-in). */
+  reminder_email: boolean;
+  /** Examinator: veckobrev på måndagar. */
+  digest_email: boolean;
   created_at: string;
+};
+
+/** Rad i email_log: bara servern (service role) läser och skriver. */
+export type EmailLogRow = {
+  id: string;
+  kind: "reminder" | "reminder_stop" | "digest";
+  user_id: string;
+  deck_id: string | null;
+  subject: string;
+  sent_at: string;
+};
+
+/** Svar från deck_digest(): underlag för examinatorns veckobrev. */
+export type DeckDigest = {
+  exam_date: string | null;
+  students: number;
+  new_students_7d: number;
+  active_7d: number;
+  reviews_7d: number;
+  avg_rating_7d: number | null;
+  hardest: { title: string; avg: number; students: number }[];
+  tricky: { front: string; low_share: number; ratings: number }[];
+  open_reports: number;
+  latest_reports: { front: string; message: string; created_at: string }[];
 };
 
 export type DeckRow = {
@@ -147,8 +175,14 @@ export type Database = {
     Tables: {
       profiles: {
         Row: ProfileRow;
-        Insert: Optional<ProfileRow, "display_name" | "is_admin" | "created_at">;
+        Insert: Optional<ProfileRow, "display_name" | "is_admin" | "reminder_email" | "digest_email" | "created_at">;
         Update: Partial<ProfileRow>;
+        Relationships: [];
+      };
+      email_log: {
+        Row: EmailLogRow;
+        Insert: Optional<EmailLogRow, "id" | "deck_id" | "sent_at">;
+        Update: Partial<EmailLogRow>;
         Relationships: [];
       };
       decks: {
@@ -243,6 +277,24 @@ export type Database = {
       };
       deck_stats_cards: { Args: { p_deck_id: string }; Returns: DeckStatsCardRow[] };
       deck_stats_overview: { Args: { p_deck_id: string; p_weeks?: number }; Returns: DeckOverviewStats };
+      deck_digest: { Args: { p_deck_id: string; p_min_students?: number }; Returns: DeckDigest };
+      reminder_candidates: {
+        Args: Record<string, never>;
+        Returns: {
+          user_id: string;
+          email: string;
+          display_name: string | null;
+          last_review_at: string | null;
+          reminders_since_last_review: number;
+          sent_today: boolean;
+          decks: { slug: string; title: string; due: number; exam_date: string | null }[] | null;
+        }[];
+      };
+      digest_recipients: {
+        Args: Record<string, never>;
+        Returns: { deck_id: string; deck_slug: string; deck_title: string; user_id: string; email: string; display_name: string | null }[];
+      };
+      is_service_role: { Args: Record<string, never>; Returns: boolean };
       deck_reports: { Args: { p_deck_id: string }; Returns: DeckReportRow[] };
       deck_open_report_count: { Args: { p_deck_id: string }; Returns: number };
       can_edit_deck: { Args: { p_deck_id: string }; Returns: boolean };

@@ -10,6 +10,7 @@ import { BarChart } from "@/components/stats/BarChart";
 import { HorizontalBars } from "@/components/stats/HorizontalBars";
 import { StatTile } from "@/components/stats/StatTile";
 import { CategoryTag } from "@/components/ui/CategoryTag";
+import { MIN_STUDENTS } from "@/lib/admin/thresholds";
 
 type Category = { id: string; title: string; cardCount: number };
 
@@ -21,8 +22,7 @@ type Props = {
   openReports: DeckReportRow[];
 };
 
-/** Så många studenter som måste ha skattat ett kort eller en kategori innan den rangordnas: ingen enskild students svar ska kunna läsas ut. */
-export const MIN_STUDENTS = 5;
+export { MIN_STUDENTS };
 
 const ratingFill: Record<number, string> = { 1: "bg-rate-1", 2: "bg-rate-2", 3: "bg-rate-3", 4: "bg-rate-4", 5: "bg-rate-5" };
 const ratingFillSvg: Record<number, string> = { 1: "fill-rate-1", 2: "fill-rate-2", 3: "fill-rate-3", 4: "fill-rate-4", 5: "fill-rate-5" };

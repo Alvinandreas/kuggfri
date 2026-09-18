@@ -6,7 +6,7 @@ import type { CardProgress, ProgressMap, SelfRating, StudyMode } from "@/lib/pro
  * - fsrs: full omschemaläggning med FSRS.
  * - tricky: bara self_rating och last_review uppdateras; schemat lämnas orört
  *   (ett aldrig sett kort får en rad i state New så att det slutar räknas som klurigt).
- * - free och random: null, progressen rörs aldrig.
+ * - free, random och exam: null, progressen rörs aldrig.
  */
 export function applyRating(input: {
   mode: StudyMode;
@@ -27,6 +27,7 @@ export function applyRating(input: {
     }
     case "free":
     case "random":
+    case "exam":
       return null;
   }
 }

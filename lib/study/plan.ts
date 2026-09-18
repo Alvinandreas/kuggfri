@@ -21,6 +21,9 @@ export const INTRO_MARGIN_DAYS = 4;
 /** De sista dagarna före tentan körs slutrepetition av hela urvalet. */
 export const FINAL_REVIEW_DAYS = 2;
 
+/** Provtentan: så många slumpade kort ur urvalet. */
+export const EXAM_SIZE = 30;
+
 export function estimateMinutes(cards: number): number {
   return Math.max(1, Math.ceil((cards * SECONDS_PER_CARD) / 60));
 }

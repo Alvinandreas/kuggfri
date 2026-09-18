@@ -19,10 +19,13 @@ import {
   writeLocalReviews,
 } from "./local-store";
 import { mergeProgress } from "./migrate";
+import { flushOutbox, outboxSize, queueProgress, queueReview } from "./outbox";
 import { isSelfRating, isStudyMode, type CardProgress, type ProgressMap, type ReviewEntry, type StudyMode } from "./types";
 
 export interface ProgressStore {
   readonly kind: "local" | "account";
+  /** Antal skrivningar som väntar på att skickas (tappad anslutning). Gäster: alltid 0. */
+  pending(): number;
   /** Progress för angivna kort. Kort utan progress saknas i svaret. */
   load(cardIds: readonly string[]): Promise<ProgressMap>;
   save(progress: CardProgress): Promise<void>;
@@ -47,6 +50,10 @@ function byTime(a: ReviewEntry, b: ReviewEntry): number {
 export class LocalProgressStore implements ProgressStore {
   readonly kind = "local" as const;
   constructor(private readonly storage: Storage) {}
+
+  pending(): number {
+    return 0;
+  }
 
   async load(cardIds: readonly string[]): Promise<ProgressMap> {
     const all = readLocalProgress(this.storage);
@@ -112,7 +119,23 @@ export class SupabaseProgressStore implements ProgressStore {
   constructor(
     private readonly supabase: Client,
     private readonly userId: string,
+    /** Utkorg för skrivningar som misslyckas. Utan lagring (tester) köas inget. */
+    private readonly storage: Pick<Storage, "getItem" | "setItem" | "removeItem"> | null = null,
   ) {}
+
+  pending(): number {
+    return this.storage ? outboxSize(this.storage) : 0;
+  }
+
+  /** Skickar det som ligger i utkorgen. Returnerar antal skickade poster (0 om inget eller vid fel). */
+  async flush(): Promise<number> {
+    if (!this.storage) return 0;
+    try {
+      return await flushOutbox(this.storage, { saveMany: (items) => this.saveMany(items), logReviews: (items) => this.logReviews(items) });
+    } catch {
+      return 0;
+    }
+  }
 
   async load(cardIds: readonly string[]): Promise<ProgressMap> {
     if (cardIds.length === 0) return {};
@@ -132,10 +155,19 @@ export class SupabaseProgressStore implements ProgressStore {
   }
 
   async save(progress: CardProgress): Promise<void> {
-    const { error } = await this.supabase
-      .from("card_progress")
-      .upsert({ user_id: this.userId, ...progress }, { onConflict: "user_id,card_id" });
-    if (error) throw error;
+    try {
+      const { error } = await this.supabase
+        .from("card_progress")
+        .upsert({ user_id: this.userId, ...progress }, { onConflict: "user_id,card_id" });
+      if (error) throw error;
+    } catch (e) {
+      // Tappad anslutning: lägg i utkorgen så att repetitionen aldrig försvinner.
+      if (this.storage) {
+        queueProgress(this.storage, progress);
+        return;
+      }
+      throw e;
+    }
   }
 
   async saveMany(items: readonly CardProgress[]): Promise<void> {
@@ -195,8 +227,16 @@ export class SupabaseProgressStore implements ProgressStore {
   }
 
   async logReview(entry: ReviewEntry): Promise<void> {
-    const { error } = await this.supabase.from("review_log").insert({ user_id: this.userId, ...entry });
-    if (error) throw error;
+    try {
+      const { error } = await this.supabase.from("review_log").insert({ user_id: this.userId, ...entry });
+      if (error) throw error;
+    } catch (e) {
+      if (this.storage) {
+        queueReview(this.storage, entry);
+        return;
+      }
+      throw e;
+    }
   }
 
   async logReviews(entries: readonly ReviewEntry[]): Promise<void> {

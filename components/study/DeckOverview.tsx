@@ -18,7 +18,7 @@ import {
   UNCATEGORIZED_ID,
 } from "@/lib/study/selection";
 import { formatRelative } from "@/lib/time/format";
-import { DAILY_NEW_CHOICES, estimateMinutes, examPhase, parseExamDate, planNewCards } from "@/lib/study/plan";
+import { DAILY_NEW_CHOICES, EXAM_SIZE, estimateMinutes, examPhase, parseExamDate, planNewCards } from "@/lib/study/plan";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import QRCode from "qrcode";
@@ -153,7 +153,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   }, [mode, perCategory]);
 
   const effectiveSelection: Selection = mode === "random" ? { kind: "all" } : categorySelection;
-  const selectionCount = mode === "random" ? cards.length : selectionCards.length;
+  const selectionCount = mode === "random" ? cards.length : mode === "exam" ? Math.min(EXAM_SIZE, selectionCards.length) : selectionCards.length;
   const startHref = `/d/${deck.slug}/plugga?mode=${mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
 
   // Tentaplan och dosering för schemalagd repetition, räknat på urvalet.
@@ -344,6 +344,10 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                     <span className="sm:hidden">{sv.deck.colLearnedShort}</span>
                     <span className="hidden sm:inline">{sv.deck.colLearned}</span>
                   </th>
+                  <th scope="col" className="w-12 px-1 py-2 text-right font-medium sm:w-20 sm:px-2" title={sv.deck.knownHelp}>
+                    <span className="sm:hidden">{sv.deck.colKnownShort}</span>
+                    <span className="hidden sm:inline">{sv.deck.colKnown}</span>
+                  </th>
                   <th scope="col" className="hidden w-32 px-3 py-2 sm:table-cell">
                     <span className="sr-only">{sv.deck.colLearned}</span>
                   </th>
@@ -386,6 +390,9 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                       </td>
                       <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.studied, c.stats.total)}</td>
                       <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.learned, c.stats.total)}</td>
+                      <td className="px-2 py-2.5 text-right tabular-nums text-muted" data-testid="category-known">
+                        {c.stats.studied >= 3 && c.stats.total > 0 ? `${Math.round((c.stats.known / c.stats.total) * 100)} %` : sv.deck.knownTooEarly}
+                      </td>
                       <td className="hidden px-3 py-2.5 sm:table-cell">
                         <div className="h-2 w-full overflow-hidden rounded bg-surface-2" aria-hidden="true">
                           <div className="relative h-full">
@@ -456,6 +463,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                 ["tricky", sv.deck.modeTricky, sv.deck.modeTrickyHelp],
                 ["free", sv.deck.modeFree, sv.deck.modeFreeHelp],
                 ["random", sv.deck.modeRandom, sv.deck.modeRandomHelp],
+                ["exam", sv.deck.modeExam, sv.deck.modeExamHelp],
               ] as const
             ).map(([value, label, help]) => (
               <label

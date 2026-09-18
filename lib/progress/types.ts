@@ -35,11 +35,12 @@ export type ProgressMap = Record<string, CardProgress>;
  * free   = fri repetition (rör inte progressen)
  * random = slumpad genomkörning (rör inte progressen)
  * tricky = kluriga kort: låg skattning eller aldrig sedda (uppdaterar bara self_rating)
+ * exam   = provtenta: 30 slumpade kort ur urvalet, ingen ledtråd, ingen tillbaka (rör inte progressen)
  */
-export type StudyMode = "fsrs" | "free" | "random" | "tricky";
+export type StudyMode = "fsrs" | "free" | "random" | "tricky" | "exam";
 
 export function isStudyMode(value: unknown): value is StudyMode {
-  return value === "fsrs" || value === "free" || value === "random" || value === "tricky";
+  return value === "fsrs" || value === "free" || value === "random" || value === "tricky" || value === "exam";
 }
 
 /** En rad i repetitionshistoriken (tabellen review_log, eller localStorage för gäster). */

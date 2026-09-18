@@ -147,6 +147,26 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
             </Link>
           </Panel>
 
+          {stats.activation ? (
+            <Panel id="aktivering" title={sv.admin.activation} help={sv.admin.activationHelp}>
+              <dl className="grid grid-cols-3 gap-3" data-testid="activation-tiles">
+                <StatTile label={sv.admin.activationStarted} value={`${stats.activation.started}`} sub={sv.admin.tileStudentsSub} tone="green" />
+                <StatTile
+                  label={sv.admin.activationFirst}
+                  value={stats.activation.started === 0 ? "–" : `${Math.round((stats.activation.first_session_20 / stats.activation.started) * 100)} %`}
+                  sub={sv.admin.activationFirstSub}
+                  tone="teal"
+                />
+                <StatTile
+                  label={sv.admin.activationReturned}
+                  value={stats.activation.eligible === 0 ? "–" : `${Math.round((stats.activation.returned_3d / stats.activation.eligible) * 100)} %`}
+                  sub={sv.admin.activationReturnedSub(stats.activation.eligible)}
+                  tone="navy"
+                />
+              </dl>
+            </Panel>
+          ) : null}
+
           <Panel id="framsteg" title={sv.admin.progressDist} help={sv.admin.progressDistHelp}>
             <BarChart
               title={sv.admin.progressDist}

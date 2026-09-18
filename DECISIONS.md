@@ -242,3 +242,24 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   skattning är kvar oförändrad (Alvins val i runda 3–8). En enda lugn animation vid "Klar för i dag".
 - **`npm run db:types` skriver över den handskrivna typfilen** (`lib/supabase/database.types.ts`)
   med råformatet; nya kolumner läggs till för hand. Noterat i filens huvud.
+
+## Beslut 2026-09-19, omgång två (Fas 1 klar, Fas 2 påbörjad)
+
+- **Utkorg för inloggade** (`lib/progress/outbox.ts`, `kuggfri:outbox:v1`): en skrivning som
+  misslyckas (spårvagnen, tappat wifi) köas i localStorage och skickas när sidan laddas nästa gång
+  eller när webbläsaren säger att nätet är tillbaka. Sessionen visar "N skattningar väntar på
+  anslutning" i stället för ett fel. Det är den del av "offline" som handlar om förtroende: en
+  repetition försvinner aldrig. Fullt offlineläge (service worker som serverar sidan utan nät)
+  är kvar i planen; det kräver mer och ger mindre.
+- **Provtenta** (läget `exam`): 30 slumpade kort ur urvalet, ingen ledtråd, ingen tillbaka, rör
+  aldrig progressen (som fri repetition) men loggas i historiken. Resultatet visas som andel kort
+  skattade 4–5. Skälet (OMVARLDSANALYS 3.10, princip 4): studenter överskattar sig; ett
+  fullängdstest kalibrerar bättre än frågebankens procent. Check-villkoren för `mode` i
+  `review_log` och `study_sessions` utökades (migration 20260919000100).
+- **"Kan nu"-kolumn** i kategoritabellen: uppskattad andel av kategorin studenten kan just nu
+  (summa FSRS-återkallelse / antal kort, aldrig sedda = 0). Visas först när minst tre kort i
+  kategorin repeterats; annars "–". Radardiagrammet lämnas orört.
+- **Aktivering i kursöversikten** ("Kommer studenterna tillbaka?"): andel med minst 20
+  repetitioner första dagen, och andel som repeterade igen inom tre dagar (räknas bara för dem vars
+  första dag ligger minst tre dagar tillbaka). Beräknas i `deck_stats_overview` ur `review_log`,
+  aggregerat, inga id:n. Det är planens aktiveringsmått, utan tredjepartsanalys.

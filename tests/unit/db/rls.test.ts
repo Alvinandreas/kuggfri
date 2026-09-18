@@ -334,10 +334,11 @@ describe("review_log", () => {
 
   it("användare kan logga och läsa bara egna rader", async () => {
     await user(db, alice).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 4, 'fsrs')`, [alice, publishedCard]);
+    await user(db, alice).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 4, 'exam')`, [alice, publishedCard]);
     await user(db, bob).query(`insert into public.review_log (user_id, card_id, rating, mode) values ($1, $2, 1, 'tricky')`, [bob, publishedCard]);
     const mine = await user(db, alice).query<{ user_id: string; rating: number }>("select user_id, rating from public.review_log");
-    expect(mine).toHaveLength(1);
-    expect(mine[0]?.user_id).toBe(alice);
+    expect(mine).toHaveLength(2);
+    expect(mine.every((r) => r.user_id === alice)).toBe(true);
   });
 
   it("användare kan inte logga åt någon annan, uppdatera eller ta bort", async () => {

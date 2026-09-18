@@ -77,6 +77,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   const [reportOpen, setReportOpen] = useState(false);
   const [announce, setAnnounce] = useState("");
   const [saveError, setSaveError] = useState(false);
+  const [queued, setQueued] = useState(0);
   const startedAt = useRef(new Date());
   const loggedRef = useRef(false);
 
@@ -179,14 +180,20 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       const next = applyRating({ mode, cardId: card.id, rating, progress, now, schedule });
       if (next) {
         setProgress((p) => ({ ...(p ?? {}), [card.id]: next }));
-        store.save(next).catch(() => setSaveError(true));
+        store
+          .save(next)
+          .then(() => setQueued(store.pending()))
+          .catch(() => setSaveError(true));
       }
       // Historiken loggas i alla lägen (underlag för statistiken); progressen rörs bara enligt applyRating.
       const entry: ReviewEntry = { card_id: card.id, rating, mode, reviewed_at: now.toISOString() };
       setReviews((r) => [...r, entry]);
-      store.logReview(entry).catch(() => {
-        // Historik är inte kritisk.
-      });
+      store
+        .logReview(entry)
+        .then(() => setQueued(store.pending()))
+        .catch(() => {
+          // Historik är inte kritisk.
+        });
       setAnnounce(sv.study.ratedAnnounce(rating));
       // Stämpla kortet, låt det glida ut, och visa först därefter nästa kort (på framsidan).
       setFeedback(rating);
@@ -238,7 +245,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           break;
         case "ArrowLeft":
           e.preventDefault();
-          previous();
+          if (mode !== "exam") previous();
           break;
         case "h":
         case "H":
@@ -252,7 +259,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [flip, rate, next, previous, card]);
+  }, [flip, rate, next, previous, card, mode]);
 
   const canRate = flipped && !!card && feedback === null;
 
@@ -272,8 +279,8 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   }, [canRate, rate, next]);
   const onSwipeRight = useCallback(() => {
     if (canRate) rate(5);
-    else previous();
-  }, [canRate, rate, previous]);
+    else if (mode !== "exam") previous();
+  }, [canRate, rate, previous, mode]);
 
   if (!session || !progress || !sessionPlan) {
     return (
@@ -334,7 +341,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         nextDue={nextDue}
         today={today}
         deckSlug={deck.slug}
-        onPrevious={canGoPrevious(session) ? previous : undefined}
+        onPrevious={mode !== "exam" && canGoPrevious(session) ? previous : undefined}
       />
     );
   }
@@ -359,7 +366,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           ← {deck.title}
         </Link>
         <span data-testid="remaining" className="shrink-0">
-          {sv.study.remaining(remaining(session))}
+          {mode === "exam" ? sv.study.examProgress(position + 1, total) : sv.study.remaining(remaining(session))}
         </span>
       </div>
       <div className="h-1 overflow-hidden rounded bg-surface-2" aria-hidden="true">
@@ -377,7 +384,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           cardId={card.id}
           front={card.front}
           back={card.back}
-          hint={card.hint}
+          hint={mode === "exam" ? null : card.hint}
           categoryTitle={categoryTitle(card.category_id)}
           categoryColorIndex={card.category_id ? (colorIndex.get(card.category_id) ?? 0) : 0}
           flipped={flipped}
@@ -391,7 +398,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       ) : null}
 
       <div className="mt-3 grid grid-cols-[auto_1fr_auto] gap-2 lg:mx-auto lg:w-full lg:max-w-xl">
-        <Button variant="secondary" onClick={previous} disabled={!canGoPrevious(session)} aria-label={sv.study.previous} data-testid="prev">
+        <Button variant="secondary" onClick={previous} disabled={mode === "exam" || !canGoPrevious(session)} aria-label={sv.study.previous} data-testid="prev">
           ←
         </Button>
         <Button onClick={flip} aria-pressed={flipped} data-testid="flip">
@@ -428,6 +435,10 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       {saveError ? (
         <p role="alert" className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
           {sv.study.saveError}
+        </p>
+      ) : queued > 0 ? (
+        <p role="status" className="rounded-md bg-surface-2 px-3 py-2 text-center text-sm text-muted" data-testid="queued-notice">
+          {sv.study.queued(queued)}
         </p>
       ) : null}
 

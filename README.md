@@ -104,6 +104,11 @@ webbläsaren under `kuggfri:prefs:v1`); förfallna kort kommer alltid med. Sessi
 tål enstaka missade dagar (två frysningar, en ny var sjunde aktiva dag) och kan undanta helger.
 Logiken ligger i `lib/study/plan.ts` och `lib/stats/progress-stats.ts` och är enhetstestad.
 
+Läget **Provtenta** tar 30 slumpade kort ur urvalet utan ledtråd och utan att gå tillbaka, och
+visar resultatet i procent; det rör inte schemat. För inloggade köas skrivningar som misslyckas
+(tappad anslutning) i en utkorg i webbläsaren (`kuggfri:outbox:v1`) och skickas automatiskt när
+nätet är tillbaka.
+
 ## Importera innehåll
 
 I admin: öppna decket → **Importera**. Stöd för CSV och JSON med kolumnerna

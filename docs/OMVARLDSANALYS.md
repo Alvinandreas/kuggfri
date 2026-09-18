@@ -11,7 +11,9 @@ Dokumentet är skrivet för att kunna läsas fristående av Alvin, och i ett sen
 **Status 19 september:** Alvin godkände planen och tog bort kodfrysningen till förmån för en
 återställningsrutin (`docs/ATERSTALLNING.md`). Fas 0 och större delen av Fas 1 (dosering, slutpunkt,
 streak med frysningar, tentadatum, skattningssemantik, fuzz, förstabesök, tangentbord, QR-kod, samt
-"uppskattad kunskap" ur Fas 2) är byggda lokalt, se TASKS.md. Kvar i Fas 1: offline och mätning.
+"uppskattad kunskap" ur Fas 2) är byggda lokalt, se TASKS.md. Senare samma dag: utkorg (ingen
+repetition tappas), aktiveringsmått i kursöversikten (Fas 1.9), provtenta och "Kan nu" per
+kategori (Fas 2.1–2.2). Kvar i Fas 1: fullt offlineläge med service worker.
 
 ---
 

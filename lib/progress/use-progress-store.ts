@@ -12,11 +12,17 @@ export function useProgressStore(userId: string | null): ProgressStore | null {
   const [store, setStore] = useState<ProgressStore | null>(null);
 
   useEffect(() => {
-    if (userId) {
-      setStore(new SupabaseProgressStore(createSupabaseBrowserClient(), userId));
-    } else {
+    if (!userId) {
       setStore(new LocalProgressStore(window.localStorage));
+      return;
     }
+    const account = new SupabaseProgressStore(createSupabaseBrowserClient(), userId, window.localStorage);
+    setStore(account);
+    // Skrivningar som köats under tappad anslutning skickas när sidan laddas och när nätet kommer tillbaka.
+    void account.flush();
+    const onOnline = () => void account.flush();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
   }, [userId]);
 
   return store;

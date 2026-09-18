@@ -105,6 +105,16 @@ describe("selectCardIds", () => {
     expect(selectCardIds({ cards, progress, mode: "fsrs", selection: { kind: "all" }, now: later, random: keepOrder })).toEqual(["b", "c", "d"]);
   });
 
+  it("provtentan tar högst 30 slumpade kort ur urvalet och rör inte ordningen i övrigt", () => {
+    const many = Array.from({ length: 50 }, (_, i) => ({ id: `k${i}`, category_id: i < 25 ? "c1" : "c2", sort_order: i }));
+    const all = selectCardIds({ cards: many, progress: {}, mode: "exam", selection: { kind: "all" }, random: () => 0.5 });
+    expect(all).toHaveLength(30);
+    expect(new Set(all).size).toBe(30);
+    const one = selectCardIds({ cards: many, progress: {}, mode: "exam", selection: { kind: "categories", categoryIds: ["c2"] } });
+    expect(one).toHaveLength(25);
+    expect(one.every((id) => Number(id.slice(1)) >= 25)).toBe(true);
+  });
+
   it("slumpad genomkörning tar hela decket oavsett urval", () => {
     const seq = [0.9, 0.1, 0.5, 0.3];
     let i = 0;
@@ -121,13 +131,13 @@ describe("categoryStats", () => {
       a: reviewCard("a", undefined, 5, NOW),
       b: reviewCard("b", undefined, 2, NOW),
     };
-    const stats = categoryStats(cards, progress, ["k1", "k2"]);
+    const stats = categoryStats(cards, progress, ["k1", "k2"], NOW);
     expect(stats).toEqual([
-      { categoryId: "k1", total: 2, studied: 2, learned: 1, weak: 1, tricky: 1, partial: 0 },
-      { categoryId: "k2", total: 1, studied: 0, learned: 0, weak: 0, tricky: 1, partial: 0 },
+      { categoryId: "k1", total: 2, studied: 2, learned: 1, weak: 1, tricky: 1, partial: 0, known: 2 },
+      { categoryId: "k2", total: 1, studied: 0, learned: 0, weak: 0, tricky: 1, partial: 0, known: 0 },
     ]);
     expect(learnedRatio(stats[0]!)).toBe(0.5);
-    expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0 })).toBe(1);
+    expect(learnedRatio({ categoryId: "x", total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0, known: 0 })).toBe(1);
   });
 });
 

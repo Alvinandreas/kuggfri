@@ -51,6 +51,9 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));
   const categoryTitle = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null);
   const done = today?.done ?? false;
+  const isExam = mode === "exam";
+  const examOk = summary.distribution[4] + summary.distribution[5];
+  const examPct = summary.reviewed === 0 ? 0 : Math.round((examOk / summary.reviewed) * 100);
 
   return (
     <div className="mx-auto grid w-full max-w-[44rem] gap-6" data-testid="session-summary" data-done={done}>
@@ -63,11 +66,18 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
               </svg>
             </span>
           ) : null}
-          <h1 className="text-2xl font-semibold tracking-tight">{done ? sv.summary.doneTitle : sv.summary.title}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{isExam ? sv.summary.examTitle : done ? sv.summary.doneTitle : sv.summary.title}</h1>
         </div>
         <p className="mt-1 text-muted" data-testid="summary-reviewed">
           {done ? sv.summary.doneBody : sv.summary.reviewed(summary.reviewed)}
         </p>
+        {isExam ? (
+          <div className="mt-4 grid gap-1" data-testid="exam-result">
+            <p className="text-3xl font-semibold tabular-nums">{examPct} %</p>
+            <p className="text-sm">{sv.summary.examScore(examOk, summary.reviewed, examPct)}</p>
+            <p className="text-sm text-muted">{sv.summary.examNote}</p>
+          </div>
+        ) : null}
         {done ? <p className="sr-only">{sv.summary.reviewed(summary.reviewed)}</p> : null}
       </header>
 

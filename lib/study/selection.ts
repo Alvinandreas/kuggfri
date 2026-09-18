@@ -1,7 +1,8 @@
 /**
  * Urval av kort för en session. Ren modul.
  */
-import { buildFinalReviewQueue, buildFsrsQueue, shuffleIds } from "@/lib/fsrs/scheduler";
+import { buildFinalReviewQueue, buildFsrsQueue, retrievability, shuffleIds } from "@/lib/fsrs/scheduler";
+import { EXAM_SIZE } from "@/lib/study/plan";
 import { isTricky, type ProgressMap, type StudyMode } from "@/lib/progress/types";
 
 export type Selection = { kind: "all" } | { kind: "categories"; categoryIds: string[] } | { kind: "low" };
@@ -87,6 +88,7 @@ function orderByWeakness(ids: readonly string[], progress: ProgressMap, random: 
  * - free: urvalet, svagast först, blandat inom samma skattning.
  * - tricky: bara kluriga kort ur urvalet, svagast först, blandat inom samma skattning.
  * - random: hela decket i slumpad ordning (urvalet ignoreras).
+ * - exam: EXAM_SIZE slumpade kort ur urvalet, som en provtenta.
  */
 export function selectCardIds(input: {
   cards: readonly SelectableCard[];
@@ -106,6 +108,9 @@ export function selectCardIds(input: {
     return shuffleIds(ordered.map((c) => c.id), random);
   }
   const filtered = filterCards(ordered, input.progress, input.selection);
+  if (input.mode === "exam") {
+    return shuffleIds(filtered.map((c) => c.id), random).slice(0, EXAM_SIZE);
+  }
   if (input.mode === "fsrs") {
     const ids = filtered.map((c) => c.id);
     if (input.finalReview) return buildFinalReviewQueue(ids, input.progress, input.now ?? new Date(), random);
@@ -130,12 +135,19 @@ export type CategoryStats = {
   tricky: number;
   /** Skattning 3–4: på väg, men inte inlärt (5). */
   partial: number;
+  /** Uppskattad kunskap just nu: summan av återkallelsesannolikheter (aldrig sedda = 0). */
+  known: number;
 };
 
 /** Statistik per kategori ur progressen. Kort utan kategori räknas till UNCATEGORIZED_ID om det id:t finns med. */
-export function categoryStats(cards: readonly SelectableCard[], progress: ProgressMap, categoryIds: readonly string[]): CategoryStats[] {
+export function categoryStats(
+  cards: readonly SelectableCard[],
+  progress: ProgressMap,
+  categoryIds: readonly string[],
+  now: Date = new Date(),
+): CategoryStats[] {
   const byId = new Map<string, CategoryStats>(
-    categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0 }]),
+    categoryIds.map((id) => [id, { categoryId: id, total: 0, studied: 0, learned: 0, weak: 0, tricky: 0, partial: 0, known: 0 }]),
   );
   for (const card of cards) {
     const s = byId.get(card.category_id ?? UNCATEGORIZED_ID);
@@ -145,6 +157,7 @@ export function categoryStats(cards: readonly SelectableCard[], progress: Progre
     if (isTricky(p)) s.tricky++;
     if (!p) continue;
     s.studied++;
+    s.known += retrievability(p, now);
     if (p.self_rating === 5) s.learned++;
     if (p.self_rating === 3 || p.self_rating === 4) s.partial++;
     if (p.self_rating !== null && p.self_rating <= 2) s.weak++;

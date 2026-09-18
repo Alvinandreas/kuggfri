@@ -136,3 +136,25 @@ test.describe("dosering", () => {
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
   });
 });
+
+test.describe("provtenta", () => {
+  test("slumpade kort ur en kategori, ingen tillbaka, resultat i procent, progressen orörd", async ({ page }) => {
+    await page.goto(`/d/${DECK_SLUG}`);
+    await page.getByLabel("Provtenta").check();
+    await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check({ force: true });
+    await expect(page.getByTestId("start-info")).toContainText("6 kort");
+    await page.getByTestId("start-session").click();
+    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(page.getByTestId("remaining")).toHaveText("Fråga 1 av 6");
+    await expect(page.getByTestId("prev")).toBeDisabled();
+    for (let i = 0; i < 6; i++) {
+      if (await page.getByTestId("session-summary").isVisible()) break;
+      await rateCurrentCard(page, i < 4 ? 5 : 2);
+    }
+    await expect(page.getByTestId("session-summary")).toBeVisible();
+    await expect(page.getByTestId("exam-result")).toContainText("4 av 6");
+    await expect(page.getByTestId("exam-result")).toContainText("67 %");
+    expect(await readLocalProgress(page)).toEqual({});
+    await expectNoSeriousA11yViolations(page);
+  });
+});

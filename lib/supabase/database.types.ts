@@ -118,6 +118,8 @@ export type DeckOverviewStats = {
   reviews_7d: number;
   avg_rating: number | null;
   open_reports: number;
+  /** Kommer studenterna tillbaka? Saknas om databasen kör en äldre version av funktionen. */
+  activation?: { started: number; first_session_20: number; eligible: number; returned_3d: number };
   rating_dist: { rating: number; n: number }[];
   /** bucket 0 = 0–20 % inlärda kort … 4 = 80–100 % */
   progress_buckets: { bucket: number; students: number }[];

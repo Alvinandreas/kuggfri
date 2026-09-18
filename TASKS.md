@@ -200,7 +200,8 @@ Alvin gav fri hand ("kör på, bygg så mycket du orkar"). Allt lokalt, ej pusha
 - [x] Rörelse: vändning 260 ms, inträde 180 ms, lugn "klar"-animation
 - [x] Tester: 25 nya enhetstester (dosering, tentaplan, streak, förhandsvisning, kunskap, inställningar), nytt E2E-test för dosering och "Klar för i dag". Unit 191 gröna, E2E 42 gröna före det nya testet
 - [x] Testkopian på 3001 ombyggd
-- [ ] **Alvin verifierar på http://localhost:3001**: decksidan (förstabesöksrutan, Starta-raden, "Nya kort per dag", QR), en session (intervall på knapparna, "Klar för i dag"), admin → Inställningar → Tentadatum. Sedan "pusha" (migrationen `20260919000000` följer med: `supabase db push` före `git push`, se ATERSTALLNING.md)
+- [x] Omgång två (lör 19 sep): utkorg så att ingen repetition tappas vid dålig anslutning; provtenta-läget (30 slumpade kort, resultat i procent); "Kan nu"-kolumn per kategori; aktiveringsmått i kursöversikten (migration `20260919000100`, ÅNGRA-sektion finns). Enhetstester och nya E2E-tester (provtenta)
+- [ ] **Alvin verifierar på http://localhost:3001**: decksidan (förstabesöksrutan, Starta-raden, "Nya kort per dag", QR), en session (intervall på knapparna, "Klar för i dag"), admin → Inställningar → Tentadatum. Sedan "pusha" (migrationerna `20260919000000` och `20260919000100` följer med: `supabase db push` före `git push`, se ATERSTALLNING.md)
 - [ ] Sätt tentadatum för Materialteknik i admin när Johan bekräftat datumet. Lokalt ligger platshållaren 2026-10-27 (bara i den lokala databasen, så att tentaraden och ikappläget syns på 3001)
 - [ ] Övning av återställningen i Vercel tillsammans (fram och tillbaka), datum antecknas i ATERSTALLNING.md
 

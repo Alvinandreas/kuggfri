@@ -43,7 +43,7 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   schemalagd repetition kan blanda hela kursen.
 - **Kategorititlarna är mina tolkningar av innehållet** (filerna hette bara `deck_<id>.csv`).
   Ordningen följer ungefär kursens upplägg (grunder → materialval → struktur → egenskaper → stål →
-  termiskt → hållbarhet → tillverkning → metaller → begrepp). Ändra i `seed/materialteknik/deck.json`
+  termiskt → hållbarhet → tillverkning → metaller → begrepp). Ändra i `content/materialteknik/`
   eller direkt i admin.
 - **Kurskod `MTM081`** är hämtad från exemplet i din spec. Kontrollera att den stämmer och ändra i
   admin annars.
@@ -55,7 +55,7 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Deterministiska UUID:n i seeden** (UUID v5 av slug + kategori + framsida) så att
   `supabase db reset` inte byter id på korten; gästers localStorage-progress överlever därmed.
 - **`supabase/seed.sql` är en genererad fil** som ändå är incheckad, så att `supabase db reset`
-  fungerar utan extra steg. Bygg om med `npm run seed:build` när du ändrar i `seed/`.
+  fungerar utan extra steg. Bygg om med `npm run seed:build` när du ändrar i `content/`.
 
 ## Studieläge
 
@@ -298,3 +298,29 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Delbar beredskapsbild**: "Dela din beredskap" under progressen ritar "Jag kan 64 % av
   Materialteknik" som PNG i webbläsaren (canvas), delar via Web Share på mobil, laddar annars ned.
   Inget skickas till servern. Andelen är FSRS-uppskattningen, inte streaken.
+
+## Beslut 2026-09-19, omgång fem: innehållspipelinen (docs/INNEHALL.md)
+
+- **Innehållet är kod.** Kursernas innehåll ligger som markdown under `content/<kurs>/` (en fil per
+  kategori plus `kurs.json`) och är källan. Databasen är det driftsatta läget. `seed/` med
+  Brainscape-CSV:erna är borta; CSV och JSON är numera inmatningsformat som konverteras till
+  kortfiler med `kuggfri konvertera`. De ursprungliga Brainscape-exporterna finns kvar i
+  git-historiken (`git show v1-lansering:seed/materialteknik/` ) om råtexten skulle behövas.
+- **Stabila nycklar i stället för texter som identitet.** `cards.key` och `categories.key` (unika per
+  deck) gör att en rättad framsida inte längre skapar ett nytt kort. Id:n är UUID v5 av nyckeln i
+  samma namnrymd som förut, så alla 144 befintliga kort behöll sina id:n och studenternas progress.
+- **Trevägssynk med `source_hash`.** Varje rad bär hashen av innehållet vid senaste synk, delad i
+  innehåll och placering. Därmed kan pipelinen skilja på "ändrat i filen", "ändrat i admin" och
+  "ändrat i båda". **Admin vinner alltid**: en rad som redigerats i gränssnittet rörs inte, och
+  `plan` ber om `pull`. Bara `--tvinga` låter filen vinna. Skälet är Alvins besked att redigering
+  sker i gränssnittet; filerna är Claudes arbetsyta.
+- **Kort som skapats i admin (utan nyckel) rörs aldrig av apply**, inte ens med `--radera`. De
+  kommer in i filerna med `pull`.
+- **Borttagning inaktiverar som standard** (`is_active = false`, progressen kvar). `--radera` raderar
+  på riktigt och kaskaderar progress och historik; planen visar hur många studenter som berörs.
+- **`sync_deck` är security invoker** så att RLS avgör skrivningarna, med en explicit kontroll
+  (`can_sync_deck`) för ett begripligt fel. Direktanslutningar känns igen på att de saknar
+  JWT-påståenden, inte på användarnamn, så att kontrollen kan testas.
+- **Verktyget heter `kuggfri`** (`npm run kuggfri -- <kommando>`) och kör mot lokal databas som
+  standard, mot produktion med `--mal prod` via Supabase CLI:s inloggning. Inga nycklar i repot.
+  `kuggfri kontrollera` ingår i `npm run verify`.

@@ -1,0 +1,56 @@
+{
+  "key": "materialteknik",
+  "title": "Materialteknik",
+  "description": "Frågor och begrepp från kursen Materialteknik på Maskinteknik, Chalmers. Sammanställt av studenter och använt av två årskullar.",
+  "course_code": "MTM081",
+  "source_credit": "Sammanställt av Alvin utifrån föreläsningar och kursmaterial i Materialteknik (Maskinteknik, Chalmers). Ursprungligen publicerat som flashcardset i Brainscape och använt av närmare 200 studenter över två årskullar.",
+  "exam_date": null,
+  "published": true,
+  "sort_order": 0,
+  "categories": [
+    {
+      "key": "materialgrupper-och-egenskaper",
+      "file": "01-materialgrupper-och-egenskaper.md"
+    },
+    {
+      "key": "materialvalsprocessen",
+      "file": "02-materialvalsprocessen.md"
+    },
+    {
+      "key": "kristallstruktur",
+      "file": "03-kristallstruktur.md"
+    },
+    {
+      "key": "styvhet-tojning-och-materialindex",
+      "file": "04-styvhet-tojning-och-materialindex.md"
+    },
+    {
+      "key": "dislokationer-hardning-och-brott",
+      "file": "05-dislokationer-hardning-och-brott.md"
+    },
+    {
+      "key": "stal-varmebehandling-och-bearbetning",
+      "file": "06-stal-varmebehandling-och-bearbetning.md"
+    },
+    {
+      "key": "termiska-egenskaper-diffusion-och",
+      "file": "07-termiska-egenskaper-diffusion-och.md"
+    },
+    {
+      "key": "hallbarhet-och-atervinning",
+      "file": "08-hallbarhet-och-atervinning.md"
+    },
+    {
+      "key": "tillverkning-och-varmebehandling-av-stal",
+      "file": "09-tillverkning-och-varmebehandling-av-stal.md"
+    },
+    {
+      "key": "icke-jarnmetaller",
+      "file": "10-icke-jarnmetaller.md"
+    },
+    {
+      "key": "begrepp-och-ja-nej-fragor",
+      "file": "11-begrepp-och-ja-nej-fragor.md"
+    }
+  ]
+}

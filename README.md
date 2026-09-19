@@ -22,12 +22,12 @@ npm install
 cp .env.example .env.local
 npx supabase start          # startar Postgres, Auth m.m. i Docker
 npx supabase status         # kopiera "anon key" till NEXT_PUBLIC_SUPABASE_ANON_KEY i .env.local
-npm run db:reset            # bygger seed från seed/ och kör migrationer + seed
+npm run db:reset            # bygger seed från content/ och kör migrationer + seed
 npm run dev                 # http://localhost:3000
 ```
 
-`npm run db:reset` kör `npm run seed:build` (skapar `supabase/seed.sql` från
-`seed/materialteknik/*.csv`) och därefter `supabase db reset`.
+`npm run db:reset` kör `npm run seed:build` (skapar `supabase/seed.sql` från `content/`)
+och därefter `supabase db reset`.
 
 E-post lokalt (magic link, bekräftelser) hamnar i Supabase Mailpit: `http://127.0.0.1:54324`.
 E-postbekräftelse vid registrering är avstängd lokalt (`supabase/config.toml`), så konton
@@ -125,8 +125,22 @@ framsidans text.
 
 **Exportera** ger en JSON-fil med hela decket som kan importeras igen.
 
-Vill du ändra seed-innehållet: redigera CSV-filerna eller `deck.json` i `seed/materialteknik/`
-och kör `npm run seed:build`.
+## Innehållspipelinen
+
+Kursernas innehåll ligger som markdown i `content/<kurs>/` och synkas med databasen med
+verktyget `kuggfri`. Handboken är [docs/INNEHALL.md](docs/INNEHALL.md); i korthet:
+
+```bash
+npm run kuggfri -- kontrollera                  # letar fel i filerna (ingår i npm run verify)
+npm run kuggfri -- plan materialteknik          # vad skulle ändras i databasen?
+npm run kuggfri -- apply materialteknik         # skriv ändringarna (lokalt)
+npm run kuggfri -- pull materialteknik          # ta in ändringar gjorda i admin i filerna
+npm run kuggfri -- konvertera nytt.csv --kurs materialteknik --kategori korrosion --titel "Korrosion"
+```
+
+Lägg till `--mal prod` för att arbeta mot det länkade Supabase-projektet. Redigering i
+admin-gränssnittet fungerar som vanligt: pipelinen skriver aldrig över en ändring som gjorts
+där, utan ber om `pull` först.
 
 ## Deploya till Vercel
 
@@ -156,10 +170,11 @@ lib/
   fsrs/              ren FSRS-modul, sessionsreducer
   progress/          progresslager (localStorage + Supabase), migrering
   import/            CSV/JSON-parser, diff, normalisering
+  content/           innehållspipelinen: modell, kortfiler, planerare
   i18n/sv.ts         alla UI-strängar
   supabase/          klienter och databastyper
 supabase/            config, migrationer, genererad seed
-seed/                källinnehåll (CSV) och manifest per deck
+content/             kursernas innehåll (markdown + kurs.json), källan till allt innehåll
 tests/unit, tests/e2e
 ```
 

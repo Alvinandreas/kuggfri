@@ -11,14 +11,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "verify:unit": "npm run typecheck && npm run lint && npm run test",
+    "verify:unit": "npm run typecheck && npm run lint && npm run kuggfri -- kontrollera && npm run test",
     "verify": "npm run verify:unit && npm run test:e2e",
-    "seed:build": "tsx scripts/build-seed.ts",
+    "seed:build": "tsx scripts/kuggfri.ts seed",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "npm run seed:build && supabase db reset",
     "db:types": "supabase gen types typescript --local > lib/supabase/database.types.ts",
-    "deploy:sql": "bash -c \"mkdir -p supabase/deploy && { echo \"-- GENERERAD: alla migrationer + seed i en fil, för ett NYTT Supabase-projekt (SQL-editorn).\"; for f in supabase/migrations/*.sql; do echo \"-- ===== $f =====\"; cat \"$f\"; echo; done; echo \"-- ===== supabase/seed.sql =====\"; cat supabase/seed.sql; } > supabase/deploy/full.sql\""
+    "deploy:sql": "tsx scripts/build-deploy-sql.ts",
+    "kuggfri": "tsx scripts/kuggfri.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

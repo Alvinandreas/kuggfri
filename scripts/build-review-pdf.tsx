@@ -3,13 +3,12 @@
  * med kryssrutor och anteckningsrad per kort. Avsett att lämnas hos en examinator
  * eller kursansvarig för innehållsgranskning.
  *
- *   npx tsx scripts/build-review-pdf.tsx [seed/materialteknik] [docs/granskning-materialteknik.pdf]
+ *   npx tsx scripts/build-review-pdf.tsx [materialteknik] [docs/granskning-materialteknik.pdf]
  *
- * Använder samma parsning och normalisering som seeden (så texten är identisk med
- * det som ligger i databasen), react-markdown + KaTeX för rendering, och Playwrights
- * Chromium för PDF-utskriften.
+ * Läser kursen ur content/ (samma text som ligger i databasen), react-markdown + KaTeX
+ * för rendering, och Playwrights Chromium för PDF-utskriften.
  */
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import React from "react";
@@ -19,40 +18,35 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { chromium } from "@playwright/test";
-import { parseImportCsv } from "../lib/import/parse-import";
-import { applyTypography, duplicateKey, normalizeBrainscapeMarkdown } from "../lib/import/normalize";
+import { loadCourse } from "../lib/content/store";
 
 type Manifest = {
-  slug: string;
   title: string;
-  description?: string | null;
   course_code?: string | null;
   source_credit?: string | null;
-  categories: { file: string; title: string }[];
 };
 
 type ReviewCard = { n: number; front: string; back: string; hint: string | null };
 type ReviewCategory = { title: string; cards: ReviewCard[] };
 
-function loadDeck(dir: string): { manifest: Manifest; categories: ReviewCategory[]; total: number } {
-  const manifest = JSON.parse(readFileSync(join(dir, "deck.json"), "utf8")) as Manifest;
-  const seenBacks = new Set<string>();
+function loadDeck(courseKey: string): { manifest: Manifest; categories: ReviewCategory[]; total: number } {
+  const { course, issues } = loadCourse(process.cwd(), courseKey);
+  for (const issue of issues) console.warn(`  ${issue.file}:${issue.line} ${issue.message}`);
   let n = 0;
-  const categories: ReviewCategory[] = manifest.categories.map((cat) => {
-    const parsed = parseImportCsv(readFileSync(join(dir, cat.file), "utf8"));
-    const cards: ReviewCard[] = [];
-    for (const card of parsed.cards) {
-      const front = applyTypography(normalizeBrainscapeMarkdown(card.front));
-      const back = applyTypography(normalizeBrainscapeMarkdown(card.back));
-      const key = duplicateKey(back);
-      if (seenBacks.has(key)) continue; // samma dubblettregel som seeden
-      seenBacks.add(key);
-      n++;
-      cards.push({ n, front, back, hint: card.hint ? applyTypography(normalizeBrainscapeMarkdown(card.hint)) : null });
-    }
-    return { title: cat.title, cards };
-  });
-  return { manifest, categories, total: n };
+  const categories: ReviewCategory[] = course.categories.map((cat) => ({
+    title: cat.title,
+    cards: cat.cards
+      .filter((card) => card.active)
+      .map((card) => {
+        n++;
+        return { n, front: card.front, back: card.back, hint: card.hint };
+      }),
+  }));
+  return {
+    manifest: { title: course.title, course_code: course.course_code ?? undefined, source_credit: course.source_credit ?? undefined },
+    categories,
+    total: n,
+  };
 }
 
 function Md({ text }: { text: string }) {
@@ -189,9 +183,9 @@ const css = `
 `;
 
 async function main() {
-  const seedDir = resolve(process.argv[2] ?? "seed/materialteknik");
+  const courseKey = process.argv[2] ?? "materialteknik";
   const outPdf = resolve(process.argv[3] ?? "docs/granskning-materialteknik.pdf");
-  const { manifest, categories, total } = loadDeck(seedDir);
+  const { manifest, categories, total } = loadDeck(courseKey);
   const date = new Date().toLocaleDateString("sv-SE", { year: "numeric", month: "long", day: "numeric" });
 
   const katexCss = pathToFileURL(resolve("node_modules/katex/dist/katex.min.css")).href;

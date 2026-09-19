@@ -208,6 +208,20 @@ Alvin gav fri hand ("kör på, bygg så mycket du orkar"). Allt lokalt, ej pusha
 - [ ] Sätt tentadatum för Materialteknik i admin när Johan bekräftat datumet. Lokalt ligger platshållaren 2026-10-27 (bara i den lokala databasen, så att tentaraden och ikappläget syns på 3001)
 - [ ] Övning av återställningen i Vercel tillsammans (fram och tillbaka), datum antecknas i ATERSTALLNING.md
 
+## Lördag 19 sep (kväll): innehållspipelinen
+
+Alvin: "bygg ut det systemet". Design i `docs/INNEHALL.md`, byggd samma kväll. Allt lokalt, ej pushat.
+
+- [x] Migration `20260920000000_content_keys.sql`: `key` och `source_hash` på kort/kategorier/deck, `deck_snapshot()`, `sync_deck()` (transaktionell), `can_sync_deck()`. ÅNGRA-sektion finns
+- [x] `lib/content/`: modell och nycklar (UUID v5, samma namnrymd som förut), markdown-parser och -skrivare med rundturstest, trevägsplanerare, konverterare, filbutik
+- [x] `scripts/kuggfri.ts`: kontrollera, plan, apply, pull, konvertera, ny-kurs, ny-kategori, ta-bort-kurs, seed. `--mal lokal|prod`, `--ja`, `--radera`, `--tvinga`. Backup tas automatiskt före apply mot prod
+- [x] Dagens 144 kort konverterade till `content/materialteknik/` (11 filer). Planen mot lokala databasen visade 144 "knyts ihop", 0 nya, 0 borttagna: alla id:n och all progress intakt. Applicerad lokalt, andra planen tom
+- [x] Hela slingan verifierad lokalt: ändring i admin → plan varnar och rör inget → pull → filen uppdaterad → apply bekräftar → plan tom
+- [x] `seed/`, `scripts/build-seed.ts` och `scripts/content-review.ts` borttagna; seeden byggs nu ur `content/`, granskningsunderlagets PDF likaså. `kuggfri kontrollera` ingår i `npm run verify`
+- [x] Tester: 21 enhetstester för pipelinen (parser, nycklar, planerare, pull) och 6 databastester för `sync_deck` (behörigheter, idempotens, inaktivering behåller progress, radering kaskaderar, unika nycklar). Totalt 236 enhetstester
+- [ ] **Efter push:** kör `npm run kuggfri -- plan materialteknik --mal prod`. Den ska visa 144 "knyts ihop" och noll innehållsändringar, precis som lokalt. Först därefter `apply --mal prod`
+- [ ] Överväg att flytta `exam_date` för Materialteknik in i `content/materialteknik/kurs.json` när Johan bekräftat datumet (nu satt direkt i den lokala databasen)
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
 - [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte

@@ -1,0 +1,114 @@
+# Hållbarhet och återvinning
+
+## Vad i materialtillverkningsprocessen kräver energi och vad innebär detta för miljön?
+key: vad-i-materialtillverkningsprocessen
+
+Energiintensiva processer:
+
+* Energi för reducering av mineral till metall
+* Övrig energi för tillverkning och formning, transport, användning. Kan minskas genom att återanvända värme.
+
+Miljöbelastning:
+
+* Ingrepp i naturen
+* Utsläpp av CO₂
+* Andra utsläpp och föroreningar
+* CO₂ används som mått på miljöbelastning (carbon footprint)
+
+## Hur återanvändningsbara är egentligen metaller? Vad finns det för utmaningar med det?
+key: hur-ateranvandningsbara-ar-egentligen
+
+* Metallskrot är en utmärkt råvara för metalltillverkning
+* Kräver mindre energi än tillverkning från malm: 1/10 för Al och 1/3 för stål
+* Ger mindre miljöbelastning
+* Metall tillverkad från skrot har samma egenskaper som metall tillverkad från mineral
+
+Utmaningar:
+
+* Legeringshalten måste kontrolleras – problem med blandat skrot och metallföroreningar
+* Koppar och tenn förstör stål
+* Fe försprödar Al
+* Bly, kadmium och kvicksilver är ofta oönskat i
+legeringar
+* Skrotet måste samlas in, transporteras, sorteras
+
+## Hur bra är aluminium sett ur ett hållbarhetsperspektiv?
+key: hur-bra-ar-aluminium-sett-ur-ett
+
+Aluminium:
+
+* Det vanligaste grundämnet i jordskorpan
+* Framställning av primäraluminium kräver mycket energi
+* Mycket mindre energi krävs för återvinning → Lämpligt för produkter som kan återvinnas, mindre lämpligt för
+produkter som inte kan återvinnas.
+
+Problem med återvinning av aluminium
+
+* Gjutlegeringar innehåller mycket Si, 8-14%
+* Övriga legeringar (smideslegeringar) innehåller små mängder Si
+* Förorenas av Fe → Blandat skrot kan bara användas i begränsade mängder för återvinning till smideslegeringar.
+
+## Hur bra är stål respektive rostfritt stål sett ur ett hållbarhetsperspektiv?
+key: hur-bra-ar-stal-respektive-rostfritt
+
+Stål:
+
+* God tillgång i jordskorpan
+* Relativt låg miljöbelastning per kg
+* Hög hållfasthet i förhållande till miljöbelastning
+* Korroderar, kräver ofta ytbehandling
+* Höghållfasta stål kan användas i lättkonstruktioner
+
+Rostfritt stål:
+
+* Legering med järn, Cr (ca 18 %), Ni (ca 8 %), ev Mo (2 %)
+* Tillgången av legeringsämne i jordskorpan är förhållandevis liten
+* Legeringsämnena kan vara ohälsosamma och allergena i fri form.
+Oftast inte bundna i rostfritt stål.
+* Bra korrosionsmotstånd och livslängd. Bör återvinnas.
+
+## Vad finns det för problem med återvinningen av blandat skrot?
+key: vad-finns-det-for-problem-med
+
+* Vid återanvändning av skrot är kontroll av legeringsämne ett problem
+* Överflödiga legeringsämne och förorenande metaller kan vara eller är oekonomiska att ta bort
+* Sorterat skrott är mer användbart och har högre värde
+
+## Vad är "CO₂- footprint" respektive "Embodied Energy"?
+key: vad-ar-co-footprint-respektive-embodied
+
+CO₂ footprint:
+
+* Mängd CO₂ som bildas vid produktion av 1 kg material
+
+För metaller:
+- CO₂ bildas vid produktion av energi
+- CO₂ bildas vid kemiska reaktioner vid reduktion av malm till metall
+
+Embodied energy:
+
+* Energin som krävs för att producera 1 kg av materialet
+
+För metaller:
+- Energi som krävs för reduktionsreaktionen
+- Transport, värmning, processer
+
+## Hur ser tillgången på metaller i jordskorpan ut?
+key: hur-ser-tillgangen-pa-metaller-i
+
+* De vanligaste metallerna finns i stor omfattning i jordskorpan: Fe, Al, Mg, Ti
+* Vissa legeringsämnen finns i begränsad mängd i jordskorpan
+* 69 element räknas som strategiska eller kritiska: sällsynta
+jordartsmetaller, platina-gruppen, fissionsämne (U, Th, Pu), W, Ta, Nb, Ga, In
+
+## Sammanfatta lite kort hur metaller lämpar sig för återvinning.
+key: sammanfatta-lite-kort-hur-metaller
+
+* Metaller lämpar sig väl för återvinning
+  - Sparar resurser och energi
+  - Ger lika bra material
+* Problem med föroreningar och legeringsämne
+* CO₂ footprint och embodied energy ger viss
+vägledning – kan användas i materialindex
+* Bör titta på totala miljöbelastningen under
+livscykeln

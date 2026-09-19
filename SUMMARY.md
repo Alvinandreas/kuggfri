@@ -16,7 +16,7 @@
    är grön (134 enhetstester inkl. alla RLS-policyer + 28 E2E-tester med axe). Se TASKS.md för
    veckans läge.
 2. **Kontrollera innehållet i seeden**: kategorititlar, ordning, kurskod (`MTM081` är tagen från
-   din spec-exempeltext) och krediteringstexten i `seed/materialteknik/deck.json`. Allt kan också
+   din spec-exempeltext) och krediteringstexten i `content/materialteknik/kurs.json`. Allt kan också
    ändras i admin.
 3. **Gör dig till admin** enligt README och klicka igenom admin: redigera ett kort med
    förhandsvisning, dra om ordningen, importera en CSV, titta på statistiken.

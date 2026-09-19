@@ -716,3 +716,125 @@ describe("examinatorer (deck_examiners)", () => {
     expect(o?.o.progress_buckets.reduce((s, b) => s + Number(b.students), 0)).toBe(Number(o?.o.students));
   });
 });
+
+describe("innehållspipelinen (sync_deck, deck_snapshot)", () => {
+  let pipelineExaminer: string;
+  const NEW_CARD = "aaaaaaaa-0000-4000-8000-000000000001";
+  const NEW_CATEGORY = "aaaaaaaa-0000-4000-8000-000000000002";
+
+  function plan(overrides: Record<string, unknown> = {}) {
+    return JSON.stringify({
+      categories: { create: [], update: [], delete: [] },
+      cards: { create: [], update: [], deactivate: [], delete: [] },
+      ...overrides,
+    });
+  }
+
+  beforeAll(async () => {
+    pipelineExaminer = await createUser(db, "pipeline@chalmers.se", { displayName: "Pipeline" });
+    await db.query(`insert into public.deck_examiners (deck_id, user_id) values ($1, $2)`, [publishedDeck, pipelineExaminer]);
+  });
+
+  it("anon kommer inte åt vare sig snapshot eller synk", async () => {
+    await expectDenied(anon(db).query(`select public.deck_snapshot($1)`, [publishedDeck]));
+    await expectDenied(anon(db).query(`select public.sync_deck($1, $2::jsonb)`, [publishedDeck, plan()]));
+  });
+
+  it("en vanlig student nekas", async () => {
+    await expectDenied(user(db, alice).query(`select public.deck_snapshot($1)`, [publishedDeck]), /forbidden/i);
+    await expectDenied(user(db, alice).query(`select public.sync_deck($1, $2::jsonb)`, [publishedDeck, plan()]), /forbidden/i);
+  });
+
+  it("en examinator synkar sitt eget deck men inte ett annat", async () => {
+    const [row] = await user(db, pipelineExaminer).query<{ data: { cards: unknown[] } }>(`select public.deck_snapshot($1) as data`, [publishedDeck]);
+    expect(Array.isArray(row?.data.cards)).toBe(true);
+    await expectDenied(user(db, pipelineExaminer).query(`select public.sync_deck($1, $2::jsonb)`, [draftDeck, plan()]), /forbidden/i);
+  });
+
+  it("skapar kategori och kort, och är idempotent", async () => {
+    const p = plan({
+      categories: { create: [{ id: NEW_CATEGORY, key: "ny", title: "Ny kategori", sort_order: 9, source_hash: "cabcabcabpdefdefde" }], update: [], delete: [] },
+      cards: {
+        create: [
+          {
+            id: NEW_CARD,
+            key: "nytt-kort",
+            category_id: NEW_CATEGORY,
+            front: "Framsida från pipelinen",
+            back: "Baksida",
+            hint: null,
+            sort_order: 99,
+            is_active: true,
+            source_hash: "c11111111p22222222",
+          },
+        ],
+        update: [],
+        deactivate: [],
+        delete: [],
+      },
+    });
+    const [res] = await user(db, pipelineExaminer).query<{ data: Record<string, number> }>(`select public.sync_deck($1, $2::jsonb) as data`, [publishedDeck, p]);
+    expect(res?.data.cards_created).toBe(1);
+    expect(res?.data.categories_created).toBe(1);
+
+    // Samma plan igen skulle krocka på primärnyckeln; pipelinen skickar i stället en uppdatering.
+    const update = plan({
+      cards: {
+        create: [],
+        update: [
+          {
+            id: NEW_CARD,
+            key: "nytt-kort",
+            category_id: NEW_CATEGORY,
+            front: "Framsida från pipelinen",
+            back: "Baksida",
+            hint: null,
+            sort_order: 99,
+            is_active: true,
+            source_hash: "c11111111p22222222",
+          },
+        ],
+        deactivate: [],
+        delete: [],
+      },
+    });
+    const [again] = await user(db, pipelineExaminer).query<{ data: Record<string, number> }>(`select public.sync_deck($1, $2::jsonb) as data`, [publishedDeck, update]);
+    expect(again?.data.cards_updated).toBe(1);
+    const [count] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where id = $1`, [NEW_CARD]);
+    expect(count?.n).toBe(1);
+  });
+
+  it("inaktivering behåller studenternas progress, radering tar bort den", async () => {
+    await db.query(`insert into public.card_progress (user_id, card_id, self_rating, reps) values ($1, $2, 4, 2)`, [alice, NEW_CARD]);
+
+    await user(db, pipelineExaminer).query(`select public.sync_deck($1, $2::jsonb)`, [
+      publishedDeck,
+      plan({ cards: { create: [], update: [], deactivate: [NEW_CARD], delete: [] } }),
+    ]);
+    const [inactive] = await db.query<{ is_active: boolean }>(`select is_active from public.cards where id = $1`, [NEW_CARD]);
+    expect(inactive?.is_active).toBe(false);
+    const [kept] = await db.query<{ n: number }>(`select count(*)::int as n from public.card_progress where card_id = $1`, [NEW_CARD]);
+    expect(kept?.n).toBe(1);
+
+    await user(db, pipelineExaminer).query(`select public.sync_deck($1, $2::jsonb)`, [
+      publishedDeck,
+      plan({ cards: { create: [], update: [], deactivate: [], delete: [NEW_CARD] } }),
+    ]);
+    const [gone] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where id = $1`, [NEW_CARD]);
+    expect(gone?.n).toBe(0);
+    const [cascaded] = await db.query<{ n: number }>(`select count(*)::int as n from public.card_progress where card_id = $1`, [NEW_CARD]);
+    expect(cascaded?.n).toBe(0);
+  });
+
+  it("nyckeln är unik per deck men får återanvändas i ett annat", async () => {
+    await db.query(`update public.cards set key = 'unik' where id = (select id from public.cards where deck_id = $1 limit 1)`, [publishedDeck]);
+    await expectDenied(
+      db.query(`insert into public.cards (deck_id, key, front, back) values ($1, 'unik', 'F', 'B')`, [publishedDeck]),
+      /unique|duplicate/i,
+    );
+    // Samma nyckel i ett annat deck är helt i sin ordning.
+    await db.query(`insert into public.cards (deck_id, key, front, back) values ($1, 'unik', 'F', 'B')`, [draftDeck]);
+    const [n] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where key = 'unik'`);
+    expect(n?.n).toBe(2);
+  });
+});

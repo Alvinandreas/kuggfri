@@ -1,6 +1,7 @@
 # Innehållsgranskning – Materialteknik
 
-Genererad 2026-09-14 av `scripts/content-review.ts`. 10 av 144 kort har minst en anmärkning.
+Genererad 2026-09-14 av dåvarande `scripts/content-review.ts` (historiskt dokument; samma
+kontroller görs numera av `npm run kuggfri -- kontrollera`). 10 av 144 kort har minst en anmärkning.
 
 Inget här är ändrat. Alvin bockar i det som ska åtgärdas; Claude gör sedan bara formateringsändringar (aldrig innehåll).
 

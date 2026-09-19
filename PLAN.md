@@ -16,7 +16,7 @@ Vertikala skivor i byggordning. Varje skiva committas separat när `npm run veri
 ## Skiva 1 – Datamodell och seed
 - Supabase-projekt lokalt (`supabase/config.toml`), migrationer för alla tabeller, RLS-policyer,
   hjälpfunktioner (nollställning, radera konto, statistik).
-- Seed byggd från de riktiga Brainscape-exporterna i `seed/materialteknik/` via
+- Seed byggd från kursinnehållet (numera `content/`, se docs/INNEHALL.md) via
   `scripts/build-seed.ts` → `supabase/seed.sql`.
 - Vitest-tester för samtliga RLS-policyer mot riktig Postgres (PGlite i process, samma SQL).
 **Acceptans:** alla RLS-tester gröna; otillåten läsning/skrivning nekas i varje tabell.

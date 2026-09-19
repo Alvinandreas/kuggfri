@@ -69,6 +69,17 @@ delete from supabase_migrations.schema_migrations where version = '2026091900000
 Går inte ÅNGRA-satserna att köra (data som beror på det nya) används backupen enligt
 `docs/BACKUP.md`, avsnittet "Hela databasen".
 
+## 2b. Innehållet
+
+Kursinnehållet ligger i git under `content/`, så en felaktig innehållsändring rullas tillbaka som
+vilken kodändring som helst: `git revert` följt av `npm run kuggfri -- apply <kurs> --mal prod`.
+Planen visar först exakt vad som återställs. Kort som hunnit inaktiveras återaktiveras då, med
+progressen kvar, eftersom inaktivering aldrig raderar något.
+
+`apply --radera` är det enda som tar bort kort och progress på riktigt. Backup tas automatiskt före
+varje apply mot produktion, och `plan` visar hur många studenter som har progress på varje kort som
+skulle raderas.
+
 ## 3. Studentdata
 
 Progress finns i `card_progress` (konton) och `kuggfri:progress:v1` i localStorage (gäster), med

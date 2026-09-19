@@ -144,7 +144,7 @@ de tänker göra.
 |---|---|
 | `kuggfri kontrollera [kurs]` | Läser filerna och rapporterar fel: saknade nycklar, dubbla nycklar, tomma fält, dubbletter (samma baksida), ogiltig KaTeX, för långa texter. Ändrar inget. Körs i `npm run verify`. |
 | `kuggfri plan [kurs] [--mal prod]` | Trevägsjämförelse fil ↔ senast applicerat ↔ databas. Skriver ut planen: nya, ändrade, flyttade, omordnade, inaktiverade kort; kategorier; kursfält. Varnar för progress som påverkas och för kort som ändrats i admin sedan senaste synk. |
-| `kuggfri apply [kurs] [--mal prod] [--ja] [--radera] [--tvinga]` | Visar planen, ber om bekräftelse (`--ja` hoppar över), kör `sync_deck` i en transaktion. Kort som saknas i filerna inaktiveras; `--radera` tar bort dem (och deras progress) på riktigt. `--tvinga` skriver över admin-ändringar; annars stoppar de planen. Mot prod: backup tas först. |
+| `kuggfri apply [kurs] [--mal prod] [--ja] [--radera] [--tvinga] [--sajt <url>]` | Visar planen, ber om bekräftelse (`--ja` hoppar över), kör `sync_deck` i en transaktion. Kort som saknas i filerna inaktiveras; `--radera` tar bort dem (och deras progress) på riktigt. `--tvinga` skriver över admin-ändringar; annars stoppar de planen. Mot prod: backup tas först. Rensar sajtens innehållscache efteråt (kräver `CRON_SECRET`; annars syns ändringen inom fem minuter). |
 | `kuggfri pull <kurs> [--mal prod]` | Skriver databasens innehåll till filerna (kort som ändrats eller skapats i admin får nycklar). Resultatet granskas som en git-diff. |
 | `kuggfri konvertera <fil.csv/json> --kurs <key> --kategori <key> [--titel …]` | Brainscape-/CSV-/JSON-material → ny eller utökad kortfil, med samma normalisering som i dag (typografi, `→`, nedsänkta formler, dubbletter markerade). |
 | `kuggfri ny-kurs <key> --titel …` | Skapar `content/<key>/kurs.json` och en första kortfil. |
@@ -225,7 +225,14 @@ Att flytta ett kort till en annan *kategori* räknas däremot som innehåll och 
   fungerar och att ett kort som inaktiverats via apply inte syns för studenten.
 - `kuggfri kontrollera` ingår i `npm run verify`.
 
-## 9. Vad som inte ändras
+## 9. Cachen
+
+Publikt innehåll cachas fem minuter på servern och rensas normalt av admin-gränssnittet när något
+sparas där. Pipelinen skriver direkt till databasen och kan inte rensa cachen den vägen, så `apply`
+anropar `POST /api/revalidate` (skyddad med `CRON_SECRET`) efteråt. Utan hemligheten syns ändringen
+ändå, men först när cachen går ut.
+
+## 10. Vad som inte ändras
 
 - Admin-UI:t och examinatorns redigering fungerar som i dag. Examinatorn kan fortsätta rätta
   kort i webbläsaren; pipelinen drar in ändringarna med `pull`.
@@ -233,7 +240,7 @@ Att flytta ett kort till en annan *kategori* räknas däremot som innehåll och 
   bulk är `konvertera` + `apply`.
 - Studentsidan, schemat, statistiken: orörda. `is_active = false` respekteras redan överallt.
 
-## 10. Felsökning
+## 11. Felsökning
 
 | Symptom | Orsak och åtgärd |
 |---|---|
@@ -245,7 +252,7 @@ Att flytta ett kort till en annan *kategori* räknas däremot som innehåll och 
 | `deck_snapshot` finns inte (mot prod) | Migrationen är inte pushad än. Kör `supabase db push` först. |
 | `apply --mal prod` klagar på storleken | Planen skickas som en JSON-sats via Management API:t. Vid mycket stora ändringar: dela upp i flera `apply` (t.ex. en kategori i taget genom att lägga till kategorierna stegvis), eller kör en gång med `--db-url "<connection string från Supabase → Settings → Database>"`, som inte har någon sådan gräns. |
 
-## 11. Arbetsordning i sessionen
+## 12. Arbetsordning i sessionen
 
 1. Migration (nycklar, hashar, `deck_snapshot`, `sync_deck`) med RLS-tester.
 2. `lib/content/`: modell, kortfilsparser och -skrivare, nyckelhärledning, hashning, planerare.
@@ -261,7 +268,7 @@ Uppskattad omfattning: en till två arbetsdagar. Inget av det ovanstående behö
 tisdagen; det kan byggas parallellt med lanseringsveckan och appliceras när planen mot produktion
 visar noll ändringar i innehållet.
 
-## 12. Beslut
+## 13. Beslut
 
 - Markdown-kortfiler som källformat, CSV/JSON som inmatning.
 - Inaktivera i stället för radera som standard.

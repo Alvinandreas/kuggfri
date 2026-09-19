@@ -130,7 +130,7 @@ I Vercel → Project → Settings → Environment Variables (Production):
 | `SMTP_USER` | mejladressen, t.ex. `hej@kuggfri.com` |
 | `SMTP_PASS` | lösenordet |
 | `EMAIL_FROM` | `Kuggfri <hej@kuggfri.com>` |
-| `CRON_SECRET` | en lång slumpsträng (Vercel skickar den som Bearer-token till cron-jobbet) |
+| `CRON_SECRET` | en lång slumpsträng. Vercel skickar den som Bearer-token till cron-jobbet, och innehållspipelinen använder den för att rensa innehållscachen efter `apply` |
 | `SUPABASE_SERVICE_ROLE_KEY` | från Supabase → Project Settings → API (bara här, aldrig `NEXT_PUBLIC_`) |
 
 Testa manuellt (ersätt hemligheten):

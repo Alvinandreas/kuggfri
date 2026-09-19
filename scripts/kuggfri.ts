@@ -3,7 +3,7 @@
  *
  *   npm run kuggfri -- kontrollera [kurs]
  *   npm run kuggfri -- plan [kurs] [--mal prod]
- *   npm run kuggfri -- apply [kurs] [--mal prod] [--ja] [--radera] [--tvinga]
+ *   npm run kuggfri -- apply [kurs] [--mal prod] [--ja] [--radera] [--tvinga] [--sajt <url>]
  *   npm run kuggfri -- pull <kurs> [--mal prod]
  *   npm run kuggfri -- konvertera <fil> --kurs <key> --kategori <key> [--titel "..."]
  *   npm run kuggfri -- ny-kurs <key> --titel "..." [--kurskod ABC123]
@@ -188,6 +188,32 @@ function printPlan(plan: ContentPlan, target: Target): void {
   say();
 }
 
+/**
+ * Rensar sajtens cache för publikt innehåll efter en apply. Pipelinen skriver direkt till
+ * databasen, så Next.js vet annars inte att innehållet ändrats (fem minuters cache).
+ * Kräver CRON_SECRET; saknas den skrivs bara en upplysning.
+ */
+async function revalidate(args: Args, target: Target): Promise<void> {
+  const secret = process.env.CRON_SECRET;
+  const site =
+    (typeof args.flags.sajt === "string" ? args.flags.sajt : undefined) ??
+    (target.kind === "linked" ? process.env.NEXT_PUBLIC_SITE_URL ?? "https://kuggfri.com" : "http://localhost:3000");
+  if (!secret) {
+    say(dim(`Cachen rensas inom fem minuter. Sätt CRON_SECRET för att rensa direkt (${site}).`));
+    return;
+  }
+  try {
+    const res = await fetch(`${site.replace(/\/$/, "")}/api/revalidate`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${secret}` },
+    });
+    if (res.ok) say(dim(`Cachen rensad på ${site}.`));
+    else say(`${C.yellow}Kunde inte rensa cachen (${res.status}).${C.reset} Innehållet syns inom fem minuter ändå.`);
+  } catch {
+    say(dim("Kunde inte nå sajten för cacherensning. Innehållet syns inom fem minuter ändå."));
+  }
+}
+
 async function confirm(question: string): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   try {
@@ -304,6 +330,7 @@ async function cmdApply(args: Args): Promise<void> {
     const rows = query<{ data: Record<string, number> }>(target, sql);
     const result = rows[0]?.data ?? {};
     say(`${C.green}Klart.${C.reset} ${Object.entries(result).map(([k, v]) => `${k}: ${v}`).join(", ")}`);
+    await revalidate(args, target);
     say();
   }
 }

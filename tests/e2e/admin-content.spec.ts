@@ -166,6 +166,9 @@ test.describe("examinator", () => {
     await hint.fill(original ? original : "");
     await page.getByTestId("card-save").click();
     await expect(page.getByRole("status").filter({ hasText: "Sparat." })).toBeVisible();
+    // Knappen är nedtonad (opacity 60 %) medan sparandet pågår; axe skulle då läsa
+    // det som ett kontrastfel. Vänta tills den är klickbar igen innan kontrollen.
+    await expect(page.getByTestId("card-save")).toBeEnabled();
     await expectNoSeriousA11yViolations(page);
   });
 });

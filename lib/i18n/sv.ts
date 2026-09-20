@@ -62,7 +62,6 @@ export const sv = {
     modeTrickyHelp: "Bara kort med låg skattning (1–2). Kort du aldrig sett räknas som kluriga tills de fått en skattning.",
     trickyEmptyCategory: "Inga kluriga kort kvar",
     summaryTricky: (n: number) => (n === 1 ? "1 klurigt kort" : `${n} kluriga kort`),
-    selection: "Urval",
     selectionAll: "Hela decket",
     selectionCategory: "Kategori",
     uncategorized: "Utan kategori",
@@ -92,8 +91,6 @@ export const sv = {
     categories: "Kategorier",
     progressTitle: "Din progress",
     seen: (n: number, total: number) => `${n} av ${total} kort sedda`,
-    resetDeck: "Nollställ det här decket",
-    resetSchedule: "Nollställ schemat, behåll skattningarna",
     resetScheduleHelp: "Alla kort blir nya igen men dina 1–5-skattningar sparas.",
     resetAll: "Nollställ all progress",
     resetConfirmTitle: "Är du säker?",
@@ -139,7 +136,6 @@ export const sv = {
     shareReadinessShared: "Delad.",
   },
   stats: {
-    title: "Din progress",
     learned: "Inlärda kort",
     learnedHelp: "Senaste skattning 5",
     streak: "Dagar i rad",
@@ -152,10 +148,8 @@ export const sv = {
     reviewsPerDay: "Repetitioner per dag",
     reviewsPerDayHelp: "Senaste 14 dagarna",
     seriesLearned: "Inlärda",
-    reviews: "Repetitioner",
     day: "Dag",
     empty: "Diagrammen fylls på när du börjar repetera.",
-    days: (n: number) => (n === 1 ? "1 dag" : `${n} dagar`),
     cards: (n: number) => (n === 1 ? "1 kort" : `${n} kort`),
   },
   study: {
@@ -183,7 +177,6 @@ export const sv = {
     skip: "Hoppa över",
     remaining: (n: number) => (n === 1 ? "1 kort kvar" : `${n} kort kvar`),
     position: (i: number, total: number) => `Kort ${i} av ${total}`,
-    category: "Kategori",
     cardAnnounce: (i: number, total: number) => `Kort ${i} av ${total}. Framsidan visas.`,
     flippedAnnounce: "Baksidan visas.",
     ratedAnnounce: (r: number) => `Skattat ${r} av 5.`,
@@ -317,12 +310,8 @@ export const sv = {
     close: "Stäng",
     save: "Spara",
     delete: "Ta bort",
-    edit: "Redigera",
-    add: "Lägg till",
     back: "Tillbaka",
     loading: "Laddar…",
-    error: "Något gick fel.",
-    no: "Nej",
     notFound: "Sidan finns inte.",
     forbiddenTitle: "Åtkomst nekad",
     forbiddenBody: "Du har inte behörighet till den här sidan.",
@@ -370,7 +359,6 @@ export const sv = {
     dragHandle: "Dra för att flytta",
     moveUp: "Flytta upp",
     moveDown: "Flytta ner",
-    import: "Importera",
     importTitle: "Importera kort",
     importHelp:
       "CSV eller JSON med kolumnerna front, back, hint, category, sort_order. Endast front och back är obligatoriska.",
@@ -391,7 +379,6 @@ export const sv = {
     importBefore: "Före",
     importAfter: "Efter",
     export: "Exportera JSON",
-    stats: "Statistik",
     statsReviews: "Genomgångna kort",
     statsAvg: "Snittskattning",
     statsCard: "Kort",
@@ -407,7 +394,6 @@ export const sv = {
     importTooMany: (max: number) => `Importen innehåller fler än ${max} kort. Dela upp den i flera filer.`,
     invalidSlug: "Ogiltig slug.",
     invalidDate: "Ogiltigt datum. Använd formatet ÅÅÅÅ-MM-DD.",
-    open: "Öppna",
     viewDeck: "Visa decket",
     categoriesHelp:
       "Innehållet är ordnat i kategorier i samma ordning som studenterna ser dem. Klicka på en kategori för att se och redigera dess kort. Dra i handtaget för att ändra ordningen.",
@@ -574,5 +560,3 @@ export const sv = {
     retry: "Försök igen",
   },
 } as const;
-
-export type Strings = typeof sv;

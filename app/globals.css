@@ -124,6 +124,7 @@
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-focus: var(--focus);
+  /* chart-1 bär alla diagram i dag; 2 och 3 finns färdiga för när ett diagram behöver flera serier. */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

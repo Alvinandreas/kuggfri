@@ -12,6 +12,8 @@ byggt från de Brainscape-set som redan använts av två årskullar.
 Läs också [PLAN.md](PLAN.md), [DECISIONS.md](DECISIONS.md), [BLOCKERS.md](BLOCKERS.md),
 [SUMMARY.md](SUMMARY.md), omvärldsanalysen och arbetsplanen i [docs/OMVARLDSANALYS.md](docs/OMVARLDSANALYS.md)
 samt återställningsrutinen i [docs/ATERSTALLNING.md](docs/ATERSTALLNING.md) (den ersätter kodfrysning).
+Inför studentlanseringen: körordningen i [docs/LANSERING.md](docs/LANSERING.md) och talarpunkterna i
+[docs/PRESENTATION-STUDENTER.md](docs/PRESENTATION-STUDENTER.md).
 
 ## Starta lokalt
 

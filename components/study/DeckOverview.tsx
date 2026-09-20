@@ -1,32 +1,21 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { nextDueDate, queueStats } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
 import { ProgressStats } from "@/components/stats/ProgressStats";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
-import {
-  categoryStats,
-  filterCards,
-  learnedRatio,
-  serializeSelection,
-  trickyCards,
-  type SelectableCard,
-  type Selection,
-  UNCATEGORIZED_ID,
-} from "@/lib/study/selection";
+import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } from "@/lib/study/selection";
 import { formatRelative } from "@/lib/time/format";
-import { DAILY_NEW_CHOICES, EXAM_SIZE, estimateMinutes, examPhase, parseExamDate, planNewCards } from "@/lib/study/plan";
+import { estimateMinutes } from "@/lib/study/plan";
+import { planDeckSession } from "@/lib/study/deck-plan";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
-import { countIntroducedToday } from "@/lib/stats/progress-stats";
-import QRCode from "qrcode";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
-import { Button, buttonClass } from "@/components/ui/Button";
-import { Select } from "@/components/ui/Select";
-import { CategoryTag } from "@/components/ui/CategoryTag";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { CategoryTable, type SortMode } from "./CategoryTable";
+import { SessionPanel } from "./SessionPanel";
+import { ShareDeck } from "./ShareDeck";
 
 type Props = {
   deck: {
@@ -43,8 +32,6 @@ type Props = {
   userId: string | null;
 };
 
-type SortMode = "deck" | "learned";
-
 export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
@@ -55,27 +42,15 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const [confirmReset, setConfirmReset] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
-  const [qrSvg, setQrSvg] = useState<string | null>(null);
-  const [showQr, setShowQr] = useState(false);
 
   useEffect(() => {
     setPrefs(readPrefs(window.localStorage));
   }, []);
-  function updatePrefs(next: StudyPrefs) {
+  const updatePrefs = useCallback((next: StudyPrefs) => {
     setPrefs(next);
     writePrefs(window.localStorage, next);
-  }
-
-  // QR-koden renderas först när den efterfrågas.
-  useEffect(() => {
-    if (!showQr || qrSvg) return;
-    const url = `${window.location.origin}/d/${deck.slug}`;
-    QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M" })
-      .then(setQrSvg)
-      .catch(() => setQrSvg(null));
-  }, [showQr, qrSvg, deck.slug]);
+  }, []);
 
   const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
   // Kort utan kategori får en egen rad ("Utan kategori") så att de aldrig försvinner ur urvalet.
@@ -114,7 +89,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
       ),
     [cards, progress, tableCategories],
   );
-  const sortedCategories = useMemo(() => {
+  const categoryRows = useMemo(() => {
     const byId = new Map(perCategory.map((s) => [s.categoryId, s] as const));
     const list = tableCategories.map((c) => ({ ...c, stats: byId.get(c.id)! }));
     if (sortMode === "learned") {
@@ -125,26 +100,20 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
-  function toggleCategory(id: string) {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return tableCategories.filter((c) => next.has(c.id)).map((c) => c.id);
-    });
-  }
-
-  // Urvalet: valda kategorier (eller hela decket). I läget kluriga kort räknas bara kluriga kort.
-  const categorySelection = useMemo<Selection>(
-    () => (selectedIds.length > 0 ? { kind: "categories", categoryIds: selectedIds } : { kind: "all" }),
-    [selectedIds],
+  const toggleCategory = useCallback(
+    (id: string) => {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        // Håll urvalet i kursens ordning, oavsett i vilken ordning rutorna kryssats i.
+        return tableCategories.filter((c) => next.has(c.id)).map((c) => c.id);
+      });
+    },
+    [tableCategories],
   );
-  const selectedCards = useMemo(() => filterCards(cards, progress ?? {}, categorySelection), [cards, progress, categorySelection]);
-  const selectionCards = useMemo(
-    () => (mode === "tricky" ? trickyCards(selectedCards, progress ?? {}) : selectedCards),
-    [mode, selectedCards, progress],
-  );
-  const selectionLearned = useMemo(() => selectionCards.filter((c) => progress?.[c.id]?.self_rating === 5).length, [selectionCards, progress]);
+  const selectAll = useCallback((all: boolean) => setSelectedIds(all ? tableCategories.map((c) => c.id) : []), [tableCategories]);
+  const selectOnly = useCallback((id: string) => setSelectedIds([id]), []);
 
   // I läget kluriga kort går bara kategorier med kluriga kort att välja; övriga avmarkeras.
   useEffect(() => {
@@ -152,28 +121,10 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     setSelectedIds((prev) => prev.filter((id) => (perCategory.find((s) => s.categoryId === id)?.tricky ?? 0) > 0));
   }, [mode, perCategory]);
 
-  const effectiveSelection: Selection = mode === "random" ? { kind: "all" } : categorySelection;
-  const selectionCount = mode === "random" ? cards.length : mode === "exam" ? Math.min(EXAM_SIZE, selectionCards.length) : selectionCards.length;
-  const startHref = `/d/${deck.slug}/plugga?mode=${mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
-
-  // Tentaplan och dosering för schemalagd repetition, räknat på urvalet.
-  const phase = useMemo(() => examPhase(parseExamDate(deck.exam_date)), [deck.exam_date]);
-  const selStats = useMemo(() => (progress ? queueStats(selectedCards.map((c) => c.id), progress, new Date()) : null), [selectedCards, progress]);
   const plan = useMemo(
-    () =>
-      selStats
-        ? planNewCards({ newRemaining: selStats.new, introducedToday: countIntroducedToday(reviews, new Date()), dailyGoal: prefs.dailyNew, phase })
-        : null,
-    [selStats, reviews, prefs.dailyNew, phase],
+    () => planDeckSession({ deck, cards, progress, reviews, mode, selectedIds, dailyNew: prefs.dailyNew }),
+    [deck, cards, progress, reviews, mode, selectedIds, prefs.dailyNew],
   );
-  const finalReview = phase.kind === "final";
-  const sessionDue = selStats?.due ?? 0;
-  const sessionNew = finalReview ? 0 : Math.min(selStats?.new ?? 0, plan?.limit ?? 0);
-  const sessionCards = finalReview ? selectionCount : sessionDue + sessionNew;
-  const nothingDue = mode === "fsrs" && selStats !== null && sessionCards === 0;
-  const canStart = selectionCount > 0 && !nothingDue;
-  const moreNew = Math.min(prefs.dailyNew, selStats?.new ?? 0);
-  const moreHref = `${startHref}&nya=${moreNew}`;
 
   async function doResetDeck() {
     if (!store) return;
@@ -187,33 +138,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     } finally {
       setBusy(false);
       setConfirmReset(false);
-    }
-  }
-
-  async function copyLink() {
-    const url = `${window.location.origin}/d/${deck.slug}`;
-    let ok = false;
-    try {
-      await navigator.clipboard.writeText(url);
-      ok = true;
-    } catch {
-      // Reserv för webbläsare utan clipboard-API eller utan behörighet.
-      const ta = document.createElement("textarea");
-      ta.value = url;
-      ta.setAttribute("readonly", "");
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        ok = document.execCommand("copy");
-      } finally {
-        ta.remove();
-      }
-    }
-    if (ok) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
     }
   }
 
@@ -232,16 +156,18 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
           ) : null}
           {deck.description ? <p className="mt-3 text-muted">{deck.description}</p> : null}
           <p className="mt-3 text-sm text-muted">{sv.deck.totalCards(cards.length)}</p>
-          {phase.kind !== "none" && deck.exam_date ? (
+          {plan.phase.kind !== "none" && deck.exam_date ? (
             <p className="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm" data-testid="exam-line">
-              <span className="font-medium">{phase.kind === "past" ? sv.deck.examDate(deck.exam_date) : sv.deck.examIn(phase.daysLeft)}</span>
+              <span className="font-medium">
+                {plan.phase.kind === "past" ? sv.deck.examDate(deck.exam_date) : sv.deck.examIn(plan.phase.daysLeft)}
+              </span>
               <span className="text-muted">
-                {phase.kind === "past"
+                {plan.phase.kind === "past"
                   ? sv.deck.examPast
-                  : phase.kind === "final"
+                  : plan.phase.kind === "final"
                     ? sv.deck.examFinalHelp
-                    : plan?.catchUp && plan.neededPerDay !== null
-                      ? sv.deck.examCatchUp(plan.neededPerDay)
+                    : plan.newCardPlan?.catchUp && plan.newCardPlan.neededPerDay !== null
+                      ? sv.deck.examCatchUp(plan.newCardPlan.neededPerDay)
                       : `${deck.exam_date}. ${sv.deck.examUpcomingHelp}`}
               </span>
             </p>
@@ -270,7 +196,9 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
           ) : seen === 0 && reviews.length === 0 ? (
             <div className="mt-2 grid gap-1" data-testid="first-visit">
               <p className="font-medium">{sv.deck.firstVisitTitle}</p>
-              <p className="text-muted">{sv.deck.firstVisitBody(Math.min(prefs.dailyNew, cards.length), estimateMinutes(Math.min(prefs.dailyNew, cards.length)))}</p>
+              <p className="text-muted">
+                {sv.deck.firstVisitBody(Math.min(prefs.dailyNew, cards.length), estimateMinutes(Math.min(prefs.dailyNew, cards.length)))}
+              </p>
             </div>
           ) : (
             <div className="mt-4">
@@ -301,259 +229,33 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
           ) : null}
         </section>
 
-        {/* Kategorier: klickbar tabell */}
-        <section aria-labelledby="kategorier-rubrik" className="order-4 grid gap-3">
-          <div className="flex flex-wrap items-end justify-between gap-2">
-            <div>
-              <h2 id="kategorier-rubrik" className="text-lg font-semibold">
-                {sv.deck.categories}
-              </h2>
-              <p className="text-sm text-muted">{sv.deck.categoriesHelp}</p>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <label htmlFor="sortering" className="text-muted">
-                {sv.deck.sortBy}
-              </label>
-              <Select fit id="sortering" value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
-                <option value="deck">{sv.deck.sortDeckOrder}</option>
-                <option value="learned">{sv.deck.sortLeastLearned}</option>
-              </Select>
-            </div>
-          </div>
+        <CategoryTable
+          rows={categoryRows}
+          colorIndex={colorIndex}
+          selected={selectedSet}
+          mode={mode}
+          sortMode={sortMode}
+          onSortMode={setSortMode}
+          onToggle={toggleCategory}
+          onOnly={selectOnly}
+          onSelectAll={selectAll}
+        />
 
-          <div className="rounded-lg border border-line bg-surface">
-            <table className="w-full table-fixed text-sm">
-              <thead>
-                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th scope="col" className="w-12 py-3 pl-4 pr-2 align-middle">
-                    <input
-                      type="checkbox"
-                      aria-label={selectedSet.size === tableCategories.length ? sv.deck.selectNone : sv.deck.selectAll}
-                      checked={selectedSet.size === tableCategories.length && tableCategories.length > 0}
-                      onChange={(e) => setSelectedIds(e.target.checked ? tableCategories.map((c) => c.id) : [])}
-                      className="h-4 w-4 accent-[var(--accent)]"
-                    />
-                  </th>
-                  <th scope="col" className="px-2 py-2 font-medium">
-                    {sv.deck.selectionCategory}
-                  </th>
-                  <th scope="col" className="w-12 px-1 py-2 text-right font-medium sm:w-24 sm:px-2">
-                    <span className="sm:hidden">{sv.deck.colStudiedShort}</span>
-                    <span className="hidden sm:inline">{sv.deck.colStudied}</span>
-                  </th>
-                  <th scope="col" className="w-12 px-1 py-2 text-right font-medium sm:w-24 sm:px-2" title={sv.deck.learnedHelp}>
-                    <span className="sm:hidden">{sv.deck.colLearnedShort}</span>
-                    <span className="hidden sm:inline">{sv.deck.colLearned}</span>
-                  </th>
-                  <th scope="col" className="w-12 px-1 py-2 text-right font-medium sm:w-20 sm:px-2" title={sv.deck.knownHelp}>
-                    <span className="sm:hidden">{sv.deck.colKnownShort}</span>
-                    <span className="hidden sm:inline">{sv.deck.colKnown}</span>
-                  </th>
-                  <th scope="col" className="hidden w-32 px-3 py-2 sm:table-cell">
-                    <span className="sr-only">{sv.deck.colLearned}</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedCategories.map((c) => {
-                  const checked = selectedSet.has(c.id);
-                  const learnedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.learned / c.stats.total) * 100);
-                  const studiedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.studied / c.stats.total) * 100);
-                  const selectable = mode !== "tricky" || c.stats.tricky > 0;
-                  return (
-                    <tr
-                      key={c.id}
-                      className={`border-b border-line last:border-b-0 ${checked ? "bg-accent-soft/60" : ""} ${selectable ? "" : "opacity-45"}`}
-                      data-testid="category-row"
-                    >
-                      <td className="py-2.5 pl-4 pr-2 align-middle">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          disabled={!selectable}
-                          onChange={() => toggleCategory(c.id)}
-                          aria-label={c.title}
-                          title={selectable ? undefined : sv.deck.trickyEmptyCategory}
-                          className="h-4 w-4 accent-[var(--accent)] disabled:cursor-not-allowed"
-                        />
-                      </td>
-                      <td className="px-2 py-2.5">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedIds([c.id])}
-                          disabled={!selectable}
-                          className="text-left disabled:cursor-not-allowed"
-                          title={selectable ? sv.deck.categoriesHelp : sv.deck.trickyEmptyCategory}
-                        >
-                          <CategoryTag title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} size="md" />
-                        </button>
-                        {mode === "tricky" ? <span className="ml-2 text-xs text-muted">{sv.deck.summaryTricky(c.stats.tricky)}</span> : null}
-                      </td>
-                      <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.studied, c.stats.total)}</td>
-                      <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.learned, c.stats.total)}</td>
-                      <td className="px-2 py-2.5 text-right tabular-nums text-muted" data-testid="category-known">
-                        {c.stats.studied >= 3 && c.stats.total > 0 ? `${Math.round((c.stats.known / c.stats.total) * 100)} %` : sv.deck.knownTooEarly}
-                      </td>
-                      <td className="hidden px-3 py-2.5 sm:table-cell">
-                        <div className="h-2 w-full overflow-hidden rounded bg-surface-2" aria-hidden="true">
-                          <div className="relative h-full">
-                            <div className="absolute inset-y-0 left-0 rounded bg-chart-1/20" style={{ width: `${studiedPct}%` }} />
-                            <div className="absolute inset-y-0 left-0 rounded bg-rate-5" style={{ width: `${learnedPct}%` }} />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Dela, källa och diskret nollställning (gäster har ingen kontosida) */}
-        <section className="order-6 grid gap-4 text-sm text-muted">
-          <div className="flex w-fit max-w-full flex-wrap items-center gap-x-8 gap-y-4 rounded-lg border border-line bg-surface p-5 shadow-card">
-            <div className="min-w-0">
-              <h2 className="text-lg font-semibold text-fg">{sv.deck.share}</h2>
-              <p className="mt-1">{sv.deck.shareHelp}</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                variant={copied ? "secondary" : "primary"}
-                onClick={copyLink}
-                aria-live="polite"
-                className={copied ? "border-accent! bg-accent-soft! text-accent!" : ""}
-                data-testid="copy-link"
-              >
-                {copied ? sv.deck.shareCopied : sv.deck.shareCopy}
-              </Button>
-              <Button variant="secondary" onClick={() => setShowQr((v) => !v)} aria-expanded={showQr} data-testid="toggle-qr">
-                {showQr ? sv.deck.hideQr : sv.deck.showQr}
-              </Button>
-            </div>
-            {showQr ? (
-              <div className="flex w-full flex-wrap items-center gap-4" data-testid="qr-code">
-                {qrSvg ? (
-                  <div
-                    role="img"
-                    aria-label={sv.deck.qrAlt(`kuggfri.com/d/${deck.slug}`)}
-                    className="h-44 w-44 shrink-0 rounded-md bg-white p-2 [&_svg]:h-full [&_svg]:w-full"
-                    dangerouslySetInnerHTML={{ __html: qrSvg }}
-                  />
-                ) : (
-                  <span className="text-muted">{sv.common.loading}</span>
-                )}
-                <p className="max-w-xs">{sv.deck.qrHelp}</p>
-              </div>
-            ) : null}
-          </div>
-        </section>
+        <ShareDeck slug={deck.slug} />
       </div>
 
       {/* Höger kolumn: läge, urval och Starta (sticky på desktop) */}
       <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
-        <section aria-labelledby="lage-rubrik" className="order-2 grid gap-4 rounded-lg border border-line bg-surface p-5 shadow-card">
-          <h2 id="lage-rubrik" className="text-lg font-semibold">
-            {sv.deck.chooseMode}
-          </h2>
-          <fieldset className="grid gap-2">
-            <legend className="sr-only">{sv.deck.chooseMode}</legend>
-            {(
-              [
-                ["fsrs", sv.deck.modeFsrs, sv.deck.modeFsrsHelp],
-                ["tricky", sv.deck.modeTricky, sv.deck.modeTrickyHelp],
-                ["free", sv.deck.modeFree, sv.deck.modeFreeHelp],
-                ["random", sv.deck.modeRandom, sv.deck.modeRandomHelp],
-                ["exam", sv.deck.modeExam, sv.deck.modeExamHelp],
-              ] as const
-            ).map(([value, label, help]) => (
-              <label
-                key={value}
-                className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
-                  mode === value ? "border-accent bg-accent-soft" : "border-line bg-bg hover:border-line-strong"
-                }`}
-              >
-                <input type="radio" name="mode" value={value} checked={mode === value} onChange={() => setMode(value)} className="mt-1 accent-[var(--accent)]" />
-                <span>
-                  <span className="block font-medium">{label}</span>
-                  <span className="block text-sm text-muted">{help}</span>
-                </span>
-              </label>
-            ))}
-          </fieldset>
-
-          {mode !== "random" ? (
-            <div className="grid gap-2 rounded-lg border border-line bg-bg p-3" data-testid="selection-summary">
-              <p className="text-sm font-medium">{sv.deck.summaryTitle}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {selectedTitles.length === 0 ? (
-                  <span className="text-sm text-muted">{sv.deck.summaryAll}</span>
-                ) : (
-                  selectedTitles.map((c) => <CategoryTag key={c.id} title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} />)
-                )}
-              </div>
-              <p className="text-sm text-muted">
-                {mode === "tricky" ? sv.deck.summaryTricky(selectionCount) : sv.deck.summaryCards(selectionCount)}
-                {progress && mode !== "tricky" ? ` · ${sv.deck.summaryLearned(selectionLearned)}` : ""}
-              </p>
-            </div>
-          ) : null}
-
-          <div className="grid gap-2">
-            {canStart ? (
-              <Link href={startHref} className={buttonClass("primary", "lg")} data-testid="start-session">
-                {sv.deck.start}
-              </Link>
-            ) : (
-              <Button size="lg" disabled data-testid="start-session">
-                {sv.deck.start}
-              </Button>
-            )}
-            <span className="text-center text-sm text-muted" data-testid="start-info">
-              {mode === "fsrs" && selStats
-                ? nothingDue
-                  ? selStats.new > 0
-                    ? sv.summary.doneTitle
-                    : sv.deck.nothingDue
-                  : sv.deck.sessionPlan(sessionDue, finalReview ? selectionCount : sessionNew, estimateMinutes(sessionCards))
-                : `${sv.home.cards(selectionCount)} · cirka ${estimateMinutes(selectionCount)} min`}
-            </span>
-            {mode === "fsrs" && nothingDue && moreNew > 0 ? (
-              <Link href={moreHref} className="text-center text-sm text-accent underline underline-offset-2" data-testid="start-more">
-                {sv.summary.continueNew(moreNew)}
-              </Link>
-            ) : null}
-          </div>
-
-          <details className="text-sm">
-            <summary className="cursor-pointer text-muted hover:text-fg">{sv.deck.dailyGoal}</summary>
-            <div className="mt-3 grid gap-3">
-              <label className="grid gap-1">
-                <span className="sr-only">{sv.deck.dailyGoal}</span>
-                <Select fit value={String(prefs.dailyNew)} onChange={(e) => updatePrefs({ ...prefs, dailyNew: Number(e.target.value) })} data-testid="daily-new">
-                  {DAILY_NEW_CHOICES.map((n) => (
-                    <option key={n} value={n}>
-                      {sv.deck.newCards(n)} per dag
-                    </option>
-                  ))}
-                </Select>
-                <span className="text-xs text-muted">{sv.deck.dailyGoalHelp}</span>
-              </label>
-              <label className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  checked={prefs.weekdaysOnly}
-                  onChange={(e) => updatePrefs({ ...prefs, weekdaysOnly: e.target.checked })}
-                  className="mt-1 h-4 w-4 accent-[var(--accent)]"
-                />
-                <span>
-                  <span className="block">{sv.deck.weekdaysOnly}</span>
-                  <span className="block text-xs text-muted">{sv.deck.weekdaysOnlyHelp}</span>
-                </span>
-              </label>
-            </div>
-          </details>
-        </section>
+        <SessionPanel
+          mode={mode}
+          onMode={setMode}
+          plan={plan}
+          selectedTitles={selectedTitles}
+          colorIndex={colorIndex}
+          progressReady={progress !== null}
+          prefs={prefs}
+          onPrefs={updatePrefs}
+        />
       </div>
 
       <ConfirmDialog

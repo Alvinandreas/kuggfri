@@ -9,23 +9,7 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { StatTile } from "@/components/stats/StatTile";
 import { ratingClass } from "./RatingButtons";
 import { CategoryTag } from "@/components/ui/CategoryTag";
-import type { StudyCard } from "./StudySession";
-
-/** Dagsläget efter en schemalagd session: underlag för "Klar för i dag". */
-export type TodaySummary = {
-  reviewsToday: number;
-  streak: number;
-  freezesLeft: number;
-  freezeUsedRecently: boolean;
-  /** Uppskattat antal kort studenten kan just nu. */
-  known: number;
-  total: number;
-  /** Inget förfallet kvar och dagsmålet nått: en tydlig slutpunkt. */
-  done: boolean;
-  /** Länk för att ta fler nya kort utöver dagsmålet, eller null. */
-  continueHref: string | null;
-  continueCount: number;
-};
+import type { StudyCard, TodaySummary } from "./types";
 
 type Props = {
   summary: Summary;

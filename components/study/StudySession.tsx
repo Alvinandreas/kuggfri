@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { applyRating } from "@/lib/fsrs/apply-rating";
-import { countDueBy, nextDueDate, previewIntervals, queueStats, type ScheduleOptions } from "@/lib/fsrs/scheduler";
+import { previewIntervals, type ScheduleOptions } from "@/lib/fsrs/scheduler";
 import {
   canGoPrevious,
   createSession,
@@ -21,23 +21,18 @@ import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs"
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { filterCards, selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
 import { examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
-import { buildProgressStats, countIntroducedToday } from "@/lib/stats/progress-stats";
-import { endOfDay, formatRelative } from "@/lib/time/format";
+import { buildSessionResult, type SessionResult } from "@/lib/study/session-result";
+import { countIntroducedToday } from "@/lib/stats/progress-stats";
+import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Flashcard } from "./Flashcard";
 import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
-import { SessionSummary, type TodaySummary } from "./SessionSummary";
+import { SessionSummary } from "./SessionSummary";
+import type { StudyCard } from "./types";
 
-export type StudyCard = {
-  id: string;
-  category_id: string | null;
-  front: string;
-  back: string;
-  hint: string | null;
-  sort_order: number;
-};
+export type { StudyCard };
 
 type Props = {
   deck: { id: string; slug: string; title: string; exam_date: string | null };
@@ -91,7 +86,6 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   const [confidentWrong, setConfidentWrong] = useState(false);
 
   const cardsById = useMemo(() => new Map(cards.map((c) => [c.id, c] as const)), [cards]);
-  const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
   const categoryTitle = useCallback(
     (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null),
     [categories],
@@ -327,32 +321,20 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
 
   if (session.finished) {
     const summary = summarize(session);
-    const now = new Date();
-    let nextDue: { date: Date; count: number } | null = null;
-    let today: TodaySummary | null = null;
-    if (mode === "fsrs") {
-      const date = nextDueDate(cardIds, progress, now);
-      if (date) nextDue = { date, count: countDueBy(cardIds, progress, endOfDay(date), now) };
-      const stats = buildProgressStats({ cardIds, progress, reviews, now, weekdaysOnly: prefs.weekdaysOnly });
-      const inSelection = filterCards(cards, progress, selection).map((c) => c.id);
-      const q = queueStats(inSelection, progress, now);
-      const done = q.due === 0 && (q.new === 0 || !sessionPlan.finalReview);
-      const continueCount = Math.min(prefs.dailyNew, q.new);
-      today = {
-        reviewsToday: stats.reviewsToday,
-        streak: stats.streak,
-        freezesLeft: stats.freezesLeft,
-        freezeUsedRecently: stats.freezeUsedRecently,
-        known: Math.round(stats.knowledge.known),
-        total: stats.totalCards,
-        done,
-        continueHref:
-          continueCount > 0 && !sessionPlan.finalReview
-            ? `/d/${deck.slug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(selection))}&nya=${continueCount}`
-            : null,
-        continueCount,
-      };
-    }
+    // Bara den schemalagda kön har en slutpunkt för dagen; övriga lägen är fria pass.
+    const result: SessionResult | null =
+      mode === "fsrs"
+        ? buildSessionResult({
+            deckSlug: deck.slug,
+            cards,
+            progress,
+            reviews,
+            selection,
+            dailyNew: prefs.dailyNew,
+            weekdaysOnly: prefs.weekdaysOnly,
+            finalReview: sessionPlan.finalReview,
+          })
+        : null;
     return (
       <SessionSummary
         summary={summary}
@@ -360,8 +342,8 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         categories={categories}
         colorIndex={colorIndex}
         mode={mode}
-        nextDue={nextDue}
-        today={today}
+        nextDue={result?.nextDue ?? null}
+        today={result?.today ?? null}
         deckSlug={deck.slug}
         onPrevious={mode !== "exam" && canGoPrevious(session) ? previous : undefined}
       />

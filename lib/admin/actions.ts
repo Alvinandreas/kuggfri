@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
-import { LIMITS } from "@/lib/admin/limits";
+import { LIMITS, MAX_IMPORT_CARDS } from "@/lib/admin/limits";
 import { CONTENT_TAG } from "@/lib/content/queries";
 import { sv } from "@/lib/i18n/sv";
 import { diffImport } from "@/lib/import/diff";
@@ -287,9 +287,6 @@ export type ImportResult = { created: number; updated: number; newCategories: nu
  * Importerar kort. Diffen räknas om på servern utifrån de tolkade korten, så
  * klientens förhandsvisning är bara en visning av samma logik.
  */
-/** Tak på hur många kort en import får innehålla, så att ett misstag inte fyller databasen. */
-export const MAX_IMPORT_CARDS = 2000;
-
 export async function importCardsAction(deckId: string, cards: ImportCard[]): Promise<ActionResult<ImportResult>> {
   try {
     if (cards.length > MAX_IMPORT_CARDS) return { ok: false, error: sv.admin.importTooMany(MAX_IMPORT_CARDS) };

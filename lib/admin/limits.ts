@@ -4,6 +4,9 @@
  * och ger ett begripligt fel. Ligger i egen fil eftersom en "use server"-modul
  * bara får exportera async-funktioner.
  */
+/** Tak på hur många kort en import får innehålla, så att ett misstag inte fyller databasen. */
+export const MAX_IMPORT_CARDS = 2000;
+
 export const LIMITS = {
   title: 200,
   description: 2000,

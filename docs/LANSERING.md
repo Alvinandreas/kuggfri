@@ -29,6 +29,7 @@ gäller även den här. Blir något fel måndag kväll finns hela natten att lag
 
 - [ ] `npm run verify` grönt lokalt (typecheck, lint, `kuggfri kontrollera`, enhetstester, E2E)
 - [ ] **`npm run build` går igenom** — med dev-servern stoppad
+- [ ] Testkopian på 3001 ombyggd **efter den sista ändringen**
 - [ ] Alvin har klickat igenom http://localhost:3001 och sagt "pusha"
 - [ ] Ingenting i `git status` som inte ska med
 
@@ -44,7 +45,15 @@ build-manifestet, vilket ger 500-svar på allt och gör en E2E-körning meningsl
 npm run build
 ```
 
-Utan de tre punkterna börjar vi inte. En lansering som behöver felsökas klockan 09:45 på tisdag är
+Ordningen på de två mittersta punkterna är inte godtycklig. Testkopian på 3001 är ett
+produktionsbygge i `.next-prod`, och den blir inte nyare av sig själv: byggdes den senast före
+helgens arbete verifierar Alvin kod som är två dygn gammal och godkänner något han inte sett.
+
+```bash
+NEXT_DIST_DIR=.next-prod npx next build
+```
+
+Utan de fem punkterna börjar vi inte. En lansering som behöver felsökas klockan 09:45 på tisdag är
 värre än en lansering som sker måndag kväll.
 
 ---

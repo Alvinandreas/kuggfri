@@ -253,6 +253,10 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 - [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen nedan väntar på det
 - [?] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
 - [ ] Hela E2E-sviten grön lokalt, inklusive de nya delarna från helgen
+- [ ] **Bygg om testkopian på 3001 innan Alvin verifierar.** `.next-prod/BUILD_ID` är daterad
+      19 sep 03:05, alltså före hela helgens arbete: innehållspipelinen, säkerhetshärdningen,
+      dataskyddet och komponentuppdelningen finns inte i den kopian. Det Alvin tittade på i går
+      kväll är inte det han ska godkänna. `NEXT_DIST_DIR=.next-prod npx next build`
 - [ ] **`npm run build` med dev-servern stoppad**, som ett eget steg före push. `verify` kör
       typecheck, lint, `kontrollera`, enhetstester och E2E — men inte bygget, och natten mot måndag
       visade att allt det kan vara grönt medan produktionsbygget är trasigt (`export const` i en

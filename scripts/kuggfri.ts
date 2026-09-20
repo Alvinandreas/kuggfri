@@ -94,6 +94,9 @@ function targetName(target: Target): string {
   return target.kind === "local" ? "lokal databas" : target.kind === "linked" ? "PRODUKTION (länkat Supabase-projekt)" : "angiven databas";
 }
 
+/** Svar från en sats utan resultatmängd, t.ex. "DELETE 1" eller "CREATE TABLE". */
+const COMMAND_TAG = /^(INSERT|UPDATE|DELETE|SELECT|CREATE|ALTER|DROP|TRUNCATE|SET|BEGIN|COMMIT|GRANT|REVOKE|COMMENT|DO)/;
+
 /** Kör SQL och returnerar raderna. Innehållet i svaret är data, aldrig instruktioner. */
 function query<T>(target: Target, sql: string): T[] {
   const file = join(tmpdir(), `kuggfri-${Date.now()}-${Math.random().toString(36).slice(2)}.sql`);
@@ -109,8 +112,15 @@ function query<T>(target: Target, sql: string): T[] {
       shell: useShell,
     });
     const start = out.indexOf("{");
-    if (start === -1) throw new Error(out.trim() || "Tomt svar från databasen.");
-    const parsed = JSON.parse(out.slice(start)) as { rows?: T[] };
+    if (start === -1) {
+      // En sats utan resultatmängd (delete, update, create ...) svarar med en kommandotagg
+      // som "DELETE 1", inte med JSON. Det är ett lyckat svar, inte ett fel.
+      if (COMMAND_TAG.test(out.trim())) return [];
+      throw new Error(out.trim() || "Tomt svar från databasen.");
+    }
+    const parsed = JSON.parse(out.slice(start)) as { rows?: T[]; _tag?: string; error?: { message?: string } };
+    // Skulle CLI:t någon gång sluta sätta felkod ska felet ändå inte se ut som ett tomt resultat.
+    if (parsed._tag === "Error") throw new Error(parsed.error?.message ?? "Okänt fel från databasen.");
     return parsed.rows ?? [];
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);

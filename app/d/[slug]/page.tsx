@@ -10,7 +10,13 @@ type Params = Promise<{ slug: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const data = await getDeckBySlug(slug);
-  return { title: data?.deck.title ?? "Deck" };
+  if (!data) return { title: "Deck" };
+  const description = data.deck.description ?? sv.deck.totalCards(data.cards.length);
+  return {
+    title: data.deck.title,
+    description,
+    openGraph: { title: data.deck.title, description },
+  };
 }
 
 export default async function DeckPage({ params }: { params: Params }) {

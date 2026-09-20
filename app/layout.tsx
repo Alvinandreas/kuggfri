@@ -4,16 +4,30 @@ import { headers } from "next/headers";
 import { sv } from "@/lib/i18n/sv";
 import { NONCE_HEADER } from "@/lib/security/headers";
 import { getCurrentUser } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/supabase/env";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ProgressMigrator } from "@/components/auth/ProgressMigrator";
 
 export const metadata: Metadata = {
+  // Absolut bas för delningsbilderna: utan den blir og:image en relativ adress som
+  // ingen chattklient kan hämta.
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: sv.app.name,
     template: `%s – ${sv.app.name}`,
   },
   description: sv.app.tagline,
+  // Det en länk i en gruppchatt visar upp. Sidorna är noindex, men länkförhandsvisningar
+  // hämtas ändå – och det är så studenterna sprider tjänsten vidare.
+  openGraph: {
+    type: "website",
+    siteName: sv.app.name,
+    locale: "sv_SE",
+    title: sv.app.name,
+    description: sv.app.tagline,
+  },
+  twitter: { card: "summary_large_image" },
   robots: {
     index: false,
     follow: false,

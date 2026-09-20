@@ -230,6 +230,12 @@ export default function PrivacyPage() {
           <li>
             <strong>Hostinger</strong> – e-postutskick för de mejl som beskrivs ovan.
           </li>
+          {/*
+            Byter vi avsändare för Supabases inloggnings- och bekräftelsemejl (steg 1 i
+            docs/LANSERING.md rekommenderar Resend) behandlar den leverantören studenternas
+            e-postadresser och ska stå med här. Raden skrivs när valet är gjort, inte i förväg:
+            ett biträde som inte behandlar några uppgifter gör policyn felaktig åt andra hållet.
+          */}
         </ul>
         <p>
           Leverantörerna är amerikanska företag med verksamhet i EU. Skulle en överföring till tredjeland ske

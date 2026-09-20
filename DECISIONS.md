@@ -179,6 +179,9 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
   mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
   till före lansering till studenter, se docs/DEPLOY.md 3c.
+  **Upphävs vid studentlanseringen:** bekräftelsen slås på i steg 1 i docs/LANSERING.md, direkt efter
+  att egen SMTP är på plats. Utan bekräftelse kan vem som helst registrera sig på examinatorns adress
+  och ärva behörigheten till kursen.
 
 ## Beslut 2026-09-17, efter mötet med Johan
 
@@ -348,6 +351,13 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   i en sådan fil är tillåten för typecheck, eslint, enhetstester och dev-servern, men stoppar
   `next build` — och eftersom dev-servern var igång dygnet runt märktes det inte på flera dygn. Den
   snabba slingan ska fånga det den kan fånga, i stället för att vi litar på att någon kör bygget.
+- **Klickytor är minst 24×24 px, utan att något ritas större.** WCAG 2.5.8 sätter gränsen, och
+  kryssrutorna i kategoritabellen låg på 16×16 — samtidigt som det är studentens huvudsakliga
+  interaktion på en telefon. Rutorna ligger nu i en etikett med utfyllnad (träffyta 32×32, ritad
+  storlek oförändrad 16), och textlänkarna "Nollställ", tillbakalänken i sessionen, "Rapportera fel"
+  och adminnavigeringen har fått `-m-2 p-2`, vilket ger 28–36 px utan att flytta en pixel i
+  layouten. Kvar under 24 px är bara det undantaget täcker: länkar inne i löpande text och
+  hoppa-till-innehållet-länken som bara syns vid fokus.
 - **Bygget körs som eget steg före push** (docs/LANSERING.md steg 0), tills vidare utanför
   `npm run verify`. Vill du ha det i skriptet hör det hemma i `verify`, inte i `verify:unit`, så att
   den snabba slingan förblir snabb.

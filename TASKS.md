@@ -270,13 +270,17 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
       förut eftersom `enable_confirmations` är `false` lokalt. Resultat och procedur i
       docs/LANSERING.md steg 1. Testkontona raderade, config.toml återställd, databasen räknad före
       och efter: identisk
-- [ ] Lastbild: antal databasfrågor och storlek på serverns svar för `/d/materialteknik` och en session. Mätt, inte gissat
+- [x] Lastbild mätt mot produktionsbygget på 3001 (21 sep, commit f217f08): startsidan 25 kB och
+      32 ms, kurssidan 71 kB och 39 ms, en session 99 kB och 57 ms, delningsbilden 50 kB PNG.
+      `/admin` och `/konto` ger 307 till inloggning för utloggad. Mobil 375 px utan horisontell
+      scroll, mörkt läge rätt, noll konsolfel. Inget av det behöver åtgärdas före lansering
 - [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort, kort utan kategori
 
 ### Bör hinnas med (studenterna märker skillnaden)
 
 - [ ] Delningsbild (OG-image) så att en länk i gruppchatten visar ett Kuggfri-kort i stället för en tom ruta
-- [ ] Mobilpass i ljust och mörkt läge: 375 och 768 px, alla sidor, med riktiga texter
+- [~] Mobilpass: 375 px och mörkt läge kontrollerade i rökprovet ovan. Kvar: 768 px och en runda
+      genom admin med riktiga texter
 - [ ] Tillgänglighetsgenomgång: axe på varje sida i E2E och en tangentbordsrunda genom en hel session
 - [ ] "Lägg till på hemskärmen" med i presentationen och infobladet (manifest och ikoner finns redan)
 

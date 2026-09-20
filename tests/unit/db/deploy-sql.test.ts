@@ -39,10 +39,21 @@ describe("supabase/deploy/full.sql", () => {
     expect(cards).toHaveLength(144);
   });
 
-  it("innehåller samma migrationer som supabase/migrations", async () => {
-    const full = readFileSync(join(__dirname, "..", "..", "..", "supabase", "deploy", "full.sql"), "utf8");
+  it("innehåller varje migrations fullständiga innehåll, inte bara filnamnet", async () => {
+    const root = join(__dirname, "..", "..", "..");
+    const full = readFileSync(join(root, "supabase", "deploy", "full.sql"), "utf8");
     const { readdirSync } = await import("node:fs");
-    const files = readdirSync(join(__dirname, "..", "..", "..", "supabase", "migrations")).filter((f) => f.endsWith(".sql")).sort();
-    for (const f of files) expect(full).toContain(`supabase/migrations/${f}`);
+    const dir = join(root, "supabase", "migrations");
+    const files = readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
+    expect(files.length).toBeGreaterThan(0);
+    // Filnamnet räcker inte: en migration kan ändras efter att den bakats in.
+    const normalize = (t: string) => t.replace(/\r\n/g, "\n").trim();
+    for (const f of files) {
+      expect(full).toContain(`supabase/migrations/${f}`);
+      expect(normalize(full), `full.sql är inte uppdaterad efter ändringar i ${f}. Kör npm run deploy:sql.`).toContain(
+        normalize(readFileSync(join(dir, f), "utf8")),
+      );
+    }
+    expect(normalize(full), "full.sql saknar seeden. Kör npm run deploy:sql.").toContain(normalize(readFileSync(join(root, "supabase", "seed.sql"), "utf8")));
   });
 });

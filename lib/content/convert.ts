@@ -5,7 +5,7 @@
  */
 import { parseImport } from "@/lib/import/parse-import";
 import { applyTypography, duplicateKey, normalizeBrainscapeMarkdown } from "@/lib/import/normalize";
-import type { ContentCard, ContentCategory } from "./model";
+import type { ContentCard } from "./model";
 import { slugifyKey, uniqueKey } from "./model";
 
 export type ConvertIssue = { row: number; message: string };
@@ -58,14 +58,4 @@ export function convertCards(text: string, options: ConvertOptions): ConvertResu
   }
 
   return { cards, issues, duplicates };
-}
-
-/** Bygger en hel kategori (kortfil) ur en källfil. */
-export function convertCategory(
-  text: string,
-  input: { key: string; title: string; file: string },
-  options: ConvertOptions,
-): { category: ContentCategory; result: ConvertResult } {
-  const result = convertCards(text, options);
-  return { category: { key: input.key, title: input.title, file: input.file, cards: result.cards }, result };
 }

@@ -54,6 +54,8 @@ export type DeckRow = {
   source_credit: string | null;
   /** Tentadatum YYYY-MM-DD, valfritt. */
   exam_date: string | null;
+  /** Innehållshash vid senaste synk från kurs.json. */
+  source_hash: string | null;
   is_published: boolean;
   sort_order: number;
   created_at: string;
@@ -65,6 +67,10 @@ export type CategoryRow = {
   deck_id: string;
   title: string;
   sort_order: number;
+  /** Stabil nyckel från content/<kurs>/kurs.json. Null = skapad i admin. */
+  key: string | null;
+  /** Innehållshash vid senaste synk från fil. */
+  source_hash: string | null;
 };
 
 export type CardRow = {
@@ -76,6 +82,10 @@ export type CardRow = {
   hint: string | null;
   sort_order: number;
   is_active: boolean;
+  /** Stabil nyckel från kortfilen. Null = skapat i admin, ännu inte draget till filerna. */
+  key: string | null;
+  /** Innehållshash vid senaste synk från fil. */
+  source_hash: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -198,6 +208,7 @@ export type Database = {
           | "course_code"
           | "source_credit"
           | "exam_date"
+          | "source_hash"
           | "is_published"
           | "sort_order"
           | "created_at"
@@ -208,7 +219,7 @@ export type Database = {
       };
       categories: {
         Row: CategoryRow;
-        Insert: Optional<CategoryRow, "id" | "sort_order">;
+        Insert: Optional<CategoryRow, "id" | "sort_order" | "key" | "source_hash">;
         Update: Partial<CategoryRow>;
         Relationships: [];
       };
@@ -216,7 +227,7 @@ export type Database = {
         Row: CardRow;
         Insert: Optional<
           CardRow,
-          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "created_at" | "updated_at"
+          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at"
         >;
         Update: Partial<CardRow>;
         Relationships: [];

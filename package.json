@@ -17,9 +17,9 @@
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "npm run seed:build && supabase db reset",
-    "db:types": "supabase gen types typescript --local > lib/supabase/database.types.ts",
     "deploy:sql": "tsx scripts/build-deploy-sql.ts",
-    "kuggfri": "tsx scripts/kuggfri.ts"
+    "kuggfri": "tsx scripts/kuggfri.ts",
+    "db:types:raw": "supabase gen types typescript --local > lib/supabase/database.types.generated.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

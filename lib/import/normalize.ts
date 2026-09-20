@@ -1,6 +1,6 @@
 /**
  * Städar text från Brainscape-exporter till giltig markdown.
- * Används av seed-bygget. Admin-importen rör inte texten.
+ * Används av innehållspipelinens konvertering (lib/content/convert.ts). Admin-importen rör inte texten.
  *
  * - "− " (minustecken) och "– " (tankstreck) i början av rad blir nästlade
  *   punkter under närmast föregående "* "-punkt.

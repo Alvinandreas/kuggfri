@@ -266,7 +266,7 @@ function cmdKontrollera(args: Args): void {
       if (dollars % 2 !== 0) {
         say(`  ${C.yellow}udda antal $${C.reset} i ${card.key} (KaTeX kan bli fel)`);
       }
-      // Formateringsanmärkningar som tidigare låg i scripts/content-review.ts.
+      // Formateringsanmärkningar: typografi som brukar följa med från Brainscape-exporter.
       if (/[\u{1D400}-\u{1D7FF}]|[𝜎𝜀𝛼∆αβγσε]/u.test(card.back) || /=>/.test(card.back)) {
         say(`  ${C.yellow}typografi${C.reset} ${card.key}: unicode-matte eller "=>" (kan bli KaTeX respektive →)`);
       }

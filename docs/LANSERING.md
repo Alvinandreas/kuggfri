@@ -28,8 +28,21 @@ gäller även den här. Blir något fel måndag kväll finns hela natten att lag
 ## Steg 0 – innan något rör produktionen (måndag kväll)
 
 - [ ] `npm run verify` grönt lokalt (typecheck, lint, `kuggfri kontrollera`, enhetstester, E2E)
+- [ ] **`npm run build` går igenom** — med dev-servern stoppad
 - [ ] Alvin har klickat igenom http://localhost:3001 och sagt "pusha"
 - [ ] Ingenting i `git status` som inte ska med
+
+Bygget är ett eget steg därför att `verify` inte innehåller det. Typecheck, lint, alla enhetstester
+och en fungerande dev-server kan alltså vara gröna samtidigt som produktionsbygget är trasigt — det
+var precis vad som hände natten mot måndag: en `export const` i en `"use server"`-fil är tillåten
+överallt utom i `next build`, och Vercel-deployen hade stannat direkt.
+
+Stoppa dev-servern först. Två Next-processer i samma katalog delar `.next` och korrumperar
+build-manifestet, vilket ger 500-svar på allt och gör en E2E-körning meningslös.
+
+```bash
+npm run build
+```
 
 Utan de tre punkterna börjar vi inte. En lansering som behöver felsökas klockan 09:45 på tisdag är
 värre än en lansering som sker måndag kväll.
@@ -104,7 +117,8 @@ git push
 ```
 
 Vercel bygger i cirka två minuter. Vänta tills deployen är grön i Vercels gränssnitt innan du går
-vidare — inte tills kommandot är klart.
+vidare — inte tills kommandot är klart. Hoppade du över `npm run build` i steg 0 är det här du får
+veta det, med skillnaden att felet nu ligger i produktionens byggkö i stället för i din terminal.
 
 ```bash
 git tag -a v1.1-lansering -m "Lansering för studenterna 22 sep" && git push --tags

@@ -253,6 +253,11 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 - [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen nedan väntar på det
 - [?] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
 - [ ] Hela E2E-sviten grön lokalt, inklusive de nya delarna från helgen
+- [ ] **`npm run build` med dev-servern stoppad**, som ett eget steg före push. `verify` kör
+      typecheck, lint, `kontrollera`, enhetstester och E2E — men inte bygget, och natten mot måndag
+      visade att allt det kan vara grönt medan produktionsbygget är trasigt (`export const` i en
+      `"use server"`-fil, rättat i cb5058b med ett test som vaktar regeln). Kvar att bestämma: ska
+      bygget in i `verify`? Det kostar en till två minuter per körning
 - [ ] **Registrering med e-postbekräftelse påslagen** verifierad lokalt mot Mailpit: registrera → mejl → `/auth/confirm` → gästens progress följer med. Det här flödet ändras av Alvins inställning ovan, och det är första intrycket för 100 studenter
 - [ ] Lastbild: antal databasfrågor och storlek på serverns svar för `/d/materialteknik` och en session. Mätt, inte gissat
 - [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort, kort utan kategori

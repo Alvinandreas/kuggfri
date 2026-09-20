@@ -120,10 +120,12 @@ Taggen är det vi rullar tillbaka **till** nästa gång. Utan den är återstäl
 npm run kuggfri -- plan materialteknik --mal prod
 ```
 
-Förväntat svar: **144 kort "knyts ihop", 0 nya, 0 borttagna.** Det betyder att filerna och molnet
-beskriver samma kort och att varje kort behåller sitt id — och därmed varje students progress.
+Förväntat svar, samma som lokalt 19 sep (docs/INNEHALL.md 7.3): **144 kort "knyts ihop",
+11 kategorier, en kursuppdatering, 0 nya, 0 borttagna.** Kursuppdateringen är väntad — det är
+kursfälten som får sin hash — och är alltså inget skäl att stanna. Att korten *knyts ihop* betyder
+att varje kort behåller sitt id, och därmed varje students progress.
 
-Står det att kort skapas eller tas bort: **kör inte apply.** Då har nycklarna glidit isär och
+Står det att kort **skapas eller tas bort**: kör inte apply. Då har nycklarna glidit isär och
 studenternas progress skulle nollställas. Kör `pull` i stället och läs skillnaden.
 
 Ser planen rätt ut:
@@ -133,6 +135,14 @@ npm run kuggfri -- apply materialteknik --mal prod
 ```
 
 Backup tas automatiskt före apply. Kör sedan `plan` igen; den ska vara tom.
+
+Två saker som kan se ut som fel men inte är det:
+
+- **Ändringen syns inte direkt på sajten.** Cachen rensas med `CRON_SECRET` (eller
+  `REVALIDATE_SECRET`); saknas den i din lokala miljö slår ändringen igenom inom fem minuter ändå.
+- **`apply` klagar på storleken.** Planen skickas som en JSON-sats via Management API:t. Kör om med
+  `--db-url "<connection string från Supabase → Settings → Database>"`, som inte har den gränsen
+  (docs/INNEHALL.md 11).
 
 ---
 

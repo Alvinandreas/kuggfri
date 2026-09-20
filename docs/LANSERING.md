@@ -8,6 +8,18 @@ uppe när QR-koden visas på sista bilden. Den här filen är körordningen frå
 
 Tidsåtgång: cirka 45 minuter, varav Alvin gör 20 och väntar 15.
 
+## Tidsplan: allt sker måndag kväll
+
+| När | Vad |
+|---|---|
+| Måndag kväll | Steg 0–5. Hela lanseringen, i lugn och ro, med tid att rulla tillbaka |
+| Tisdag 09:30 | Ett kort rökprov i mobilen: startsidan, ett pass, "Klar för i dag" |
+| Tisdag 10:00 | Presentationen. Ingen deploy, ingen migration, ingen inställning ändras |
+
+Rutinen i ATERSTALLNING.md säger att ingen migration deployas samma dag som en föreläsning. Det
+gäller även den här. Blir något fel måndag kväll finns hela natten att laga det; blir något fel
+09:50 finns det inte.
+
 ---
 
 ## Steg 0 – innan något rör produktionen (måndag kväll)

@@ -5,7 +5,8 @@ helst, eftersom vi alltid kan gå tillbaka till ett känt fungerande läge.
 
 Återställningspunkten inför studentlanseringen är git-taggen **`v1-lansering`**
 (commit `3935773`, det som låg på kuggfri.com 19 september 2026). Varje senare release taggas
-`v<nummer>-<kort namn>` när Alvin sagt "pusha".
+`v<nummer>-<kort namn>` när Alvin sagt "pusha". Studentlanseringen 22 september blir
+`v1.1-lansering`; körordningen för den står i [LANSERING.md](LANSERING.md).
 
 ## De tre lagren
 
@@ -105,3 +106,7 @@ aldrig en omskrivning av `v1`.
 
 Rutinen övas en gång tillsammans (Vercel-steget fram och tillbaka) så att vi vet att den tar en
 minut och inte tjugo. Datum för övningen antecknas här: _ej gjord ännu_.
+
+Bästa tillfället är direkt efter måndagens deploy, medan ingen student ännu använder tjänsten: rulla
+tillbaka till föregående deploy, kontrollera att kuggfri.com svarar, rulla fram igen. Fem minuter,
+och sedan vet vi att vägen ut fungerar innan vi behöver den.

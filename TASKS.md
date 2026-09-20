@@ -228,6 +228,23 @@ Alvin: "skriv en ny lista med grejer vi hinner förbättra innan vi går live nu
 Sorterad efter vad som faktiskt hindrar en lansering, inte efter hur roligt det är att bygga.
 Allt nedan är lokalt tills Alvin sagt "pusha".
 
+> **Två Claude-sessioner arbetade i samma mapp natten mot måndag.** Det blev några felmärkta
+> commits (63d5238, 4a5997d, c1e83fb beskriver inte riktigt vad de innehåller), men inget arbete
+> gick förlorat och trädet är grönt. Sessionerna delade sedan upp sig: en på koden och testerna,
+> en på TASKS.md och docs/. Lärdomen är värd att ta med: `git add -A` med två skribenter i samma
+> träd sveper med den andres filer.
+
+**Gjort i natt (dokumentation):**
+
+- [x] `docs/LANSERING.md`: körordningen för tisdagen — Alvins inställningar (SMTP före Confirm
+      email), databasen före koden, innehållet sist, rökprov i tre roller, avbrytskriterier med
+      tabell över vad som ska rulla tillbaka och vad som bara ska felsökas
+- [x] `docs/PRESENTATION-STUDENTER.md`: 6–8 minuter för tisdagens föreläsning, demon som mittpunkt,
+      QR-bilden som får ligga kvar medan salen skannar, svaren på frågorna som kommer
+- [x] **Fynd:** byter vi till Resend för inloggningsmejlen blir Resend ett personuppgiftsbiträde som
+      måste stå i `/integritet` innan första studenten registrerar sig. Registret och
+      lanseringsordningen uppdaterade; raden på integritetssidan ligger hos kodsessionen
+
 ### Måste vara på plats innan studenterna släpps in
 
 - [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen nedan väntar på det

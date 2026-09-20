@@ -8,6 +8,9 @@ uppe när QR-koden visas på sista bilden. Den här filen är körordningen frå
 
 Tidsåtgång: cirka 45 minuter, varav Alvin gör 20 och väntar 15.
 
+> Samma steg att bocka av medan du gör dem, med kommandona att kopiera: [lanseringschecklistan](https://claude.ai/artifact/XegL8HAcJfTSE7xP49UFj6).
+> Bockarna följer med mellan datorn och mobilen. Den här filen är källan; checklistan är händerna.
+
 ## Tidsplan: allt sker måndag kväll
 
 | När | Vad |

@@ -244,6 +244,9 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 - [x] **Fynd:** byter vi till Resend för inloggningsmejlen blir Resend ett personuppgiftsbiträde som
       måste stå i `/integritet` innan första studenten registrerar sig. Registret och
       lanseringsordningen uppdaterade; raden på integritetssidan ligger hos kodsessionen
+- [x] Lanseringschecklista att bocka av i handen på måndag kväll: https://claude.ai/artifact/XegL8HAcJfTSE7xP49UFj6
+      (samma steg som LANSERING.md, med kommandon att kopiera; bockarna följer med mellan dator och
+      mobil). Privat länk, bara Alvin kommer åt den
 
 ### Måste vara på plats innan studenterna släpps in
 

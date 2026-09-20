@@ -131,11 +131,21 @@ export const user = (db: RawDb, sub: string): ScopedDb => as(db, { role: "authen
 export const anon = (db: RawDb): ScopedDb => as(db, { role: "anon" });
 
 /** Skapar en användare i auth.users (triggern skapar profilen). */
-export async function createUser(db: RawDb, email: string, opts: { admin?: boolean; displayName?: string } = {}): Promise<string> {
+/**
+ * Skapar en testanvändare. Adressen räknas som bekräftad om inget annat anges, eftersom
+ * det är normalfallet; `confirmed: false` används för att testa att obekräftade konton
+ * inte ärver examinatorsrätt.
+ */
+export async function createUser(
+  db: RawDb,
+  email: string,
+  opts: { admin?: boolean; displayName?: string; confirmed?: boolean } = {},
+): Promise<string> {
   const meta = JSON.stringify(opts.displayName ? { display_name: opts.displayName } : {});
+  const confirmed = opts.confirmed ?? true;
   const rows = await db.query<{ id: string }>(
-    `insert into auth.users (email, raw_user_meta_data) values ($1, $2::jsonb) returning id`,
-    [email, meta],
+    `insert into auth.users (email, raw_user_meta_data, email_confirmed_at) values ($1, $2::jsonb, case when $3 then now() else null end) returning id`,
+    [email, meta, confirmed],
   );
   const id = rows[0]?.id;
   if (!id) throw new Error("Kunde inte skapa testanvändare");

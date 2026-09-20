@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { headers } from "next/headers";
 import { sv } from "@/lib/i18n/sv";
+import { NONCE_HEADER } from "@/lib/security/headers";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -45,11 +47,16 @@ export const viewport: Viewport = {
 const themeScript = `(function(){try{var t=localStorage.getItem('kuggfri:theme');var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const user = await getCurrentUser();
+  const [user, headerList] = await Promise.all([getCurrentUser(), headers()]);
+  // Nonce från middleware, så att temaskriptet släpps igenom av innehållspolicyn.
+  const nonce = headerList.get(NONCE_HEADER) ?? undefined;
   return (
     <html lang="sv" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* React skickar medvetet inte nonce till klienten, så attributet skiljer sig mellan
+            server och klient. Skriptet har redan körts när hydreringen sker; varningen
+            dämpas här i stället för att tas om hand (inget går sönder). */}
+        <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="flex min-h-dvh flex-col bg-bg text-fg antialiased">
         <a

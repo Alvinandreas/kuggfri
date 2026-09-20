@@ -168,7 +168,9 @@ export async function updateCategoryAction(id: string, deckId: string, title: st
     if (!t) return { ok: false, error: sv.common.required };
     const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
     if (long) return long;
-    const { error } = await supabase.from("categories").update({ title: t }).eq("id", id);
+    // Bind id:t till decket: RLS stoppar det redan, men frågan ska inte ens kunna träffa
+    // en rad i en annan kurs om en policy någon gång skulle ändras.
+    const { error } = await supabase.from("categories").update({ title: t }).eq("id", id).eq("deck_id", deckId);
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
@@ -180,7 +182,7 @@ export async function updateCategoryAction(id: string, deckId: string, title: st
 export async function deleteCategoryAction(id: string, deckId: string): Promise<ActionResult> {
   try {
     const { supabase } = await requireEditor(deckId);
-    const { error } = await supabase.from("categories").delete().eq("id", id);
+    const { error } = await supabase.from("categories").delete().eq("id", id).eq("deck_id", deckId);
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
@@ -231,7 +233,7 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult<{ i
       is_active: input.is_active,
     };
     if (input.id) {
-      const { error } = await supabase.from("cards").update(values).eq("id", input.id);
+      const { error } = await supabase.from("cards").update(values).eq("id", input.id).eq("deck_id", input.deck_id);
       if (error) return fail(error);
       revalidateDeck(input.deck_id);
       return { ok: true, data: { id: input.id } };
@@ -254,7 +256,7 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult<{ i
 export async function deleteCardAction(id: string, deckId: string): Promise<ActionResult> {
   try {
     const { supabase } = await requireEditor(deckId);
-    const { error } = await supabase.from("cards").delete().eq("id", id);
+    const { error } = await supabase.from("cards").delete().eq("id", id).eq("deck_id", deckId);
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
@@ -285,8 +287,12 @@ export type ImportResult = { created: number; updated: number; newCategories: nu
  * Importerar kort. Diffen räknas om på servern utifrån de tolkade korten, så
  * klientens förhandsvisning är bara en visning av samma logik.
  */
+/** Tak på hur många kort en import får innehålla, så att ett misstag inte fyller databasen. */
+export const MAX_IMPORT_CARDS = 2000;
+
 export async function importCardsAction(deckId: string, cards: ImportCard[]): Promise<ActionResult<ImportResult>> {
   try {
+    if (cards.length > MAX_IMPORT_CARDS) return { ok: false, error: sv.admin.importTooMany(MAX_IMPORT_CARDS) };
     const { supabase } = await requireEditor(deckId);
     const [{ data: existingCards }, { data: existingCategories }] = await Promise.all([
       supabase.from("cards").select("id, front, back, hint, category_id, sort_order").eq("deck_id", deckId),

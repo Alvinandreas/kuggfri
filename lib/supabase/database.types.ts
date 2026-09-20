@@ -146,6 +146,10 @@ export type DeckOverviewStats = {
   reviews_7d: number;
   avg_rating: number | null;
   open_reports: number;
+  /** Anonymitetsgränsen som databasen tillämpat. */
+  min_students: number;
+  /** Hur många kategorier och kort som ännu har för få skattningar för att visas. */
+  suppressed: { cards: number; categories: number };
   /** Kommer studenterna tillbaka? Saknas om databasen kör en äldre version av funktionen. */
   activation?: { started: number; first_session_20: number; eligible: number; returned_3d: number };
   rating_dist: { rating: number; n: number }[];
@@ -275,8 +279,8 @@ export type Database = {
         Args: { p_deck_id: string };
         Returns: { unique_users: number; total_reviews: number; avg_rating: number | null }[];
       };
-      deck_stats_cards: { Args: { p_deck_id: string }; Returns: DeckStatsCardRow[] };
-      deck_stats_overview: { Args: { p_deck_id: string; p_weeks?: number }; Returns: DeckOverviewStats };
+      deck_stats_cards: { Args: { p_deck_id: string; p_min_students?: number }; Returns: DeckStatsCardRow[] };
+      deck_stats_overview: { Args: { p_deck_id: string; p_weeks?: number; p_min_students?: number }; Returns: DeckOverviewStats };
       deck_digest: { Args: { p_deck_id: string; p_min_students?: number }; Returns: DeckDigest };
       reminder_candidates: {
         Args: Record<string, never>;

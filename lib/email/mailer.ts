@@ -22,6 +22,11 @@ export function readMailerConfig(env: NodeJS.ProcessEnv = process.env): MailerCo
 
 export type Mailer = { send(message: MailMessage): Promise<void> };
 
+/** Tar bort radbrytningar och kapar längden på ett värde som ska in i en mejlheader. */
+export function sanitizeHeader(value: string): string {
+  return value.replace(/[\r\n]+/g, " ").trim().slice(0, 200);
+}
+
 export function createMailer(config: MailerConfig): Mailer {
   const transport = nodemailer.createTransport({
     host: config.host,
@@ -31,7 +36,15 @@ export function createMailer(config: MailerConfig): Mailer {
   });
   return {
     async send(message) {
-      await transport.sendMail({ from: config.from, to: message.to, subject: message.subject, text: message.text, html: message.html });
+      await transport.sendMail({
+        from: config.from,
+        to: message.to,
+        // Ämnesraden innehåller text som en redaktör satt (kursens titel). Radbrytningar i
+        // ett fält som hamnar i en mejlheader är klassisk headerinjektion, så de tas bort här.
+        subject: sanitizeHeader(message.subject),
+        text: message.text,
+        html: message.html,
+      });
     },
   };
 }

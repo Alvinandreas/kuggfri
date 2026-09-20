@@ -1,4 +1,6 @@
 import "server-only";
+import { MIN_STUDENTS } from "@/lib/admin/thresholds";
+import { parseOverviewStats } from "@/lib/admin/parse-overview";
 import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { CardRow, CategoryRow, DeckOverviewStats, DeckReportRow, DeckRow } from "@/lib/supabase/database.types";
@@ -60,7 +62,7 @@ export async function getDeckStats(deckId: string): Promise<DeckStats> {
   const supabase = await createSupabaseServerClient();
   const [{ data: summary, error: e1 }, { data: cards, error: e2 }] = await Promise.all([
     supabase.rpc("deck_stats_summary", { p_deck_id: deckId }),
-    supabase.rpc("deck_stats_cards", { p_deck_id: deckId }),
+    supabase.rpc("deck_stats_cards", { p_deck_id: deckId, p_min_students: MIN_STUDENTS }),
   ]);
   if (e1) throw e1;
   if (e2) throw e2;
@@ -100,31 +102,9 @@ export const countOpenReports = cache(async (deckId: string): Promise<number> =>
 /** Kursöversikten: aggregerad, anonym statistik i ett anrop (deck_stats_overview). */
 export async function getDeckOverviewStats(deckId: string): Promise<DeckOverviewStats> {
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("deck_stats_overview", { p_deck_id: deckId, p_weeks: 8 });
+  const { data, error } = await supabase.rpc("deck_stats_overview", { p_deck_id: deckId, p_weeks: 8, p_min_students: MIN_STUDENTS });
   if (error) throw error;
-  const d = data as DeckOverviewStats;
-  const num = (v: unknown) => Number(v ?? 0);
-  return {
-    students: num(d.students),
-    active_7d: num(d.active_7d),
-    reviews_7d: num(d.reviews_7d),
-    avg_rating: d.avg_rating === null || d.avg_rating === undefined ? null : Number(d.avg_rating),
-    open_reports: num(d.open_reports),
-    rating_dist: (d.rating_dist ?? []).map((r) => ({ rating: num(r.rating), n: num(r.n) })),
-    progress_buckets: (d.progress_buckets ?? []).map((b) => ({ bucket: num(b.bucket), students: num(b.students) })),
-    weeks: (d.weeks ?? []).map((w) => ({ week: num(w.week), start: w.start, students: num(w.students), reviews: num(w.reviews) })),
-    categories: (d.categories ?? []).map((c) => ({
-      category_id: c.category_id,
-      students: num(c.students),
-      ratings: num(c.ratings),
-      avg: c.avg === null || c.avg === undefined ? null : Number(c.avg),
-      low: num(c.low),
-      learned: num(c.learned),
-      partial: num(c.partial),
-      studied: num(c.studied),
-    })),
-    cards: (d.cards ?? []).map((c) => ({ ...c, ratings: num(c.ratings), low: num(c.low), avg: Number(c.avg) })),
-  };
+  return parseOverviewStats(data, MIN_STUDENTS);
 }
 
 /** pending = väntar på att personen registrerar sig (user_id är då null). */

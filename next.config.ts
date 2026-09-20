@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { STATIC_SECURITY_HEADERS } from "./lib/security/headers";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -13,11 +14,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: [
-          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "same-origin" },
-        ],
+        // Innehållspolicyn (CSP) sätts i middleware.ts eftersom den innehåller en nonce.
+        headers: [...STATIC_SECURITY_HEADERS],
       },
     ];
   },

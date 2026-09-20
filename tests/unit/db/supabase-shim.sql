@@ -25,7 +25,8 @@ create table if not exists auth.users (
   email text unique,
   raw_user_meta_data jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
-  last_sign_in_at timestamptz
+  last_sign_in_at timestamptz,
+  email_confirmed_at timestamptz
 );
 
 create or replace function auth.jwt()

@@ -7,8 +7,9 @@ import { getSupabaseEnv } from "./env";
  * Uppdaterar sessionskakorna på varje request och returnerar användaren.
  * Körs i middleware.
  */
-export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request });
+export async function updateSession(request: NextRequest, requestHeaders?: Headers) {
+  const init = requestHeaders ? { request: { headers: requestHeaders } } : { request };
+  let response = NextResponse.next(init);
   const { url, anonKey } = getSupabaseEnv();
 
   const supabase = createServerClient<Database>(url, anonKey, {
@@ -20,7 +21,7 @@ export async function updateSession(request: NextRequest) {
         for (const { name, value } of cookiesToSet) {
           request.cookies.set(name, value);
         }
-        response = NextResponse.next({ request });
+        response = NextResponse.next(init);
         for (const { name, value, options } of cookiesToSet) {
           response.cookies.set(name, value, options);
         }

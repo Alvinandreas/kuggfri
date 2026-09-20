@@ -2,32 +2,40 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
 import { decideAdminAccess } from "@/lib/auth/admin-gate";
+import { buildCsp, createNonce, NONCE_HEADER } from "@/lib/security/headers";
 
 /**
- * 1. Håller Supabase-sessionen färsk på varje request.
- * 2. Fångar upp inloggningskoder (?code=…) från e-postlänkar oavsett vilken sida de
- *    landar på, t.ex. om Supabase skickat användaren till startsidan i stället för
- *    /auth/confirm. Koden byts mot en session och adressen städas.
- * 3. Skyddar /admin server-side: icke-admin får 403 redan här,
- *    innan någon sida renderas. Layouten under /admin gör samma kontroll igen.
+ * 1. Sätter en innehållspolicy (CSP) med en färsk nonce per request. Next.js märker sina
+ *    egna inline-skript med den, och layouten märker temaskriptet.
+ * 2. Håller Supabase-sessionen färsk på varje request.
+ * 3. Skyddar /admin server-side: icke-admin får 403 redan här, innan någon sida renderas.
+ *    Layouten under /admin gör samma kontroll igen.
+ *
+ * Inloggningskoder (?code=…) löses bara in på /auth/confirm. Hamnar en länk på någon
+ * annan sida skickas besökaren dit i stället; att lösa in koder överallt gör det möjligt
+ * att logga in någon annan på ett konto de inte äger.
  */
 export async function middleware(request: NextRequest) {
-  const { supabase, response, user } = await updateSession(request);
+  const nonce = createNonce();
+  const csp = buildCsp(nonce, process.env.NODE_ENV !== "production");
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(NONCE_HEADER, nonce);
+  requestHeaders.set("content-security-policy", csp);
+
+  const { supabase, response, user } = await updateSession(request, requestHeaders);
+  response.headers.set("content-security-policy", csp);
+
   const { pathname, searchParams } = request.nextUrl;
 
   const code = searchParams.get("code");
   if (code && !pathname.startsWith("/auth/")) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
     const url = request.nextUrl.clone();
-    url.searchParams.delete("code");
-    if (error) {
-      url.pathname = "/logga-in";
-      url.search = "?fel=lank";
-    }
+    url.pathname = "/auth/confirm";
+    // Behåll vart besökaren skulle ha hamnat, men bara som en intern sökväg.
+    url.searchParams.set("next", pathname === "/" ? "/" : pathname);
     const redirect = NextResponse.redirect(url);
-    for (const cookie of response.cookies.getAll()) {
-      redirect.cookies.set(cookie);
-    }
+    redirect.headers.set("content-security-policy", csp);
     return redirect;
   }
 
@@ -46,12 +54,14 @@ export async function middleware(request: NextRequest) {
     if (decision.kind === "redirect-login") {
       const loginUrl = new URL("/logga-in", request.url);
       loginUrl.searchParams.set("next", pathname);
-      return NextResponse.redirect(loginUrl);
+      const redirect = NextResponse.redirect(loginUrl);
+      redirect.headers.set("content-security-policy", csp);
+      return redirect;
     }
     if (decision.kind === "forbidden") {
       return new NextResponse(forbiddenHtml(), {
         status: 403,
-        headers: { "content-type": "text/html; charset=utf-8" },
+        headers: { "content-type": "text/html; charset=utf-8", "content-security-policy": csp },
       });
     }
   }

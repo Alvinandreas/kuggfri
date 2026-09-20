@@ -5,6 +5,7 @@ import { getSiteUrl, getSupabaseEnv } from "@/lib/supabase/env";
 import { createMailer, readMailerConfig, type Mailer } from "@/lib/email/mailer";
 import { buildDigestEmail, buildReminderEmail, buildReminderStopEmail, decideReminder, type DigestData, type ReminderDeck } from "@/lib/email/templates";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
+import { bearerMatches } from "@/lib/security/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -15,9 +16,7 @@ export const dynamic = "force-dynamic";
  * visar vad som skulle ha skickats.
  */
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  const auth = request.headers.get("authorization");
-  if (!secret || auth !== `Bearer ${secret}`) {
+  if (!bearerMatches(request.headers.get("authorization"), process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -62,7 +61,9 @@ export async function GET(request: Request) {
       if (decision === "stop") summary.stops++;
       else summary.reminders++;
     } catch (e) {
-      summary.errors.push(`reminder ${c.user_id}: ${e instanceof Error ? e.message : String(e)}`);
+      // Loggas med detaljer på servern, men svaret innehåller inga user_id eller adresser.
+      console.error("[cron] påminnelse misslyckades", c.user_id, e);
+      summary.errors.push("reminder_failed");
     }
   }
 
@@ -100,7 +101,8 @@ export async function GET(request: Request) {
         }
         summary.digests++;
       } catch (e) {
-        summary.errors.push(`digest ${r.deck_id}: ${e instanceof Error ? e.message : String(e)}`);
+        console.error("[cron] veckobrev misslyckades", r.deck_id, e);
+        summary.errors.push("digest_failed");
       }
     }
   }

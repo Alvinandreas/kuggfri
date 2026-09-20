@@ -407,6 +407,7 @@ export const sv = {
     slugTaken: "Sluggen används redan.",
     tooLong: (field: string, max: number) => `${field} får vara högst ${max} tecken.`,
     importFailed: "Importen avbröts och ingenting skrevs. Kontrollera indata och försök igen.",
+    importTooMany: (max: number) => `Importen innehåller fler än ${max} kort. Dela upp den i flera filer.`,
     invalidSlug: "Ogiltig slug.",
     invalidDate: "Ogiltigt datum. Använd formatet ÅÅÅÅ-MM-DD.",
     open: "Öppna",
@@ -490,6 +491,10 @@ export const sv = {
     latestReportsHelp: "Öppna rapporter från studenter. Åtgärda i kortet och markera sedan som åtgärdad.",
     allReports: "Alla felrapporter",
     studentCount: (n: number) => (n === 1 ? "1 student" : `${n} studenter`),
+    suppressedCards: (n: number, min: number) =>
+      n === 1
+        ? `1 kort visas inte än: det behöver skattas av minst ${min} studenter.`
+        : `${n} kort visas inte än: de behöver skattas av minst ${min} studenter.`,
     thresholdNote: (n: number) => `Visas när minst ${n} studenter har skattat, så att ingen enskild students svar kan läsas ut.`,
     tricky: "Kluriga frågor just nu",
     trickyHelp:

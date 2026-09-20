@@ -43,12 +43,12 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
   const titleOf = new Map(categories.map((c) => [c.id, c.title] as const));
   const students = stats.students;
 
-  const hardest = stats.categories
-    .filter((c) => c.students >= MIN_STUDENTS && c.avg !== null && titleOf.has(c.category_id))
-    .sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0));
-  // Per kort är antalet skattningar = antalet studenter (en progressrad per student och kort).
-  const tricky = stats.cards.filter((c) => c.low > 0 && c.ratings >= MIN_STUDENTS).slice(0, 8);
-  const belowThreshold = stats.cards.length > 0 && stats.cards.every((c) => c.ratings < MIN_STUDENTS);
+  // Databasen har redan filtrerat bort allt under anonymitetsgränsen (deck_stats_overview),
+  // så inget som inte får visas har ens lämnat servern.
+  const threshold = stats.min_students ?? MIN_STUDENTS;
+  const hardest = stats.categories.filter((c) => c.avg !== null && titleOf.has(c.category_id)).sort((a, b) => (a.avg ?? 0) - (b.avg ?? 0));
+  const tricky = stats.cards.filter((c) => c.low > 0).slice(0, 8);
+  const suppressed = stats.suppressed ?? { cards: 0, categories: 0 };
   const totalRatings = stats.rating_dist.reduce((s, r) => s + r.n, 0);
 
   return (
@@ -74,7 +74,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
         <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
           <Panel id="svarast" title={sv.admin.hardest} help={sv.admin.hardestHelp}>
             {hardest.length === 0 ? (
-              <p className="text-sm text-muted">{belowThreshold ? sv.admin.thresholdNote(MIN_STUDENTS) : sv.admin.hardestNone}</p>
+              <p className="text-sm text-muted">{suppressed.categories > 0 ? sv.admin.thresholdNote(threshold) : sv.admin.hardestNone}</p>
             ) : (
               <HorizontalBars
                 ariaLabel={sv.admin.hardest}
@@ -96,7 +96,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
 
           <Panel id="kluriga" title={sv.admin.tricky} help={sv.admin.trickyHelp}>
             {tricky.length === 0 ? (
-              <p className="text-sm text-muted">{belowThreshold ? sv.admin.thresholdNote(MIN_STUDENTS) : sv.admin.trickyNone}</p>
+              <p className="text-sm text-muted">{suppressed.cards > 0 ? sv.admin.thresholdNote(threshold) : sv.admin.trickyNone}</p>
             ) : (
               <table className="w-full text-sm" data-testid="tricky-table">
                 <thead>
@@ -142,6 +142,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                 </tbody>
               </table>
             )}
+            {suppressed.cards > 0 ? <p className="text-xs text-muted">{sv.admin.suppressedCards(suppressed.cards, threshold)}</p> : null}
             <Link href={`/admin/deck/${deckId}/statistik`} className="text-sm text-accent underline-offset-2 hover:underline">
               {sv.admin.allCardsDetail} →
             </Link>

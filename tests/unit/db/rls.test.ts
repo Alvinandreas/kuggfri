@@ -506,9 +506,26 @@ describe("funktioner", () => {
     expect(Number(summary?.unique_users)).toBe(1);
     expect(Number(summary?.total_reviews)).toBe(3);
     expect(Number(summary?.avg_rating)).toBe(5);
+    // Anonymitetsgränsen gäller även admin: ett kort med färre än fem skattningar
+    // tas bort i databasen, inte i renderingen.
+    const cards = await user(db, admin).query<{ front: string; rating_count: number }>(`select * from public.deck_stats_cards($1)`, [publishedDeck]);
+    expect(cards.map((c) => c.front)).toEqual([]);
+    // Gränsen kan inte sänkas av anroparen.
+    const forced = await user(db, admin).query<{ front: string }>(`select * from public.deck_stats_cards($1, 1)`, [publishedDeck]);
+    expect(forced.map((c) => c.front)).toEqual([]);
+  });
+
+  it("gränsen släpper igenom när tillräckligt många har skattat", async () => {
+    const extra: string[] = [];
+    for (let i = 0; i < 5; i++) extra.push(await createUser(db, `troskel${i}@example.com`));
+    for (const id of extra) {
+      await db.query(`insert into public.card_progress (user_id, card_id, self_rating, reps) values ($1, $2, 3, 1)`, [id, publishedCard]);
+    }
     const cards = await user(db, admin).query<{ front: string; rating_count: number }>(`select * from public.deck_stats_cards($1)`, [publishedDeck]);
     expect(cards.map((c) => c.front)).toEqual(["Fråga 1"]);
-    expect(Number(cards[0]?.rating_count)).toBe(1);
+    expect(Number(cards[0]?.rating_count)).toBeGreaterThanOrEqual(5);
+    // Städa upp så att senare tester ser samma läge som förut.
+    for (const id of extra) await db.query(`delete from auth.users where id = $1`, [id]);
   });
 
   it("delete_my_account raderar bara det egna kontot och kaskaderar", async () => {
@@ -706,15 +723,38 @@ describe("examinatorer (deck_examiners)", () => {
     expect(await user(db, examiner).query(`select id from public.decks where id = $1`, [draftDeck])).toHaveLength(0);
   });
 
-  it("deck_stats_overview räknar rätt för admin", async () => {
-    const [o] = await user(db, admin).query<{
-      o: { students: number; open_reports: number; categories: { learned: number; studied: number; avg: number }[]; cards: { ratings: number }[]; progress_buckets: { students: number }[] };
-    }>(`select public.deck_stats_overview($1, 8) as o`, [publishedDeck]);
+  it("deck_stats_overview räknar rätt och döljer allt under anonymitetsgränsen", async () => {
+    type Overview = {
+      students: number;
+      min_students: number;
+      suppressed: { cards: number; categories: number };
+      categories: { learned: number; studied: number; avg: number }[];
+      cards: { ratings: number }[];
+      progress_buckets: { students: number }[];
+    };
+    const [o] = await user(db, admin).query<{ o: Overview }>(`select public.deck_stats_overview($1, 8) as o`, [publishedDeck]);
     expect(o?.o.students).toBeGreaterThanOrEqual(1);
-    expect(o?.o.categories[0]?.studied).toBeGreaterThanOrEqual(1);
-    expect(o?.o.categories[0]?.avg).toBeGreaterThan(0);
-    expect(o?.o.cards.some((c) => c.ratings >= 1)).toBe(true);
     expect(o?.o.progress_buckets.reduce((s, b) => s + Number(b.students), 0)).toBe(Number(o?.o.students));
+    // Med bara ett par studenter lämnar inga siffror per kategori eller kort servern,
+    // men examinatorn får veta hur många som väntar på fler skattningar.
+    expect(o?.o.min_students).toBe(5);
+    expect(o?.o.categories).toEqual([]);
+    expect(o?.o.cards).toEqual([]);
+    expect(o?.o.suppressed.cards).toBeGreaterThanOrEqual(1);
+
+    // Gränsen går inte att sänka från anroparen.
+    const [forced] = await user(db, admin).query<{ o: Overview }>(`select public.deck_stats_overview($1, 8, 1) as o`, [publishedDeck]);
+    expect(forced?.o.min_students).toBe(5);
+    expect(forced?.o.cards).toEqual([]);
+  });
+
+  it("deck_digest kan inte heller anropas med en lägre gräns", async () => {
+    const [row] = await as(db, { role: "service_role" }).query<{ d: { hardest: unknown[]; tricky: unknown[] } }>(
+      `select public.deck_digest($1, 1) as d`,
+      [publishedDeck],
+    );
+    expect(row?.d.hardest).toEqual([]);
+    expect(row?.d.tricky).toEqual([]);
   });
 });
 
@@ -880,5 +920,42 @@ describe("dataskydd (email_log, gallring, radering)", () => {
     expect(row?.contact).toBeNull();
     // Progressen är borta.
     expect(await db.query(`select 1 from public.card_progress where user_id = $1`, [alice])).toHaveLength(0);
+  });
+});
+
+describe("examinatorsrätt kräver bekräftad e-postadress", () => {
+  it("ett obekräftat konto på en inbjuden adress ärver inte rätten", async () => {
+    const deckRows = await db.query<{ id: string }>(`insert into public.decks (slug, title) values ('kurs-k1', 'Kurs K1') returning id`);
+    const deck = deckRows[0]!.id;
+    await db.query(`insert into public.deck_examiner_invites (deck_id, email) values ($1, 'johan@chalmers.se')`, [deck]);
+
+    // Någon registrerar ett konto på adressen utan att bekräfta den.
+    const impostor = await createUser(db, "johan@chalmers.se", { confirmed: false });
+    expect(await db.query(`select 1 from public.deck_examiners where deck_id = $1 and user_id = $2`, [deck, impostor])).toHaveLength(0);
+    expect(await db.query(`select 1 from public.deck_examiner_invites where deck_id = $1`, [deck])).toHaveLength(1);
+    // Och kommer inte åt kursens innehåll.
+    await expectDenied(user(db, impostor).query(`select public.deck_snapshot($1)`, [deck]), /forbidden/i);
+
+    // När adressen bekräftas kopplas rätten automatiskt.
+    await db.query(`update auth.users set email_confirmed_at = now() where id = $1`, [impostor]);
+    expect(await db.query(`select 1 from public.deck_examiners where deck_id = $1 and user_id = $2`, [deck, impostor])).toHaveLength(1);
+    expect(await db.query(`select 1 from public.deck_examiner_invites where deck_id = $1`, [deck])).toHaveLength(0);
+
+    await db.query(`delete from public.decks where id = $1`, [deck]);
+    await db.query(`delete from auth.users where id = $1`, [impostor]);
+  });
+
+  it("add_deck_examiner hittar bara konton med bekräftad adress", async () => {
+    const deckRows = await db.query<{ id: string }>(`insert into public.decks (slug, title) values ('kurs-k1b', 'Kurs K1b') returning id`);
+    const deck = deckRows[0]!.id;
+    const unconfirmed = await createUser(db, "obekraftad@chalmers.se", { confirmed: false });
+
+    // Kontot finns, men räknas inte: rätten läggs som en väntande inbjudan i stället.
+    const [res] = await user(db, admin).query<{ r: string }>(`select public.add_deck_examiner($1, 'obekraftad@chalmers.se') as r`, [deck]);
+    expect(res?.r).toBe("invited");
+    expect(await db.query(`select 1 from public.deck_examiners where deck_id = $1 and user_id = $2`, [deck, unconfirmed])).toHaveLength(0);
+
+    await db.query(`delete from public.decks where id = $1`, [deck]);
+    await db.query(`delete from auth.users where id = $1`, [unconfirmed]);
   });
 });

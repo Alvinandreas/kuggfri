@@ -222,6 +222,43 @@ Alvin: "bygg ut det systemet". Design i `docs/INNEHALL.md`, byggd samma kväll. 
 - [ ] **Efter push:** kör `npm run kuggfri -- plan materialteknik --mal prod`. Den ska visa 144 "knyts ihop" och noll innehållsändringar, precis som lokalt. Först därefter `apply --mal prod`
 - [ ] Överväg att flytta `exam_date` för Materialteknik in i `content/materialteknik/kurs.json` när Johan bekräftat datumet (nu satt direkt i den lokala databasen)
 
+## Söndag 20 sep (natt): lista inför lanseringen på tisdag
+
+Alvin: "skriv en ny lista med grejer vi hinner förbättra innan vi går live nu i veckan".
+Sorterad efter vad som faktiskt hindrar en lansering, inte efter hur roligt det är att bygga.
+Allt nedan är lokalt tills Alvin sagt "pusha".
+
+### Måste vara på plats innan studenterna släpps in
+
+- [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen nedan väntar på det
+- [?] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
+- [ ] Hela E2E-sviten grön lokalt, inklusive de nya delarna från helgen
+- [ ] **Registrering med e-postbekräftelse påslagen** verifierad lokalt mot Mailpit: registrera → mejl → `/auth/confirm` → gästens progress följer med. Det här flödet ändras av Alvins inställning ovan, och det är första intrycket för 100 studenter
+- [ ] Lastbild: antal databasfrågor och storlek på serverns svar för `/d/materialteknik` och en session. Mätt, inte gissat
+- [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort, kort utan kategori
+
+### Bör hinnas med (studenterna märker skillnaden)
+
+- [ ] Delningsbild (OG-image) så att en länk i gruppchatten visar ett Kuggfri-kort i stället för en tom ruta
+- [ ] Mobilpass i ljust och mörkt läge: 375 och 768 px, alla sidor, med riktiga texter
+- [ ] Tillgänglighetsgenomgång: axe på varje sida i E2E och en tangentbordsrunda genom en hel session
+- [ ] "Lägg till på hemskärmen" med i presentationen och infobladet (manifest och ikoner finns redan)
+
+### Examinatorn (det Johan gillade mest)
+
+- [ ] CSV-export av kategori- och kortstatistiken, så att Johan kan ta med siffrorna till kursutvärderingen
+- [ ] Torrkörning av veckobrevet mot Mailpit: rätt siffror, rätt anonymitetsgräns, avprenumerera fungerar
+
+### Drift
+
+- [ ] Systemöversikt i admin: senaste cron-körningen, skickade mejl, öppna felrapporter. En sida som svarar på "fungerar allt?"
+- [ ] Återställningsövning i Vercel tillsammans med Alvin (5 min, fram och tillbaka), datum antecknas i docs/ATERSTALLNING.md
+
+### Inre kvalitet (bara om tiden räcker)
+
+- [ ] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler
+- [ ] Beslut om komponenttester: egen jsdom-körning eller ta bort de fyra testing-library-beroendena
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
 - [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte

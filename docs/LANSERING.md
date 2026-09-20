@@ -85,6 +85,29 @@ Du ska landa inloggad på kuggfri.com. Fungerar inte det, gå inte vidare.
 > kopplas på. Johans konto är skapat tidigare och påverkas inte, men en ny examinator som bjuds in
 > efter tisdag ser inget förrän hen klickat i mejlet.
 
+### Flödet är testat med bekräftelsen påslagen
+
+Lokalt körs `enable_confirmations = false`, så registreringskedjan med bekräftelse hade aldrig
+körts skarpt förrän natten mot måndag. Den gör det nu, mot Mailpit, och hela vägen (21 sep 00:53):
+
+| Steg | Utfall |
+|---|---|
+| Gäst pluggar tre kort | Två hamnar i localStorage |
+| Registrering | "Kontrollera din e-post för att bekräfta kontot." Inget felaktigt löfte om att man är inloggad |
+| Mejlet | Svensk rubrik, länk till `/auth/confirm?token_hash=…&type=signup` |
+| Länken öppnas | Inloggad, och startsidan säger "2 kort flyttades till ditt konto" |
+| Databasen | `email_confirmed_at` satt, visningsnamn sparat, två rader i `card_progress` och två i `review_log` |
+| Inloggning före bekräftelse | Nekas med `email_not_confirmed` — det är den egenskapen som stänger hålet med examinatorsadressen |
+
+Att göra om testet lokalt, till exempel efter en ändring i inloggningen:
+
+1. `supabase/config.toml` rad 225: `enable_confirmations = true` under **`[auth.email]`**. Raden
+   under `[auth.sms]` (rad 275) heter likadant och ska inte röras.
+2. `npx supabase stop && npx supabase start`
+3. Kör igenom kedjan ovan, läs mejlen i Mailpit.
+4. Återställ raden till `false` och starta om igen, annars fastnar nästa lokala registrering i ett
+   mejl ingen läser. Radera testkontona och räkna raderna i databasen före och efter.
+
 ---
 
 ## Steg 2 – databasen före koden

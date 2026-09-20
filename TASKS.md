@@ -252,7 +252,9 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 
 - [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen nedan väntar på det
 - [?] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
-- [ ] Hela E2E-sviten grön lokalt, inklusive de nya delarna från helgen
+- [x] Hela E2E-sviten grön lokalt: **50/50 på 12,9 minuter, noll omkörningar** (21 sep 00:53,
+      commit cb5058b). De två tidigare körningarna i natt räknas inte — den första förstördes av två
+      parallella dev-servrar i samma `.next`, den andra föll på det trasiga produktionsbygget
 - [ ] **Bygg om testkopian på 3001 innan Alvin verifierar.** `.next-prod/BUILD_ID` är daterad
       19 sep 03:05, alltså före hela helgens arbete: innehållspipelinen, säkerhetshärdningen,
       dataskyddet och komponentuppdelningen finns inte i den kopian. Det Alvin tittade på i går
@@ -262,7 +264,12 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
       visade att allt det kan vara grönt medan produktionsbygget är trasigt (`export const` i en
       `"use server"`-fil, rättat i cb5058b med ett test som vaktar regeln). Kvar att bestämma: ska
       bygget in i `verify`? Det kostar en till två minuter per körning
-- [ ] **Registrering med e-postbekräftelse påslagen** verifierad lokalt mot Mailpit: registrera → mejl → `/auth/confirm` → gästens progress följer med. Det här flödet ändras av Alvins inställning ovan, och det är första intrycket för 100 studenter
+- [x] **Registrering med e-postbekräftelse påslagen** verifierad lokalt mot Mailpit (21 sep 00:53):
+      gäst → registrera → mejl → `/auth/confirm` → "2 kort flyttades till ditt konto", och
+      inloggning före bekräftelse nekas med `email_not_confirmed`. Flödet hade aldrig körts skarpt
+      förut eftersom `enable_confirmations` är `false` lokalt. Resultat och procedur i
+      docs/LANSERING.md steg 1. Testkontona raderade, config.toml återställd, databasen räknad före
+      och efter: identisk
 - [ ] Lastbild: antal databasfrågor och storlek på serverns svar för `/d/materialteknik` och en session. Mätt, inte gissat
 - [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort, kort utan kategori
 

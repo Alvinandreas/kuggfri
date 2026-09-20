@@ -290,6 +290,7 @@ export type Database = {
         Args: { p_deck_id: string };
         Returns: { unique_users: number; total_reviews: number; avg_rating: number | null }[];
       };
+      deck_card_counts: { Args: Record<string, never>; Returns: { deck_id: string; active_cards: number }[] };
       deck_stats_cards: { Args: { p_deck_id: string; p_min_students?: number }; Returns: DeckStatsCardRow[] };
       deck_stats_overview: { Args: { p_deck_id: string; p_weeks?: number; p_min_students?: number }; Returns: DeckOverviewStats };
       deck_digest: { Args: { p_deck_id: string; p_min_students?: number }; Returns: DeckDigest };

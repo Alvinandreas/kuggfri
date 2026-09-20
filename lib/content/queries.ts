@@ -31,14 +31,13 @@ export type DeckWithContent = {
 export const getPublishedDecks = unstable_cache(
   async (): Promise<DeckSummary[]> => {
     const supabase = publicClient();
-    const [{ data: decks, error }, { data: cards }] = await Promise.all([
+    const [{ data: decks, error }, { data: counts }] = await Promise.all([
       supabase.from("decks").select("*").eq("is_published", true).order("sort_order").order("title"),
-      supabase.from("cards").select("deck_id").eq("is_active", true),
+      supabase.rpc("deck_card_counts"),
     ]);
     if (error) throw error;
-    const counts = new Map<string, number>();
-    for (const c of cards ?? []) counts.set(c.deck_id, (counts.get(c.deck_id) ?? 0) + 1);
-    return (decks ?? []).map((d) => ({ ...d, cardCount: counts.get(d.id) ?? 0 }));
+    const byDeck = new Map((counts ?? []).map((c) => [c.deck_id, Number(c.active_cards)] as const));
+    return (decks ?? []).map((d) => ({ ...d, cardCount: byDeck.get(d.id) ?? 0 }));
   },
   ["published-decks"],
   { tags: [CONTENT_TAG], revalidate: CONTENT_TTL_SECONDS },

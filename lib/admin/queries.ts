@@ -19,11 +19,10 @@ export async function getAllDecksForAdmin(): Promise<AdminDeckSummary[]> {
   const supabase = await createSupabaseServerClient();
   let query = supabase.from("decks").select("*").order("sort_order").order("title");
   if (!ctx.isAdmin) query = query.in("id", ctx.examinerDeckIds);
-  const [{ data: decks, error }, { data: cards }] = await Promise.all([query, supabase.from("cards").select("deck_id")]);
+  const [{ data: decks, error }, { data: counts }] = await Promise.all([query, supabase.rpc("deck_card_counts")]);
   if (error) throw error;
-  const counts = new Map<string, number>();
-  for (const c of cards ?? []) counts.set(c.deck_id, (counts.get(c.deck_id) ?? 0) + 1);
-  return (decks ?? []).map((d) => ({ ...d, cardCount: counts.get(d.id) ?? 0 }));
+  const byDeck = new Map((counts ?? []).map((c) => [c.deck_id, Number(c.active_cards)] as const));
+  return (decks ?? []).map((d) => ({ ...d, cardCount: byDeck.get(d.id) ?? 0 }));
 }
 
 export type AdminDeck = { deck: DeckRow; categories: CategoryRow[]; cards: CardRow[] };

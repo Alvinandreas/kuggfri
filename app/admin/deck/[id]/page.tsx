@@ -15,10 +15,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 /** Deckets startsida i admin: kursöversikten. */
 export default async function AdminDeckPage({ params }: { params: Params }) {
   const { id } = await params;
-  const data = await getDeckForAdmin(id);
+  // getDeckForAdmin är memoiserad från layouten; de tre anropen beror bara på id.
+  const [data, stats, reports] = await Promise.all([getDeckForAdmin(id), getDeckOverviewStats(id), getDeckReports(id)]);
   if (!data) notFound();
   const { deck, categories, cards } = data;
-  const [stats, reports] = await Promise.all([getDeckOverviewStats(deck.id), getDeckReports(deck.id)]);
   const counts = new Map<string, number>();
   for (const c of cards) if (c.category_id && c.is_active) counts.set(c.category_id, (counts.get(c.category_id) ?? 0) + 1);
 

@@ -55,7 +55,12 @@ export const getCurrentProfile = cache(async () => {
     const user = await getCurrentUser();
     if (!user) return null;
     const supabase = await createSupabaseServerClient();
-    const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+    // Bara det appen faktiskt läser: körs på varje sidvisning för inloggade.
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id, display_name, is_admin, reminder_email, digest_email, created_at")
+      .eq("id", user.id)
+      .maybeSingle();
     return { user, profile };
   } catch {
     return null;

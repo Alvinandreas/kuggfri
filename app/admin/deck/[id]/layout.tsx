@@ -15,10 +15,10 @@ export default async function DeckLayout({ children, params }: { children: React
   const { id } = await params;
   const ctx = await getAdminContext();
   if (!canEditDeck(ctx, id)) forbidden();
-  const data = await getDeckForAdmin(id);
+  // Båda beror bara på id, så de kan hämtas samtidigt.
+  const [data, openReports] = await Promise.all([getDeckForAdmin(id), countOpenReports(id)]);
   if (!data) notFound();
   const { deck, categories, cards } = data;
-  const openReports = await countOpenReports(deck.id);
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">

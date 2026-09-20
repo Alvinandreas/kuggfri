@@ -12,9 +12,8 @@ export const metadata: Metadata = { title: sv.admin.allCardsDetail };
 /** Alla kort i detalj: snittskattning och repetitioner per kort, lägst först. */
 export default async function StatsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const data = await getDeckForAdmin(id);
+  const [data, stats] = await Promise.all([getDeckForAdmin(id), getDeckStats(id)]);
   if (!data) notFound();
-  const stats = await getDeckStats(id);
   const colorIndex = categoryColorIndex(data.categories);
   const categoryOf = new Map(data.cards.map((c) => [c.id, c.category_id] as const));
   const titleOf = new Map(data.categories.map((c) => [c.id, c.title] as const));

@@ -43,6 +43,13 @@ export interface ProgressStore {
   logReview(entry: ReviewEntry): Promise<void>;
 }
 
+/** Så många kort-id per fråga: håller URL:en kort nog för PostgREST. */
+const CHUNK = 200;
+/** Tak på historikrader per del (se loadReviews). */
+const REVIEW_LIMIT_PER_CHUNK = 5000;
+/** Kolumnerna rowToProgress använder. Explicita, så att nya kolumner inte hämtas i onödan. */
+const PROGRESS_COLUMNS = "card_id, due, stability, difficulty, elapsed_days, scheduled_days, reps, lapses, state, last_review, self_rating";
+
 function byTime(a: ReviewEntry, b: ReviewEntry): number {
   return Date.parse(a.reviewed_at) - Date.parse(b.reviewed_at);
 }
@@ -139,15 +146,15 @@ export class SupabaseProgressStore implements ProgressStore {
 
   async load(cardIds: readonly string[]): Promise<ProgressMap> {
     if (cardIds.length === 0) return {};
+    // In-listan delas upp så att URL:en inte blir för lång. Delarna hämtas parallellt:
+    // en kurs med 800 kort blir då en rundresa i stället för fyra.
+    const chunks: string[][] = [];
+    for (let i = 0; i < cardIds.length; i += CHUNK) chunks.push(cardIds.slice(i, i + CHUNK) as string[]);
+    const responses = await Promise.all(
+      chunks.map((chunk) => this.supabase.from("card_progress").select(PROGRESS_COLUMNS).eq("user_id", this.userId).in("card_id", chunk)),
+    );
     const result: ProgressMap = {};
-    // Håll in-listan rimlig i storlek.
-    for (let i = 0; i < cardIds.length; i += 200) {
-      const chunk = cardIds.slice(i, i + 200);
-      const { data, error } = await this.supabase
-        .from("card_progress")
-        .select("*")
-        .eq("user_id", this.userId)
-        .in("card_id", chunk);
+    for (const { data, error } of responses) {
       if (error) throw error;
       for (const row of data ?? []) result[row.card_id] = rowToProgress(row);
     }
@@ -206,16 +213,23 @@ export class SupabaseProgressStore implements ProgressStore {
 
   async loadReviews(cardIds: readonly string[]): Promise<ReviewEntry[]> {
     if (cardIds.length === 0) return [];
+    const chunks: string[][] = [];
+    for (let i = 0; i < cardIds.length; i += CHUNK) chunks.push(cardIds.slice(i, i + CHUNK) as string[]);
+    const responses = await Promise.all(
+      chunks.map((chunk) =>
+        this.supabase
+          .from("review_log")
+          .select("card_id, rating, mode, reviewed_at")
+          .eq("user_id", this.userId)
+          .in("card_id", chunk)
+          .order("reviewed_at", { ascending: true })
+          // Taket gäller per del, inte totalt: en del är högst CHUNK kort, och diagrammen
+          // behöver inte fler rader än så för att bli rättvisande.
+          .limit(REVIEW_LIMIT_PER_CHUNK),
+      ),
+    );
     const result: ReviewEntry[] = [];
-    for (let i = 0; i < cardIds.length; i += 200) {
-      const chunk = cardIds.slice(i, i + 200);
-      const { data, error } = await this.supabase
-        .from("review_log")
-        .select("card_id, rating, mode, reviewed_at")
-        .eq("user_id", this.userId)
-        .in("card_id", chunk)
-        .order("reviewed_at", { ascending: true })
-        .limit(5000);
+    for (const { data, error } of responses) {
       if (error) throw error;
       for (const row of data ?? []) {
         if (isSelfRating(row.rating) && isStudyMode(row.mode)) {
@@ -248,7 +262,10 @@ export class SupabaseProgressStore implements ProgressStore {
   }
 }
 
-function rowToProgress(row: Database["public"]["Tables"]["card_progress"]["Row"]): CardProgress {
+/** Raden så som PROGRESS_COLUMNS hämtar den (utan user_id, som vi redan känner till). */
+type ProgressRow = Omit<Database["public"]["Tables"]["card_progress"]["Row"], "user_id">;
+
+function rowToProgress(row: ProgressRow): CardProgress {
   return {
     card_id: row.card_id,
     due: row.due,

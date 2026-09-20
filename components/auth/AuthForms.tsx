@@ -60,7 +60,7 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
           <Button type="submit" disabled={linkPending}>
             {sv.auth.magicLinkTitle}
           </Button>
-          <button type="button" onClick={() => setUseLink(false)} className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
+          <button type="button" onClick={() => setUseLink(false)} className="-my-1 w-fit py-1 text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.orPassword}
           </button>
         </form>
@@ -79,10 +79,10 @@ export function LoginForm({ next, initialError = null }: { next: string; initial
           <Button type="submit" disabled={passwordPending} data-testid="login-submit">
             {sv.auth.login}
           </Button>
-          <button type="button" onClick={() => setUseLink(true)} className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
+          <button type="button" onClick={() => setUseLink(true)} className="-my-1 w-fit py-1 text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.magicLink}
           </button>
-          <Link href="/glomt-losenord" className="text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
+          <Link href="/glomt-losenord" className="-my-1 w-fit py-1 text-sm text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
             {sv.auth.forgotLink}
           </Link>
         </form>

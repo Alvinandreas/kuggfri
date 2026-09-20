@@ -367,7 +367,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         {deck.title} – {sv.study.position(position + 1, total)}
       </h1>
       <div className="flex items-center justify-between gap-3 text-sm text-muted">
-        <Link href={`/d/${deck.slug}`} className="truncate hover:text-fg">
+        <Link href={`/d/${deck.slug}`} className="-my-2 truncate py-2 hover:text-fg">
           ← {deck.title}
         </Link>
         <span data-testid="remaining" className="shrink-0">
@@ -428,7 +428,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
             <button
               type="button"
               onClick={() => setReportOpen(true)}
-              className="text-xs text-muted underline underline-offset-2 decoration-line-strong hover:text-fg"
+              className="-m-2 p-2 text-xs text-muted underline underline-offset-2 decoration-line-strong hover:text-fg"
               data-testid="report-open"
             >
               {sv.report.open}

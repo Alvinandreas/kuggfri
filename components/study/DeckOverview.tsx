@@ -184,7 +184,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
               type="button"
               onClick={() => setConfirmReset(true)}
               disabled={!store}
-              className="text-xs text-muted underline underline-offset-2 hover:text-fg disabled:opacity-50"
+              className="-m-2 p-2 text-xs text-muted underline underline-offset-2 hover:text-fg disabled:opacity-50"
               title={sv.deck.resetLink}
               data-testid="reset-deck"
             >

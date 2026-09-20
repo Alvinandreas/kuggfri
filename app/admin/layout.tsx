@@ -17,15 +17,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.title} className="flex items-center gap-4 border-b border-line pb-3 text-sm">
-        <Link href="/admin" className="font-semibold">
+        <Link href="/admin" className="-my-1 py-1 font-semibold">
           {sv.admin.title}
         </Link>
         {ctx.isAdmin ? (
           <>
-            <Link href="/admin/deck" className="text-muted hover:text-fg">
+            <Link href="/admin/deck" className="-my-1 py-1 text-muted hover:text-fg">
               {sv.admin.allDecks}
             </Link>
-            <Link href="/admin/deck/ny" className="text-muted hover:text-fg">
+            <Link href="/admin/deck/ny" className="-my-1 py-1 text-muted hover:text-fg">
               {sv.admin.newDeck}
             </Link>
           </>

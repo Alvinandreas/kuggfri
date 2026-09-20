@@ -53,13 +53,16 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
           <thead>
             <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
               <th scope="col" className="w-12 py-3 pl-4 pr-2 align-middle">
-                <input
-                  type="checkbox"
-                  aria-label={allSelected ? sv.deck.selectNone : sv.deck.selectAll}
-                  checked={allSelected}
-                  onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-4 w-4 accent-[var(--accent)]"
-                />
+                {/* Etiketten syns inte men gör träffytan 32 px i stället för kryssrutans 16. */}
+                <label className="-m-2 flex w-fit cursor-pointer p-2">
+                  <input
+                    type="checkbox"
+                    aria-label={allSelected ? sv.deck.selectNone : sv.deck.selectAll}
+                    checked={allSelected}
+                    onChange={(e) => onSelectAll(e.target.checked)}
+                    className="h-4 w-4 accent-[var(--accent)]"
+                  />
+                </label>
               </th>
               <th scope="col" className="px-2 py-2 font-medium">
                 {sv.deck.selectionCategory}
@@ -95,15 +98,17 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
                   data-testid="category-row"
                 >
                   <td className="py-2.5 pl-4 pr-2 align-middle">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={!selectable}
-                      onChange={() => onToggle(c.id)}
-                      aria-label={c.title}
-                      title={selectable ? undefined : sv.deck.trickyEmptyCategory}
-                      className="h-4 w-4 accent-[var(--accent)] disabled:cursor-not-allowed"
-                    />
+                    <label className={`-m-2 flex w-fit p-2 ${selectable ? "cursor-pointer" : "cursor-not-allowed"}`}>
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={!selectable}
+                        onChange={() => onToggle(c.id)}
+                        aria-label={c.title}
+                        title={selectable ? undefined : sv.deck.trickyEmptyCategory}
+                        className="h-4 w-4 accent-[var(--accent)] disabled:cursor-not-allowed"
+                      />
+                    </label>
                   </td>
                   <td className="px-2 py-2.5">
                     <button

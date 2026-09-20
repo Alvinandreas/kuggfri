@@ -156,6 +156,14 @@ Som **gäst**, i mobilen, utan att logga in:
 - [ ] Avsluta passet: "Klar för i dag" med de tre nyckeltalen
 - [ ] Ladda om sidan: progressen finns kvar
 
+Om **delningsbilderna** kom med i pushen (fråga innan du testar — de byggdes natten mot måndag och
+kanske inte hann bli verifierade):
+
+- [ ] Klistra in `https://kuggfri.com/d/materialteknik` i en chatt och se att förhandsvisningen
+      visar en Kuggfri-bild med kursens namn, inte en tom ruta. Testa i den tjänst studenterna
+      faktiskt använder; Messenger, Snapchat och iMessage hämtar bilden var för sig och cachar den,
+      så en bild som rättas efter lanseringen slår inte igenom i redan delade länkar
+
 Som **ny student**:
 
 - [ ] Registrera ett konto med en riktig adress → mejlet kommer inom en minut

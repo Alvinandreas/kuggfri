@@ -67,7 +67,14 @@ Du ska landa inloggad på kuggfri.com. Fungerar inte det, gå inte vidare.
 Nya kolumner först, ny kod sedan. Omvänd ordning ger femhundra fel medan bygget hinner ikapp.
 
 ```bash
-npx supabase db dump --linked -f backup-fore-lansering.sql
+node scripts/backup.cjs
+```
+
+Samma skript som i den vanliga deployrutinen, så backupen hamnar i `backups/<datum-tid>/` och kan
+återställas enligt docs/BACKUP.md. Verifiera den innan du går vidare:
+
+```bash
+node scripts/restore-test.cjs backups/<mappen>
 ```
 
 ```bash

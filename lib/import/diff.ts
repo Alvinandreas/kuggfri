@@ -1,4 +1,5 @@
 import type { ImportCard, ImportError } from "./parse-import";
+import { matchKey } from "@/lib/text/first-line";
 
 export type ExistingCard = {
   id: string;
@@ -26,10 +27,7 @@ export type ImportDiff = {
   errors: ImportError[];
 };
 
-/** Normaliserar text för matchning: trimmar, kollapsar blanksteg, skiftlägesokänsligt. */
-export function matchKey(text: string): string {
-  return text.trim().replace(/\s+/g, " ").toLowerCase();
-}
+export { matchKey };
 
 /**
  * Jämför importerade kort med befintliga. Kort matchas på framsidans text.

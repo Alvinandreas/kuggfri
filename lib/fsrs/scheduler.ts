@@ -13,6 +13,7 @@ import {
   type Grade,
 } from "ts-fsrs";
 import type { CardProgress, ProgressMap, SelfRating } from "@/lib/progress/types";
+import { DAY_MS } from "@/lib/time/day";
 import { SELF_RATINGS } from "@/lib/progress/types";
 
 /** Längsta intervall i dagar när inget tentadatum styr. */
@@ -227,8 +228,6 @@ export function isNew(progress: CardProgress | undefined): boolean {
 }
 
 export type QueueStats = { due: number; new: number; total: number };
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 export type QueueOptions = {
   /** Högst så här många nya (aldrig sedda) kort i kön. Undefined = alla. */

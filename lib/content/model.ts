@@ -3,6 +3,9 @@
  * Supabase, React eller filsystemet. Används av kortfilsparsern, planeraren och CLI:t.
  */
 import { createHash } from "node:crypto";
+import { matchKey } from "@/lib/text/first-line";
+
+export { matchKey };
 
 export type ContentCard = {
   /** Stabil nyckel inom kursen. Texterna får ändras utan att kortet byter identitet. */
@@ -119,12 +122,25 @@ function short(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex").slice(0, 8);
 }
 
-/** Kortets innehåll: framsida, baksida, ledtråd, aktiv och kategori. */
-export function cardContentHash(
-  card: Pick<ContentCard, "front" | "back" | "hint" | "active">,
-  categoryKey: string | null,
-): string {
-  return `c${short(JSON.stringify([card.front, card.back, card.hint ?? "", card.active, categoryKey ?? ""]))}`;
+/**
+ * Kortets innehåll: allt utom nyckeln, plus vilken kategori det ligger i.
+ *
+ * Typen är `Omit<ContentCard, "key">` och inte en handplockad lista, med flit. Lägger vi
+ * till ett fält på kortet (t.ex. korttyp eller svarsalternativ) blir varje anropsställe ett
+ * kompileringsfel tills fältet skickas med. Med en handplockad lista hade det nya fältet
+ * i stället fallit utanför hashen, och pipelinen hade sett ett ändrat kort som oförändrat
+ * och aldrig skrivit det till databasen. Det är det enda stället i kodbasen där en glömd
+ * rad ger tyst dataförlust.
+ */
+export function cardContentHash(card: Omit<ContentCard, "key">, categoryKey: string | null): string {
+  const fields = Object.entries(card)
+    // Nyckeln är identitet, inte innehåll: att byta nyckel ska inte se ut som en ändring.
+    // Filtreras bort här så att anropare kan skicka ett helt ContentCard utan att hashen
+    // skiljer sig från den som byggs ur en databasrad.
+    .filter(([name]) => name !== "key")
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([name, value]) => [name, value ?? ""] as const);
+  return `c${short(JSON.stringify([fields, categoryKey ?? ""]))}`;
 }
 
 /** Innehållshashen ur en lagrad source_hash. null när den saknas eller har okänd form. */
@@ -141,11 +157,6 @@ export function deckHashOf(course: Omit<ContentCourse, "categories">): string {
   return `c${short(
     JSON.stringify([course.title, course.description ?? "", course.course_code ?? "", course.source_credit ?? "", course.exam_date ?? "", course.published, course.sort_order]),
   )}`;
-}
-
-/** Normaliserad text för matchning av kort som ännu saknar nyckel (framsidan). */
-export function matchKey(text: string): string {
-  return text.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
 /** Alla kort i kursen i den ordning de ska ha, med kategori och global sort_order. */

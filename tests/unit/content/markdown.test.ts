@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseCardFile, serializeCardFile } from "@/lib/content/markdown";
-import { slugifyKey, uniqueKey } from "@/lib/content/model";
+import { cardContentHash, slugifyKey, uniqueKey } from "@/lib/content/model";
 
 const FILE = `# Kristallstruktur
 
@@ -101,5 +101,33 @@ describe("nycklar", () => {
     expect(uniqueKey("kort", taken)).toBe("kort");
     expect(uniqueKey("kort", taken)).toBe("kort-2");
     expect(uniqueKey("kort", taken)).toBe("kort-3");
+  });
+});
+
+describe("innehållshashen", () => {
+  const base = { front: "F", back: "B", hint: null, active: true };
+
+  it("ändras när något fält i kortet ändras", () => {
+    const h = cardContentHash(base, "kat");
+    expect(cardContentHash({ ...base, front: "F2" }, "kat")).not.toBe(h);
+    expect(cardContentHash({ ...base, back: "B2" }, "kat")).not.toBe(h);
+    expect(cardContentHash({ ...base, hint: "L" }, "kat")).not.toBe(h);
+    expect(cardContentHash({ ...base, active: false }, "kat")).not.toBe(h);
+    expect(cardContentHash(base, "annan")).not.toBe(h);
+  });
+
+  it("ändras även för fält som läggs till senare", () => {
+    // Skyddet mot tyst dataförlust: hashen bygger på kortets alla fält, inte en handplockad
+    // lista. Ett nytt fält (t.ex. korttyp eller svarsalternativ) måste påverka hashen,
+    // annars skulle pipelinen se ett ändrat kort som oförändrat och aldrig skriva det.
+    const utökad = { ...base, typ: "flerval", alternativ: ["a", "b"] } as unknown as typeof base;
+    expect(cardContentHash(utökad, "kat")).not.toBe(cardContentHash(base, "kat"));
+  });
+
+  it("påverkas inte av nyckeln eller av fältens ordning", () => {
+    const medNyckel = { ...base, key: "k1" } as unknown as typeof base;
+    expect(cardContentHash(medNyckel, "kat")).toBe(cardContentHash(base, "kat"));
+    const omkastad = { active: true, hint: null, back: "B", front: "F" };
+    expect(cardContentHash(omkastad, "kat")).toBe(cardContentHash(base, "kat"));
   });
 });

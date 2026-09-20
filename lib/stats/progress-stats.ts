@@ -13,7 +13,9 @@ import { estimateKnowledge, type KnowledgeEstimate } from "@/lib/fsrs/scheduler"
 export const STREAK_FREEZES_MAX = 2;
 export const STREAK_FREEZE_EVERY_ACTIVE_DAYS = 7;
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+import { DAY_MS, localDayKey, startOfDay } from "@/lib/time/day";
+
+export { localDayKey };
 
 export type DayPoint = {
   /** YYYY-MM-DD i lokal tid */
@@ -49,22 +51,8 @@ export type ProgressStats = {
   hasReviews: boolean;
 };
 
-/** Lokal kalenderdag som YYYY-MM-DD. */
-export function localDayKey(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
 function shortLabel(d: Date): string {
   return `${d.getDate()}/${d.getMonth() + 1}`;
-}
-
-function startOfDay(d: Date): Date {
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  return x;
 }
 
 export function buildProgressStats(input: {

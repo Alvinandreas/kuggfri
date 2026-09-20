@@ -37,18 +37,10 @@ export type ExamPhase =
   /** Tentan har passerat: långsiktigt schema igen. */
   | { kind: "past"; daysAgo: number };
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-function startOfDay(d: Date): Date {
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  return x;
-}
+import { calendarDaysUntil } from "@/lib/time/day";
 
 /** Hela kalenderdagar från nu till datumet (lokal tid); negativt om passerat. */
-export function daysUntil(date: Date, now: Date): number {
-  return Math.round((startOfDay(date).getTime() - startOfDay(now).getTime()) / DAY_MS);
-}
+export const daysUntil = calendarDaysUntil;
 
 /** Tolkar ett tentadatum (YYYY-MM-DD, lokal tid). Null om saknas eller ogiltigt. */
 export function parseExamDate(value: string | null | undefined): Date | null {

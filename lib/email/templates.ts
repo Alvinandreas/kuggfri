@@ -3,6 +3,8 @@
  * Tonen följer docs/OMVARLDSANALYS.md: ett mejl med faktiskt värde, aldrig skuld.
  */
 import { daysUntil, estimateMinutes, parseExamDate } from "@/lib/study/plan";
+import { firstLine } from "@/lib/text/first-line";
+import type { DeckDigest } from "@/lib/supabase/database.types";
 
 export type ReminderDeck = { slug: string; title: string; due: number; exam_date: string | null };
 
@@ -62,22 +64,13 @@ export function buildReminderStopEmail(input: { name: string | null; siteUrl: st
   };
 }
 
-export type DigestData = {
-  exam_date: string | null;
-  students: number;
-  new_students_7d: number;
-  active_7d: number;
-  reviews_7d: number;
-  avg_rating_7d: number | null;
-  hardest: { title: string; avg: number; students: number }[];
-  tricky: { front: string; low_share: number; ratings: number }[];
-  open_reports: number;
-  latest_reports: { front: string; message: string; created_at: string }[];
-};
+/**
+ * Underlaget till veckobrevet är exakt det deck_digest() returnerar. Ett alias i stället
+ * för en egen kopia, så att ett nytt fält i SQL-funktionen inte kan falla bort tyst i mejlet.
+ */
+export type DigestData = DeckDigest;
 
-function firstLine(s: string): string {
-  return s.split("\n")[0]?.replace(/[*_`$#]/g, "").trim().slice(0, 90) ?? "";
-}
+
 
 export function buildDigestEmail(input: {
   name: string | null;
@@ -107,12 +100,12 @@ export function buildDigestEmail(input: {
     paras.push(`Svåraste områdena visas när minst ${input.minStudents} studenter skattat en kategori.`);
   }
   if (data.tricky.length > 0) {
-    paras.push(`Kluriga frågor (andel som skattade 1–2): ${data.tricky.map((t) => `”${firstLine(t.front)}” ${Math.round(t.low_share * 100)} %`).join(" · ")}.`);
+    paras.push(`Kluriga frågor (andel som skattade 1–2): ${data.tricky.map((t) => `”${firstLine(t.front, { maxLength: 90 })}” ${Math.round(t.low_share * 100)} %`).join(" · ")}.`);
   }
   if (data.open_reports > 0) {
     paras.push(
       `${data.open_reports === 1 ? "1 öppen felrapport" : `${data.open_reports} öppna felrapporter`}${
-        data.latest_reports.length > 0 ? `: ${data.latest_reports.map((r) => `”${firstLine(r.front)}”: ${r.message.slice(0, 120)}`).join(" · ")}` : ""
+        data.latest_reports.length > 0 ? `: ${data.latest_reports.map((r) => `”${firstLine(r.front, { maxLength: 90 })}”: ${r.message.slice(0, 120)}`).join(" · ")}` : ""
       }.`,
     );
   } else {

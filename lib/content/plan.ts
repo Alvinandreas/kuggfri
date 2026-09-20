@@ -23,6 +23,7 @@ import {
   type ContentCard,
   type ContentCourse,
 } from "./model";
+import { firstLine } from "@/lib/text/first-line";
 
 // ---------------------------------------------------------------------------
 // Databasens läge (svaret från deck_snapshot)
@@ -164,8 +165,8 @@ function compareDim(file: string, db: string, stored: string | null): Dim {
   return file === db ? "unchanged" : "conflict";
 }
 
-function firstLine(text: string): string {
-  return (text.split("\n").find((l) => l.trim()) ?? text).trim().slice(0, 70);
+function label(text: string): string {
+  return firstLine(text, { maxLength: 70 });
 }
 
 export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options: PlanOptions = {}): ContentPlan {
@@ -329,7 +330,7 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
 
     if (!db) {
       sync.cards.create.push(values);
-      changes.push({ kind: "card-create", key: cKey, label: firstLine(card.front) });
+      changes.push({ kind: "card-create", key: cKey, label: label(card.front) });
       continue;
     }
     usedDbCardIds.add(db.id);
@@ -341,11 +342,11 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
     const cContent = compareDim(fileContent, dbContent, storedContentHash(db.source_hash));
 
     if (cContent === "conflict" && !force) {
-      conflicts.push({ key: cKey, label: firstLine(card.front), reason: "ändrat både i filen och i admin" });
+      conflicts.push({ key: cKey, label: label(card.front), reason: "ändrat både i filen och i admin" });
       continue;
     }
     if (cContent === "db" && !force) {
-      warnings.push(`Kortet ”${firstLine(card.front)}” är ändrat i admin. Kör pull för att ta in ändringen i filen.`);
+      warnings.push(`Kortet ”${label(card.front)}” är ändrat i admin. Kör pull för att ta in ändringen i filen.`);
       continue;
     }
 
@@ -355,21 +356,21 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
 
     sync.cards.update.push(values);
     if (adopting || db.key !== cKey) {
-      changes.push({ kind: "card-adopt", key: cKey, label: firstLine(card.front), detail: "knyter ihop med befintligt kort" });
+      changes.push({ kind: "card-adopt", key: cKey, label: label(card.front), detail: "knyter ihop med befintligt kort" });
     } else if (cContent !== "unchanged") {
       changes.push({
         kind: "card-update",
         key: cKey,
-        label: firstLine(card.front),
+        label: label(card.front),
         detail: card.active ? undefined : "inaktiveras",
         progress: snapshot.progress[db.id],
       });
     } else if (orderChanged) {
-      changes.push({ kind: "card-move", key: cKey, label: firstLine(card.front) });
+      changes.push({ kind: "card-move", key: cKey, label: label(card.front) });
     } else {
       // Innehållet stämmer redan; bara den lagrade hashen skrivs om (t.ex. direkt efter
       // en pull som tagit in en ändring från admin).
-      changes.push({ kind: "card-sync", key: cKey, label: firstLine(card.front) });
+      changes.push({ kind: "card-sync", key: cKey, label: label(card.front) });
     }
   }
 
@@ -385,10 +386,10 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
     const progress = snapshot.progress[db.id];
     if (options.deleteMissing) {
       sync.cards.delete.push(db.id);
-      changes.push({ kind: "card-delete", key: db.key, label: firstLine(db.front), progress });
+      changes.push({ kind: "card-delete", key: db.key, label: label(db.front), progress });
     } else if (db.is_active) {
       sync.cards.deactivate.push(db.id);
-      changes.push({ kind: "card-deactivate", key: db.key, label: firstLine(db.front), progress });
+      changes.push({ kind: "card-deactivate", key: db.key, label: label(db.front), progress });
     }
   }
   if (adminOnly > 0) {

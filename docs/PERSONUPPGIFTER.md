@@ -20,8 +20,14 @@ Testerna i `tests/unit/privacy/` kontrollerar punkt 3 och 4 automatiskt.
 |---|---|
 | Personuppgiftsansvarig | Alvin Andreasson, privatperson, student vid Chalmers |
 | Dataskyddsombud | Krävs inte (ingen myndighet, ingen storskalig övervakning, inga känsliga uppgifter) |
-| Personuppgiftsbiträden | Supabase (databas och inloggning, EU-region Irland), Vercel (drift, serverregion Stockholm), Hostinger (e-postutskick) |
+| Personuppgiftsbiträden | Supabase (databas och inloggning, EU-region Irland), Vercel (drift, serverregion Stockholm), Hostinger (appens egna mejl: påminnelser och veckobrev) |
 | Utanför ansvaret | Chalmers är **inte** personuppgiftsansvarig. Tjänsten är ett studentinitiativ som används i en kurs, inte en del av lärosätets IT-miljö. Examinatorn får bara se anonym, aggregerad statistik |
+
+> **Att göra samtidigt som SMTP byts (docs/LANSERING.md steg 1):** slås egen SMTP på för Supabase
+> inloggningsmejl blir den leverantören (Resend i den rekommenderade lösningen) ett nytt biträde som
+> behandlar studenternas e-postadresser. Då ska den läggas till både i tabellen ovan och i listan på
+> `/integritet`, och DPA:t hos leverantören godkännas. Byts inte SMTP står Supabase för utskicken och
+> listan stämmer som den är.
 
 Kursens examinator är inte ett biträde: hen behandlar inga personuppgifter i tjänsten, eftersom
 kursöversikten bara innehåller aggregat. Undantaget är felrapporter, där studenten *frivilligt* kan

@@ -30,6 +30,10 @@ Exakta klickvägar finns i DEPLOY.md 3b–3d. Kortfattat:
    risken på lanseringsdagen.
 2. **Slå på Confirm email** (Authentication → Providers → Email). Måste ske *efter* SMTP, annars
    fastnar alla nya konton i ett mejl som aldrig kommer fram.
+2b. **Integritetspolicyn måste nämna den nya mejlleverantören** innan den första studenten
+   registrerar sig. Byter vi till Resend behandlar Resend studenternas e-postadresser och är därmed
+   ett personuppgiftsbiträde; `/integritet` och docs/PERSONUPPGIFTER.md listar i dag Supabase,
+   Vercel och Hostinger. En rad i listan, men den ska ligga före lanseringen, inte efter.
 3. **Miljövariabler i Vercel** (Production): `CRON_SECRET`, `REVALIDATE_SECRET`,
    `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`, samt SMTP-variablerna enligt DEPLOY.md 3d.
 4. **Ta bort `https://*.vercel.app/**`** ur Redirect URLs och lämna kvar `https://kuggfri.com/**`.

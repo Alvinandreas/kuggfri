@@ -250,7 +250,10 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 
 ### Måste vara på plats innan studenterna släpps in
 
-- [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen nedan väntar på det
+- [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen
+      nedan väntar på det. Kopian är ombyggd natten mot 21 sep från commit 3b5b8ea (sista committen)
+      och startad, så den visar hela helgens arbete. Sidorna svarar på 37–300 ms. Dev-servern på
+      3000 är avstängd med flit: två Next-processer i samma `.next` korrumperar bygget
 - [?] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
 - [x] Hela E2E-sviten grön lokalt: **50/50 på 12,9 minuter, noll omkörningar** (21 sep 00:53,
       commit cb5058b). De två tidigare körningarna i natt räknas inte — den första förstördes av två
@@ -279,12 +282,13 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 ### Bör hinnas med (studenterna märker skillnaden)
 
 - [ ] Delningsbild (OG-image) så att en länk i gruppchatten visar ett Kuggfri-kort i stället för en tom ruta
-- [~] Mobilpass: 375 px, 768 px, mörkt läge och en runda genom alla admin- och studentvyer är
-      gjorda — ingen horisontell scroll någonstans, statistiksidan tyngst med 210 kB HTML men
-      innanför kanten. Fyndet var inte layouten utan **klickytorna**: kryssrutorna i
-      kategoritabellen låg på 16×16 px mot WCAG 2.5.8:s 24×24, och det är studentens huvudsakliga
-      interaktion på en telefon. Åtgärdat på fem ställen utan att något ritas större eller flyttas
-      (se DECISIONS.md). Bockas av när E2E bekräftats grön efter markup-ändringen
+- [x] Mobilpass: 375 px, 768 px, mörkt läge och en runda genom alla admin- och studentvyer —
+      ingen horisontell scroll någonstans, statistiksidan tyngst med 210 kB HTML men innanför
+      kanten. Fyndet var inte layouten utan **klickytorna**: kryssrutorna i kategoritabellen låg på
+      16×16 px mot WCAG 2.5.8:s 24×24, och det är studentens huvudsakliga interaktion på en telefon.
+      Åtgärdat på fem ställen utan att något ritas större eller flyttas (se DECISIONS.md).
+      E2E 50/50 grön igen efter markup-ändringen (12,8 min) — etiketten runt kryssrutan fångar
+      inga klick
 - [ ] Tillgänglighetsgenomgång: axe på varje sida i E2E och en tangentbordsrunda genom en hel session
 - [ ] "Lägg till på hemskärmen" med i presentationen och infobladet (manifest och ikoner finns redan)
 

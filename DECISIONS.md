@@ -179,9 +179,13 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **E-postbekräftelse är avstängd** i produktion. Kontot skapas direkt med lösenord, ingen väntan på
   mejl som kan fastna i Supabase inbyggda gräns (ett par mejl per timme). Egen SMTP (Resend) läggs
   till före lansering till studenter, se docs/DEPLOY.md 3c.
-  **Upphävs vid studentlanseringen:** bekräftelsen slås på i steg 1 i docs/LANSERING.md, direkt efter
-  att egen SMTP är på plats. Utan bekräftelse kan vem som helst registrera sig på examinatorns adress
-  och ärva behörigheten till kursen.
+  **Upphävs vid studentlanseringen**, på två ställen som gör olika saker. Steg 1 i
+  docs/LANSERING.md slår på "Confirm email" i Supabase, vilket är det som gör att bekräftelsemejlet
+  alls skickas. Själva skyddet ligger i databasen: migrationen `20260920000200_sakerhet.sql` kräver
+  en bekräftad adress för att en rad i `deck_examiners` ska ge behörighet. Skulle inställningen
+  någon gång slås av igen står databasens villkor kvar. Leta alltså inte efter skyddet i
+  dashboarden. Utan det kan vem som helst registrera sig på examinatorns adress och ärva
+  behörigheten till kursen.
 
 ## Beslut 2026-09-17, efter mötet med Johan
 

@@ -90,12 +90,12 @@ describe("LocalProgressStore", () => {
 
     expect(Object.keys(await store.load(["a", "b"])).sort()).toEqual(["a", "b"]);
 
-    await store.resetSchedule("deck", ["a"]);
+    await store.resetSchedule({ deckId: "deck", cardIds: ["a"] });
     const afterSchedule = await store.load(["a"]);
     expect(afterSchedule.a?.state).toBe(0);
     expect(afterSchedule.a?.self_rating).toBe(2);
 
-    await store.resetDeck("deck", ["a", "b"]);
+    await store.resetDeck({ deckId: "deck", cardIds: ["a", "b"] });
     expect(Object.keys(await store.load(["a", "b", "c"]))).toEqual(["c"]);
 
     await store.resetAll();
@@ -127,7 +127,7 @@ describe("repetitionshistorik för gäster", () => {
     expect(all.map((r) => r.card_id)).toEqual(["a", "b"]);
     expect(await store.loadReviews(["b"])).toHaveLength(1);
 
-    await store.resetDeck("deck", ["a"]);
+    await store.resetDeck({ deckId: "deck", cardIds: ["a"] });
     expect((await store.loadReviews(["a", "b"])).map((r) => r.card_id)).toEqual(["b"]);
     await store.resetAll();
     expect(await store.loadReviews(["a", "b"])).toEqual([]);

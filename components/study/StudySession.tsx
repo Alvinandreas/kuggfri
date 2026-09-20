@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
+import { percent } from "@/lib/text/percent";
 import { applyRating } from "@/lib/fsrs/apply-rating";
 import { previewIntervals, type ScheduleOptions } from "@/lib/fsrs/scheduler";
 import {
@@ -54,9 +55,9 @@ type SessionPlan = {
 };
 
 /** Under så här många ms från visning till vändning räknas vändningen som "säker". */
-export const CONFIDENT_FLIP_MS = 2500;
+const CONFIDENT_FLIP_MS = 2500;
 /** Så länge stannar ett säkert-men-fel-kort innan nästa visas. */
-export const CONFIDENT_STAY_MS = 2600;
+const CONFIDENT_STAY_MS = 2600;
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -350,7 +351,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     );
   }
 
-  const progressPct = total === 0 ? 0 : Math.round((position / total) * 100);
+  const progressPct = percent(position, total);
   const banner =
     mode !== "fsrs"
       ? null

@@ -130,7 +130,7 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     if (!store) return;
     setBusy(true);
     try {
-      await store.resetDeck(deck.id, cardIds);
+      await store.resetDeck({ deckId: deck.id, cardIds });
       await reload();
       setNotice(sv.deck.resetDone);
     } catch {

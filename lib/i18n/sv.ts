@@ -92,7 +92,6 @@ export const sv = {
     categories: "Kategorier",
     progressTitle: "Din progress",
     seen: (n: number, total: number) => `${n} av ${total} kort sedda`,
-    noProgress: "Du har inte pluggat det här decket ännu.",
     resetDeck: "Nollställ det här decket",
     resetSchedule: "Nollställ schemat, behåll skattningarna",
     resetScheduleHelp: "Alla kort blir nya igen men dina 1–5-skattningar sparas.",
@@ -175,7 +174,6 @@ export const sv = {
       5: "Direkt",
     } as Record<1 | 2 | 3 | 4 | 5, string>,
     /** Kort intervalltext på knappen: när kortet kommer tillbaka. */
-    intervalAgain: "igen i dag",
     keyboardHelp: "Mellanslag vänder · 1–5 skattar · ← → bläddrar · H ledtråd",
     finalReviewBanner: (days: number) =>
       days === 0 ? "Tentan är i dag: slutrepetition av alla kort, svagast först." : days === 1 ? "Tentan är i morgon: slutrepetition av alla kort, svagast först." : `Tentan om ${days} dagar: slutrepetition av alla kort, svagast först.`,
@@ -226,7 +224,6 @@ export const sv = {
     nextDueNone: "Inget kort är schemalagt ännu.",
     nextDueCount: (n: number, when: string) => (n === 1 ? `1 kort ${when}` : `${n} kort ${when}`),
     freeModeNote: "Fri repetition påverkar inte schemat.",
-    again: "Plugga igen",
     backToDeck: "Tillbaka till decket",
     home: "Alla deck",
   },

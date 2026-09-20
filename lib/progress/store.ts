@@ -22,6 +22,11 @@ import { mergeProgress } from "./migrate";
 import { flushOutbox, outboxSize, queueProgress, queueReview } from "./outbox";
 import { isSelfRating, isStudyMode, type CardProgress, type ProgressMap, type ReviewEntry, type StudyMode } from "./types";
 
+/** Vilket deck en nollställning gäller, uttryckt för båda lagren (se resetDeck). */
+export type ResetTarget = { deckId: string; cardIds: readonly string[] };
+/** Alla deck. */
+export type AllDecks = { deckId: null; cardIds: null };
+
 export interface ProgressStore {
   readonly kind: "local" | "account";
   /** Antal skrivningar som väntar på att skickas (tappad anslutning). Gäster: alltid 0. */
@@ -29,12 +34,16 @@ export interface ProgressStore {
   /** Progress för angivna kort. Kort utan progress saknas i svaret. */
   load(cardIds: readonly string[]): Promise<ProgressMap>;
   save(progress: CardProgress): Promise<void>;
-  /** Tar bort all progress (och historik) för ett deck. */
-  resetDeck(deckId: string, cardIds: readonly string[]): Promise<void>;
+  /**
+   * Tar bort all progress (och historik) för ett deck.
+   * Kontolagret går på deckId, gästlagret på cardIds: localStorage vet inget om deck.
+   * Båda anges därför, och den som anropar från kurssidan har alltid båda.
+   */
+  resetDeck(target: ResetTarget): Promise<void>;
   /** Tar bort all progress i alla deck. */
   resetAll(): Promise<void>;
-  /** Nollställer schemat men behåller self_rating. deckId null = alla deck. */
-  resetSchedule(deckId: string | null, cardIds: readonly string[] | null): Promise<void>;
+  /** Nollställer schemat men behåller self_rating. Båda fälten null = alla deck. */
+  resetSchedule(target: ResetTarget | AllDecks): Promise<void>;
   /** Loggar en avslutad session. Gäster loggar ingenting. */
   logSession(input: { deckId: string; mode: StudyMode; startedAt: Date; cardsReviewed: number }): Promise<void>;
   /** Repetitionshistorik för angivna kort, äldst först. */
@@ -76,7 +85,7 @@ export class LocalProgressStore implements ProgressStore {
     writeLocalProgress(this.storage, all);
   }
 
-  async resetDeck(_deckId: string, cardIds: readonly string[]): Promise<void> {
+  async resetDeck({ cardIds }: ResetTarget): Promise<void> {
     const all = readLocalProgress(this.storage);
     const ids = new Set(cardIds);
     for (const id of cardIds) delete all[id];
@@ -92,7 +101,7 @@ export class LocalProgressStore implements ProgressStore {
     clearLocalReviews(this.storage);
   }
 
-  async resetSchedule(_deckId: string | null, cardIds: readonly string[] | null): Promise<void> {
+  async resetSchedule({ cardIds }: ResetTarget | AllDecks): Promise<void> {
     const all = readLocalProgress(this.storage);
     const now = new Date();
     const ids = cardIds ?? Object.keys(all);
@@ -184,7 +193,7 @@ export class SupabaseProgressStore implements ProgressStore {
     if (error) throw error;
   }
 
-  async resetDeck(deckId: string): Promise<void> {
+  async resetDeck({ deckId }: ResetTarget): Promise<void> {
     const { error } = await this.supabase.rpc("reset_deck_progress", { p_deck_id: deckId });
     if (error) throw error;
   }
@@ -194,7 +203,7 @@ export class SupabaseProgressStore implements ProgressStore {
     if (error) throw error;
   }
 
-  async resetSchedule(deckId: string | null): Promise<void> {
+  async resetSchedule({ deckId }: ResetTarget | AllDecks): Promise<void> {
     const { error } = await this.supabase.rpc("reset_schedule_keep_ratings", { p_deck_id: deckId });
     if (error) throw error;
   }

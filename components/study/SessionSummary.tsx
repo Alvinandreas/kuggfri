@@ -2,6 +2,7 @@
 
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
+import { percent } from "@/lib/text/percent";
 import type { SessionSummary as Summary } from "@/lib/fsrs/session";
 import { SELF_RATINGS, type StudyMode } from "@/lib/progress/types";
 import { formatRelative } from "@/lib/time/format";
@@ -37,7 +38,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
   const done = today?.done ?? false;
   const isExam = mode === "exam";
   const examOk = summary.distribution[4] + summary.distribution[5];
-  const examPct = summary.reviewed === 0 ? 0 : Math.round((examOk / summary.reviewed) * 100);
+  const examPct = percent(examOk, summary.reviewed);
 
   return (
     <div className="mx-auto grid w-full max-w-[44rem] gap-6" data-testid="session-summary" data-done={done}>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import type { DeckOverviewStats, DeckReportRow } from "@/lib/supabase/database.types";
 import { firstLine } from "@/lib/text/first-line";
+import { percent, percentText } from "@/lib/text/percent";
 import { formatDateTime } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { BarChart } from "@/components/stats/BarChart";
@@ -80,7 +81,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                 ariaLabel={sv.admin.hardest}
                 rows={hardest.map((c) => {
                   const avg = c.avg ?? 0;
-                  const lowPct = Math.round((c.low / Math.max(1, c.ratings)) * 100);
+                  const lowPct = percent(c.low, c.ratings);
                   return {
                     key: c.category_id,
                     label: <CategoryTag title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} />,
@@ -117,7 +118,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                 </thead>
                 <tbody>
                   {tricky.map((c) => {
-                    const share = Math.round((c.low / c.ratings) * 100);
+                    const share = percent(c.low, c.ratings);
                     return (
                       <tr key={c.card_id} className="border-b border-line last:border-b-0">
                         <td className="max-w-0 py-2.5 pr-2 align-middle">
@@ -154,13 +155,13 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                 <StatTile label={sv.admin.activationStarted} value={`${stats.activation.started}`} sub={sv.admin.tileStudentsSub} tone="green" />
                 <StatTile
                   label={sv.admin.activationFirst}
-                  value={stats.activation.started === 0 ? "–" : `${Math.round((stats.activation.first_session_20 / stats.activation.started) * 100)} %`}
+                  value={percentText(stats.activation.first_session_20, stats.activation.started)}
                   sub={sv.admin.activationFirstSub}
                   tone="teal"
                 />
                 <StatTile
                   label={sv.admin.activationReturned}
-                  value={stats.activation.eligible === 0 ? "–" : `${Math.round((stats.activation.returned_3d / stats.activation.eligible) * 100)} %`}
+                  value={percentText(stats.activation.returned_3d, stats.activation.eligible)}
                   sub={sv.admin.activationReturnedSub(stats.activation.eligible)}
                   tone="navy"
                 />
@@ -195,7 +196,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                 label: `${r.rating}`,
                 value: r.n,
                 colorClass: ratingFillSvg[r.rating] ?? "fill-chart-1",
-                detail: totalRatings === 0 ? undefined : `${Math.round((r.n / totalRatings) * 100)} %`,
+                detail: totalRatings === 0 ? undefined : percentText(r.n, totalRatings),
               }))}
               formatValue={(v) => sv.stats.cards(v)}
             />

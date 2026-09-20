@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { tagBgClass } from "@/lib/ui/tag-colors";
+import { percent } from "@/lib/text/percent";
 
 export type RadarAxis = {
   key: string;
@@ -57,7 +58,6 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
   const learnedPts = pts((a) => ratio(a.learned, a.total));
   // Staplat: yttre ytan är inlärda + delvis inlärda, inre ytan bara inlärda.
   const stackedPts = pts((a) => ratio(a.learned + a.partial, a.total));
-  const pct = (num: number, den: number) => `${Math.round(ratio(num, den) * 100)} %`;
 
   return (
     <figure className="grid gap-2">
@@ -85,8 +85,8 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
               <td>
                 {i + 1}. {a.label}
               </td>
-              <td>{pct(a.partial, a.total)}</td>
-              <td>{pct(a.learned, a.total)}</td>
+              <td>{percent(a.partial, a.total)} %</td>
+              <td>{percent(a.learned, a.total)} %</td>
             </tr>
           ))}
         </tbody>
@@ -152,7 +152,6 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
 
 /** Numrerad kategorilista som hör till radardiagrammet; läggs där det finns plats (t.ex. under båda diagrammen). */
 export function RadarLegend({ axes, hover, onHover }: { axes: RadarAxis[]; hover: number | null; onHover: (i: number | null) => void }) {
-  const pct = (num: number, den: number) => `${den === 0 ? 0 : Math.round((num / den) * 100)} %`;
   return (
     <ol className="grid grid-cols-1 gap-x-4 gap-y-1 text-xs sm:grid-cols-2 lg:grid-cols-3" aria-label={sv.deck.selectionCategory}>
       {axes.map((a, i) => (
@@ -166,7 +165,7 @@ export function RadarLegend({ axes, hover, onHover }: { axes: RadarAxis[]; hover
           <span className="min-w-0 flex-1 truncate" title={a.label}>
             {a.label}
           </span>
-          <span className="shrink-0 tabular-nums text-muted">{pct(a.learned, a.total)}</span>
+          <span className="shrink-0 tabular-nums text-muted">{percent(a.learned, a.total)} %</span>
         </li>
       ))}
     </ol>

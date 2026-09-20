@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { BarChart } from "./BarChart";
 import { RadarChart, RadarLegend, type RadarAxis } from "./RadarChart";
 import { StatTile } from "./StatTile";
+import { percent } from "@/lib/text/percent";
 
 type Props = {
   cardIds: readonly string[];
@@ -54,7 +55,7 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories,
     () => categories.map((c, i) => ({ key: c.id, label: c.title, colorIndex: i, total: c.total, partial: c.partial, learned: c.learned })),
     [categories],
   );
-  const learnedPct = stats.totalCards === 0 ? 0 : Math.round((stats.learned / stats.totalCards) * 100);
+  const learnedPct = percent(stats.learned, stats.totalCards);
 
   return (
     <div className="grid gap-5">

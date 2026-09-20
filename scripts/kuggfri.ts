@@ -20,6 +20,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { convertCards } from "@/lib/content/convert";
+import { LIMITS } from "@/lib/admin/limits";
 
 import { deckId as deckIdFor, flattenCards, type ContentCourse } from "@/lib/content/model";
 import { courseFromSnapshot, planSync, EMPTY_SNAPSHOT, type ContentPlan, type DeckSnapshot } from "@/lib/content/plan";
@@ -258,7 +259,7 @@ function cmdKontrollera(args: Args): void {
       }
     }
     for (const { card } of cards) {
-      if (card.front.length > 5000 || card.back.length > 20000 || (card.hint?.length ?? 0) > 500) {
+      if (card.front.length > LIMITS.front || card.back.length > LIMITS.back || (card.hint?.length ?? 0) > LIMITS.hint) {
         say(`  ${C.red}för lång text${C.reset} ${card.key}`);
         problems++;
       }

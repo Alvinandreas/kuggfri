@@ -50,8 +50,9 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         if (result && !result.ok) setNotice(result.error);
       } else if (store) {
         if (pending.kind === "resetAll") await store.resetAll();
-        else if (pending.kind === "resetSchedule") await store.resetSchedule(null, null);
-        else await store.resetDeck(pending.deck.id, []);
+        else if (pending.kind === "resetSchedule") await store.resetSchedule({ deckId: null, cardIds: null });
+        // Kontosidan nås bara inloggad, så det är alltid kontolagret som svarar: deckId räcker.
+        else await store.resetDeck({ deckId: pending.deck.id, cardIds: [] });
         setNotice(sv.deck.resetDone);
       }
     } catch {

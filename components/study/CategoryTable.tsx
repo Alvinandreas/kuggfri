@@ -1,6 +1,7 @@
 "use client";
 
 import { sv } from "@/lib/i18n/sv";
+import { percent, percentText } from "@/lib/text/percent";
 import type { StudyMode } from "@/lib/progress/types";
 import type { CategoryStats } from "@/lib/study/selection";
 import { CategoryTag } from "@/components/ui/CategoryTag";
@@ -83,8 +84,8 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
           <tbody>
             {rows.map((c) => {
               const checked = selected.has(c.id);
-              const learnedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.learned / c.stats.total) * 100);
-              const studiedPct = c.stats.total === 0 ? 0 : Math.round((c.stats.studied / c.stats.total) * 100);
+              const learnedPct = percent(c.stats.learned, c.stats.total);
+              const studiedPct = percent(c.stats.studied, c.stats.total);
               // I läget kluriga kort går bara kategorier med kluriga kort att välja.
               const selectable = mode !== "tricky" || c.stats.tricky > 0;
               return (
@@ -119,7 +120,7 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
                   <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.studied, c.stats.total)}</td>
                   <td className="px-2 py-2.5 text-right tabular-nums text-muted">{sv.deck.studiedOf(c.stats.learned, c.stats.total)}</td>
                   <td className="px-2 py-2.5 text-right tabular-nums text-muted" data-testid="category-known">
-                    {c.stats.studied >= 3 && c.stats.total > 0 ? `${Math.round((c.stats.known / c.stats.total) * 100)} %` : sv.deck.knownTooEarly}
+                    {c.stats.studied >= 3 ? percentText(c.stats.known, c.stats.total, sv.deck.knownTooEarly) : sv.deck.knownTooEarly}
                   </td>
                   <td className="hidden px-3 py-2.5 sm:table-cell">
                     <div className="h-2 w-full overflow-hidden rounded bg-surface-2" aria-hidden="true">

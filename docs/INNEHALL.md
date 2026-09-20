@@ -250,6 +250,7 @@ anropar `POST /api/revalidate` (skyddad med `CRON_SECRET`) efteråt. Utan hemlig
 | `apply` vill inaktivera kort du inte tagit bort | Kortets `key` i filen har ändrats. Nycklar ska aldrig ändras; återställ nyckeln, eller acceptera att kortet blir ett nytt kort utan progress. |
 | Planen vill skriva om alla kort efter att du lagt till ett i mitten | `sort_order` är global i kursen, så allt efter det nya kortet flyttas. Det visas som "kort byter bara ordning" och är ofarligt. |
 | `deck_snapshot` finns inte (mot prod) | Migrationen är inte pushad än. Kör `supabase db push` först. |
+| `ta-bort-kurs --radera` rapporterar fel trots att kursen försvann | Rättat 20 sep (4c364b8). CLI:t krävde JSON i svaret, men en sats utan resultatmängd svarar med en kommandotagg (`DELETE 1`), vilket lästes som ett fel. Ser du det igen: kontrollera i admin eller med `plan` om raderingen faktiskt gick igenom innan du kör om — ett omkört `--radera` på en redan raderad kurs är ofarligt, men felmeddelandet säger inget om vilket. |
 | `apply --mal prod` klagar på storleken | Planen skickas som en JSON-sats via Management API:t. Vid mycket stora ändringar: dela upp i flera `apply` (t.ex. en kategori i taget genom att lägga till kategorierna stegvis), eller kör en gång med `--db-url "<connection string från Supabase → Settings → Database>"`, som inte har någon sådan gräns. |
 
 ## 12. Arbetsordning i sessionen

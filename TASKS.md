@@ -279,8 +279,12 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 ### Bör hinnas med (studenterna märker skillnaden)
 
 - [ ] Delningsbild (OG-image) så att en länk i gruppchatten visar ett Kuggfri-kort i stället för en tom ruta
-- [~] Mobilpass: 375 px och mörkt läge kontrollerade i rökprovet ovan. Kvar: 768 px och en runda
-      genom admin med riktiga texter
+- [~] Mobilpass: 375 px, 768 px, mörkt läge och en runda genom alla admin- och studentvyer är
+      gjorda — ingen horisontell scroll någonstans, statistiksidan tyngst med 210 kB HTML men
+      innanför kanten. Fyndet var inte layouten utan **klickytorna**: kryssrutorna i
+      kategoritabellen låg på 16×16 px mot WCAG 2.5.8:s 24×24, och det är studentens huvudsakliga
+      interaktion på en telefon. Åtgärdat på fem ställen utan att något ritas större eller flyttas
+      (se DECISIONS.md). Bockas av när E2E bekräftats grön efter markup-ändringen
 - [ ] Tillgänglighetsgenomgång: axe på varje sida i E2E och en tangentbordsrunda genom en hel session
 - [ ] "Lägg till på hemskärmen" med i presentationen och infobladet (manifest och ikoner finns redan)
 

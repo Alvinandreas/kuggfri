@@ -1,0 +1,16 @@
+{
+  "key": "pipelinetest",
+  "title": "Pipelinetest",
+  "description": null,
+  "course_code": "TST001",
+  "source_credit": null,
+  "exam_date": null,
+  "published": false,
+  "sort_order": 0,
+  "categories": [
+    {
+      "key": "allmant",
+      "file": "01-allmant.md"
+    }
+  ]
+}

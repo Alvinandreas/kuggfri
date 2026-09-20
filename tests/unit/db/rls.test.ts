@@ -370,12 +370,13 @@ describe("mejl (profiles.reminder_email, email_log, deck_digest)", () => {
     expect(other).toHaveLength(0);
   });
 
-  it("email_log är stängd för anon och användare, öppen för service role", async () => {
+  it("email_log skrivs bara av service role; anon kommer inte åt den alls", async () => {
     await expectDenied(anon(db).query("select * from public.email_log"));
-    await expectDenied(user(db, alice).query("select * from public.email_log"));
     await expectDenied(user(db, alice).query(`insert into public.email_log (kind, user_id, subject) values ('reminder', $1, 'x')`, [alice]));
     await as(db, { role: "service_role" }).query(`insert into public.email_log (kind, user_id, subject) values ('reminder', $1, 'Test')`, [alice]);
     expect(await as(db, { role: "service_role" }).query("select id from public.email_log")).toHaveLength(1);
+    // Användaren får läsa sin egen rad (GDPR art. 15), se "dataskydd" längre ned.
+    expect(await user(db, alice).query("select id from public.email_log")).toHaveLength(1);
   });
 
   it("reminder_candidates och digest_recipients kan bara service role anropa", async () => {
@@ -836,5 +837,48 @@ describe("innehållspipelinen (sync_deck, deck_snapshot)", () => {
     await db.query(`insert into public.cards (deck_id, key, front, back) values ($1, 'unik', 'F', 'B')`, [draftDeck]);
     const [n] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where key = 'unik'`);
     expect(n?.n).toBe(2);
+  });
+});
+
+describe("dataskydd (email_log, gallring, radering)", () => {
+  it("användaren läser sina egna mejlrader men inte andras, och kan inte skriva", async () => {
+    await as(db, { role: "service_role" }).query(`insert into public.email_log (kind, user_id, subject) values ('reminder', $1, 'Till Alice'), ('digest', $2, 'Till Bob')`, [alice, bob]);
+    const mine = await user(db, alice).query<{ user_id: string }>(`select user_id from public.email_log`);
+    expect(mine.length).toBeGreaterThan(0);
+    expect(mine.every((r) => r.user_id === alice)).toBe(true);
+    await expectDenied(user(db, alice).query(`insert into public.email_log (kind, user_id, subject) values ('reminder', $1, 'Fusk')`, [alice]), /permission denied/i);
+    await expectDenied(user(db, alice).query(`delete from public.email_log`), /permission denied/i);
+    await expectDenied(anon(db).query(`select * from public.email_log`));
+  });
+
+  it("gallringen kan bara köras av service role och rensar gamla rader", async () => {
+    await expectDenied(user(db, alice).query(`select public.purge_old_data()`), /forbidden|permission denied/i);
+    await expectDenied(anon(db).query(`select public.purge_old_data()`));
+    await db.query(`update public.email_log set sent_at = now() - interval '100 days' where user_id = $1`, [bob]);
+    const [res] = await as(db, { role: "service_role" }).query<{ data: { email_log_deleted: number } }>(`select public.purge_old_data() as data`);
+    expect(res?.data.email_log_deleted).toBeGreaterThanOrEqual(1);
+    expect(await db.query(`select 1 from public.email_log where user_id = $1`, [bob])).toHaveLength(0);
+    // Alices färska rad är kvar.
+    expect((await db.query(`select 1 from public.email_log where user_id = $1`, [alice])).length).toBeGreaterThan(0);
+  });
+
+  it("listan över vilande konton är bara för service role", async () => {
+    await expectDenied(user(db, alice).query(`select * from public.dormant_accounts()`), /forbidden|permission denied/i);
+    const rows = await as(db, { role: "service_role" }).query(`select * from public.dormant_accounts(0)`);
+    expect(Array.isArray(rows)).toBe(true);
+  });
+
+  it("kontoradering rensar kontaktadressen i egna felrapporter", async () => {
+    const [report] = await db.query<{ id: string }>(
+      `insert into public.card_reports (card_id, user_id, message, contact) values ($1, $2, 'Fel i svaret', 'alice@example.com') returning id`,
+      [publishedCard, alice],
+    );
+    // Radera Alices konto som Alice själv.
+    await user(db, alice).query(`select public.delete_my_account()`);
+    const [row] = await db.query<{ user_id: string | null; contact: string | null }>(`select user_id, contact from public.card_reports where id = $1`, [report!.id]);
+    expect(row?.user_id).toBeNull();
+    expect(row?.contact).toBeNull();
+    // Progressen är borta.
+    expect(await db.query(`select 1 from public.card_progress where user_id = $1`, [alice])).toHaveLength(0);
   });
 });

@@ -18,11 +18,14 @@ $$;
 
 create schema if not exists auth;
 
+-- Kolumnerna som appen och funktionerna faktiskt läser. Lägg till fler här när något
+-- i migrationerna börjar använda dem, så att testerna kör samma SQL som produktionen.
 create table if not exists auth.users (
   id uuid primary key default gen_random_uuid(),
   email text unique,
   raw_user_meta_data jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  last_sign_in_at timestamptz
 );
 
 create or replace function auth.jwt()

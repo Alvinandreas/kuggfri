@@ -295,6 +295,8 @@ export type Database = {
         Returns: { deck_id: string; deck_slug: string; deck_title: string; user_id: string; email: string; display_name: string | null }[];
       };
       is_service_role: { Args: Record<string, never>; Returns: boolean };
+      purge_old_data: { Args: Record<string, never>; Returns: { email_log_deleted: number; reports_deleted: number; contacts_cleared: number } };
+      dormant_accounts: { Args: { p_months?: number }; Returns: { user_id: string; email: string; last_seen: string }[] };
       deck_reports: { Args: { p_deck_id: string }; Returns: DeckReportRow[] };
       deck_open_report_count: { Args: { p_deck_id: string }; Returns: number };
       can_edit_deck: { Args: { p_deck_id: string }; Returns: boolean };

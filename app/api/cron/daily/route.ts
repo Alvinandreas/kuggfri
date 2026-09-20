@@ -9,8 +9,8 @@ import { MIN_STUDENTS } from "@/lib/admin/thresholds";
 export const dynamic = "force-dynamic";
 
 /**
- * Dagligt cron-jobb (vercel.json): påminnelser till studenter som valt det, och på måndagar
- * examinatorns veckobrev. Anropas av Vercel med Authorization: Bearer CRON_SECRET.
+ * Dagligt cron-jobb (vercel.json): gallring av gamla uppgifter, påminnelser till studenter som
+ * valt det, och på måndagar examinatorns veckobrev. Anropas av Vercel med Authorization: Bearer CRON_SECRET.
  * ?digest=1 tvingar veckobrevet (för test). Utan SMTP-konfiguration skickas inget, men svaret
  * visar vad som skulle ha skickats.
  */
@@ -34,7 +34,12 @@ export async function GET(request: Request) {
   const forceDigest = new URL(request.url).searchParams.get("digest") === "1";
   const doDigest = forceDigest || stockholmWeekday === "Mon";
 
-  const summary = { configured: mailer !== null, reminders: 0, stops: 0, digests: 0, skipped: 0, errors: [] as string[] };
+  const summary = { configured: mailer !== null, reminders: 0, stops: 0, digests: 0, skipped: 0, purged: {} as Record<string, number>, errors: [] as string[] };
+
+  // Gallring av det som inte ska sparas för alltid (docs/PERSONUPPGIFTER.md avsnitt 3).
+  const { data: purged, error: purgeErr } = await supabase.rpc("purge_old_data");
+  if (purgeErr) summary.errors.push(`purge_old_data: ${purgeErr.message}`);
+  else summary.purged = (purged ?? {}) as Record<string, number>;
 
   // Påminnelser
   const { data: candidates, error: candErr } = await supabase.rpc("reminder_candidates");

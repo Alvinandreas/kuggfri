@@ -1,7 +1,8 @@
 # Deploy till kuggfri.com – exakt vad Alvin gör och vad Claude gör
 
 > Rutinen vid varje deploy (backup före migration, `db push` före `git push`, tagg, återställning)
-> står i [ATERSTALLNING.md](ATERSTALLNING.md).
+> står i [ATERSTALLNING.md](ATERSTALLNING.md). Körordningen för lanseringen tisdag 22 sep, med
+> rökprov och avbrytskriterier, står i [LANSERING.md](LANSERING.md).
 
 Konton finns redan på Supabase och Vercel. Det som återstår kräver dina inloggningar i tre
 verktyg. Kör stegen under **"Du gör"** i ordning (cirka 15 minuter), så tar Claude resten.

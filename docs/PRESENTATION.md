@@ -1,9 +1,10 @@
 # Presentation för Johan – torsdag 17 sep 08:30, Rännvägen 2A
 
 Utkast skrivet av Claude. Redigera fritt; det här är talarpunkter, inte ett manus att läsa innantill.
-Genomförd 17 sep. Presentationen för studenterna tisdag 22 sep ligger i
-[PRESENTATION-STUDENTER.md](PRESENTATION-STUDENTER.md).
 Mötet är max 60 minuter (Johan har möte 09:30). Sikta på 25 minuter presentation + 20 minuter samtal.
+
+> Genomförd 17 sep. Presentationen för studenterna tisdag 22 sep ligger i
+> [PRESENTATION-STUDENTER.md](PRESENTATION-STUDENTER.md).
 
 ## Mål med mötet (från ditt mejl)
 

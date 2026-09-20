@@ -324,3 +324,30 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Verktyget heter `kuggfri`** (`npm run kuggfri -- <kommando>`) och kör mot lokal databas som
   standard, mot produktion med `--mal prod` via Supabase CLI:s inloggning. Inga nycklar i repot.
   `kuggfri kontrollera` ingår i `npm run verify`.
+
+## Beslut natten mot 2026-09-21, inför studentlanseringen
+
+- **Reglerna för vad studenten får plugga ligger i rena moduler, inte i komponenterna.**
+  `lib/study/deck-plan.ts` (urval, dosering, vad nästa pass innehåller) och
+  `lib/study/session-result.ts` ("klar för i dag", nästa repetition). Skälet: tentaläget,
+  slutrepetitionen och doseringen nära tentan gick bara att kontrollera genom att klicka sig fram i
+  gränssnittet, och det är precis den sortens regler som ändras varje gång ett läge tillkommer.
+  23 enhetstester täcker dem nu. DeckOverview gick från 570 till 272 rader och StudySession från
+  473 till 439; cykeln mellan StudySession och SessionSummary är bruten med
+  `components/study/types.ts`. Vill du flytta tillbaka en regel till en komponent: den ska då inte
+  längre gå att uttrycka utan React.
+- **Delningsbilden är ett flashcard, inte en logotyp.** `lib/ui/og.tsx` ritar kursens namn, kurskod,
+  beskrivning och kortantal. Skälet: bilden är det enda en student ser innan hen bestämmer sig för
+  att trycka på länken, och den sprids i gruppchattar. Två villkor följer med beslutet: bilden måste
+  vara rätt redan i första pushen, eftersom Messenger, Snapchat och iMessage cachar förhandsvisningen
+  per länk och inte hämtar om den, och `NEXT_PUBLIC_SITE_URL` måste vara satt i produktion — utan
+  den pekar `og:image` på localhost.
+- **Regler som bara ett bygge kontrollerar ska ha ett eget test när de går att uttrycka billigt.**
+  `tests/unit/admin/use-server-exports.test.ts` läser varje `"use server"`-fil och underkänner allt
+  som inte är en async-funktion eller en ren typexport. Skälet är felet i cb5058b: en `export const`
+  i en sådan fil är tillåten för typecheck, eslint, enhetstester och dev-servern, men stoppar
+  `next build` — och eftersom dev-servern var igång dygnet runt märktes det inte på flera dygn. Den
+  snabba slingan ska fånga det den kan fånga, i stället för att vi litar på att någon kör bygget.
+- **Bygget körs som eget steg före push** (docs/LANSERING.md steg 0), tills vidare utanför
+  `npm run verify`. Vill du ha det i skriptet hör det hemma i `verify`, inte i `verify:unit`, så att
+  den snabba slingan förblir snabb.

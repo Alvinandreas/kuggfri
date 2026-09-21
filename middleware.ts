@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { maintenanceGate } from "@/lib/maintenance";
 import { updateSession } from "@/lib/supabase/middleware";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
 import { decideAdminAccess } from "@/lib/auth/admin-gate";
@@ -10,8 +11,14 @@ import { decideAdminAccess } from "@/lib/auth/admin-gate";
  *    /auth/confirm. Koden byts mot en session och adressen städas.
  * 3. Skyddar /admin server-side: icke-admin får 403 redan här,
  *    innan någon sida renderas. Layouten under /admin gör samma kontroll igen.
+ *
+ * Är UNDER_UTVECKLING satt svarar grinden först av allt, innan sessionen rörs, så att
+ * ingenting av tjänsten kan nås — varken som gäst eller inloggad.
  */
 export async function middleware(request: NextRequest) {
+  const stängt = maintenanceGate(request);
+  if (stängt) return stängt;
+
   const { supabase, response, user } = await updateSession(request);
   const { pathname, searchParams } = request.nextUrl;
 

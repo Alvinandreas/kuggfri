@@ -9,8 +9,8 @@ import { NextResponse, type NextRequest } from "next/server";
  * igenom något av tjänsten.
  *
  * Egen förhandsvisning: sätt `FORHANDSVISNING_NYCKEL` till en lång slumpsträng och öppna
- * `https://…/?nyckel=DEN_STRÄNGEN`. Nyckeln sparas som kaka i den webbläsaren tills den
- * stängs. Utan satt nyckel finns ingen väg förbi.
+ * `https://…/?nyckel=DEN_STRÄNGEN`. Nyckeln sparas som kaka i den webbläsaren i en vecka.
+ * Utan satt nyckel finns ingen väg förbi.
  */
 
 const KAKA = "kuggfri-forhandsvisning";
@@ -45,7 +45,14 @@ export function maintenanceGate(request: NextRequest): NextResponse | null {
     const url = request.nextUrl.clone();
     url.searchParams.delete("nyckel");
     const svar = NextResponse.redirect(url);
-    svar.cookies.set(KAKA, nyckel, { httpOnly: true, sameSite: "lax", secure: protocol === "https:", path: "/" });
+    // En vecka: kakan ska överleva att datorn startas om natten före en presentation.
+    svar.cookies.set(KAKA, nyckel, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: protocol === "https:",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
     return svar;
   }
 

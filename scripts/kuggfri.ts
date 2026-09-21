@@ -16,7 +16,7 @@
  */
 import { execFileSync } from "node:child_process";
 import { createInterface } from "node:readline/promises";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { convertCards } from "@/lib/content/convert";
@@ -277,6 +277,19 @@ function resolveCourses(args: Args): string[] {
   return [named];
 }
 
+/** Markdownfiler i kursmappen som kurs.json inte pekar ut. */
+function orphanFiles(key: string, course: ContentCourse): string[] {
+  const mapp = join(ROOT, "content", key);
+  const kanda = new Set(course.categories.map((c) => c.file));
+  try {
+    return readdirSync(mapp)
+      .filter((f) => f.endsWith(".md") && !kanda.has(f))
+      .sort();
+  } catch {
+    return [];
+  }
+}
+
 function cmdKontrollera(args: Args): void {
   let problems = 0;
   for (const key of resolveCourses(args)) {
@@ -286,6 +299,11 @@ function cmdKontrollera(args: Args): void {
     for (const issue of issues) {
       say(`  ${C.red}${issue.file}:${issue.line}${C.reset} ${issue.message}`);
       problems++;
+    }
+    // Kortfiler som kurs.json inte nämner. De ser ut att vara innehåll men når aldrig
+    // en enda student, och inget annat i kedjan säger ifrån.
+    for (const fil of orphanFiles(key, course)) {
+      say(`  ${C.yellow}oanvänd fil${C.reset} ${fil} saknas i kurs.json och når inga studenter.`);
     }
     // Dubbletter på framsidan inom kursen (tillåtet i databasen, men nästan alltid ett misstag).
     const fronts = new Map<string, number>();

@@ -256,7 +256,7 @@ export const sv = {
     emailInUse: "Det finns redan ett konto med den e-postadressen. Logga in i stället, eller välj Glömt lösenord.",
     invalidEmail: "E-postadressen ser inte giltig ut.",
     rateLimited:
-      "För många e-postutskick på kort tid. Vänta en stund och försök igen, eller logga in med lösenord.",
+      "För många försök på kort tid. Du behöver inget konto för att plugga – börja direkt, så sparas allt i den här webbläsaren. Skapar du kontot senare följer progressen med.",
     signupDisabled: "Det går inte att skapa konton just nu.",
     notConfirmed: "E-postadressen är inte bekräftad ännu. Öppna länken i mejlet, eller be om en ny inloggningslänk.",
     weakPassword: "Lösenordet är för kort.",

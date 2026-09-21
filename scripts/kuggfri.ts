@@ -94,6 +94,34 @@ function targetName(target: Target): string {
   return target.kind === "local" ? "lokal databas" : target.kind === "linked" ? "PRODUKTION (länkat Supabase-projekt)" : "angiven databas";
 }
 
+/**
+ * Databasfelet som det faktiskt lyder. CLI:t skriver sitt fel som JSON på stdout och
+ * avslutar med felkod, så execFileSync kastar ett "Command failed"-undantag där själva
+ * orsaken bara finns i stdout. Utan det här står man på lanseringsmorgonen med ett
+ * meddelande som inte säger något.
+ */
+function explainDbError(e: unknown): string {
+  const err = e as { message?: string; stdout?: string; stderr?: string };
+  const delar = [err.stdout, err.stderr, err.message].filter((d): d is string => Boolean(d && d.trim()));
+  const rå = delar.join(" ").replace(/\s+/g, " ").trim();
+  // Gräv fram PostgreSQL-felet ur de inbäddade JSON-lagren.
+  const pg = /ERROR:\s+\d+:\s*([^\\"]+)/.exec(rå)?.[1]?.trim();
+  const kärna = pg ?? rå ?? "Okänt fel från databasen.";
+  if (/function public\.\w+\(.*\) does not exist/.test(kärna)) {
+    return `${kärna}
+  Databasen saknar migrationerna. Kör \`npx supabase db push\` mot målet först.`;
+  }
+  if (/permission denied|must be owner/i.test(kärna)) {
+    return `${kärna}
+  Behörighet saknas. Kontrollera att du är inloggad mot rätt projekt (\`npx supabase projects list\`).`;
+  }
+  if (/connect|timeout|ENOTFOUND|ECONNREFUSED/i.test(kärna)) {
+    return `${kärna}
+  Nådde inte databasen. Är Docker igång (lokalt) respektive nätet uppe (prod)?`;
+  }
+  return kärna.slice(0, 800);
+}
+
 /** Svar från en sats utan resultatmängd, t.ex. "DELETE 1" eller "CREATE TABLE". */
 const COMMAND_TAG = /^(INSERT|UPDATE|DELETE|SELECT|CREATE|ALTER|DROP|TRUNCATE|SET|BEGIN|COMMIT|GRANT|REVOKE|COMMENT|DO)/;
 
@@ -123,8 +151,7 @@ function query<T>(target: Target, sql: string): T[] {
     if (parsed._tag === "Error") throw new Error(parsed.error?.message ?? "Okänt fel från databasen.");
     return parsed.rows ?? [];
   } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    throw new Error(message.replace(/\s+/g, " ").slice(0, 600));
+    throw new Error(explainDbError(e));
   } finally {
     rmSync(file, { force: true });
   }

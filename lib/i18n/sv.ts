@@ -253,7 +253,7 @@ export const sv = {
     checkEmail: "Kontrollera din e-post för att bekräfta kontot.",
     error: "Det gick inte. Kontrollera uppgifterna och försök igen.",
     invalidCredentials: "Fel e-post eller lösenord.",
-    emailInUse: "Det finns redan ett konto med den e-postadressen.",
+    emailInUse: "Det finns redan ett konto med den e-postadressen. Logga in i stället, eller välj Glömt lösenord.",
     invalidEmail: "E-postadressen ser inte giltig ut.",
     rateLimited:
       "För många e-postutskick på kort tid. Vänta en stund och försök igen, eller logga in med lösenord.",
@@ -552,6 +552,7 @@ export const sv = {
     sent: "Tack! Rapporten är skickad.",
     tooShort: "Skriv några ord om vad som är fel.",
     tooLong: "Rapporten är för lång (max 1000 tecken).",
+    rateLimited: "För många rapporter på kort tid. Försök igen om en stund.",
   },
   errors: {
     generic: "Något gick fel. Försök igen.",

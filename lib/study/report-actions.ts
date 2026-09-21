@@ -24,6 +24,9 @@ export async function reportCardAction(input: { cardId: string; message: string;
   const { error } = await supabase.from("card_reports").insert({ card_id: input.cardId, message, contact });
   if (error) {
     console.error("[report]", error.code, error.message);
+    // 53400 = takgränsen i databasen. Den har ett eget, begripligt meddelande: utan det
+    // får studenten "något gick fel" och uppmanas försöka igen direkt, vilket bara misslyckas.
+    if (error.code === "53400") return { ok: false, error: error.message || sv.report.rateLimited };
     return { ok: false, error: sv.errors.generic };
   }
   return { ok: true };

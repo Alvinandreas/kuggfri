@@ -50,8 +50,6 @@ bättre i tryckbelastning
 * Elektriskt och termiskt
 isolerande
 
-Tillägg gjort av examinatorn i admin.
-
 ## Hur tillverkas vanligtvis en produkt gjord i någon form av keram?
 key: hur-tillverkas-vanligtvis-en-produkt
 

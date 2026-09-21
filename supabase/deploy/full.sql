@@ -2837,7 +2837,7 @@ $$;
 
 begin;
 -- Kurs: Materialteknik
-insert into public.decks (id, slug, title, description, course_code, source_credit, exam_date, is_published, sort_order, source_hash) values ('1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $kuggfri$materialteknik$kuggfri$, $kuggfri$Materialteknik$kuggfri$, $kuggfri$Frågor och begrepp från kursen Materialteknik på Maskinteknik, Chalmers. Sammanställt av studenter och använt av två årskullar.$kuggfri$, $kuggfri$MTM081$kuggfri$, $kuggfri$Sammanställt av Alvin utifrån föreläsningar och kursmaterial i Materialteknik (Maskinteknik, Chalmers). Ursprungligen publicerat som flashcardset i Brainscape och använt av närmare 200 studenter över två årskullar.$kuggfri$, null, true, 0, $kuggfri$c34433c5e$kuggfri$);
+insert into public.decks (id, slug, title, description, course_code, source_credit, exam_date, is_published, sort_order, source_hash) values ('1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $kuggfri$materialteknik$kuggfri$, $kuggfri$Materialteknik$kuggfri$, $kuggfri$Frågor och begrepp från kursen Materialteknik på Maskinteknik, Chalmers. Sammanställt av studenter och använt av två årskullar.$kuggfri$, $kuggfri$MTT085$kuggfri$, $kuggfri$Sammanställt av Alvin Andreasson utifrån föreläsningar och kursmaterial i Materialteknik (Maskinteknik, Chalmers). Ursprungligen publicerat som flashcardset i Brainscape och använt av närmare 200 studenter över två årskullar.$kuggfri$, null, true, 0, $kuggfri$c2865cf47$kuggfri$);
 insert into public.categories (id, deck_id, key, title, sort_order, source_hash) values ('97aae7d0-af93-5132-ad15-c840e2825cb2', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $kuggfri$materialgrupper-och-egenskaper$kuggfri$, $kuggfri$Materialgrupper och egenskaper$kuggfri$, 0, $kuggfri$c3077a3e9$kuggfri$);
 insert into public.categories (id, deck_id, key, title, sort_order, source_hash) values ('e2f719bb-f9eb-549f-acbb-a21921adb0bc', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $kuggfri$materialvalsprocessen$kuggfri$, $kuggfri$Materialvalsprocessen$kuggfri$, 1, $kuggfri$c697dc3eb$kuggfri$);
 insert into public.categories (id, deck_id, key, title, sort_order, source_hash) values ('d63240aa-9a49-52d8-8170-a0180269bc83', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', $kuggfri$kristallstruktur$kuggfri$, $kuggfri$Kristallstruktur$kuggfri$, 2, $kuggfri$cbf9dc862$kuggfri$);
@@ -2886,9 +2886,7 @@ Egenskaper:
 * Spröda, tål inte dragbelastning,
 bättre i tryckbelastning
 * Elektriskt och termiskt
-isolerande
-
-Tillägg gjort av examinatorn i admin.$kuggfri$, null, 2, true, $kuggfri$cbd489d76$kuggfri$);
+isolerande$kuggfri$, null, 2, true, $kuggfri$c5770792a$kuggfri$);
 insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash) values ('647b3aed-fdfc-574a-8d18-5329c3c1415d', '1fd9bb0d-b779-540f-bbbd-604e02cdaf6b', '97aae7d0-af93-5132-ad15-c840e2825cb2', $kuggfri$hur-tillverkas-vanligtvis-en-produkt$kuggfri$, $kuggfri$Hur tillverkas vanligtvis en produkt gjord i någon form av keram?$kuggfri$, $kuggfri$* Keramer tillverkas av olika
 mineral
 * Utgångsmaterial i form av lera

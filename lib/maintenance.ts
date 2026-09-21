@@ -3,10 +3,14 @@ import { NextResponse, type NextRequest } from "next/server";
 /**
  * Tillfällig avstängning av hela tjänsten.
  *
- * Sätts `UNDER_UTVECKLING=1` svarar varje sida med en enkel sida i stället för appen —
- * gäster, inloggade och admin lika. Grinden ligger först i middleware och svarar med egen
- * HTML, utan att röra databasen eller rendera någon sida. Den kan alltså inte råka släppa
- * igenom något av tjänsten.
+ * DEN HÄR GRENEN STÄNGER SAJTEN. Grinden är PÅ som standard och kräver ingen
+ * miljövariabel — grenen finns bara för att hålla kuggfri.com stängd, och då ska inget
+ * kunna glömmas bort. **Slå aldrig ihop den med main.** För att öppna igen: promota
+ * föregående deployment i Vercel, eller sätt UNDER_UTVECKLING=0.
+ *
+ * Varje sida svarar med en enkel sida i stället för appen — gäster, inloggade och admin
+ * lika. Grinden ligger först i middleware och svarar med egen HTML, utan att röra
+ * databasen eller rendera någon sida. Den kan alltså inte råka släppa igenom något.
  *
  * Egen förhandsvisning: sätt `FORHANDSVISNING_NYCKEL` till en lång slumpsträng och öppna
  * `https://…/?nyckel=DEN_STRÄNGEN`. Nyckeln sparas som kaka i den webbläsaren i en vecka.
@@ -15,9 +19,19 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const KAKA = "kuggfri-forhandsvisning";
 
+/**
+ * Uppslag via hakparentes, inte punktnotation: Next.js ersätter `process.env.NAMN` med
+ * sitt värde redan vid bygget, så en variabel som lagts till efteråt får ingen effekt
+ * förrän man bygger om. `process.env["NAMN"]` läses i stället när requesten kommer.
+ */
+function env(namn: string): string {
+  return (process.env[namn] ?? "").trim();
+}
+
+/** På som standard. Bara ett uttryckligt av-värde öppnar tjänsten. */
 export function underUtveckling(): boolean {
-  const v = (process.env.UNDER_UTVECKLING ?? "").trim().toLowerCase();
-  return v === "1" || v === "true" || v === "ja";
+  const v = env("UNDER_UTVECKLING").toLowerCase();
+  return !(v === "0" || v === "false" || v === "nej" || v === "av");
 }
 
 /** Konstant-tidsjämförelse: nyckeln ska inte gå att gissa fram tecken för tecken. */
@@ -35,7 +49,8 @@ function likaNycklar(given: string, förväntad: string): boolean {
 export function maintenanceGate(request: NextRequest): NextResponse | null {
   if (!underUtveckling()) return null;
 
-  const nyckel = (process.env.FORHANDSVISNING_NYCKEL ?? "").trim();
+
+  const nyckel = env("FORHANDSVISNING_NYCKEL");
   const { searchParams, protocol } = request.nextUrl;
 
   // ?nyckel=… sätter kakan och tar bort parametern ur adressen, så att nyckeln inte
@@ -66,6 +81,8 @@ export function maintenanceGate(request: NextRequest): NextResponse | null {
       "cache-control": "no-store",
       "retry-after": "86400",
       "x-robots-tag": "noindex, nofollow",
+      // Så att det går att se utifrån vilken version som kör, utan att gissa.
+      "x-kuggfri-lage": "under-utveckling",
     },
   });
 }

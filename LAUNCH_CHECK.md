@@ -252,7 +252,60 @@ Utöver behörighetstesterna i punkt 5:
 
 ---
 
-## 5. Checklista före kl. 10:00
+## 5. Begränsningar i befintliga funktioner
+
+Funktioner som finns och fungerar, men inte fullt ut som avsett. Inget av det hindrar lanseringen;
+allt av det är värt att veta innan någon upptäcker det åt oss.
+
+### Inställningar följer inte med mellan enheter
+
+Progressen synkar, men **dagsmålet och "bara vardagar" sparas bara i webbläsaren**
+(`kuggfri:prefs:v1` i localStorage). En student som ställer in 40 nya kort per dag på mobilen får
+20 igen på datorn. Det skaver mot löftet "fortsätt på andra enheter" på kontosidan, även om själva
+progressen faktiskt följer med. Åtgärd: flytta inställningarna till `profiles`.
+
+### Påminnelsemejlen skalar inte till en årskurs
+
+Cron-jobbet skickar **ett mejl i taget i en vanlig loop**, utan poolad SMTP-anslutning, och rutten
+sätter ingen `maxDuration`. Med tre användare går det på någon sekund. Med 150 studenter som tackat
+ja blir det 150 sekventiella SMTP-anslutningar, vilket med stor sannolikhet överskrider Vercels
+tidsgräns — jobbet mejlar några och slutar tyst mitt i.
+
+Funktionen är frivillig och avstängd som standard, så det märks inte på tisdag. Men den bör åtgärdas
+innan många hunnit tacka ja: poolad transport, `export const maxDuration`, och en räknare i loggen
+över hur många som faktiskt skickades.
+
+### Statistiken ser tom ut de första dagarna
+
+Anonymitetsgränsen på fem studenter gäller per kort och per kategori. Dag ett har inget kort fem
+skattningar, så Johans statistiksida visar nästan bara "för få studenter". Det är korrekt och
+avsiktligt, men **ser ut som att inget fungerar**. Säg det innan han loggar in, eller visa sidan
+senare i veckan. Aktiveringsmåttet "kom tillbaka inom tre dagar" kräver dessutom att tre dagar gått.
+
+### Cacherensningen kräver sin hemlighet
+
+Publikt innehåll cachas i fem minuter. Utan `REVALIDATE_SECRET` i Vercel slår en ändring i admin
+igenom först när cachen går ut. Det ser ut som att ändringen inte sparades — särskilt om du sitter
+med Johan och väntar på att se resultatet.
+
+### Gästens progress är knuten till en webbläsare
+
+Pluggar en student som gäst på mobilen och sedan skapar konto på datorn, följer bara datorns lokala
+progress med. Mobilens ligger kvar där tills hen loggar in även på mobilen. Det finns ingen väg att
+slå ihop två gästprofiler.
+
+### Tentafunktionerna är vilande
+
+Nedräkning, höjd takt inför tentan och slutrepetition tänds först när `decks.exam_date` är satt.
+Koden är testad; den saknar bara sitt datum.
+
+### Tre kort finns men når ingen
+
+`content/materialteknik/12-korrosion.md`, se avsnitt 2. Kräver ett innehållsbeslut, inte en rättelse.
+
+---
+
+## 6. Checklista före kl. 10:00
 
 ### I kväll
 

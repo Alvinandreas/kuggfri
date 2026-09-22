@@ -58,3 +58,6 @@ supabase/.env
 
 # databasbackuper (scripts/backup.cjs)
 /backups/
+
+# startarens temporära kopia av backup.cjs
+/.drift/

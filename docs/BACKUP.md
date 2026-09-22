@@ -18,20 +18,45 @@ skriptet eller i repot. CLI:t kör `pg_dump` i Docker, så skriptet startar Dock
 
 ## Schemaläggning
 
-En Windows-schemalagd uppgift, **Kuggfri backup**, kör `node scripts/backup.cjs` varje natt 03:30
-och vid inloggning om nattens körning missades (datorn avstängd). Kontrollera:
+En Windows-schemalagd uppgift, **Kuggfri backup**, kör backupen varje natt 03:30 och vid inloggning,
+och kör ikapp en missad natt så snart datorn är igång igen. Kontrollera:
 
 ```powershell
 Get-ScheduledTaskInfo -TaskName "Kuggfri backup"
 ```
 
-`LastTaskResult` ska vara `0`. Loggen skrivs till `backups/backup.log`.
+`LastTaskResult` ska vara `0`. Loggen skrivs till `backups/backup.log`, och varje körning börjar med
+en `[startare]`-rad. Saknas den raden har uppgiften inte ens kommit igång.
 
 Ta en backup manuellt (t.ex. före en migration eller en import):
 
 ```bash
 node scripts/backup.cjs
 ```
+
+### Uppgiften är oberoende av vilken gren som är utcheckad
+
+Uppgiften pekade tidigare rakt på `node scripts\backup.cjs` i arbetskatalogen. Den 22 september låg
+grenen `under-utveckling` utcheckad, där filen inte finns, och **varje körning föll med
+`MODULE_NOT_FOUND` utan att något sa ifrån** – backuperna hade då legat nere sedan den 21:a.
+
+Numera kör uppgiften en startare som ligger *utanför* repot,
+`%USERPROFILE%\Kuggfri-drift\kuggfri-backup.cmd`. Finns `scripts/backup.cjs` i trädet används den;
+annars hämtar startaren versionen ur `main` till `.drift/` (gitignorerad) och kör den. Källan till
+startaren är `scripts/uppgift/kuggfri-backup.cmd`.
+
+Installera om uppgiften efter en ändring i startaren, eller på en ny dator:
+
+```bash
+node scripts/installera-backup-uppgift.cjs          # installerar/uppdaterar
+node scripts/installera-backup-uppgift.cjs --visa   # visar vad som är satt
+```
+
+Tre saker är utprovade mot Task Scheduler och ska inte "förenklas" tillbaka: uppgiften kör
+`cmd.exe /c call "<startare>" "<repo>"`, startaren sköter sin egen loggning, och inloggningsutlösaren
+sätts med `-User`. Formen `cmd /c "…" … >> logg 2>&1` svarar *"The system cannot find the path
+specified."* innan startaren hinner börja, en `.cmd` som uppgiftens egen `Execute` startar inte alls,
+och en inloggningsutlösare utan `-User` kräver administratör.
 
 ## Återställning
 

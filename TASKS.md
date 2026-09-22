@@ -307,6 +307,71 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 - [ ] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler
 - [ ] Beslut om komponenttester: egen jsdom-körning eller ta bort de fyra testing-library-beroendena
 
+## Tisdag 22 sep: presentationen genomförd, tjänsten stängd under sista rundan
+
+Alvin presenterade för studenterna kl. 10:00. **Studenterna väntar på länken.** kuggfri.com svarar
+med avstängningssidan (503, `x-kuggfri-lage: under-utveckling`) tills vi öppnar, enligt Alvins
+beslut: helgens arbete ska verifieras i lugn och ro först, med fler iterationer.
+
+- [x] Miljön i gång igen (tis 16:00): Docker, lokal Supabase (54321–54324), dev-server på 3000,
+      testkopian på **http://localhost:3001** ombyggd från senaste committen
+- [x] `launch-check` (6 commits) fast-forwardad in i `main`. En linje igen; inget pushat
+- [x] Migration `20260921000000_rapportgrans.sql` applicerad i den lokala databasen (låg oapplicerad
+      sedan grenbytet). Lokalt är nu 17 av 17 migrationer på plats, 144 kort, progressen orörd
+- [x] `npm run verify:unit` grön: typecheck, lint, `kuggfri kontrollera`, **335 enhetstester**
+- [ ] **Alvin verifierar helgens arbete på http://localhost:3001** – det är första gången kopian
+      innehåller dosering, "Klar för i dag", provtenta, streak, utkorg, tentaplan, innehållspipelinen,
+      säkerhetshärdningen och dataskyddet
+
+### Fynd i dag
+
+- [ ] **Den nattliga backupen har inte gått sedan 21 sep 01:30.** Uppgiften "Kuggfri backup" kör
+      `scripts/backup.cjs`, som inte finns på grenen `under-utveckling` – den var utcheckad, så
+      körningarna 22 sep föll med MODULE_NOT_FOUND (se `backups/backup.log`). Fungerar nu när `main`
+      är utcheckad, men uppgiften ska inte vara beroende av vilken gren som råkar ligga i trädet
+- [ ] **Produktionsdatabasen ligger nio migrationer efter** (senast applicerad `20260917000200`).
+      Backup före push, enligt docs/ATERSTALLNING.md
+- Produktionens innehåll och `content/` är identiska sedan cd978f4: första synken knyter bara nycklar
+
+## Vägen till lansering: **måndag 28 september**
+
+Alvins beslut tisdag 22 sep: tjänsten öppnar måndag nästa vecka om allt fungerar som avsett, och
+**före dess ska vi gå igenom hur tjänsten drivs under läsperioden** – både rutinerna och vad som
+tekniskt händer. Alvin har aldrig drivit något liknande, så genomgången är ett eget leveransmål,
+inte en fotnot. Avstängningssidan står kvar oförändrad tills vi öppnar.
+
+Fyra byggspår valda av Alvin, alla fyra: begränsningarna som biter vid 150 studenter,
+uppföljningsrapporten för Johan, robusta backuper och deployrutin, samt delningsbild och onboarding.
+
+### Dagsordning
+
+- **Tis 22 sep (kväll)** – Alvin: verifiera helgens arbete på 3001. Claude: robust backuprutin,
+  färsk produktionsbackup, därefter cron-poolningen
+- **Ons 23 sep** – Claude: dagsmålet till `profiles`, uppföljningsrapporten för Johan påbörjad.
+  Alvin: dashboardstegen (SMTP + SPF/DKIM tar tid att slå igenom i DNS, gör dem tidigt)
+- **Tors 24 sep** – Claude: uppföljningsrapporten klar, delningsbild (OG) och onboarding.
+  Generalrepetition i molnet bakom grinden: nio migrationer + `apply --mal prod` + preview-deploy
+- **Fre 25 sep** – `docs/DRIFT.md` och genomgången med Alvin: läsperiodens rutiner, kostnader,
+  övervakning, support, incidenter, innehållsändringar, dataskyddsansvar. Rökprov i tre roller
+- **Lör–sön 26–27 sep** – buffert och Alvins iterationer: full `npm run verify`, `npm run build`,
+  mobiltest ljust/mörkt, återställningsövning i Vercel tillsammans
+- **Mån 28 sep** – öppning: `UNDER_UTVECKLING=0` respektive produktionsgrenen tillbaka till `main`,
+  rökprov, länken till studenterna
+
+### Måste vara klart före öppning
+
+- [ ] Alvin har verifierat på 3001 och sagt "pusha"
+- [ ] Driftgenomgången gjord (docs/DRIFT.md), Alvin vet vad som händer när något går sönder
+- [ ] Eget SMTP + SPF/DKIM, provmejl till en `@student.chalmers.se`-adress som landar i inkorgen
+- [ ] Höjda rate limits i Supabase (registreringen stryps annars efter ~30 studenter)
+- [ ] Confirm email på, **efter** SMTP
+- [ ] Vercel-variabler: `NEXT_PUBLIC_SITE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`,
+      `REVALIDATE_SECRET`, `ALLOWED_HOSTS`, SMTP-variablerna
+- [ ] `https://*.vercel.app/**` bort ur Redirect URLs
+- [ ] Nio migrationer i molnet + `kuggfri apply --mal prod` (144 kort ska knytas ihop, noll ändringar)
+- [ ] Kurskoden bekräftad med Johan (MTM081 i appen, MTT085 i infobladet)
+- [ ] Beslut om de tre korrosionskorten och om tentadatum
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
 - [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte

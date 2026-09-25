@@ -372,6 +372,33 @@ uppföljningsrapporten för Johan, robusta backuper och deployrutin, samt delnin
 - [ ] Kurskoden bekräftad med Johan (MTM081 i appen, MTT085 i infobladet)
 - [ ] Beslut om de tre korrosionskorten och om tentadatum
 
+## Fredag 25 sep: pipelinen kopplad mot produktionen, tjänsten fortsatt stängd
+
+Alvins beslut: ta bort korrosionsfilen, koppla innehållspipelinen mot produktionen nu och pusha
+allt – men **utan att ändra registreringsvillkoren**, tjänsten ska vara stängd medan vi bygger ut.
+
+- [x] `content/materialteknik/12-korrosion.md` borttagen (korten finns i git-historiken,
+      `git show 24cb104:content/materialteknik/12-korrosion.md`). `kontrollera` är utan varningar
+- [x] `kuggfri` skrev ut en rad för mycket i hjälpen (klippte på radnummer); hjalp/--help finns nu
+- [x] Färsk produktionsbackup före migrationerna: `backups/2026-09-25-0047`
+- [x] **Nio migrationer körda i molnet** (`supabase db push`), från `20260918000000` till
+      `20260921000000`. Data intakt efteråt: 3 konton, 144 kort, 110 progressrader, 380 repetitioner
+- [x] **Innehållspipelinen kopplad mot produktionen.** `plan --mal prod` visade 11 kategorier och
+      144 kort som "knyts ihop", noll innehållsändringar – precis som lokalt. `apply --mal prod`:
+      144 kort uppdaterade (nycklar och hashar), 0 skapade, 0 borttagna, 0 inaktiverade. Andra
+      planen: "Inget att göra: filerna och databasen är i fas". Alla 144 kort har nu `key` och
+      `source_hash` i molnet, så nästa innehållsändring är en filändring + `apply`
+- [x] **Grinden flyttad in i `main`** (debd858): satt `UNDER_UTVECKLING` avgör, annars stängt i
+      varje Vercel-miljö och öppet lokalt. Stängningen vilade tidigare på vilken gren Vercels
+      produktion pekar på – en inställning vi inte kan läsa härifrån. Nu kan ingen deploy råka
+      öppna tjänsten. Grinden stänger även `/api/cron/*`, så inga mejl går ut medan det är stängt
+- [x] 347 enhetstester gröna, produktionsbygget grönt som eget steg, testkopian på 3001 ombyggd
+- [x] **`main` pushad till GitHub** (58 commits, `3935773..debd858`). kuggfri.com svarar fortfarande
+      503 på startsidan, kurssidan, `/registrera` och cron-vägen
+- [ ] **Alvin i Vercel:** peka produktionsgrenen på `main` (så att molnet kör v1.0 bakom grinden)
+      och lägg in `FORHANDSVISNING_NYCKEL` så att vi kan titta på den skarpa sajten med `?nyckel=`
+- [ ] Full E2E-svit mot den nya koden innan öppning
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
 - [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte

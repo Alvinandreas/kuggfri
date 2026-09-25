@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { maintenanceGate } from "@/lib/maintenance";
 import { updateSession } from "@/lib/supabase/middleware";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
 import { decideAdminAccess } from "@/lib/auth/admin-gate";
@@ -14,8 +15,14 @@ import { buildCsp, createNonce, NONCE_HEADER } from "@/lib/security/headers";
  * Inloggningskoder (?code=…) löses bara in på /auth/confirm. Hamnar en länk på någon
  * annan sida skickas besökaren dit i stället; att lösa in koder överallt gör det möjligt
  * att logga in någon annan på ett konto de inte äger.
+ *
+ * Avstängningsgrinden svarar först av allt, innan sessionen rörs och innan någon sida
+ * renderas, så att ingenting av tjänsten kan nås medan den är stängd. Se lib/maintenance.ts.
  */
 export async function middleware(request: NextRequest) {
+  const stängt = maintenanceGate(request);
+  if (stängt) return stängt;
+
   const nonce = createNonce();
   const csp = buildCsp(nonce, process.env.NODE_ENV !== "production");
 

@@ -566,8 +566,16 @@ function cmdSeed(): void {
   say(`${C.green}Skrev supabase/seed.sql${C.reset}: ${decks} kurser, ${cards} kort.`);
 }
 
+// Hjälptexten är filens egen inledande kommentar, läst fram till dess avslutande rad.
 function usage(): void {
-  say(readFileSync(new URL(import.meta.url), "utf8").split("\n").slice(1, 17).map((l) => l.replace(/^ \* ?/, "")).join("\n"));
+  const rader = readFileSync(new URL(import.meta.url), "utf8").split("\n");
+  const slut = rader.findIndex((rad) => rad.trim() === "*/");
+  say(
+    rader
+      .slice(1, slut === -1 ? 16 : slut)
+      .map((rad) => rad.replace(/^ \* ?/, ""))
+      .join("\n"),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -594,6 +602,11 @@ async function main(): Promise<void> {
       return cmdTaBortKurs(args);
     case "seed":
       return cmdSeed();
+    case "hjalp":
+    case "hjälp":
+    case "--help":
+    case "-h":
+      return usage();
     default:
       usage();
       if (command) fail(`Okänt kommando: ${command}`);

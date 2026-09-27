@@ -102,7 +102,7 @@ export function Showcase() {
         </div>
       </header>
 
-      <Section title="Så kan hemsidan se ut" lead="Ett kursblock i Knowts anda: nedräkning till tentan, kunskapsestimat och fördelning per kategori.">
+      <Section title="Så kan hemsidan se ut" lead="Ett kursblock i Knowts anda: nedräkning till tentan, inlärd kunskap och fördelning per kategori.">
         <Card padding="lg">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ export function Showcase() {
               <p className="text-5xl font-extrabold tracking-tight">
                 68<span className="text-2xl text-muted"> %</span>
               </p>
-              <p className="mt-1 font-semibold">Kunskapsestimat</p>
+              <p className="mt-1 font-semibold">Inlärd kunskap</p>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               {[

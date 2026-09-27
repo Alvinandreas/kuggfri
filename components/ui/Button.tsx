@@ -76,8 +76,7 @@ export function IconButton({ label, variant = "ghost", size = "md", className = 
     <button
       type={type}
       aria-label={label}
-      title={label}
-      className={`inline-flex shrink-0 items-center justify-center rounded-full transition-[background-color,color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50 ${
+      className={`inline-flex shrink-0 select-none items-center justify-center rounded-full transition-[background-color,color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50 ${
         size === "sm" ? "h-8 w-8" : "h-10 w-10"
       } ${iconVariants[variant]} ${className}`.trim()}
       {...rest}

@@ -12,6 +12,8 @@ type Props<T extends string> = {
   onChange?: (value: T) => void;
   label: string;
   size?: "sm" | "md";
+  /** "raised" på en redan grå yta (t.ex. inne i ett inställningsblock), så att spåret syns. */
+  tone?: "default" | "raised";
   className?: string;
 };
 
@@ -20,7 +22,7 @@ type Props<T extends string> = {
  * pill som glider mellan lägena. Segment med href blir länkar (vyer med egna adresser),
  * annars knappar som anropar onChange.
  */
-export function SegmentedControl<T extends string>({ segments, value, onChange, label, size = "md", className }: Props<T>) {
+export function SegmentedControl<T extends string>({ segments, value, onChange, label, size = "md", tone = "default", className }: Props<T>) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
   const [animate, setAnimate] = useState(false);
@@ -44,12 +46,12 @@ export function SegmentedControl<T extends string>({ segments, value, onChange, 
   }, [value, segments]);
 
   const item = cx(
-    "relative z-10 inline-flex items-center justify-center whitespace-nowrap rounded-full font-semibold transition-colors duration-200",
+    "relative z-10 inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-semibold transition-colors duration-200",
     size === "sm" ? "h-8 px-3.5 text-sm" : "h-10 px-5 text-[0.95rem]",
   );
 
   return (
-    <div ref={wrapRef} role="group" aria-label={label} className={cx("relative inline-flex rounded-full bg-surface-2 p-1", className)}>
+    <div ref={wrapRef} role="group" aria-label={label} className={cx("relative inline-flex rounded-full p-1", tone === "raised" ? "bg-surface dark:bg-surface-3" : "bg-surface-2", className)}>
       {pill ? (
         <span
           aria-hidden

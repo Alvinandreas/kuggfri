@@ -5,19 +5,14 @@ import { ArrowRight, Info, Star } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { StudyMode } from "@/lib/progress/types";
 import type { PickerMode } from "./ModePicker";
-import type { StudyPrefs } from "@/lib/progress/prefs";
 import type { DeckPlan } from "@/lib/study/deck-plan";
-import { DAILY_NEW_CHOICES, estimateMinutes } from "@/lib/study/plan";
-import { DUGGA_SIZES, duggaQuery, type DuggaSettings, type DuggaSize } from "@/lib/study/dugga";
+import { estimateMinutes } from "@/lib/study/plan";
+import { duggaQuery, type DuggaSettings } from "@/lib/study/dugga";
 import { Badge } from "@/components/ui/Badge";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { CategoryTag } from "@/components/ui/CategoryTag";
-import { Disclosure } from "@/components/ui/Disclosure";
-import { Select } from "@/components/ui/Select";
-import { ToggleRow } from "@/components/ui/Toggle";
-
-const DAILY_OPTIONS = DAILY_NEW_CHOICES.map((n) => ({ value: String(n), label: `${sv.deck.newCards(n)} per dag` }));
+import { DuggaSettingsFields } from "./DuggaSettingsFields";
 
 const MODE_TITLES: Record<PickerMode, string> = {
   starred: sv.deck.modeStarred,
@@ -41,8 +36,8 @@ type Props = {
   /** Första besöket: ingen progress alls ännu. */
   firstVisit: boolean;
   totalCards: number;
-  prefs: StudyPrefs;
-  onPrefs: (prefs: StudyPrefs) => void;
+  /** Nya kort per dag (ställs in under Konto), för hälsningen vid första besöket. */
+  dailyNew: number;
   dugga: DuggaSettings;
   onDugga: (settings: DuggaSettings) => void;
   starredCount: number;
@@ -51,7 +46,8 @@ type Props = {
 
 /**
  * Ditt pass: vad som startar när man trycker på knappen (läge, urval, antal kort och tid),
- * och passets inställningar. Står fast i höger kolumn på desktop.
+ * och duggans regler. Nya kort per dag och vardagsrytmen ställs in under Konto. Står fast
+ * i höger kolumn på desktop.
  */
 export function SessionPanel({
   pick,
@@ -62,22 +58,18 @@ export function SessionPanel({
   progressReady,
   firstVisit,
   totalCards,
-  prefs,
-  onPrefs,
+  dailyNew,
   dugga,
   onDugga,
   starredCount,
   onShowStarred,
 }: Props) {
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
-  const firstCount = Math.min(prefs.dailyNew, totalCards);
+  const firstCount = Math.min(dailyNew, totalCards);
   const isDugga = mode === "exam";
   // Duggans regler och stjärnfiltret följer med i adressen till passet.
   const isStarred = pick === "starred";
   const suffix = `${isDugga ? duggaQuery(dugga) : ""}${isStarred ? "&stjarnor=1" : ""}`;
-  // Hur många kort urvalet har innan duggans tak, för alternativet "Alla (N)".
-  const available = plan.selectionCards.length;
-  const sizeOptions = DUGGA_SIZES.map((n) => ({ value: String(n), label: n === "alla" ? sv.dugga.questionsAll(available) : sv.dugga.questionsOption(n) }));
 
   return (
     <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
@@ -122,23 +114,7 @@ export function SessionPanel({
         </div>
       ) : null}
 
-      {isDugga ? (
-        <div className="grid gap-3 rounded-lg bg-surface-2 p-4" data-testid="dugga-settings">
-          <p className="font-bold">{sv.dugga.settingsTitle}</p>
-          <div>
-            <p className="mb-1.5 text-sm font-semibold">{sv.dugga.questions}</p>
-            <Select
-              label={sv.dugga.questions}
-              value={String(dugga.size)}
-              onChange={(v) => onDugga({ ...dugga, size: (v === "alla" ? "alla" : Number(v)) as DuggaSize })}
-              options={sizeOptions}
-              data-testid="dugga-size"
-            />
-          </div>
-          <ToggleRow title={sv.dugga.hints} description={sv.dugga.hintsHelp} checked={dugga.hints} onChange={(v) => onDugga({ ...dugga, hints: v })} />
-          <ToggleRow title={sv.dugga.timer} description={sv.dugga.timerHelp} checked={dugga.timer} onChange={(v) => onDugga({ ...dugga, timer: v })} />
-        </div>
-      ) : null}
+      {isDugga ? <DuggaSettingsFields value={dugga} onChange={onDugga} available={plan.selectionCards.length} /> : null}
 
       <div className="grid gap-2">
         {canStart ? (
@@ -167,21 +143,6 @@ export function SessionPanel({
         ) : null}
       </div>
 
-      <Disclosure summary={sv.deck.sessionSettings} className="border-t border-line pt-3 text-sm">
-        <div className="grid gap-3">
-          <div>
-            <p className="mb-1.5 font-semibold">{sv.deck.dailyGoal}</p>
-            <Select label={sv.deck.dailyGoal} value={String(prefs.dailyNew)} onChange={(v) => onPrefs({ ...prefs, dailyNew: Number(v) })} options={DAILY_OPTIONS} data-testid="daily-new" />
-            <p className="mt-1.5 text-muted">{sv.deck.dailyGoalHelp}</p>
-          </div>
-          <ToggleRow
-            title={sv.deck.weekdaysOnly}
-            description={sv.deck.weekdaysOnlyHelp}
-            checked={prefs.weekdaysOnly}
-            onChange={(v) => onPrefs({ ...prefs, weekdaysOnly: v })}
-          />
-        </div>
-      </Disclosure>
     </Card>
   );
 }

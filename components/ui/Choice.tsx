@@ -47,7 +47,7 @@ export function OptionTile({
   return (
     <label
       className={cx(
-        "group relative flex cursor-pointer flex-col gap-3 rounded-lg border-2 bg-surface p-5 transition-[border-color,background-color,transform] duration-150",
+        "group relative flex cursor-pointer select-none flex-col gap-3 rounded-lg border-2 bg-surface p-5 transition-[border-color,background-color,transform] duration-150",
         "hover:-translate-y-0.5 hover:bg-surface-2 dark:bg-surface-2/60 dark:hover:bg-surface-2",
         "border-line has-[:checked]:border-accent has-[:checked]:bg-accent-soft/50 dark:border-transparent dark:has-[:checked]:border-accent dark:has-[:checked]:bg-accent-soft/40",
         "has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-accent/20 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
@@ -83,7 +83,7 @@ export function ChoiceCard({
   return (
     <label
       className={cx(
-        "flex cursor-pointer items-start gap-3 rounded-lg border-2 border-transparent bg-surface-2 p-4 transition-[border-color,background-color] duration-150 hover:bg-surface-3",
+        "flex cursor-pointer select-none items-start gap-3 rounded-lg border-2 border-transparent bg-surface-2 p-4 transition-[border-color,background-color] duration-150 hover:bg-surface-3",
         "has-[:checked]:border-accent has-[:checked]:bg-accent-soft/60 has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-accent/15",
         className,
       )}

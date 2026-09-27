@@ -7,7 +7,7 @@ import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } from "@/lib/study/selection";
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
-import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
+import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { DEFAULT_DUGGA, duggaExamSize, type DuggaSettings } from "@/lib/study/dugga";
 import { useStars } from "@/lib/progress/stars";
@@ -62,12 +62,9 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
 
+  // Nya kort per dag ställs in under Konto; här läses bara värdet.
   useEffect(() => {
     setPrefs(readPrefs(window.localStorage));
-  }, []);
-  const updatePrefs = useCallback((next: StudyPrefs) => {
-    setPrefs(next);
-    writePrefs(window.localStorage, next);
   }, []);
 
   const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
@@ -231,8 +228,7 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
             progressReady={progress !== null}
             firstVisit={firstVisit}
             totalCards={cards.length}
-            prefs={prefs}
-            onPrefs={updatePrefs}
+            dailyNew={prefs.dailyNew}
             dugga={dugga}
             onDugga={setDugga}
             starredCount={starredCount}

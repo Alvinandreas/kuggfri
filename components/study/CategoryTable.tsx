@@ -75,7 +75,7 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
               key={c.id}
               data-testid="category-row"
               className={cx(
-                "flex min-h-14 items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-150",
+                "flex min-h-14 select-none items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-150",
                 checked ? "bg-accent-soft/60" : "bg-surface-2/60 hover:bg-surface-2",
                 !selectable && "opacity-45",
               )}

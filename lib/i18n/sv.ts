@@ -66,7 +66,7 @@ export const sv = {
     points: [
       { title: "Repetition i rätt tid", body: "Schemat lär sig vad du kan och tar fram det du håller på att glömma." },
       { title: "Kurser från examinatorn", body: "Korten bygger på kursens eget material, granskat av den som skriver tentan." },
-      { title: "Se hur du ligger till", body: "Kunskapsestimat per kategori och nedräkning till tentadagen." },
+      { title: "Se hur du ligger till", body: "Inlärd kunskap per kategori och nedräkning till tentadagen." },
     ],
     formLabel: "Konto",
     tabRegister: "Skapa konto",
@@ -125,7 +125,7 @@ export const sv = {
       },
       {
         title: "Nya kort per dag",
-        body: "Du får 20 nya kort per dag om du inte väljer 10 eller 40 i inställningarna för passet. Kort som ska repeteras kommer alltid med, oavsett dagsmålet.",
+        body: "Du får 20 nya kort per dag om du inte väljer 10 eller 40 under Pluggrytm på kontosidan. Kort som ska repeteras kommer alltid med, oavsett dagsmålet.",
       },
       {
         title: "Tentadatumet",
@@ -133,7 +133,7 @@ export const sv = {
       },
       {
         title: "Streak och frysningar",
-        body: "Streaken räknar dagar i rad med minst en repetition. Två frysningar täcker enstaka missade dagar, och du får en ny frysning var sjunde aktiva dag. Pluggar du helst vardagar kan du välja det, så räknas helger inte som missade.",
+        body: "Streaken räknar dagar i rad med minst en repetition. Två frysningar täcker enstaka missade dagar, och du får en ny frysning var sjunde aktiva dag. Pluggar du helst vardagar kan du välja det under Konto, så räknas helger inte som missade.",
       },
     ],
     modesLead: "Du väljer läge på kursens sida. Bara schemalagd repetition flyttar korten i schemat.",
@@ -182,7 +182,7 @@ export const sv = {
       },
     },
     homeBody:
-      "Hemsidan visar dagens pass, din streak, kunskapsestimatet och tiden kvar till tentan. Radardiagrammet visar hur mycket du kan inom varje område av kursen.",
+      "Hemsidan visar dagens pass, din streak, din inlärda kunskap och tiden kvar till tentan. Genvägarna Kluriga kort och Dugga öppnar en ruta där du ser vad som ingår, väljer inställningar och startar direkt. Radardiagrammet visar hur mycket du kan inom varje område av kursen.",
     homeRadar:
       "Klicka på ett område i diagrammet eller i listan bredvid för att öppna det. Där pluggar du bara det området: schemalagt, som kluriga kort, fritt eller som dugga.",
     statsBody:
@@ -205,7 +205,7 @@ export const sv = {
       },
       {
         q: "Kan jag byta hur många nya kort jag får per dag?",
-        a: "Ja. Öppna inställningarna för passet på kursens sida och välj 10, 20 eller 40. Förfallna kort kommer alltid med. Närmar sig tentan kan dagsmålet höjas i ikappläget, och då står det tydligt.",
+        a: "Ja. Gå till Konto och välj 10, 20 eller 40 under Pluggrytm. Förfallna kort kommer alltid med. Närmar sig tentan kan dagsmålet höjas i ikappläget, och då står det tydligt.",
       },
       {
         q: "Påverkar en dugga eller fri repetition schemat?",
@@ -262,7 +262,7 @@ export const sv = {
     reviewsSub: (sessions: number) => (sessions === 1 ? "på 1 pass" : `på ${sessions} pass`),
     learned: "Inlärda kort",
     learnedSub: (pct: number, total: number) => `${pct} % av ${total}`,
-    knowledge: "Kunskapsestimat",
+    knowledge: "Inlärd kunskap",
     knowledgeSub: "av kursen kan du just nu",
     // Aktivitetskartan och rekorden bredvid
     activity: "Aktivitet",
@@ -377,7 +377,7 @@ export const sv = {
     doneTitle: "Klart för i dag",
     doneBody: "Kom tillbaka i morgon, så har schemat nya kort åt dig.",
     moreNew: (n: number) => `Ta ${n} nya kort till`,
-    knowledge: "Kunskapsestimat",
+    knowledge: "Inlärd kunskap",
     knowledgeHelp: "Andel av kursens kort du kan just nu enligt schemat.",
     examCountdown: "Tid kvar till tentan",
     examPast: "Tentan har varit",
@@ -658,6 +658,8 @@ export const sv = {
     deleteConfirm:
       "Allt som hör till kontot raderas permanent: e-post, visningsnamn, progress och sessioner.",
     deleteConfirmWord: "Skriv RADERA för att bekräfta.",
+    studyTitle: "Pluggrytm",
+    studyHelp: "Gäller alla dina pass och sparas direkt, i den här webbläsaren.",
     remindersTitle: "Mejl",
     remindersHelp: "Inga nyhetsbrev. Bara det du själv slår på här.",
     reminderEmail: "Påminn mig när jag har kort att repetera",
@@ -961,6 +963,40 @@ export const sv = {
     starredShow: (n: number) => (n === 1 ? "Visa ditt stjärnmärkta kort" : `Visa dina ${n} stjärnmärkta kort`),
     starredEmpty: "Du har inte stjärnmärkt några kort än. Tryck på stjärnan uppe till höger på ett kort under passet.",
     starredHelp: "Tryck på stjärnan för att ta bort ett kort ur listan.",
+  },
+  // Dialogerna bakom genvägarna Kluriga kort och Dugga på hemsidan.
+  quick: {
+    trickyLead: "Korten du skattat 1–2, och kort du inte sett än. Svagast först. Din nya skattning sparas, men schemat rörs inte.",
+    weak: "Skattade 1–2",
+    unseen: "Inte sedda än",
+    time: "Tid",
+    minutes: (n: number) => `${n} min`,
+    about: "ungefär",
+    cardsOf: (n: number, total: number) => `${n} av ${total}`,
+    areas: "Områden",
+    areasHelp: "Bocka ur det du inte vill ta nu.",
+    areaCount: (weak: number, unseen: number) =>
+      weak + unseen === 0
+        ? "Inga kluriga"
+        : [weak > 0 ? `${weak} ${weak === 1 ? "skattat" : "skattade"} 1–2` : "", unseen > 0 ? `${unseen} osedda` : ""].filter(Boolean).join(" · "),
+    selectAll: "Välj alla",
+    trickyStart: "Starta kluriga kort",
+    startMeta: (n: number, minutes: number) => `${n === 1 ? "1 kort" : `${n} kort`} · cirka ${minutes} min`,
+    trickyNone: "Välj minst ett område med kluriga kort.",
+    duggaLead: "Slumpade frågor ur hela kursen, en i taget och utan att gå tillbaka. Du skattar dig själv som vanligt, men schemat rörs inte.",
+    questions: "Frågor",
+    questionsFrom: (n: number) => `ur ${n} kort`,
+    timerOn: "tiden tas",
+    timerOff: "ingen tidtagning",
+    hints: "Ledtrådar",
+    hintsOn: "Tillåtna",
+    hintsOff: "Av",
+    hintsSub: "när kortet har en",
+    drawnFrom: "Frågorna dras ur",
+    drawnFromHelp: (areas: number) => `Hela kursen, alla ${areas} områden. Vill du köra ett enda område? Klicka på det i radardiagrammet.`,
+    duggaStartMeta: (n: number, minutes: number, hints: boolean) =>
+      `${n === 1 ? "1 fråga" : `${n} frågor`} · cirka ${minutes} min · ${hints ? "med ledtrådar" : "utan ledtrådar"}`,
+    onCoursePage: "Fler val på kurssidan",
   },
   dugga: {
     settingsTitle: "Duggans regler",

@@ -4,7 +4,8 @@ import { ChevronRight, type LucideProps } from "lucide-react";
 import { cx } from "./cx";
 
 type Props = {
-  href: string;
+  /** Länk. Utan href blir raden en knapp (t.ex. för att öppna en dialog). */
+  href?: string;
   icon: ComponentType<LucideProps>;
   title: string;
   /** Rad under rubriken, t.ex. "12 kort · cirka 3 min". */
@@ -20,16 +21,12 @@ type Props = {
  * Används där man ska kunna hoppa rakt in i något (plugga ett område, ta kluriga kort).
  */
 export function ActionRow({ href, icon: Icon, title, meta, primary = false, onClick, ...rest }: Props) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={cx(
-        "group flex min-h-16 items-center gap-4 rounded-lg px-4 py-3 transition-[background-color,transform] duration-150 active:scale-[0.99]",
-        primary ? "bg-accent-soft hover:bg-accent-soft/70" : "bg-surface-2 hover:bg-surface-3",
-      )}
-      {...rest}
-    >
+  const className = cx(
+    "group flex min-h-16 w-full select-none items-center gap-4 rounded-lg px-4 py-3 text-left transition-[background-color,transform] duration-150 active:scale-[0.99]",
+    primary ? "bg-accent-soft hover:bg-accent-soft/70" : "bg-surface-2 hover:bg-surface-3",
+  );
+  const body = (
+    <>
       <span
         className={cx(
           "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md",
@@ -43,7 +40,16 @@ export function ActionRow({ href, icon: Icon, title, meta, primary = false, onCl
         {meta ? <span className="block text-sm text-muted">{meta}</span> : null}
       </span>
       <ChevronRight size={18} aria-hidden className="shrink-0 text-muted transition-transform duration-200 group-hover:translate-x-0.5" />
+    </>
+  );
+  return href ? (
+    <Link href={href} onClick={onClick} className={className} {...rest}>
+      {body}
     </Link>
+  ) : (
+    <button type="button" onClick={onClick} aria-haspopup="dialog" className={className} {...rest}>
+      {body}
+    </button>
   );
 }
 

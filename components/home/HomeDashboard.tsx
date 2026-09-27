@@ -15,6 +15,8 @@ import { categoryStats, type CategoryStats, type SelectableCard } from "@/lib/st
 import { percent } from "@/lib/text/percent";
 import { RadarBars, RadarChart, type RadarAxis } from "@/components/stats/RadarChart";
 import { CategoryFocusDialog } from "@/components/stats/CategoryFocusDialog";
+import { DuggaDialog } from "./DuggaDialog";
+import { TrickyDialog } from "./TrickyDialog";
 import { StatTile } from "@/components/stats/StatTile";
 import { Badge } from "@/components/ui/Badge";
 import { ActionList, ActionRow } from "@/components/ui/ActionRow";
@@ -63,7 +65,7 @@ function Skeleton({ className }: { className: string }) {
 }
 
 /**
- * Hemsidan: dagens pass, hur det går i kursen (kunskapsestimat, nyckeltal), kunskap per
+ * Hemsidan: dagens pass, hur det går i kursen (inlärd kunskap, nyckeltal), kunskap per
  * kategori i radardiagrammet och aktiviteten de senaste två veckorna. Progressen laddas i
  * klienten med samma moduler som decksidan, så siffrorna är alltid desamma på båda ställena.
  */
@@ -75,6 +77,8 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
   const [hour, setHour] = useState<number | null>(null);
   const [axisHover, setAxisHover] = useState<number | null>(null);
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
+  // Genvägarna i dagens block öppnar var sin dialog i stället för att lämna sidan.
+  const [quick, setQuick] = useState<"tricky" | "dugga" | null>(null);
 
   const allIds = useMemo(() => decks.flatMap((d) => d.cards.map((c) => c.id)), [decks]);
 
@@ -182,7 +186,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
             <CourseCard view={primary} loading={loading} />
             {/* På smala skärmar kommer dagens pass först: knappen ska synas utan att scrolla. */}
-            <TodayCard view={primary} loading={loading} className="order-first xl:order-none" />
+            <TodayCard view={primary} loading={loading} onQuick={setQuick} className="order-first xl:order-none" />
           </div>
           <KnowledgeCard view={primary} loading={loading} hover={axisHover} onHover={setAxisHover} onSelect={setFocusIndex} />
           <CategoryFocusDialog
@@ -192,6 +196,27 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
             cards={primary.deck.cards}
             category={focusIndex === null ? null : (primary.axes[focusIndex] ? { id: primary.axes[focusIndex].key, title: primary.axes[focusIndex].label, colorIndex: focusIndex } : null)}
             stats={focusIndex === null ? undefined : primary.categoryStats.find((c) => c.categoryId === primary.axes[focusIndex]?.key)}
+            progress={progress}
+            reviews={reviews}
+            dailyNew={prefs.dailyNew}
+          />
+          <TrickyDialog
+            open={quick === "tricky"}
+            onClose={() => setQuick(null)}
+            deck={primary.deck}
+            cards={primary.deck.cards}
+            categories={primary.axes.map((a) => ({ id: a.key, title: a.label, colorIndex: a.colorIndex }))}
+            categoryStats={primary.categoryStats}
+            progress={progress}
+            reviews={reviews}
+            dailyNew={prefs.dailyNew}
+          />
+          <DuggaDialog
+            open={quick === "dugga"}
+            onClose={() => setQuick(null)}
+            deck={primary.deck}
+            cards={primary.deck.cards}
+            categories={primary.axes.map((a) => ({ id: a.key, title: a.label, colorIndex: a.colorIndex }))}
             progress={progress}
             reviews={reviews}
             dailyNew={prefs.dailyNew}
@@ -237,7 +262,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
   );
 }
 
-/** Kursen i överblick: kunskapsestimat och fyra nyckeltal på en rad. */
+/** Kursen i överblick: inlärd kunskap och fyra nyckeltal på en rad. */
 function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
   const { deck, exam, knowledge, stats } = view;
   const examFuture = exam !== null && exam.getTime() > Date.now();
@@ -260,7 +285,7 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
         ) : null}
       </div>
 
-      {/* Kunskapsestimatet: stort tal till vänster, stapel och underlag till höger. */}
+      {/* Inlärd kunskap: stort tal till vänster, stapel och underlag till höger. */}
       <div className="mt-7 flex flex-wrap items-end gap-x-8 gap-y-4" title={sv.dashboard.knowledgeHelp}>
         <div>
           {loading ? (
@@ -338,8 +363,18 @@ function KnowledgeCard({
   );
 }
 
-/** Dagens pass med en stor knapp, och genvägar till kluriga kort och provtenta. */
-function TodayCard({ view, loading, className = "" }: { view: DeckView; loading: boolean; className?: string }) {
+/** Dagens pass med en stor knapp, och genvägar (dialoger) till kluriga kort och dugga. */
+function TodayCard({
+  view,
+  loading,
+  onQuick,
+  className = "",
+}: {
+  view: DeckView;
+  loading: boolean;
+  onQuick: (which: "tricky" | "dugga") => void;
+  className?: string;
+}) {
   const { plan, stats, trickyPlan } = view;
   const done = !loading && plan.nothingDue;
   return (
@@ -380,13 +415,14 @@ function TodayCard({ view, loading, className = "" }: { view: DeckView; loading:
         <ActionList className="mt-6 border-t border-line pt-5">
           {trickyPlan.selectionCount > 0 && stats.seen > 0 ? (
             <ActionRow
-              href={trickyPlan.startHref}
+              onClick={() => onQuick("tricky")}
               icon={Target}
               title={sv.deck.modeTricky}
               meta={`${sv.deck.summaryTricky(trickyPlan.selectionCount)} · cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
+              data-testid="home-tricky"
             />
           ) : null}
-          <ActionRow href={`/d/${view.deck.slug}?lage=exam`} icon={GraduationCap} title={sv.deck.modeExam} meta={sv.dugga.homeMeta} />
+          <ActionRow onClick={() => onQuick("dugga")} icon={GraduationCap} title={sv.deck.modeExam} meta={sv.dugga.homeMeta} data-testid="home-dugga" />
         </ActionList>
       ) : null}
     </Card>

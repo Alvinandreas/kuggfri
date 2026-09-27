@@ -232,6 +232,13 @@ body {
   outline-offset: 2px;
 }
 
+/* Knappar, reglage och valrutor klickas ofta, ibland snabbt efter varandra; texten i dem
+   ska inte råka markeras. Komponenter som är länkar sätter select-none själva. */
+:where(button, [role="switch"], label:has(input[type="radio"]), label:has(input[type="checkbox"])) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

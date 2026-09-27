@@ -1,18 +1,23 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Download } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { deleteAccountAction, updateDisplayNameAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
+import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
+import { DAILY_NEW_CHOICES } from "@/lib/study/plan";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Select } from "@/components/ui/Select";
 import { inputClass } from "@/components/ui/TextField";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
 import { ToggleRow } from "@/components/ui/Toggle";
 import { cx } from "@/components/ui/cx";
+
+const DAILY_OPTIONS = DAILY_NEW_CHOICES.map((n) => ({ value: String(n), label: `${sv.deck.newCards(n)} per dag` }));
 
 type DeckRef = { id: string; slug: string; title: string };
 type Props = {
@@ -70,6 +75,15 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
   // och värde ("on") som kryssrutorna hade, så servern läser formuläret som förut.
   const [reminderOn, setReminderOn] = useState(reminderEmail);
   const [digestOn, setDigestOn] = useState(digestEmail);
+  // Pluggrytmen bor i localStorage (en bekvämlighet per enhet) och sparas direkt vid ändring.
+  const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
+  useEffect(() => {
+    setPrefs(readPrefs(window.localStorage));
+  }, []);
+  function updatePrefs(next: StudyPrefs) {
+    setPrefs(next);
+    writePrefs(window.localStorage, next);
+  }
 
   async function onConfirm() {
     if (!pending) return;
@@ -144,7 +158,27 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         </form>
       </Card>
 
-      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 2 }} role="region" aria-labelledby="paminnelser-rubrik">
+      {/* Pluggrytmen: gäller alla pass och sparas direkt i webbläsaren (samma som förut på kurssidan). */}
+      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 2 }} role="region" aria-labelledby="rytm-rubrik" data-testid="study-prefs">
+        <CardHeader id="rytm-rubrik" title={sv.account.studyTitle} description={sv.account.studyHelp} />
+        <div className="-mt-2 grid gap-2">
+          <div className="py-3">
+            <p className="mb-1.5 font-semibold">{sv.deck.dailyGoal}</p>
+            <Select label={sv.deck.dailyGoal} value={String(prefs.dailyNew)} onChange={(v) => updatePrefs({ ...prefs, dailyNew: Number(v) })} options={DAILY_OPTIONS} data-testid="daily-new" />
+            <p className="mt-1.5 text-sm text-muted">{sv.deck.dailyGoalHelp}</p>
+          </div>
+          <div className="border-t border-line">
+            <ToggleRow
+              title={sv.deck.weekdaysOnly}
+              description={sv.deck.weekdaysOnlyHelp}
+              checked={prefs.weekdaysOnly}
+              onChange={(v) => updatePrefs({ ...prefs, weekdaysOnly: v })}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 3 }} role="region" aria-labelledby="paminnelser-rubrik">
         <CardHeader id="paminnelser-rubrik" title={sv.account.remindersTitle} description={sv.account.remindersHelp} />
         <form action={prefsAction} className="-mt-2 grid gap-4">
           <div className="divide-y divide-line">
@@ -169,7 +203,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         </form>
       </Card>
 
-      <Card padding="lg" className="anim-fade-up flex flex-wrap items-center justify-between gap-4" style={{ ["--i" as string]: 3 }} role="region" aria-labelledby="tema-rubrik">
+      <Card padding="lg" className="anim-fade-up flex flex-wrap items-center justify-between gap-4" style={{ ["--i" as string]: 4 }} role="region" aria-labelledby="tema-rubrik">
         <h2 id="tema-rubrik" className="text-lg font-bold tracking-tight">
           {sv.theme.label}
         </h2>
@@ -179,7 +213,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
       <Card
         padding="lg"
         className={cx("anim-fade-up", focusPassword && "ring-2 ring-accent")}
-        style={{ ["--i" as string]: 4 }}
+        style={{ ["--i" as string]: 5 }}
         role="region"
         aria-labelledby="losenord-rubrik"
       >
@@ -217,7 +251,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         </form>
       </Card>
 
-      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 5 }} role="region" aria-labelledby="nollstall-rubrik">
+      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 6 }} role="region" aria-labelledby="nollstall-rubrik">
         <CardHeader id="nollstall-rubrik" title={sv.account.resetTitle} description={sv.account.resetHelp} />
         <div className="grid gap-4">
           {decks.length === 0 ? (
@@ -249,7 +283,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         </div>
       </Card>
 
-      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 6 }} role="region" aria-labelledby="data-rubrik">
+      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 7 }} role="region" aria-labelledby="data-rubrik">
         <CardHeader id="data-rubrik" title={sv.account.dataTitle} description={sv.account.downloadHelp} />
         <a href="/api/konto/export" download="kuggfri-data.json" className={buttonClass("outline", "md")}>
           <Download size={17} aria-hidden />
@@ -260,7 +294,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
       {/* Farozonen: egen röd kant i båda lägena, så att den inte smälter ihop med blocken ovan. */}
       <section
         className="anim-fade-up rounded-lg border border-danger/40 bg-surface p-6 sm:p-7"
-        style={{ ["--i" as string]: 7 }}
+        style={{ ["--i" as string]: 8 }}
         aria-labelledby="radera-rubrik"
       >
         <CardHeader id="radera-rubrik" title={sv.account.deleteTitle} description={sv.account.deleteHelp} />

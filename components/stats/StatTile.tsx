@@ -30,16 +30,16 @@ export function StatTile({ label, value, sub, tone, help, href, testId, variant 
   return (
     <div
       className={cx(
-        "relative rounded-lg p-4",
+        "relative rounded-lg p-3 sm:p-4",
         variant === "inset" ? "bg-surface-2" : "border border-line bg-surface dark:border-transparent",
         href && "transition-colors hover:bg-surface-3",
       )}
     >
-      <dt className="flex items-center gap-2 text-xs font-semibold text-muted" title={help}>
+      <dt className="flex items-center gap-1.5 text-xs font-semibold text-muted sm:gap-2" title={help}>
         <span aria-hidden className={cx("h-2 w-2 shrink-0 rounded-full", dots[tone])} />
         {label}
       </dt>
-      <dd className="mt-2 text-3xl font-extrabold leading-none tracking-tight tabular-nums" data-testid={testId}>
+      <dd className="mt-2 whitespace-nowrap text-2xl font-extrabold leading-none tracking-tight tabular-nums sm:text-3xl" data-testid={testId}>
         {href ? (
           <Link href={href} className="after:absolute after:inset-0 after:rounded-lg">
             {value}

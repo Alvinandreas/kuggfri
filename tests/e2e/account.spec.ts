@@ -1,9 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { createClient } from "@supabase/supabase-js";
 import {
   latestMailText,
   DECK_SLUG,
-  expectNoSeriousA11yViolations,
+  SUPABASE_SERVICE_ROLE_KEY,
+  SUPABASE_URL,
   login,
+  logout,
   readLocalProgress,
   register,
   seenCountText,
@@ -13,34 +16,78 @@ import {
 
 const PASSWORD = "testlosenord-123";
 
+/** Id:n för några kort i decket, för att bygga gammal lokal progress. */
+async function someCardIds(n: number): Promise<string[]> {
+  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const { data: deck } = await admin.from("decks").select("id").eq("slug", DECK_SLUG).single();
+  const { data } = await admin.from("cards").select("id").eq("deck_id", deck!.id).eq("is_active", true).order("sort_order").limit(n);
+  return (data ?? []).map((c) => c.id);
+}
+
+test.describe("landningssidan", () => {
+  test("registrering från landningssidan leder rakt in i kursen som länken pekade på", async ({ page }) => {
+    await page.goto(`/?next=${encodeURIComponent(`/d/${DECK_SLUG}`)}`);
+    await page.getByLabel("Namn").fill("Landa Landsson");
+    await page.getByLabel("E-postadress").fill(uniqueEmail("landning"));
+    await page.locator('input[name="password"]').fill(PASSWORD);
+    await page.getByTestId("register-submit").click();
+    await page.waitForURL(new RegExp(`/d/${DECK_SLUG}$`), { timeout: 20_000 });
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
+    // Namnet syns i profilmenyn.
+    await expect(page.getByTestId("profile-menu").filter({ visible: true }).first()).toHaveAttribute("aria-label", /Landa Landsson/);
+  });
+
+  test("namn krävs för att skapa konto", async ({ page }) => {
+    await page.goto("/");
+    await page.getByLabel("E-postadress").fill(uniqueEmail("utannamn"));
+    await page.locator('input[name="password"]').fill(PASSWORD);
+    await page.getByTestId("register-submit").click();
+    // Webbläsarens egen validering stoppar formuläret; vi är kvar på landningssidan.
+    await expect(page).toHaveURL(/\/$/);
+    expect(await page.getByLabel("Namn").evaluate((el) => (el as HTMLInputElement).validity.valueMissing)).toBe(true);
+  });
+
+  test("inloggningsfliken på landningssidan loggar in befintligt konto", async ({ page }) => {
+    const email = uniqueEmail("flik");
+    await register(page, email, PASSWORD);
+    await logout(page);
+    await page.getByRole("button", { name: "Logga in" }).first().click();
+    await page.getByLabel("E-postadress").fill(email);
+    await page.locator('input[name="password"]').fill(PASSWORD);
+    await page.getByTestId("login-submit").click();
+    await page.waitForURL(/\/hem$/, { timeout: 20_000 });
+    await expect(page.getByTestId("home-today")).toBeVisible();
+  });
+});
+
 test.describe("konto", () => {
-  test("2. gäst skapar konto och den lokala progressen följer med", async ({ page }) => {
-    await studyCards(page, "fsrs", 3, 4);
-    expect(Object.keys(await readLocalProgress(page))).toHaveLength(3);
+  test("2. gammal lokal progress från gästtiden flyttas till kontot vid registrering", async ({ page }) => {
+    const ids = await someCardIds(3);
+    const now = new Date();
+    const due = new Date(now.getTime() + 86_400_000).toISOString();
+    const cards = Object.fromEntries(
+      ids.map((id) => [
+        id,
+        { card_id: id, due, stability: 2, difficulty: 5, elapsed_days: 0, scheduled_days: 1, reps: 1, lapses: 0, state: 2, last_review: now.toISOString(), self_rating: 4 },
+      ]),
+    );
+    await page.goto("/");
+    await page.evaluate((c) => localStorage.setItem("kuggfri:progress:v1", JSON.stringify({ version: 1, cards: c })), cards);
 
-    await page.goto("/registrera");
-    await expectNoSeriousA11yViolations(page);
-
-    const email = uniqueEmail("migrering");
-    await register(page, email, PASSWORD, `/d/${DECK_SLUG}`);
+    await register(page, uniqueEmail("migrering"), PASSWORD, `/d/${DECK_SLUG}`);
 
     // Migreringen körs i klienten efter inloggning.
     await expect(page.getByTestId("migration-status")).toContainText("3 kort flyttades", { timeout: 20_000 });
     await expect.poll(async () => Object.keys(await readLocalProgress(page)).length).toBe(0);
 
-    // Progressen finns nu på kontot.
     const seen = await seenCountText(page);
     expect(seen).toContain("3 av");
-
-    // Bannern för gäster är borta.
-    await expect(page.getByText("Du pluggar som gäst.")).toHaveCount(0);
   });
 
   test("3. inloggad användare nollställer sitt deck och progressen är borta", async ({ page }) => {
-    const email = uniqueEmail("nollstall");
-    await register(page, email, PASSWORD, "/");
+    await register(page, uniqueEmail("nollstall"), PASSWORD);
     await studyCards(page, "fsrs", 2, 5);
-    expect(await seenCountText(page)).toContain("2 av");
+    await expect.poll(async () => seenCountText(page)).toContain("2 av");
 
     // Nollställning per deck finns på kontosidan.
     await page.goto("/konto");
@@ -55,9 +102,10 @@ test.describe("konto", () => {
     await expect(page.getByTestId("seen-count")).toHaveCount(0);
   });
 
-  test("gäst kan nollställa decket via länken på deck-sidan", async ({ page }) => {
+  test("decket kan nollställas via länken på deck-sidan", async ({ page }) => {
+    await register(page, uniqueEmail("decklank"), PASSWORD);
     await studyCards(page, "fsrs", 2, 4);
-    expect(await seenCountText(page)).toContain("2 av");
+    await expect.poll(async () => seenCountText(page)).toContain("2 av");
     await page.getByTestId("reset-deck").click();
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
@@ -66,11 +114,9 @@ test.describe("konto", () => {
   });
 
   test("nollställ schemat behåller skattningarna", async ({ page }) => {
-    const email = uniqueEmail("schema");
-    await register(page, email, PASSWORD, "/");
+    await register(page, uniqueEmail("schema"), PASSWORD);
     await studyCards(page, "fsrs", 2, 2);
-    await page.goto(`/d/${DECK_SLUG}`);
-    await expect(page.getByTestId("seen-count")).toContainText("2 av");
+    await expect.poll(async () => seenCountText(page)).toContain("2 av");
 
     await page.goto("/konto");
     await page.getByTestId("reset-schedule").click();
@@ -83,22 +129,13 @@ test.describe("konto", () => {
   });
 
   test("5. vanlig användare blir nekad på /admin med 403", async ({ page }) => {
-    const email = uniqueEmail("vanlig");
-    await register(page, email, PASSWORD, "/");
+    await register(page, uniqueEmail("vanlig"), PASSWORD);
     const response = await page.goto("/admin");
     expect(response?.status()).toBe(403);
     await expect(page.getByRole("heading", { name: "Åtkomst nekad" })).toBeVisible();
     // Admin-länken finns inte i menyn.
-    await page.goto("/");
+    await page.goto("/hem");
     await expect(page.getByRole("link", { name: "Admin" })).toHaveCount(0);
-  });
-
-  test("utloggad skickas till inloggning från /admin och /konto", async ({ page }) => {
-    await page.goto("/admin");
-    await expect(page).toHaveURL(/\/logga-in\?next=%2Fadmin/);
-    await page.goto("/konto");
-    await expect(page).toHaveURL(/\/logga-in/);
-    await expectNoSeriousA11yViolations(page);
   });
 
   test("ladda ner mina data och radera konto", async ({ page, context }) => {
@@ -135,8 +172,7 @@ test.describe("konto", () => {
     await page.getByTestId("save-password").click();
     await expect(page.getByRole("status").filter({ hasText: "Lösenordet är bytt." })).toBeVisible();
 
-    await page.getByRole("button", { name: "Logga ut" }).click();
-    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+    await logout(page);
     await login(page, email, newPassword, "/konto");
     await expect(page.getByRole("heading", { name: "Ditt konto" })).toBeVisible();
   });
@@ -144,9 +180,8 @@ test.describe("konto", () => {
   test("glömt lösenord: länken i mejlet loggar in och det nya lösenordet fungerar", async ({ page }) => {
     const email = uniqueEmail("glomt");
     const newPassword = "aterstallt-losenord-789";
-    await register(page, email, PASSWORD, "/");
-    await page.getByRole("button", { name: "Logga ut" }).click();
-    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+    await register(page, email, PASSWORD);
+    await logout(page);
 
     await page.goto("/logga-in");
     await page.getByRole("link", { name: "Glömt lösenordet?" }).click();
@@ -166,17 +201,15 @@ test.describe("konto", () => {
     await page.locator('input[name="password"]').fill(newPassword);
     await page.getByTestId("save-password").click();
     await expect(page.getByRole("status").filter({ hasText: "Lösenordet är bytt." })).toBeVisible();
-    await page.getByRole("button", { name: "Logga ut" }).click();
-    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+    await logout(page);
     await login(page, email, newPassword, "/konto");
     await expect(page.getByRole("heading", { name: "Ditt konto" })).toBeVisible();
   });
 
   test("inloggning med lösenord fungerar för befintligt konto", async ({ page }) => {
     const email = uniqueEmail("login");
-    await register(page, email, PASSWORD, "/");
-    await page.getByRole("button", { name: "Logga ut" }).click();
-    await expect(page.getByRole("link", { name: "Logga in" })).toBeVisible();
+    await register(page, email, PASSWORD);
+    await logout(page);
     await login(page, email, PASSWORD, "/konto");
     await expect(page.getByRole("heading", { name: "Ditt konto" })).toBeVisible();
   });

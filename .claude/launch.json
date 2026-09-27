@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "kuggfri-3001",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "set NEXT_DIST_DIR=.next-prod&& npx next start -p 3001"],
+      "port": 3001
     }
   ]
 }

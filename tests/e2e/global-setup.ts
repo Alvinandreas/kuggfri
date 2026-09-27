@@ -8,7 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 import { ADMIN_USER, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } from "./helpers";
 
 export default async function globalSetup() {
-  // Mot produktion (E2E_BASE_URL satt) skapas inga testkonton: kör bara gästtesterna.
+  // Mot produktion (E2E_BASE_URL satt) skapas inga testkonton: kör bara public.spec.ts.
   if (process.env.E2E_SKIP_SETUP === "1") return;
   let healthy = false;
   try {

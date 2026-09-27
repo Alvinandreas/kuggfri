@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
-import { ADMIN_USER, DECK_SLUG, expectNoSeriousA11yViolations, login, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, uniqueEmail } from "./helpers";
+import { ADMIN_USER, DECK_SLUG, expectNoSeriousA11yViolations, login, registerStudent, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, uniqueEmail } from "./helpers";
 
 /**
  * Adminflöden som Johan använder: kategorier (skapa, byt namn, ordna, ta bort), kort (ta bort),
@@ -81,6 +81,7 @@ test.describe("admin: innehåll", () => {
 
     const student = await browser.newContext();
     const s = await student.newPage();
+    await registerStudent(s, "utankategori", `/d/${DECK_SLUG}`);
     await s.goto(`/d/${DECK_SLUG}`);
     const uncategorized = s.getByTestId("category-row").filter({ hasText: "Utan kategori" });
     await expect(uncategorized).toBeVisible();
@@ -135,8 +136,11 @@ test.describe("examinator", () => {
   });
 
   test("ser bara sin kurs, kan redigera ett kort, men varken skapa deck eller ta bort det", async ({ page }) => {
-    await login(page, examiner.email, examiner.password, "/");
-    await expect(page.getByRole("link", { name: "Admin" })).toBeVisible();
+    await login(page, examiner.email, examiner.password, "/hem");
+    // Adminlänken står i sidomenyn; på mobil ligger den i den utdragbara menyn.
+    const openMenu = page.getByRole("button", { name: "Öppna menyn" });
+    if (await openMenu.isVisible()) await openMenu.click();
+    await expect(page.getByRole("link", { name: "Admin" }).filter({ visible: true })).toBeVisible();
     await page.goto("/admin");
     await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");

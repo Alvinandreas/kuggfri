@@ -3,13 +3,15 @@ import { maintenanceGate } from "@/lib/maintenance";
 import { updateSession } from "@/lib/supabase/middleware";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
 import { decideAdminAccess } from "@/lib/auth/admin-gate";
+import { inviteRewriteTarget, isPublicPath, loginRedirectTarget } from "@/lib/auth/route-gate";
 import { buildCsp, createNonce, NONCE_HEADER } from "@/lib/security/headers";
 
 /**
  * 1. Sätter en innehållspolicy (CSP) med en färsk nonce per request. Next.js märker sina
  *    egna inline-skript med den, och layouten märker temaskriptet.
  * 2. Håller Supabase-sessionen färsk på varje request.
- * 3. Skyddar /admin server-side: icke-admin får 403 redan här, innan någon sida renderas.
+ * 3. Kräver konto: utloggade skickas till landningssidan (lib/auth/route-gate.ts).
+ * 4. Skyddar /admin server-side: icke-admin får 403 redan här, innan någon sida renderas.
  *    Layouten under /admin gör samma kontroll igen.
  *
  * Inloggningskoder (?code=…) löses bara in på /auth/confirm. Hamnar en länk på någon
@@ -42,6 +44,22 @@ export async function middleware(request: NextRequest) {
     // Behåll vart besökaren skulle ha hamnat, men bara som en intern sökväg.
     url.searchParams.set("next", pathname === "/" ? "/" : pathname);
     const redirect = NextResponse.redirect(url);
+    redirect.headers.set("content-security-policy", csp);
+    return redirect;
+  }
+
+  // Konto krävs för allt utom landningssidan, inloggningsflödet och informationssidorna.
+  // En kurslänk visar kursens inbjudan på samma adress, så att länkförhandsvisningen stämmer.
+  const invite = user ? null : inviteRewriteTarget(pathname);
+  if (invite) {
+    const rewrite = NextResponse.rewrite(new URL(invite, request.url), { request: { headers: requestHeaders } });
+    rewrite.headers.set("content-security-policy", csp);
+    // Sessionskakor som updateSession rensat eller förnyat ska följa med även här.
+    for (const cookie of response.cookies.getAll()) rewrite.cookies.set(cookie);
+    return rewrite;
+  }
+  if (!user && !isPublicPath(pathname)) {
+    const redirect = NextResponse.redirect(new URL(loginRedirectTarget(pathname, request.nextUrl.search), request.url));
     redirect.headers.set("content-security-policy", csp);
     return redirect;
   }

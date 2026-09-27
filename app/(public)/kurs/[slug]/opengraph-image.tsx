@@ -7,7 +7,11 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 export const alt = sv.app.name;
 
-/** Delningsbild per kurs: den bild studenterna faktiskt skickar vidare. */
+/**
+ * Delningsbild per kurs: den bild studenterna faktiskt skickar vidare. Den hör till
+ * inbjudningssidan, eftersom det är den en chattklient (utan inloggning) får när den
+ * hämtar en kurslänk /d/<slug> — middleware skriver om dit (lib/auth/route-gate.ts).
+ */
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const data = await getDeckBySlug(slug);

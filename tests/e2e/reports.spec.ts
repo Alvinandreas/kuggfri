@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { ADMIN_USER, expectNoSeriousA11yViolations, login, startSession } from "./helpers";
+import { ADMIN_USER, expectNoSeriousA11yViolations, login, registerStudent, startSession } from "./helpers";
 
 test.describe("felrapporter", () => {
-  test("gäst rapporterar fel på ett kort, admin ser, åtgärdar och tar bort rapporten", async ({ browser, page }) => {
+  test("student rapporterar fel på ett kort, admin ser, åtgärdar och tar bort rapporten", async ({ browser, page }) => {
     const text = `E2E-rapport ${Date.now()}: enheten i svaret ser fel ut`;
 
-    // Gäst, utan konto.
+    // Student utan kontaktuppgift i rapporten: visas som anonym för admin.
+    await registerStudent(page, "rapport");
     await startSession(page, "free");
     await page.getByTestId("report-open").click();
     const dialog = page.getByRole("dialog");

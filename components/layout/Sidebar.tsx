@@ -11,7 +11,7 @@ import { cx } from "@/components/ui/cx";
 import { Logo } from "@/components/layout/Logo";
 import { ProfileMenu, type ShellUser } from "@/components/layout/ProfileMenu";
 
-type NavLink = { href: string; label: string; icon: ComponentType<LucideProps> };
+type NavLink = { href: string; label: string; icon: ComponentType<LucideProps>; /** Fler sökvägsprefix där posten räknas som aktiv. */ also?: string[] };
 
 export type SidebarProps = {
   user: ShellUser;
@@ -29,7 +29,7 @@ function isActive(pathname: string, href: string): boolean {
 }
 
 function NavItem({ link, pathname }: { link: NavLink; pathname: string }) {
-  const active = isActive(pathname, link.href);
+  const active = isActive(pathname, link.href) || (link.also ?? []).some((p) => pathname.startsWith(p));
   const Icon = link.icon;
   return (
     <Link
@@ -61,8 +61,8 @@ function SectionLabel({ children }: { children: string }) {
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
 function SidebarContent({ user, canAdmin, isAdmin, pathname, top }: SidebarProps & { pathname: string; top: React.ReactNode }) {
   const study: NavLink[] = [
-    { href: "/", label: sv.shell.home, icon: House },
-    { href: "/kurser", label: sv.shell.courses, icon: Library },
+    { href: "/hem", label: sv.shell.home, icon: House },
+    { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d/"] },
   ];
   const admin: NavLink[] = [
     ...(canAdmin ? [{ href: "/admin", label: sv.shell.admin, icon: Settings2 }] : []),
@@ -145,7 +145,7 @@ export function Sidebar(props: SidebarProps) {
 
   const desktopTop = (
     <div className="sidebar-top flex items-center justify-between gap-2 px-4 pb-1 pt-4">
-      <Link href="/" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
+      <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
         <span data-sidebar-label>
           <Logo variant="menu" height={34} priority decorative />
         </span>
@@ -162,7 +162,7 @@ export function Sidebar(props: SidebarProps) {
 
   const drawerTop = (
     <div className="flex items-center justify-between gap-2 px-4 pb-1 pt-4">
-      <Link href="/" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
+      <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
         <Logo variant="menu" height={34} decorative />
       </Link>
       <IconButton label={sv.shell.closeMenu} variant="outline" size="sm" onClick={() => setDrawerOpen(false)}>
@@ -181,7 +181,7 @@ export function Sidebar(props: SidebarProps) {
         <IconButton label={sv.shell.openMenu} onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>
           <MenuIcon size={20} strokeWidth={2} aria-hidden />
         </IconButton>
-        <Link href="/" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
+        <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
           <Logo variant="menu" height={30} decorative />
         </Link>
         <ProfileMenu user={props.user} placement="bottom-end" compact />

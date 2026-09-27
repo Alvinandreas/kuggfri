@@ -48,19 +48,73 @@ export const sv = {
     dark: "Mörkt",
   },
   home: {
-    title: "Välj ett deck",
-    lead: "Alla deck är gratis och öppna. Du behöver inget konto för att börja plugga.",
-    empty: "Det finns inga publicerade deck ännu.",
+    title: "Kurser",
+    lead: "Alla kurser är gratis. Välj en för att se korten och börja plugga.",
+    empty: "Det finns inga publicerade kurser ännu.",
     cards: (n: number) => (n === 1 ? "1 kort" : `${n} kort`),
     courseCode: "Kurskod",
   },
-  guest: {
-    bannerTitle: "Du pluggar som gäst.",
-    bannerBody:
-      "Din progress sparas bara i den här webbläsaren på den här enheten. Skapa ett konto för att spara den och fortsätta på andra enheter.",
-    bannerCta: "Skapa konto",
-    bannerLogin: "Logga in",
-    bannerDismiss: "Dölj",
+  landing: {
+    eyebrow: "Flashcards för Chalmersstudenter",
+    title: "Plugga smartare inför tentan.",
+    lead: "Kuggfri visar rätt kort på rätt dag, så att det du lär dig sitter kvar till tentan. Gratis och utan reklam.",
+    points: [
+      { title: "Repetition i rätt tid", body: "Schemat lär sig vad du kan och tar fram det du håller på att glömma." },
+      { title: "Kurser från examinatorn", body: "Korten bygger på kursens eget material, granskat av den som skriver tentan." },
+      { title: "Se hur du ligger till", body: "Kunskapsestimat per kategori och nedräkning till tentadagen." },
+    ],
+    formLabel: "Konto",
+    tabRegister: "Skapa konto",
+    tabLogin: "Logga in",
+    registerTitle: "Skapa ditt konto",
+    registerLead: "Det tar en halv minut.",
+    loginTitle: "Välkommen tillbaka",
+    loginLead: "Logga in för att fortsätta plugga.",
+    nextHint: "Logga in eller skapa ett konto för att öppna kursen.",
+  },
+  invite: {
+    eyebrow: "Du är inbjuden till en kurs på Kuggfri",
+    lead: "Skapa ett konto på en halv minut, så öppnas kursen direkt. Gratis, utan reklam, och schemat visar rätt kort på rätt dag fram till tentan.",
+  },
+  dashboard: {
+    title: "Hem",
+    greeting: (hour: number, name: string) => {
+      const who = name ? `, ${name}` : "";
+      if (hour >= 5 && hour < 10) return `God morgon${who}`;
+      if (hour >= 18 || hour < 5) return `God kväll${who}`;
+      return `Hej${who}`;
+    },
+    leadDue: (n: number) => (n === 1 ? "Ett kort väntar på dig i dag." : `${n} kort väntar på dig i dag.`),
+    leadDone: "Du är klar för i dag. Snyggt jobbat!",
+    leadStart: "Välj en kurs för att komma igång.",
+    leadFirst: (n: number) => `Ditt första pass är redo: ${n} kort, några minuter. Skatta ärligt, så lär sig schemat vad du kan.`,
+    streak: (n: number) => (n === 1 ? "1 dag i rad" : `${n} dagar i rad`),
+    streakLabel: "Streak",
+    today: "Dagens pass",
+    todayPlan: (due: number, fresh: number) =>
+      [due > 0 ? `${due} att repetera` : null, fresh > 0 ? `${fresh} nya` : null].filter(Boolean).join(" · "),
+    continue: "Fortsätt plugga",
+    startFirst: "Börja plugga",
+    doneTitle: "Klart för i dag",
+    doneBody: "Kom tillbaka i morgon, så har schemat nya kort åt dig.",
+    moreNew: (n: number) => `Ta ${n} nya kort till`,
+    knowledge: "Kunskapsestimat",
+    knowledgeHelp: "Andel av kursens kort du kan just nu enligt schemat.",
+    examCountdown: "Tid kvar till tentan",
+    examPast: "Tentan har varit",
+    categories: "Per kategori",
+    openCourse: "Till kursen",
+    courseSettings: "Kursens sida",
+    activity: "Senaste två veckorna",
+    reviewsToday: "I dag",
+    learned: "Säkra kort",
+    avg7: "Snitt, 7 dagar",
+    myCourses: "Mina kurser",
+    moreCourses: "Fler kurser",
+    allCourses: "Alla kurser",
+    cardsLeft: (n: number) => `${n} kvar i dag`,
+    notStarted: "Inte påbörjad",
+    loading: "Laddar din progress…",
   },
   deck: {
     start: "Starta",
@@ -121,7 +175,7 @@ export const sv = {
     resetAllConfirm: "All progress i alla deck tas bort. Det går inte att ångra.",
     resetDone: "Klart. Progressen är nollställd.",
     share: "Dela decket med en vän",
-    shareHelp: "Alla kan plugga direkt via länken, utan konto.",
+    shareHelp: "Länken leder till kursen. Den som saknar konto skapar ett på en halv minut och hamnar sedan direkt här.",
     shareCopied: "Kopierad ✓",
     shareCopy: "Kopiera länk",
     showQr: "Visa QR-kod",
@@ -130,7 +184,7 @@ export const sv = {
     qrHelp: "För föreläsningsbilden eller anslagstavlan. Skanna med mobilkameran.",
     firstVisitTitle: "Så funkar det",
     firstVisitBody: (n: number, minutes: number) =>
-      `Du kan börja utan konto. Första passet är ${n} kort, cirka ${minutes} minuter. Skatta ärligt efter varje kort: det är så schemat lär känna dig och visar rätt kort rätt dag.`,
+      `Första passet är ${n} kort, cirka ${minutes} minuter. Skatta ärligt efter varje kort: det är så schemat lär känna dig och visar rätt kort rätt dag.`,
     sessionPlan: (due: number, fresh: number, minutes: number) => {
       const parts: string[] = [];
       if (due > 0) parts.push(due === 1 ? "1 att repetera" : `${due} att repetera`);
@@ -254,7 +308,9 @@ export const sv = {
     email: "E-postadress",
     password: "Lösenord",
     passwordHelp: "Minst 8 tecken.",
-    displayName: "Visningsnamn (valfritt)",
+    displayName: "Namn",
+    displayNamePlaceholder: "Förnamn Efternamn",
+    nameRequired: "Skriv ditt namn.",
     login: "Logga in",
     register: "Skapa konto",
     magicLink: "Skicka inloggningslänk i stället",
@@ -275,14 +331,12 @@ export const sv = {
     invalidCredentials: "Fel e-post eller lösenord.",
     emailInUse: "Det finns redan ett konto med den e-postadressen. Logga in i stället, eller välj Glömt lösenord.",
     invalidEmail: "E-postadressen ser inte giltig ut.",
-    rateLimited:
-      "För många försök på kort tid. Du behöver inget konto för att plugga – börja direkt, så sparas allt i den här webbläsaren. Skapar du kontot senare följer progressen med.",
+    rateLimited: "För många försök på kort tid. Vänta en stund och försök igen.",
     signupDisabled: "Det går inte att skapa konton just nu.",
     notConfirmed: "E-postadressen är inte bekräftad ännu. Öppna länken i mejlet, eller be om en ny inloggningslänk.",
     weakPassword: "Lösenordet är för kort.",
     passwordSame: "Det nya lösenordet måste skilja sig från det gamla.",
-    privacyNote:
-      "Vi sparar bara din e-post, ditt valfria visningsnamn och din studieprogress.",
+    privacyNote: "Vi sparar bara ditt namn, din e-post och din studieprogress. Ingen reklam, ingen spårning.",
     migrating: "Flyttar din lokala progress till kontot…",
     migrated: (n: number) =>
       n === 1 ? "1 kort flyttades till ditt konto." : `${n} kort flyttades till ditt konto.`,
@@ -551,7 +605,7 @@ export const sv = {
       "Kursansvarig får en egen examinatorsvy med kursöversikt: svåraste områdena, kluriga frågor, hur långt studenterna kommit och hur många som repeterar varje vecka. Allt är sammanställt och anonymt, och visas först när minst fem studenter skattat.",
       "Examinatorn redigerar innehållet själv: kort, kategorier och ordning, med förhandsvisning. Rätten gäller bara den egna kursen.",
       "Redigering sker i webbläsaren med förhandsvisning av formler och formatering. Import från CSV eller JSON visar vad som ändras innan något sparas.",
-      "Inga kostnader, ingen reklam, ingen spårning. Studenter kan plugga helt utan konto. Data för den som skapar konto lagras inom EU.",
+      "Inga kostnader, ingen reklam, ingen spårning. Studenterna skapar ett konto med namn och e-post; all data lagras inom EU.",
     ],
     teachersOutro:
       "Vill du använda Kuggfri i din kurs, med egen examinatorsvy? Hör av dig till den som sammanställt decket, se krediteringen ovan.",

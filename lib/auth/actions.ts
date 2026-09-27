@@ -35,7 +35,7 @@ export async function signOutAction(): Promise<void> {
 export async function signInWithPasswordAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const next = safeNext(formData.get("next"));
+  const next = safeNext(formData.get("next"), "/hem");
   if (!email || !password) return { ok: false, error: sv.auth.error };
 
   const supabase = await createSupabaseServerClient();
@@ -52,8 +52,9 @@ export async function signInWithPasswordAction(formData: FormData): Promise<Auth
 export async function signUpAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const displayName = String(formData.get("display_name") ?? "").trim();
-  const next = safeNext(formData.get("next"));
+  const displayName = String(formData.get("display_name") ?? "").trim().slice(0, 80);
+  const next = safeNext(formData.get("next"), "/hem");
+  if (!displayName) return { ok: false, error: sv.auth.nameRequired };
   if (!email) return { ok: false, error: sv.auth.error };
   if (password.length < 8) return { ok: false, error: sv.auth.weakPassword };
 
@@ -62,7 +63,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
     email,
     password,
     options: {
-      data: displayName ? { display_name: displayName } : undefined,
+      data: { display_name: displayName },
       emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
@@ -81,7 +82,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
 
 export async function sendMagicLinkAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
-  const next = safeNext(formData.get("next"));
+  const next = safeNext(formData.get("next"), "/hem");
   if (!email) return { ok: false, error: sv.auth.error };
 
   const supabase = await createSupabaseServerClient();

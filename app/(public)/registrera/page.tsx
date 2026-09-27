@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: sv.auth.registerTitle };
 
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
-  const next = safeNext(query.next);
+  const next = safeNext(query.next, "/hem");
   const user = await getCurrentUser();
   if (user) redirect(next);
   return <RegisterForm next={next} />;

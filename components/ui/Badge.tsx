@@ -6,7 +6,7 @@ type Tone = "neutral" | "strong" | "accent" | "danger" | "outline";
 const tones: Record<Tone, string> = {
   neutral: "bg-surface-2 text-muted",
   strong: "bg-inverse text-inverse-fg",
-  accent: "bg-accent-soft text-accent",
+  accent: "bg-accent-soft text-accent-ink",
   danger: "bg-danger-soft text-danger",
   outline: "border border-line-strong text-muted",
 };

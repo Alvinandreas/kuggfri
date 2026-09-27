@@ -46,7 +46,7 @@ export function ShareDeck({ slug }: Props) {
             variant={copied ? "secondary" : "primary"}
             onClick={copyLink}
             aria-live="polite"
-            className={copied ? "border-accent! bg-accent-soft! text-accent!" : ""}
+            className={copied ? "border-accent! bg-accent-soft! text-accent-ink!" : ""}
             data-testid="copy-link"
           >
             {copied ? sv.deck.shareCopied : sv.deck.shareCopy}

@@ -22,12 +22,15 @@ helst, eftersom vi alltid kan gå tillbaka till ett känt fungerande läge.
 2. Hitta den senaste deploy som fungerade (commit-meddelandet och taggen syns; produktionsläget
    före lanseringen heter `v1-lansering` i git).
 3. Klicka på de tre punkterna → **Promote to Production**. Bekräfta.
-4. Kontrollera: öppna https://kuggfri.com i ett privat fönster, starta en session som gäst.
-   Snabbtest från datorn:
+4. Kontrollera: öppna https://kuggfri.com i ett privat fönster, logga in och starta en session.
+   Snabbtest från datorn (skapar inga konton, bara landningssidan och inloggningsgrinden):
 
 ```bash
-E2E_BASE_URL=https://kuggfri.com E2E_SKIP_SETUP=1 npx playwright test tests/e2e/guest-study.spec.ts
+E2E_BASE_URL=https://kuggfri.com E2E_SKIP_SETUP=1 npx playwright test tests/e2e/public.spec.ts
 ```
+
+Rullar du tillbaka till en version före Kuggfri 2.0 (27 september 2026) finns gästläget igen;
+då är det `tests/e2e/guest-study.spec.ts` i den versionen som gäller.
 
 Vercel bygger ingenting om, den pekar bara om domänen. Nästa push till `main` blir en ny deploy
 igen, så rätta felet i koden innan nästa push.

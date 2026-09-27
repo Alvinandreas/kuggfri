@@ -73,7 +73,7 @@ export function Showcase() {
         <Card padding="lg">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent-soft text-accent">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent-soft text-accent-ink">
                 <BookOpen size={22} aria-hidden />
               </span>
               <div>

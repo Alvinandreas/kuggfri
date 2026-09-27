@@ -59,15 +59,48 @@ export async function readLocalProgress(page: Page): Promise<Record<string, unkn
   });
 }
 
-export async function register(page: Page, email: string, password: string, next = "/") {
+export const STUDENT_PASSWORD = "testlosenord-123";
+
+export async function register(page: Page, email: string, password: string, next = "/hem", name = "E2E Testare") {
   await page.goto(`/registrera?next=${encodeURIComponent(next)}`);
+  await page.getByLabel("Namn").fill(name);
   await page.getByLabel("E-postadress").fill(email);
   await page.locator('input[name="password"]').fill(password);
   await page.getByTestId("register-submit").click();
   await page.waitForURL((url) => !url.pathname.startsWith("/registrera"), { timeout: 20_000 });
 }
 
-export async function login(page: Page, email: string, password: string, next = "/") {
+/** Ny student med eget konto; konto krävs för att plugga. Returnerar e-postadressen. */
+export async function registerStudent(page: Page, prefix = "student", next = "/hem"): Promise<string> {
+  const email = uniqueEmail(prefix);
+  await register(page, email, STUDENT_PASSWORD, next);
+  return email;
+}
+
+/** Loggar ut via profilmenyn (sidomenyn på desktop, toppfältet på mobil) och landar på startsidan. */
+export async function logout(page: Page) {
+  if (!/\/(hem|kurser|konto|d\/|admin|om|integritet)/.test(page.url())) await page.goto("/hem");
+  await page.getByTestId("profile-menu").filter({ visible: true }).first().click();
+  await page.getByRole("menuitem", { name: "Logga ut" }).click();
+  await page.waitForURL((url) => url.pathname === "/", { timeout: 20_000 });
+  await expect(page.getByTestId("register-submit")).toBeVisible();
+}
+
+type StoredProgress = { card_id: string; due: string; self_rating: number | null; reps: number };
+
+/** Kontots progress direkt ur databasen (service role, bara i testerna). */
+export async function accountProgress(email: string): Promise<Record<string, StoredProgress>> {
+  const { createClient } = await import("@supabase/supabase-js");
+  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const { data: users } = await admin.auth.admin.listUsers({ perPage: 1000 });
+  const id = users?.users.find((u) => u.email === email)?.id;
+  if (!id) throw new Error(`Hittade inte ${email}`);
+  const { data, error } = await admin.from("card_progress").select("card_id, due, self_rating, reps").eq("user_id", id);
+  if (error) throw error;
+  return Object.fromEntries((data ?? []).map((r) => [r.card_id, r as StoredProgress]));
+}
+
+export async function login(page: Page, email: string, password: string, next = "/hem") {
   await page.goto(`/logga-in?next=${encodeURIComponent(next)}`);
   await page.getByLabel("E-postadress").fill(email);
   await page.locator('input[name="password"]').fill(password);

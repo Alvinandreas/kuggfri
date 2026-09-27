@@ -1,19 +1,31 @@
 import { expect, test } from "@playwright/test";
 import {
   DECK_SLUG,
+  accountProgress,
   expectNoSeriousA11yViolations,
   rateCurrentCard,
-  readLocalProgress,
+  registerStudent,
   seenCountText,
   startSession,
   studyCards,
 } from "./helpers";
 
-test.describe("gäst", () => {
+// Konto krävs för att plugga (Kuggfri 2.0): varje test får en ny student, så att
+// progressen alltid börjar från noll och testerna inte påverkar varandra.
+let email = "";
+test.beforeEach(async ({ page }) => {
+  email = await registerStudent(page, "plugg");
+});
+
+/** Väntar tills antalet kort med progress i databasen är n (skrivningarna går asynkront). */
+async function expectStoredCount(n: number) {
+  await expect.poll(async () => Object.keys(await accountProgress(email)).length, { timeout: 15_000 }).toBe(n);
+}
+
+test.describe("plugga", () => {
   test("1. pluggar tio kort, laddar om sidan, progressen finns kvar", async ({ page }) => {
     await page.goto(`/d/${DECK_SLUG}`);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
-    await expect(page.getByText("Du pluggar som gäst.")).toBeVisible();
     await expectNoSeriousA11yViolations(page);
 
     await page.getByTestId("start-session").click();
@@ -23,13 +35,9 @@ test.describe("gäst", () => {
     for (let i = 0; i < 10; i++) {
       await rateCurrentCard(page, i % 2 === 0 ? 4 : 5);
     }
-
-    const stored = await readLocalProgress(page);
-    expect(Object.keys(stored)).toHaveLength(10);
+    await expectStoredCount(10);
 
     await page.reload();
-    expect(Object.keys(await readLocalProgress(page))).toHaveLength(10);
-
     const seen = await seenCountText(page);
     expect(seen).toContain("10 av");
   });
@@ -37,8 +45,8 @@ test.describe("gäst", () => {
   test("4. fri repetition ändrar inte nästa schemalagda datum", async ({ page }) => {
     // Schemalägg ett par kort först.
     await studyCards(page, "fsrs", 2, 5);
-    const before = await readLocalProgress(page);
-    expect(Object.keys(before)).toHaveLength(2);
+    await expectStoredCount(2);
+    const before = await accountProgress(email);
 
     // Fri repetition med låga skattningar över flera kort, inklusive de schemalagda.
     await startSession(page, "free", "all");
@@ -47,18 +55,18 @@ test.describe("gäst", () => {
     }
     await expect(page.getByTestId("session-summary").or(page.getByTestId("flashcard"))).toBeVisible();
 
-    const after = await readLocalProgress(page);
-    expect(after).toEqual(before);
+    expect(await accountProgress(email)).toEqual(before);
   });
 
-  test("slumpad genomkörning ändrar inte heller progressen och sammanfattningen visas", async ({ page }) => {
+  test("slumpad genomkörning ändrar inte heller progressen", async ({ page }) => {
     await studyCards(page, "fsrs", 1, 3);
-    const before = await readLocalProgress(page);
+    await expectStoredCount(1);
+    const before = await accountProgress(email);
 
     await startSession(page, "random");
     await rateCurrentCard(page, 2);
     await rateCurrentCard(page, 4);
-    expect(await readLocalProgress(page)).toEqual(before);
+    expect(await accountProgress(email)).toEqual(before);
   });
 
   test("tangentbord: mellanslag vänder, siffra skattar, pil hoppar", async ({ page }) => {
@@ -96,6 +104,21 @@ test.describe("gäst", () => {
   });
 });
 
+test.describe("hemsidan", () => {
+  test("ny student ser sitt första pass och kommer rakt in i det", async ({ page }) => {
+    await page.goto("/hem");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("E2E");
+    await expect(page.getByTestId("home-lead")).toContainText("första pass");
+    await expect(page.getByTestId("home-today")).toContainText("20 kort");
+    await expect(page.getByTestId("home-knowledge")).toHaveText(/^0\s*%$/);
+    await expectNoSeriousA11yViolations(page);
+
+    await page.getByTestId("home-start").click();
+    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
+  });
+});
+
 test.describe("dosering", () => {
   test("första passet slutar efter dagsmålet med 'Klar för i dag' och erbjuder fler nya kort", async ({ page }) => {
     await page.goto(`/d/${DECK_SLUG}`);
@@ -128,10 +151,18 @@ test.describe("dosering", () => {
     await expectNoSeriousA11yViolations(page);
 
     // Deck-sidan: dagsmålet är nått, men fler nya kort kan tas frivilligt.
+    await expectStoredCount(20);
     await page.goto(`/d/${DECK_SLUG}`);
     await expect(page.getByTestId("start-info")).toHaveText("Klar för i dag");
     await expect(page.getByTestId("start-more")).toContainText("Ta 20 nya kort till");
     await expect(page.getByTestId("knowledge-now")).toContainText("baserat på 20 repeterade kort");
+
+    // Hemsidan säger samma sak.
+    await page.goto("/hem");
+    await expect(page.getByTestId("home-today")).toContainText("Klart för i dag");
+    await expect(page.getByTestId("home-lead")).toContainText("klar för i dag");
+
+    await page.goto(`/d/${DECK_SLUG}`);
     await page.getByTestId("start-more").click();
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
   });
@@ -154,7 +185,7 @@ test.describe("provtenta", () => {
     await expect(page.getByTestId("session-summary")).toBeVisible();
     await expect(page.getByTestId("exam-result")).toContainText("4 av 6");
     await expect(page.getByTestId("exam-result")).toContainText("67 %");
-    expect(await readLocalProgress(page)).toEqual({});
+    expect(await accountProgress(email)).toEqual({});
     await expectNoSeriousA11yViolations(page);
   });
 });

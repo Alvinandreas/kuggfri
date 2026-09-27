@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: sv.privacy.title };
  * (app/api/konto/export/route.ts). Testet i tests/unit/privacy hjälper till att påminna.
  */
 
-const UPDATED = "20 september 2026";
+const UPDATED = "27 september 2026";
 
 function Row({ what, why, basis, retention }: { what: string; why: string; basis: string; retention: string }) {
   return (
@@ -38,8 +38,7 @@ export default function PrivacyPage() {
       <section className="rounded-lg border border-line bg-surface p-5">
         <h2 className="mt-0">Kort sammanfattning</h2>
         <ul>
-          <li>Du kan använda Kuggfri helt utan konto. Då lämnar du inga uppgifter till oss alls.</li>
-          <li>Skapar du konto sparar vi din e-postadress, ett valfritt visningsnamn och din studieprogress. Inget annat.</li>
+          <li>För att plugga skapar du ett konto. Vi sparar ditt namn, din e-postadress och din studieprogress. Inget annat.</li>
           <li>Vi har ingen analys, inga annonser, inga spårningskakor och inga tredjepartsinloggningar.</li>
           <li>Vi skickar aldrig mejl du inte bett om. Påminnelser är avstängda tills du själv slår på dem.</li>
           <li>Kursens examinator ser bara sammanställd statistik, aldrig enskilda studenters svar.</li>
@@ -60,7 +59,8 @@ export default function PrivacyPage() {
       <section>
         <h2>Vilka uppgifter vi behandlar, varför och hur länge</h2>
         <p>
-          Utan konto behandlar vi inga personuppgifter. Med konto behandlar vi följande. ”Berättigat intresse”
+          Den som bara läser landningssidan, den här sidan eller Om Kuggfri lämnar inga personuppgifter. För den
+          som skapar konto behandlar vi följande. ”Berättigat intresse”
           betyder artikel 6.1 f i dataskyddsförordningen, ”avtal” artikel 6.1 b och ”samtycke” artikel 6.1 a.
         </p>
         <div className="overflow-x-auto">
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
                 retention="Tills du raderar kontot"
               />
               <Row
-                what="Visningsnamn (valfritt)"
+                what="Namn"
                 why="Visas för dig själv i appen och i mejl vi skickar. Syns inte för andra."
                 basis="Avtal"
                 retention="Tills du raderar kontot"
@@ -147,24 +147,23 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2>Utan konto: det som sparas i din egen webbläsare</h2>
+        <h2>Det som sparas i din egen webbläsare</h2>
         <p>
-          Som gäst skickas ingenting till oss. Din progress sparas lokalt i webbläsaren på den enhet du använder,
-          under följande nycklar i <em>localStorage</em>:
+          Några bekvämligheter sparas bara lokalt i webbläsaren på den enhet du använder, under följande nycklar i{" "}
+          <em>localStorage</em>. De skickas inte till oss.
         </p>
         <ul>
           <li>
-            <code>kuggfri:progress:v1</code> – din progress per kort.
-          </li>
-          <li>
-            <code>kuggfri:reviews:v1</code> – dina repetitioner, som ger dig diagrammen.
+            <code>kuggfri:progress:v1</code> och <code>kuggfri:reviews:v1</code> – progress och repetitioner från
+            tiden då Kuggfri gick att använda utan konto. Finns de kvar flyttas de till ditt konto nästa gång du
+            loggar in och tas sedan bort ur webbläsaren.
           </li>
           <li>
             <code>kuggfri:prefs:v1</code> – hur många nya kort per dag du valt och om du pluggar helst på vardagar.
           </li>
           <li>
             <code>kuggfri:outbox:v1</code> – skattningar som inte kunnat sparas på grund av dålig anslutning, tills
-            de skickats. Används bara när du är inloggad.
+            de skickats.
           </li>
           <li>
             <code>kuggfri:theme</code> – ditt val av ljust eller mörkt läge.
@@ -173,10 +172,7 @@ export default function PrivacyPage() {
             <code>kuggfri:sidebar</code> – om du fällt ihop sidomenyn.
           </li>
         </ul>
-        <p>
-          Allt detta försvinner om du rensar webbplatsdata. Skapar du senare ett konto flyttas progressen och
-          historiken till kontot och tas bort ur webbläsaren.
-        </p>
+        <p>Allt detta försvinner om du rensar webbplatsdata.</p>
       </section>
 
       <section>
@@ -277,10 +273,10 @@ export default function PrivacyPage() {
             ner allt vi har om dig som en JSON-fil, direkt och utan att behöva fråga.
           </li>
           <li>
-            <strong>Rättelse.</strong> Visningsnamn ändrar du själv. Hör av dig för byte av e-postadress.
+            <strong>Rättelse.</strong> Namnet ändrar du själv under Konto. Hör av dig för byte av e-postadress.
           </li>
           <li>
-            <strong>Radering.</strong> Under Konto raderar du hela kontot: e-post, visningsnamn, progress,
+            <strong>Radering.</strong> Under Konto raderar du hela kontot: e-post, namn, progress,
             historik och sessioner försvinner omedelbart och går inte att återskapa. Felrapporter du skickat
             behålls för kursens skull, men kopplas bort från dig och kontaktadressen raderas. Du kan också bara
             nollställa progressen och behålla kontot.

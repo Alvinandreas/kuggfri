@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
-import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, expectNoSeriousA11yViolations, login } from "./helpers";
+import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, expectNoSeriousA11yViolations, login, registerStudent } from "./helpers";
 
 /** Städar bort det importtestet lägger in i det riktiga decket, så att lokala databasen inte fylls på. */
 async function cleanupImportedCards() {
@@ -95,8 +95,9 @@ test.describe("admin", () => {
     const deckAdminUrl = page.url();
     await expectNoSeriousA11yViolations(page);
 
-    // Opublicerat deck syns inte för en utloggad besökare (admin själv ser det).
+    // Opublicerat deck syns inte för en vanlig student (admin själv ser det).
     const visitor = await browser.newContext();
+    await registerStudent(await visitor.newPage(), "besokare");
     const hidden = await visitor.request.get(`/d/${slug}`);
     expect(hidden.status()).toBe(404);
 

@@ -1,15 +1,19 @@
 import { sv } from "@/lib/i18n/sv";
 import { LinkButton } from "@/components/ui/Button";
+import { FullPage, StatusMessage } from "@/components/layout/StatusMessage";
 
+/** Okända adresser: ingen layout omger sidan, så den bär sin egen helsidesram. */
 export default function NotFound() {
   return (
-    <div className="py-16 text-center">
-      <h1 className="text-2xl font-semibold">{sv.common.notFound}</h1>
-      <div className="mt-6">
-        <LinkButton href="/" variant="secondary">
-          {sv.common.toHome}
-        </LinkButton>
-      </div>
-    </div>
+    <FullPage>
+      <StatusMessage
+        title={sv.common.notFound}
+        actions={
+          <LinkButton href="/" variant="secondary">
+            {sv.common.toHome}
+          </LinkButton>
+        }
+      />
+    </FullPage>
   );
 }

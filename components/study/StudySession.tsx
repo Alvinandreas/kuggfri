@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { percent } from "@/lib/text/percent";
 import { applyRating } from "@/lib/fsrs/apply-rating";
@@ -367,15 +368,22 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         {deck.title} – {sv.study.position(position + 1, total)}
       </h1>
       <div className="flex items-center justify-between gap-3 text-sm text-muted">
-        <Link href={`/d/${deck.slug}`} className="-my-2 truncate py-2 hover:text-fg">
-          ← {deck.title}
+        <Link
+          href={`/d/${deck.slug}`}
+          aria-label={`${sv.study.backToDeck}: ${deck.title}`}
+          className="group -my-1 inline-flex min-w-0 items-center gap-3 rounded-full py-1 pr-2 font-semibold text-fg"
+        >
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-strong transition-colors group-hover:bg-surface-2">
+            <X size={17} strokeWidth={2} aria-hidden />
+          </span>
+          <span className="truncate">{deck.title}</span>
         </Link>
-        <span data-testid="remaining" className="shrink-0">
+        <span data-testid="remaining" className="shrink-0 rounded-full bg-surface-2 px-3 py-1 font-semibold tabular-nums">
           {mode === "exam" ? sv.study.examProgress(position + 1, total) : sv.study.remaining(remaining(session))}
         </span>
       </div>
-      <div className="h-1 overflow-hidden rounded bg-surface-2" aria-hidden="true">
-        <div className="h-full rounded bg-accent transition-[width]" style={{ width: `${progressPct}%` }} />
+      <div className="h-1.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
+        <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${progressPct}%` }} />
       </div>
       {banner ? (
         <p className="rounded-md bg-accent-soft px-3 py-2 text-center text-sm" data-testid="session-banner">

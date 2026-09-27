@@ -25,13 +25,15 @@
   --surface-3: #e4e1da;
   --fg: #1d1c19;
   --muted: #676259;
-  --subtle: #736e64;
+  --subtle: #6b665c;
   --line: #dedbd3;
   --line-strong: #c4c0b6;
   --accent: #1f7a4d;
   --accent-hover: #196540;
   --accent-fg: #ffffff;
   --accent-soft: #dcefe3;
+  /* Grön text på accent-soft: accent själv når bara 4,4:1 där (WCAG kräver 4,5). */
+  --accent-ink: #17613d;
   --danger: #a13d3d;
   --danger-soft: #f6e6e6;
   --focus: #1f7a4d;
@@ -110,6 +112,7 @@
   --accent-hover: #55c886;
   --accent-fg: #06140c;
   --accent-soft: #173121;
+  --accent-ink: #5fcf8e;
   --danger: #e0827c;
   --danger-soft: #3a2322;
   --focus: #3fb872;
@@ -157,6 +160,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-fg: var(--accent-fg);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-focus: var(--focus);

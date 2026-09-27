@@ -9,10 +9,8 @@ import { planDeckSession } from "@/lib/study/deck-plan";
 import { DEFAULT_DUGGA, duggaExamSize, duggaQuery, type DuggaSettings } from "@/lib/study/dugga";
 import { estimateMinutes } from "@/lib/study/plan";
 import type { SelectableCard } from "@/lib/study/selection";
-import { StatTile } from "@/components/stats/StatTile";
 import { DuggaSettingsFields } from "@/components/study/DuggaSettingsFields";
 import { ActionRow } from "@/components/ui/ActionRow";
-import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Modal } from "@/components/ui/Modal";
 
 type Props = {
@@ -20,18 +18,17 @@ type Props = {
   onClose: () => void;
   deck: { slug: string; exam_date: string | null };
   cards: readonly SelectableCard[];
-  categories: readonly { id: string; title: string; colorIndex: number }[];
   progress: ProgressMap | null;
   reviews: readonly ReviewEntry[];
   dailyNew: number;
 };
 
 /**
- * Genvägen Dugga på hemsidan, öppnad: duggans regler (antal frågor, ledtrådar, tidtagning),
- * vad den kommer att testa, och en knapp som startar den direkt. Rutorna överst följer
- * valen, så man ser vad man får innan man trycker.
+ * Genvägen Dugga på hemsidan, öppnad: frågor ur hela kursen, duggans regler (antal frågor,
+ * ledtrådar, tidtagning) och en knapp som startar den direkt. Startknappen sammanfattar
+ * reglerna som gäller just nu.
  */
-export function DuggaDialog({ open, onClose, deck, cards, categories, progress, reviews, dailyNew }: Props) {
+export function DuggaDialog({ open, onClose, deck, cards, progress, reviews, dailyNew }: Props) {
   const [dugga, setDugga] = useState<DuggaSettings>(DEFAULT_DUGGA);
 
   // Varje gång dialogen öppnas börjar den med standardreglerna, som på kurssidan.
@@ -68,27 +65,7 @@ export function DuggaDialog({ open, onClose, deck, cards, categories, progress, 
       <div className="grid gap-6" data-testid="dugga-dialog">
         <p className="text-muted">{sv.quick.duggaLead}</p>
 
-        <dl className="grid grid-cols-3 gap-3">
-          <StatTile label={sv.quick.questions} value={`${count}`} sub={sv.quick.questionsFrom(available)} tone="green" />
-          <StatTile label={sv.quick.time} value={sv.quick.minutes(minutes)} sub={dugga.timer ? sv.quick.timerOn : sv.quick.timerOff} tone="navy" />
-          <StatTile label={sv.quick.hints} value={dugga.hints ? sv.quick.hintsOn : sv.quick.hintsOff} sub={sv.quick.hintsSub} tone="teal" />
-        </dl>
-
         <DuggaSettingsFields value={dugga} onChange={setDugga} available={available} />
-
-        {categories.length > 0 ? (
-          <section aria-labelledby="dugga-omraden" className="grid gap-2">
-            <h3 id="dugga-omraden" className="font-bold">
-              {sv.quick.drawnFrom}
-            </h3>
-            <div className="flex flex-wrap gap-1.5">
-              {categories.map((c) => (
-                <CategoryTag key={c.id} title={c.title} colorIndex={c.colorIndex} />
-              ))}
-            </div>
-            <p className="text-sm text-muted">{sv.quick.drawnFromHelp(categories.length)}</p>
-          </section>
-        ) : null}
 
         <Link href={`/d/${deck.slug}?lage=exam`} className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-accent hover:underline">
           {sv.quick.onCoursePage}

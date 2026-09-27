@@ -216,7 +216,6 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
             onClose={() => setQuick(null)}
             deck={primary.deck}
             cards={primary.deck.cards}
-            categories={primary.axes.map((a) => ({ id: a.key, title: a.label, colorIndex: a.colorIndex }))}
             progress={progress}
             reviews={reviews}
             dailyNew={prefs.dailyNew}

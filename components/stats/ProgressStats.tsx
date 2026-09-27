@@ -1,13 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { buildProgressStats } from "@/lib/stats/progress-stats";
-import { drawReadiness, shareReadiness } from "@/lib/share/readiness-image";
-import { Button } from "@/components/ui/Button";
 import { BarChart } from "./BarChart";
 import { RadarChart, RadarLegend, type RadarAxis } from "./RadarChart";
+import { ShareReadiness } from "./ShareReadiness";
 import { StatTile } from "./StatTile";
 import { percent } from "@/lib/text/percent";
 
@@ -31,25 +30,6 @@ type Props = {
  */
 export function ProgressStats({ cardIds, progress, reviews, dueText, categories, weekdaysOnly = false, deck }: Props) {
   const stats = useMemo(() => buildProgressStats({ cardIds, progress, reviews, weekdaysOnly }), [cardIds, progress, reviews, weekdaysOnly]);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [shareNotice, setShareNotice] = useState<string | null>(null);
-
-  async function share() {
-    const canvas = canvasRef.current;
-    if (!canvas || !deck) return;
-    const card = {
-      deckTitle: deck.title,
-      share: stats.knowledge.share,
-      streak: stats.streak,
-      reviewed: stats.knowledge.reviewed,
-      total: stats.totalCards,
-      url: `kuggfri.com/d/${deck.slug}`,
-      date: new Date(),
-    };
-    if (!drawReadiness(canvas, card)) return;
-    const result = await shareReadiness(canvas, card);
-    setShareNotice(result === "shared" ? sv.deck.shareReadinessShared : result === "downloaded" ? sv.deck.shareReadinessDone : sv.errors.generic);
-  }
   const [axisHover, setAxisHover] = useState<number | null>(null);
   const axes: RadarAxis[] = useMemo(
     () => categories.map((c, i) => ({ key: c.id, label: c.title, colorIndex: i, total: c.total, partial: c.partial, learned: c.learned })),
@@ -58,7 +38,7 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories,
   const learnedPct = percent(stats.learned, stats.totalCards);
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-6">
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${learnedPct} % av ${stats.totalCards}`} tone="green" />
         <StatTile
@@ -72,30 +52,36 @@ export function ProgressStats({ cardIds, progress, reviews, dueText, categories,
         <StatTile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
       </dl>
 
-      <p className="text-sm">
-        <span data-testid="seen-count" className="font-medium">
-          {sv.deck.seen(stats.seen, stats.totalCards)}
-        </span>
-        <span className="text-muted"> · </span>
-        <span data-testid="due-info">{dueText}</span>
-      </p>
-      <p className="text-sm text-muted" data-testid="knowledge-now">
-        {stats.knowledge.reviewed === 0
-          ? sv.deck.knowledgeNowEmpty
-          : sv.deck.knowledgeNow(Math.round(stats.knowledge.share * 100), stats.knowledge.reviewed)}
-      </p>
+      <div className="grid gap-1.5">
+        <p className="text-sm">
+          <span data-testid="seen-count" className="font-semibold">
+            {sv.deck.seen(stats.seen, stats.totalCards)}
+          </span>
+          <span className="text-muted"> · </span>
+          <span data-testid="due-info">{dueText}</span>
+        </p>
+        <p className="text-sm text-muted" data-testid="knowledge-now">
+          {stats.knowledge.reviewed === 0
+            ? sv.deck.knowledgeNowEmpty
+            : sv.deck.knowledgeNow(Math.round(stats.knowledge.share * 100), stats.knowledge.reviewed)}
+        </p>
+      </div>
       {deck && stats.knowledge.reviewed > 0 ? (
-        <div className="flex flex-wrap items-center gap-3 text-sm">
-          <Button variant="secondary" size="sm" onClick={share} data-testid="share-readiness">
-            {sv.deck.shareReadiness}
-          </Button>
-          <span className="text-muted">{shareNotice ?? sv.deck.shareReadinessHelp}</span>
-          <canvas ref={canvasRef} className="hidden" aria-hidden="true" />
-        </div>
+        <ShareReadiness
+          card={{
+            deckTitle: deck.title,
+            share: stats.knowledge.share,
+            streak: stats.streak,
+            reviewed: stats.knowledge.reviewed,
+            total: stats.totalCards,
+            url: `kuggfri.com/d/${deck.slug}`,
+            date: new Date(),
+          }}
+        />
       ) : null}
 
       {stats.hasReviews ? (
-        <div className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:items-start">
+        <div className="grid gap-6 border-t border-line pt-6 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:items-start">
           <BarChart
             title={sv.stats.reviewsPerDay}
             help={sv.stats.reviewsPerDayHelp}

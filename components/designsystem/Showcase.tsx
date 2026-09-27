@@ -11,6 +11,11 @@ import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { TextField } from "@/components/ui/TextField";
+import { TextArea } from "@/components/ui/TextArea";
+import { Select } from "@/components/ui/Select";
+import { CheckboxField, ChoiceCard } from "@/components/ui/Choice";
+import { Disclosure } from "@/components/ui/Disclosure";
+import { StatTile } from "@/components/stats/StatTile";
 import { ToggleRow } from "@/components/ui/Toggle";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
 
@@ -27,6 +32,14 @@ const SWATCHES: Array<[string, string]> = [
   ["fg", "Text"],
   ["muted", "Dämpad text"],
   ["subtle", "Etiketter"],
+];
+
+const CATEGORY_OPTIONS = [
+  { value: "", label: "Ingen kategori" },
+  { value: "1", label: "Materialgrupper och egenskaper" },
+  { value: "2", label: "Materialvalsprocessen" },
+  { value: "3", label: "Kristallstruktur" },
+  { value: "4", label: "Termiska egenskaper, diffusion och krypning" },
 ];
 
 // Ett tentadatum en bit fram, så att nedräkningen har något att räkna.
@@ -48,6 +61,8 @@ export function Showcase() {
   const [modalOpen, setModalOpen] = useState(false);
   const [opts, setOpts] = useState({ shuffle: true, write: false, starred: false, reminders: true });
   const [replay, setReplay] = useState(0);
+  const [category, setCategory] = useState("1");
+  const [mode, setMode] = useState<"fsrs" | "exam">("fsrs");
   const set = (k: keyof typeof opts) => (v: boolean) => setOpts((o) => ({ ...o, [k]: v }));
 
   return (
@@ -328,11 +343,53 @@ export function Showcase() {
         </Modal>
       </Section>
 
-      <Section title="Fält" lead="Mjuka fält utan hård kant; fokus ger en grön ring.">
-        <Card padding="lg" className="grid max-w-xl gap-4">
-          <TextField label="Namn" placeholder="Förnamn Efternamn" autoComplete="off" />
-          <TextField label="E-post" type="email" placeholder="namn@student.chalmers.se" hint="Vi skickar bara inloggningslänkar hit." autoComplete="off" />
-          <TextField label="Lösenord" type="password" defaultValue="kort" error="Lösenordet måste vara minst 8 tecken." autoComplete="off" />
+      <Section title="Fält" lead="Mjuka fält utan hård kant; fokus ger en grön ring. Rullgardinen är en egen lista i menyernas stil, inte webbläsarens.">
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card padding="lg" className="grid gap-4">
+            <TextField label="Namn" placeholder="Förnamn Efternamn" autoComplete="off" />
+            <TextField label="E-post" type="email" placeholder="namn@student.chalmers.se" hint="Vi skickar bara inloggningslänkar hit." autoComplete="off" />
+            <TextField label="Lösenord" type="password" defaultValue="kort" error="Lösenordet måste vara minst 8 tecken." autoComplete="off" />
+          </Card>
+          <Card padding="lg" className="grid content-start gap-4">
+            <div>
+              <p className="mb-1.5 text-sm font-semibold">Kategori</p>
+              <Select label="Kategori" value={category} onChange={setCategory} options={CATEGORY_OPTIONS} />
+            </div>
+            <TextArea label="Baksida" mono defaultValue={"* Organiska material\n* Plast = polymer + tillsatser"} />
+            <Disclosure summary="Nya kort per dag">
+              <p className="text-sm text-muted">Innehåll som fälls ut, med pil som vrids.</p>
+            </Disclosure>
+          </Card>
+        </div>
+      </Section>
+
+      <Section title="Val" lead="Kryssrutor och radioknappar är de inbyggda elementen i ny form; valkort för lägen och alternativ.">
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card padding="lg" className="grid content-start gap-2">
+            <CheckboxField label="Aktivt" description="Kortet visas för studenterna." checked={opts.starred} onChange={(e) => set("starred")(e.target.checked)} />
+            <CheckboxField label="Bara vardagar" checked={opts.shuffle} onChange={(e) => set("shuffle")(e.target.checked)} />
+          </Card>
+          <Card padding="lg" className="grid gap-2">
+            {(
+              [
+                ["fsrs", "Schemalagd repetition", "Bara kort som är nya eller förfallna."],
+                ["exam", "Provtenta", "30 slumpade kort, som på tentan."],
+              ] as const
+            ).map(([v, t, d]) => (
+              <ChoiceCard key={v} name="demo-mode" value={v} checked={mode === v} onChange={() => setMode(v)} title={t} description={d} />
+            ))}
+          </Card>
+        </div>
+      </Section>
+
+      <Section title="Nyckeltal" lead="Samma rutor på hemsidan, decksidan, sammanfattningen och i kursöversikten.">
+        <Card padding="lg">
+          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatTile label="Inlärda kort" value="57" sub="39 % av 145" tone="green" />
+            <StatTile label="Dagar i rad" value="4" sub="2 frysningar kvar" tone="navy" />
+            <StatTile label="Repetitioner i dag" value="23" sub="23 kort" tone="teal" />
+            <StatTile label="Snitt senaste 7 dagarna" value="3.8" sub="av 5" tone="violet" />
+          </dl>
         </Card>
       </Section>
     </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, Plus } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
@@ -34,16 +35,17 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
   const newHref = `/admin/deck/${deck.id}/kort/ny${category ? `?kategori=${category.id}` : ""}`;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${deck.id}/innehall`} className="hover:text-fg">
-          ← {sv.admin.tabContent}
+        <Link href={`/admin/deck/${deck.id}/innehall`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
+          <ArrowLeft size={15} aria-hidden />
+          {sv.admin.tabContent}
         </Link>
       </nav>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-xl font-semibold tracking-tight">
+          <h2 className="text-xl font-bold tracking-tight">
             {category ? (
               <CategoryTag title={category.title} colorIndex={colorIndex.get(category.id) ?? 0} size="lg" />
             ) : (
@@ -57,6 +59,7 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
           </p>
         </div>
         <LinkButton href={newHref} size="sm">
+          <Plus size={16} aria-hidden />
           {sv.admin.newCardInCategory}
         </LinkButton>
       </div>

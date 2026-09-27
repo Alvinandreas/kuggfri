@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { CardEditor } from "@/components/admin/CardEditor";
@@ -20,21 +21,21 @@ export default async function NewCardPage({
   const category = kategori ? (data.categories.find((c) => c.id === kategori) ?? null) : null;
   const backHref = `/admin/deck/${data.deck.id}/kategori/${category ? category.id : "ingen"}`;
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${data.deck.id}/innehall`} className="hover:text-fg">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
+      <nav aria-label={sv.admin.breadcrumb} className="flex min-w-0 items-center gap-1 text-sm text-muted">
+        <Link href={`/admin/deck/${data.deck.id}/innehall`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
           {sv.admin.tabContent}
         </Link>
         {category ? (
           <>
-            {" › "}
-            <Link href={backHref} className="hover:text-fg">
-              {category.title}
+            <ChevronRight size={15} aria-hidden className="shrink-0 text-subtle" />
+            <Link href={backHref} className="flex min-h-8 min-w-0 items-center rounded-full font-semibold hover:text-fg">
+              <span className="truncate">{category.title}</span>
             </Link>
           </>
         ) : null}
       </nav>
-      <h2 className="text-xl font-semibold tracking-tight">{sv.admin.newCard}</h2>
+      <h2 className="text-2xl font-bold tracking-tight">{sv.admin.newCard}</h2>
       <CardEditor
         deckId={data.deck.id}
         categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}

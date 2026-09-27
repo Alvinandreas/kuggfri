@@ -17,12 +17,12 @@ export default async function ReportsPage({ params }: { params: Promise<{ id: st
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
       <div className="grid grid-cols-[minmax(0,1fr)] gap-1">
-        <h2 className="text-lg font-semibold">{sv.admin.reports}</h2>
+        <h2 className="text-xl font-bold tracking-tight">{sv.admin.reports}</h2>
         <p className="text-sm text-muted">{sv.admin.reportsHelp}</p>
       </div>
 
       <section aria-labelledby="oppna" className="grid grid-cols-[minmax(0,1fr)] gap-3">
-        <h2 id="oppna" className="text-lg font-semibold">
+        <h2 id="oppna" className="text-lg font-bold tracking-tight">
           {sv.admin.reportsOpen} ({open.length})
         </h2>
         <ReportList deckId={id} reports={open} />
@@ -30,7 +30,7 @@ export default async function ReportsPage({ params }: { params: Promise<{ id: st
 
       {resolved.length > 0 ? (
         <section aria-labelledby="atgardade" className="grid grid-cols-[minmax(0,1fr)] gap-3">
-          <h2 id="atgardade" className="text-lg font-semibold">
+          <h2 id="atgardade" className="text-lg font-bold tracking-tight">
             {sv.admin.reportsResolved} ({resolved.length})
           </h2>
           <ReportList deckId={id} reports={resolved} />

@@ -18,6 +18,9 @@ export function uniqueEmail(prefix = "e2e"): string {
 
 /** Inga allvarliga eller kritiska tillgänglighetsfel på sidan. */
 export async function expectNoSeriousA11yViolations(page: Page) {
+  // Block tonar in (anim-fade-up, förskjutet per block). Mitt i intoningen är texten halvt
+  // genomskinlig och axe mäter för låg kontrast; spola fram så att det färdiga läget mäts.
+  await page.evaluate(() => document.getAnimations().forEach((a) => a.finish()));
   const results = await new AxeBuilder({ page }).analyze();
   const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(serious, JSON.stringify(serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.html) })), null, 2)).toEqual([]);

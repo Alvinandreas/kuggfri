@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef } from "react";
+import { Lightbulb } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
+import { buttonClass } from "@/components/ui/Button";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { ratingClass } from "./RatingButtons";
 
@@ -83,7 +85,7 @@ export function Flashcard({
   }
 
   const faceClass =
-    "flip-face col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg bg-surface p-5 shadow-card sm:p-7";
+    "flip-face col-start-1 row-start-1 flex min-h-[var(--card-min-height)] flex-col rounded-lg bg-surface p-5 shadow-card sm:p-8";
 
   return (
     <div className="card-stack" data-testid="flashcard" data-card-id={cardId} data-flipped={flipped}>
@@ -101,7 +103,7 @@ export function Flashcard({
           onClick={onClick}
           style={{ touchAction: "pan-y" }}
         >
-          <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line`}>
+          <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line dark:border-transparent`}>
             <FaceHeader label={sv.study.front} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
             {/* m-auto på innehållet (inte items-center på behållaren): centrerat när det får plats,
                 scrollbart från toppen när det inte gör det, så inget hamnar under rubrikraden. */}
@@ -111,23 +113,24 @@ export function Flashcard({
             {hint ? (
               <div className="mt-4 border-t border-line pt-3 text-center text-sm">
                 {showHint ? (
-                  <p>
-                    <span className="font-medium text-muted">{sv.study.hint}: </span>
+                  <p className="anim-fade-in">
+                    <span className="font-semibold text-muted">{sv.study.hint}: </span>
                     {hint}
                   </p>
                 ) : (
                   <button
                     type="button"
                     onClick={onToggleHint}
-                    className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent"
+                    className={buttonClass("secondary", "sm")}
                     data-testid="show-hint"
                   >
+                    <Lightbulb size={15} aria-hidden />
                     {sv.study.showHint}
                   </button>
                 )}
               </div>
             ) : null}
-            <p className="mt-4 text-center text-xs text-muted">{sv.study.flipHint}</p>
+            <p className="mt-4 text-center text-xs font-medium text-subtle">{sv.study.flipHint}</p>
           </section>
 
           <section aria-label={sv.study.back} aria-hidden={!flipped} inert={!flipped} className={`${faceClass} flip-back border border-accent/40`}>
@@ -138,7 +141,7 @@ export function Flashcard({
             {feedback !== null ? <Stamp rating={feedback} /> : null}
             {feedback !== null && feedback >= 4 ? <span aria-hidden="true" className={`rate-burst rate-burst-${feedback}`} /> : null}
             {feedback !== null && confidentWrong ? (
-              <p className="confident-note mt-3 rounded-md border border-rate-1 bg-rate-1/15 px-3 py-2 text-center text-sm" data-testid="confident-note">
+              <p className="confident-note mt-3 rounded-lg border border-rate-1/70 bg-rate-1/15 px-4 py-2.5 text-center text-sm font-medium" data-testid="confident-note">
                 {sv.study.confidentWrong}
               </p>
             ) : null}
@@ -153,7 +156,7 @@ function FaceHeader({ label, categoryTitle, colorIndex }: { label: string; categ
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
       {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} size="lg" /> : <span />}
-      <span className="shrink-0 text-xs uppercase tracking-wide text-muted">{label}</span>
+      <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-subtle">{label}</span>
     </div>
   );
 }
@@ -178,8 +181,8 @@ function Stamp({ rating }: { rating: SelfRating }) {
       data-testid="stamp"
       className={`card-stamp pointer-events-none absolute right-4 top-14 flex flex-col items-center justify-center rounded-full border-4 bg-surface/92 text-fg shadow-card sm:right-7 sm:top-16 ${stampSize[rating]} ${ratingClass[rating]}`}
     >
-      <span className={`font-bold leading-none ${rating >= 4 ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl"}`}>{sv.study.stamp(rating)}</span>
-      <span className="mt-1 text-[0.65rem] font-medium uppercase tracking-wide">{sv.study.rate[rating]}</span>
+      <span className={`font-extrabold leading-none ${rating >= 4 ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl"}`}>{sv.study.stamp(rating)}</span>
+      <span className="mt-1 text-[0.65rem] font-semibold uppercase tracking-wide">{sv.study.rate[rating]}</span>
     </div>
   );
 }

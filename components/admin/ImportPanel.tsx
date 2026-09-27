@@ -8,6 +8,10 @@ import { importCardsAction } from "@/lib/admin/actions";
 import { diffImport, type ExistingCard, type ExistingCategory } from "@/lib/import/diff";
 import { parseImport, type ImportParseResult } from "@/lib/import/parse-import";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Disclosure } from "@/components/ui/Disclosure";
+import { TextArea } from "@/components/ui/TextArea";
+import { StatBlock } from "./StatBlock";
 
 type Props = { deckId: string; existingCards: ExistingCard[]; existingCategories: ExistingCategory[] };
 
@@ -57,40 +61,38 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <p className="text-sm text-muted">{sv.admin.importHelp}</p>
-      <p className="text-sm text-muted">{sv.admin.importMatchHelp}</p>
-
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.importFile}</span>
-          <input type="file" accept=".csv,.json,text/csv,application/json,text/plain" onChange={onFile} data-testid="import-file" className="text-sm" />
-        </label>
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.importPaste}</span>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={8}
-            className="w-full rounded-md border border-line-strong bg-surface px-3 py-2 font-mono text-sm text-fg"
-            data-testid="import-text"
+      <Card padding="lg" className="grid grid-cols-[minmax(0,1fr)] gap-5">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm text-muted">
+          <p>{sv.admin.importHelp}</p>
+          <p>{sv.admin.importMatchHelp}</p>
+        </div>
+        <label className="grid grid-cols-[minmax(0,1fr)] gap-1.5 text-sm">
+          <span className="font-semibold">{sv.admin.importFile}</span>
+          <input
+            type="file"
+            accept=".csv,.json,text/csv,application/json,text/plain"
+            onChange={onFile}
+            data-testid="import-file"
+            className="text-sm text-muted file:mr-3 file:inline-flex file:min-h-9 file:cursor-pointer file:rounded-full file:border-0 file:bg-surface-2 file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-fg file:transition-colors hover:file:bg-surface-3"
           />
         </label>
+        <TextArea label={sv.admin.importPaste} mono value={text} onChange={(e) => setText(e.target.value)} rows={8} data-testid="import-text" />
         <div>
           <Button variant="secondary" onClick={preview} disabled={!text.trim()} data-testid="import-preview">
             {sv.admin.importParse}
           </Button>
         </div>
-      </div>
+      </Card>
 
       {errors.length > 0 ? (
-        <section aria-labelledby="importfel" className="rounded-lg border border-danger/40 bg-danger-soft p-4">
-          <h2 id="importfel" className="font-semibold text-danger">
+        <section aria-labelledby="importfel" className="rounded-lg bg-danger-soft p-5 sm:p-6">
+          <h2 id="importfel" className="font-bold text-danger">
             {sv.admin.importErrors} ({errors.length})
           </h2>
           <ul className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
             {errors.slice(0, 50).map((e, i) => (
               <li key={i}>
-                {e.row > 0 ? `${sv.admin.importRow(e.row)}: ` : ""}
+                {e.row > 0 ? <span className="font-semibold">{sv.admin.importRow(e.row)}: </span> : null}
                 {e.message}
               </li>
             ))}
@@ -99,83 +101,69 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
       ) : null}
 
       {diff ? (
-        <section aria-labelledby="diff" className="grid grid-cols-[minmax(0,1fr)] gap-4" data-testid="import-diff">
-          <h2 id="diff" className="text-lg font-semibold">
+        <section aria-labelledby="diff" className="anim-fade-up grid grid-cols-[minmax(0,1fr)] gap-4" data-testid="import-diff">
+          <h2 id="diff" className="text-xl font-bold tracking-tight">
             {sv.admin.preview}
           </h2>
-          <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-            <div className="rounded-md border border-line bg-surface p-3">
-              <dt className="text-muted">{sv.admin.importDiffNew}</dt>
-              <dd className="text-xl font-semibold" data-testid="diff-new">
-                {diff.create.length}
-              </dd>
-            </div>
-            <div className="rounded-md border border-line bg-surface p-3">
-              <dt className="text-muted">{sv.admin.importDiffUpdated}</dt>
-              <dd className="text-xl font-semibold" data-testid="diff-updated">
-                {diff.update.length}
-              </dd>
-            </div>
-            <div className="rounded-md border border-line bg-surface p-3">
-              <dt className="text-muted">{sv.admin.importDiffUnchanged}</dt>
-              <dd className="text-xl font-semibold">{diff.unchanged.length}</dd>
-            </div>
-            <div className="rounded-md border border-line bg-surface p-3">
-              <dt className="text-muted">{sv.admin.importDiffNewCategories}</dt>
-              <dd className="text-xl font-semibold">{diff.newCategories.length}</dd>
-            </div>
+          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatBlock label={sv.admin.importDiffNew} value={`${diff.create.length}`} testId="diff-new" />
+            <StatBlock label={sv.admin.importDiffUpdated} value={`${diff.update.length}`} testId="diff-updated" />
+            <StatBlock label={sv.admin.importDiffUnchanged} value={`${diff.unchanged.length}`} />
+            <StatBlock label={sv.admin.importDiffNewCategories} value={`${diff.newCategories.length}`} />
           </dl>
 
           {diff.newCategories.length > 0 ? (
             <p className="text-sm">
-              <span className="font-medium">{sv.admin.importDiffNewCategories}:</span> {diff.newCategories.join(", ")}
+              <span className="font-semibold">{sv.admin.importDiffNewCategories}:</span> {diff.newCategories.join(", ")}
             </p>
           ) : null}
 
           {diff.create.length > 0 ? (
-            <details open className="rounded-lg border border-line bg-surface p-4">
-              <summary className="cursor-pointer font-medium">
-                {sv.admin.importDiffNew} ({diff.create.length})
-              </summary>
-              <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-2 text-sm">
-                {diff.create.map((c) => (
-                  <li key={c.row} className="border-b border-line pb-2">
-                    <p className="font-medium">{truncate(firstLine(c.front))}</p>
-                    <p className="text-muted">{truncate(c.back)}</p>
-                    {c.category ? <p className="text-xs text-muted">{c.category}</p> : null}
-                  </li>
-                ))}
-              </ul>
-            </details>
+            <Card padding="none" className="px-5 py-3">
+              <Disclosure defaultOpen summary={`${sv.admin.importDiffNew} (${diff.create.length})`}>
+                <ul className="grid grid-cols-[minmax(0,1fr)] divide-y divide-line text-sm">
+                  {diff.create.map((c) => (
+                    <li key={c.row} className="py-2.5">
+                      <p className="font-semibold">{truncate(firstLine(c.front))}</p>
+                      <p className="text-muted">{truncate(c.back)}</p>
+                      {c.category ? <p className="text-xs text-muted">{c.category}</p> : null}
+                    </li>
+                  ))}
+                </ul>
+              </Disclosure>
+            </Card>
           ) : null}
 
           {diff.update.length > 0 ? (
-            <details open className="rounded-lg border border-line bg-surface p-4">
-              <summary className="cursor-pointer font-medium">
-                {sv.admin.importDiffUpdated} ({diff.update.length})
-              </summary>
-              <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-3 text-sm">
-                {diff.update.map((u) => (
-                  <li key={u.id} className="border-b border-line pb-3">
-                    <p className="font-medium">{truncate(firstLine(u.before.front))}</p>
-                    {u.changedFields.map((field) => (
-                      <div key={field} className="mt-1 grid gap-1 sm:grid-cols-2">
-                        <p className="rounded bg-danger-soft px-2 py-1">
-                          <span className="text-xs uppercase text-muted">{sv.admin.importBefore} · {field}</span>
-                          <br />
-                          {truncate(String(u.before[field] ?? "–"))}
-                        </p>
-                        <p className="rounded bg-accent-soft px-2 py-1">
-                          <span className="text-xs uppercase text-muted">{sv.admin.importAfter} · {field}</span>
-                          <br />
-                          {truncate(String(u.after[field] ?? "–"))}
-                        </p>
-                      </div>
-                    ))}
-                  </li>
-                ))}
-              </ul>
-            </details>
+            <Card padding="none" className="px-5 py-3">
+              <Disclosure defaultOpen summary={`${sv.admin.importDiffUpdated} (${diff.update.length})`}>
+                <ul className="grid grid-cols-[minmax(0,1fr)] divide-y divide-line text-sm">
+                  {diff.update.map((u) => (
+                    <li key={u.id} className="py-3">
+                      <p className="font-semibold">{truncate(firstLine(u.before.front))}</p>
+                      {u.changedFields.map((field) => (
+                        <div key={field} className="mt-2 grid gap-2 sm:grid-cols-2">
+                          <p className="rounded-md bg-danger-soft px-3 py-2">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+                              {sv.admin.importBefore} · {field}
+                            </span>
+                            <br />
+                            {truncate(String(u.before[field] ?? "–"))}
+                          </p>
+                          <p className="rounded-md bg-accent-soft px-3 py-2">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+                              {sv.admin.importAfter} · {field}
+                            </span>
+                            <br />
+                            {truncate(String(u.after[field] ?? "–"))}
+                          </p>
+                        </div>
+                      ))}
+                    </li>
+                  ))}
+                </ul>
+              </Disclosure>
+            </Card>
           ) : null}
 
           <div className="flex flex-wrap gap-2">
@@ -190,7 +178,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
       ) : null}
 
       {result ? (
-        <p role="status" className={`text-sm ${result.ok ? "text-accent" : "text-danger"}`} data-testid="import-result">
+        <p role="status" className={`text-sm font-medium ${result.ok ? "text-accent" : "text-danger"}`} data-testid="import-result">
           {result.text}
         </p>
       ) : null}

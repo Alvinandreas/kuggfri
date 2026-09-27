@@ -1,9 +1,11 @@
-import Link from "next/link";
 import { forbidden, notFound } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { countOpenReports, getDeckForAdmin } from "@/lib/admin/queries";
 import { DeckTabs } from "@/components/admin/DeckTabs";
+import { Badge } from "@/components/ui/Badge";
+import { LinkButton } from "@/components/ui/Button";
 
 type Params = Promise<{ id: string }>;
 
@@ -22,27 +24,26 @@ export default async function DeckLayout({ children, params }: { children: React
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="anim-fade-up flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{deck.title}</h1>
-          <p className="mt-1 flex flex-wrap items-center gap-x-2 text-sm text-muted">
-            {deck.course_code ? <span>{deck.course_code}</span> : null}
-            {deck.course_code ? <span aria-hidden="true">·</span> : null}
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{deck.title}</h1>
+          <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+            {deck.course_code ? <Badge tone="outline">{deck.course_code}</Badge> : null}
             <span>{sv.admin.cardCount(cards.length)}</span>
             <span aria-hidden="true">·</span>
             <span>
               {categories.length} {sv.admin.categories.toLowerCase()}
             </span>
-            <span aria-hidden="true">·</span>
-            <span className={deck.is_published ? "inline-flex items-center gap-1 text-accent" : "inline-flex items-center gap-1"}>
-              <span className={`inline-block h-2 w-2 rounded-full ${deck.is_published ? "bg-accent" : "bg-line-strong"}`} aria-hidden="true" />
+            <Badge tone={deck.is_published ? "accent" : "neutral"} className="ml-1">
+              <span className={`h-1.5 w-1.5 rounded-full ${deck.is_published ? "bg-accent-ink" : "bg-muted"}`} aria-hidden="true" />
               {deck.is_published ? sv.admin.published : sv.admin.unpublished}
-            </span>
+            </Badge>
           </p>
         </div>
-        <Link href={`/d/${deck.slug}`} className="inline-flex h-9 items-center rounded-md border border-line-strong bg-surface px-3 text-sm font-medium hover:bg-surface-2">
-          {sv.admin.viewDeck} →
-        </Link>
+        <LinkButton href={`/d/${deck.slug}`} variant="outline" size="sm">
+          {sv.admin.viewDeck}
+          <ArrowUpRight size={15} aria-hidden />
+        </LinkButton>
       </div>
       <DeckTabs deckId={deck.id} openReports={openReports} />
       <div className="min-w-0">{children}</div>

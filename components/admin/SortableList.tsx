@@ -13,7 +13,19 @@ import {
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
+import { ChevronDown, ChevronUp, GripVertical } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
+import { cx } from "@/components/ui/cx";
+
+/**
+ * Små knappar i en rad (Byt namn, Ta bort). Egen hovring (surface-3) eftersom raden
+ * själv blir surface-2 vid hovring. Minst 32 px höga, så klickytan räcker.
+ */
+export const rowActionClass =
+  "inline-flex min-h-8 min-w-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-2 text-sm font-semibold text-muted transition-colors duration-150 hover:bg-surface-3 hover:text-fg disabled:pointer-events-none disabled:opacity-50 sm:px-3";
+
+const iconAction =
+  "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-3 hover:text-fg disabled:pointer-events-none disabled:opacity-30";
 
 type Props<T extends { id: string }> = {
   items: T[];
@@ -111,45 +123,43 @@ function SortableRow({
     <li
       ref={setNodeRef}
       style={style}
-      className={`relative flex items-center gap-2 rounded-md border border-line bg-surface p-2 transition-colors ${
-        href ? "hover:border-line-strong hover:bg-surface-2 focus-within:border-line-strong" : ""
-      } ${isDragging ? "opacity-70 shadow-card" : ""}`}
+      className={cx(
+        "relative flex min-h-14 items-center gap-1 rounded-lg border border-line bg-surface py-2 pl-4 pr-2 transition-colors duration-150 dark:border-transparent",
+        href && "hover:bg-surface-2 focus-within:bg-surface-2",
+        isDragging && "z-20 bg-surface-2 shadow-pop ring-2 ring-accent/30",
+      )}
     >
       {href ? (
         // Täcker hela raden så att den är klickbar överallt; knapparna ligger ovanpå (z-10).
-        <Link href={href} aria-label={hrefLabel} data-testid={linkTestId} className="absolute inset-0 rounded-md focus-visible:outline-2 focus-visible:outline-accent" />
+        <Link href={href} aria-label={hrefLabel} data-testid={linkTestId} className="absolute inset-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />
       ) : null}
-      <button
-        type="button"
-        aria-label={sv.admin.dragHandle}
-        title={sv.admin.dragHandle}
-        className="relative z-10 cursor-grab touch-none rounded px-1 py-1 text-muted hover:text-fg"
-        {...attributes}
-        {...listeners}
-      >
-        ⋮⋮
-      </button>
+      {/* Titeln ligger längst till vänster: den som trycker där träffar radlänken, inte ett handtag. */}
       <div className="relative z-10 min-w-0 flex-1 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_form]:pointer-events-auto [&_input]:pointer-events-auto">
         {children}
       </div>
-      <div className="relative z-10 flex flex-col">
-        <button
-          type="button"
-          onClick={() => onMove(index, -1)}
-          disabled={index === 0}
-          aria-label={sv.admin.moveUp}
-          className="rounded px-1 text-muted hover:text-fg disabled:opacity-30"
-        >
-          ↑
+      <div className="relative z-10 flex shrink-0 items-center">
+        <button type="button" onClick={() => onMove(index, -1)} disabled={index === 0} aria-label={sv.admin.moveUp} title={sv.admin.moveUp} className={iconAction}>
+          <ChevronUp size={17} aria-hidden />
         </button>
         <button
           type="button"
           onClick={() => onMove(index, 1)}
           disabled={index === count - 1}
           aria-label={sv.admin.moveDown}
-          className="rounded px-1 text-muted hover:text-fg disabled:opacity-30"
+          title={sv.admin.moveDown}
+          className={iconAction}
         >
-          ↓
+          <ChevronDown size={17} aria-hidden />
+        </button>
+        <button
+          type="button"
+          aria-label={sv.admin.dragHandle}
+          title={sv.admin.dragHandle}
+          className={cx(iconAction, "cursor-grab touch-none active:cursor-grabbing")}
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical size={17} aria-hidden />
         </button>
       </div>
     </li>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { createCategoryAction, deleteCategoryAction, reorderCategoriesAction, updateCategoryAction } from "@/lib/admin/actions";
 import type { CategoryRow } from "@/lib/supabase/database.types";
@@ -10,9 +11,9 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { SortableList } from "./SortableList";
-
-const inputClass = "h-10 w-full rounded-md border border-line-strong bg-surface px-3 text-fg";
+import { inputClass } from "@/components/ui/TextField";
+import { cx } from "@/components/ui/cx";
+import { SortableList, rowActionClass } from "./SortableList";
 
 export type CategoryCounts = { total: number; inactive: number };
 
@@ -71,10 +72,11 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
       {uncategorized.total > 0 ? (
         <Link
           href={`/admin/deck/${deckId}/kategori/ingen`}
-          className="flex items-center gap-3 rounded-md border border-dashed border-line-strong bg-surface px-3 py-3 transition-colors hover:bg-surface-2"
+          className="group flex min-h-14 items-center gap-3 rounded-lg border border-dashed border-line-strong px-4 py-2 transition-colors duration-150 hover:bg-surface-2"
         >
-          <span className="font-medium">{sv.admin.uncategorized}</span>
+          <span className="font-semibold">{sv.admin.uncategorized}</span>
           <span className="text-sm text-muted">{countLabel(uncategorized)}</span>
+          <ChevronRight size={17} aria-hidden className="ml-auto text-muted transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
       ) : null}
       <form
@@ -84,21 +86,22 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
           handle(createCategoryAction(deckId, newTitle));
           setNewTitle("");
         }}
-        className="flex gap-2"
+        className="mt-1 flex gap-2"
       >
         <input
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder={sv.admin.categoryTitle}
           aria-label={sv.admin.categoryTitle}
-          className={inputClass}
+          className={cx(inputClass, "h-11")}
         />
-        <Button type="submit" variant="secondary" size="sm" disabled={pending || !newTitle.trim()} className="shrink-0 whitespace-nowrap">
+        <Button type="submit" variant="secondary" disabled={pending || !newTitle.trim()} className="shrink-0">
+          <Plus size={17} aria-hidden />
           {sv.admin.newCategory}
         </Button>
       </form>
       {error ? (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
           {error}
         </p>
       ) : null}
@@ -151,22 +154,27 @@ function CategoryRowView({
         }}
         className="flex items-center gap-2"
       >
-        <input value={title} onChange={(e) => setTitle(e.target.value)} aria-label={sv.admin.categoryTitle} maxLength={200} className={inputClass} autoFocus />
-        <Button type="submit" variant="secondary" size="sm" disabled={pending || !title.trim()} className="shrink-0 whitespace-nowrap">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          aria-label={sv.admin.categoryTitle}
+          maxLength={200}
+          className={cx(inputClass, "h-10")}
+          autoFocus
+        />
+        <Button type="submit" size="sm" disabled={pending || !title.trim()} className="shrink-0">
           {sv.common.save}
         </Button>
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="sm"
           onClick={() => {
             setTitle(category.title);
             setEditing(false);
           }}
-          className="shrink-0 whitespace-nowrap"
+          className={rowActionClass}
         >
           {sv.common.cancel}
-        </Button>
+        </button>
       </form>
     );
   }
@@ -178,18 +186,14 @@ function CategoryRowView({
         <span className="shrink-0 whitespace-nowrap text-sm text-muted">{countLabel(counts)}</span>
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
-        <Button variant="ghost" size="sm" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`} title={sv.admin.rename}>
+        <button type="button" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`} title={sv.admin.rename} className={rowActionClass}>
+          <Pencil size={15} aria-hidden className="sm:hidden" />
           <span className="hidden sm:inline">{sv.admin.rename}</span>
-          <span className="sm:hidden" aria-hidden="true">
-            ✎
-          </span>
-        </Button>
-        <Button variant="ghost" size="sm" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`} title={sv.common.delete}>
+        </button>
+        <button type="button" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`} title={sv.common.delete} className={rowActionClass}>
+          <Trash2 size={15} aria-hidden className="sm:hidden" />
           <span className="hidden sm:inline">{sv.common.delete}</span>
-          <span className="sm:hidden" aria-hidden="true">
-            ✕
-          </span>
-        </Button>
+        </button>
       </div>
     </div>
   );

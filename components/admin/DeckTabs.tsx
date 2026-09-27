@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
+import { cx } from "@/components/ui/cx";
 
 type Props = {
   deckId: string;
@@ -10,8 +11,9 @@ type Props = {
 };
 
 /**
- * Flikarna under deckets rubrik. Aktiv flik = längsta matchande prefix, så att
- * kategori- och kortsidorna räknas till "Innehåll".
+ * Flikarna under deckets rubrik, som piller i samma form som SegmentedControl (vald flik
+ * = den fyllda pillern). Egen komponent eftersom flikarna behöver test-id och en räknare.
+ * Aktiv flik = längsta matchande prefix, så att kategori- och kortsidorna räknas till "Innehåll".
  */
 export function DeckTabs({ deckId, openReports }: Props) {
   const pathname = usePathname();
@@ -28,7 +30,7 @@ export function DeckTabs({ deckId, openReports }: Props) {
 
   return (
     <nav aria-label={sv.admin.title} className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-      <ul className="flex min-w-max gap-1 border-b border-line text-sm">
+      <ul className="inline-flex min-w-max gap-0.5 rounded-full bg-surface-2 p-1 text-sm">
         {tabs.map((t) => {
           const active = isActive(t);
           return (
@@ -37,13 +39,14 @@ export function DeckTabs({ deckId, openReports }: Props) {
                 href={t.href}
                 aria-current={active ? "page" : undefined}
                 data-testid={`deck-tab-${t.href.split("/").pop()}`}
-                className={`-mb-px inline-flex items-center gap-1.5 border-b-2 px-3 py-2.5 font-medium transition-colors ${
-                  active ? "border-accent text-fg" : "border-transparent text-muted hover:border-line-strong hover:text-fg"
-                }`}
+                className={cx(
+                  "inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-full px-4 font-semibold transition-colors duration-200",
+                  active ? "bg-inverse text-inverse-fg" : "text-muted hover:bg-surface-3 hover:text-fg",
+                )}
               >
                 {t.label}
                 {t.badge ? (
-                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-semibold text-white">{t.badge}</span>
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-bold tabular-nums text-accent-fg">{t.badge}</span>
                 ) : null}
               </Link>
             </li>

@@ -41,6 +41,38 @@ export function CardLink({ href, padding = "md", className, style, children, ...
   );
 }
 
+/** Huvud inne i ett block: rubrik, valfri förklaring och en handling till höger. */
+export function CardHeader({
+  title,
+  description,
+  action,
+  as: H = "h2",
+  spacing = "md",
+  className,
+  id,
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  as?: "h2" | "h3";
+  /** Avstånd till innehållet under: klasser går inte att skriva över, därför en egen egenskap. */
+  spacing?: "none" | "sm" | "md";
+  className?: string;
+  id?: string;
+}) {
+  return (
+    <div className={cx("flex items-start justify-between gap-4", { none: "", sm: "mb-3", md: "mb-5" }[spacing], className)}>
+      <div className="min-w-0">
+        <H id={id} className="text-lg font-bold tracking-tight">
+          {title}
+        </H>
+        {description ? <p className="mt-0.5 text-sm text-muted">{description}</p> : null}
+      </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
+    </div>
+  );
+}
+
 /** Rubrik för en sektion av block ("Mina kurser"). */
 export function SectionTitle({ children, action, className }: { children: ReactNode; action?: ReactNode; className?: string }) {
   return (

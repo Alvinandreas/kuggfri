@@ -23,7 +23,16 @@ type Props = {
   /** Styrd hover (delas med RadarLegend); utelämnas → intern. */
   hover?: number | null;
   onHover?: (index: number | null) => void;
+  /** "lg" på hemsidan, där diagrammet är sidans huvudperson. */
+  size?: "md" | "lg";
+  /** Rubriken finns redan i blockets huvud: visa den bara för skärmläsare. */
+  hideTitle?: boolean;
 };
+
+/** Kategorins färg (samma som taggen), som SVG-fyllning. */
+function tagFill(colorIndex: number): string {
+  return `var(--tag-${(((colorIndex % 10) + 10) % 10) + 1})`;
+}
 
 const SIZE = 260;
 const CX = SIZE / 2;
@@ -42,7 +51,7 @@ function polar(angle: number, r: number): [number, number] {
  * Fylld yta = andel inlärda kort, streckad kontur = andel studerade. Ren SVG med hover per
  * axel och en tabellvy.
  */
-export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Props) {
+export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size = "md", hideTitle = false }: Props) {
   const [hoverState, setHoverState] = useState<number | null>(null);
   const hover = hoverProp === undefined ? hoverState : hoverProp;
   const setHover = (i: number | null) => {
@@ -61,9 +70,9 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
 
   return (
     <figure className="grid gap-2">
-      <figcaption className="flex items-start justify-between gap-3">
+      <figcaption className={hideTitle ? "sr-only" : "flex items-start justify-between gap-3"}>
         <div>
-          <span id={titleId} className="block text-sm font-medium">
+          <span id={titleId} className="block text-sm font-semibold">
             {title}
           </span>
           {help ? <span className="block text-xs text-muted">{help}</span> : null}
@@ -95,7 +104,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
       {(
         <div className="grid gap-3">
           <div className="relative">
-            <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-labelledby={titleId} className="mx-auto h-auto w-full max-w-[20rem]" onMouseLeave={() => setHover(null)}>
+            <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-labelledby={titleId} className={`mx-auto h-auto w-full ${size === "lg" ? "max-w-[24rem]" : "max-w-[20rem]"}`} onMouseLeave={() => setHover(null)}>
               {RINGS.map((f) => (
                 <polygon key={f} points={axes.map((_, i) => polar(angle(i), R * f).join(",")).join(" ")} fill="none" className="stroke-chart-grid" strokeWidth={1} />
               ))}
@@ -118,8 +127,8 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
                   <g key={a.key} onMouseEnter={() => setHover(i)}>
                     <circle cx={hx} cy={hy} r={R * 0.5} fill="transparent" />
                     <circle cx={px} cy={py} r={active ? 5 : 3.5} className={active ? "fill-accent-hover stroke-bg" : "fill-chart-1 stroke-bg"} strokeWidth={1.5} />
-                    <circle cx={lx} cy={ly} r={8.5} className={active ? "fill-accent" : "fill-surface-2"} />
-                    <text x={lx} y={ly + 3.5} textAnchor="middle" className={active ? "fill-white" : "fill-fg"} fontSize={10} fontWeight={600}>
+                    <circle cx={lx} cy={ly} r={active ? 10 : 8.5} fill={active ? "var(--accent)" : tagFill(a.colorIndex)} className="transition-[r] duration-150" />
+                    <text x={lx} y={ly + 3.5} textAnchor="middle" className={active ? "fill-accent-fg" : "fill-fg"} fontSize={10} fontWeight={700}>
                       {i + 1}
                     </text>
                   </g>
@@ -127,7 +136,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover }: Pro
               })}
             </svg>
             {hover !== null && axes[hover] ? (
-              <div role="status" className="pointer-events-none absolute left-1/2 top-0 max-w-[95%] -translate-x-1/2 whitespace-nowrap rounded-md border border-line bg-surface px-2 py-1 text-xs shadow-card">
+              <div role="status" className="anim-fade-in pointer-events-none absolute left-1/2 top-0 max-w-[95%] -translate-x-1/2 truncate whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs shadow-pop">
                 <span className="font-medium">{axes[hover].label}</span>
                 <span className="text-muted"> · </span>
                 {sv.stats.seriesLearned} {axes[hover].learned}/{axes[hover].total}
@@ -168,6 +177,51 @@ export function RadarLegend({ axes, hover, onHover }: { axes: RadarAxis[]; hover
           <span className="shrink-0 tabular-nums text-muted">{percent(a.learned, a.total)} %</span>
         </li>
       ))}
+    </ol>
+  );
+}
+
+/**
+ * Kategorilistan som staplar: nummer i kategorins färg, namn, andel inlärda och en
+ * stapel där inlärda är fyllda och delvis inlärda ljusare. Delar hover med diagrammet.
+ */
+export function RadarBars({
+  axes,
+  hover,
+  onHover,
+  columns = 1,
+}: {
+  axes: RadarAxis[];
+  hover: number | null;
+  onHover: (i: number | null) => void;
+  columns?: 1 | 2;
+}) {
+  return (
+    <ol className={`grid gap-x-6 gap-y-1 ${columns === 2 ? "sm:grid-cols-2" : ""}`} aria-label={sv.deck.selectionCategory} data-testid="radar-bars">
+      {axes.map((a, i) => {
+        const learned = a.total === 0 ? 0 : (a.learned / a.total) * 100;
+        const partial = a.total === 0 ? 0 : (a.partial / a.total) * 100;
+        return (
+          <li
+            key={a.key}
+            onMouseEnter={() => onHover(i)}
+            onMouseLeave={() => onHover(null)}
+            className={`grid gap-1.5 rounded-md px-2 py-1.5 transition-colors ${hover === i ? "bg-surface-2" : ""}`}
+          >
+            <div className="flex min-w-0 items-center gap-2.5 text-sm">
+              <span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-fg ${tagBgClass(a.colorIndex)}`}>{i + 1}</span>
+              <span className="min-w-0 flex-1 truncate font-medium" title={a.label}>
+                {a.label}
+              </span>
+              <span className="shrink-0 tabular-nums text-muted">{percent(a.learned, a.total)} %</span>
+            </div>
+            <div className="ml-[1.875rem] flex h-1.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
+              <div className="h-full bg-chart-1 transition-[width] duration-700 ease-out" style={{ width: `${learned}%` }} />
+              <div className="h-full bg-chart-1/35 transition-[width] duration-700 ease-out" style={{ width: `${partial}%` }} />
+            </div>
+          </li>
+        );
+      })}
     </ol>
   );
 }

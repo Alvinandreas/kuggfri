@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { DeckOverviewStats, DeckReportRow } from "@/lib/supabase/database.types";
 import { firstLine } from "@/lib/text/first-line";
@@ -9,9 +10,10 @@ import { formatDateTime } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { BarChart } from "@/components/stats/BarChart";
 import { HorizontalBars } from "@/components/stats/HorizontalBars";
-import { StatTile } from "@/components/stats/StatTile";
+import { Card, CardHeader } from "@/components/ui/Card";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
+import { StatBlock } from "./StatBlock";
 
 type Category = { id: string; title: string; cardCount: number };
 
@@ -54,25 +56,55 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
-      <section aria-labelledby="oversikt" className="grid grid-cols-[minmax(0,1fr)] gap-5 rounded-lg border border-line bg-surface p-5 shadow-card">
-        <div>
-          <h2 id="oversikt" className="text-lg font-semibold">
+      <section aria-labelledby="oversikt" className="grid grid-cols-[minmax(0,1fr)] gap-4">
+        <div className="anim-fade-up">
+          <h2 id="oversikt" className="text-xl font-bold tracking-tight">
             {sv.admin.overviewTitle}
           </h2>
-          <p className="mt-1 text-sm text-muted">{sv.admin.overviewHelp}</p>
+          <p className="mt-1 max-w-3xl text-sm text-muted">{sv.admin.overviewHelp}</p>
         </div>
-        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatTile label={sv.admin.tileStudents} help={sv.admin.tileStudentsHelp} value={`${students}`} sub={sv.admin.tileStudentsSub} tone="green" testId="overview-students" />
-          <StatTile label={sv.admin.tileActive} value={`${stats.active_7d}`} sub={sv.admin.tileActiveSub(stats.reviews_7d)} tone="navy" />
-          <StatTile label={sv.admin.tileAvg} value={stats.avg_rating === null ? "–" : stats.avg_rating.toFixed(1)} sub={sv.admin.tileAvgSub} tone="teal" />
-          <StatTile label={sv.admin.tileReports} value={`${stats.open_reports}`} sub={sv.admin.tileReportsSub} tone="violet" href={`/admin/deck/${deckId}/rapporter`} />
+        <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <StatBlock
+            label={sv.admin.tileStudents}
+            help={sv.admin.tileStudentsHelp}
+            value={`${students}`}
+            sub={sv.admin.tileStudentsSub}
+            testId="overview-students"
+            className="anim-fade-up"
+            style={{ ["--i" as string]: 1 }}
+          />
+          <StatBlock
+            label={sv.admin.tileActive}
+            value={`${stats.active_7d}`}
+            sub={sv.admin.tileActiveSub(stats.reviews_7d)}
+            className="anim-fade-up"
+            style={{ ["--i" as string]: 2 }}
+          />
+          <StatBlock
+            label={sv.admin.tileAvg}
+            value={stats.avg_rating === null ? "–" : stats.avg_rating.toFixed(1)}
+            sub={sv.admin.tileAvgSub}
+            className="anim-fade-up"
+            style={{ ["--i" as string]: 3 }}
+          />
+          <StatBlock
+            label={sv.admin.tileReports}
+            value={`${stats.open_reports}`}
+            sub={sv.admin.tileReportsSub}
+            href={`/admin/deck/${deckId}/rapporter`}
+            className="anim-fade-up"
+            style={{ ["--i" as string]: 4 }}
+          />
         </dl>
-        {students === 0 ? <p className="text-sm text-muted">{sv.admin.overviewEmpty}</p> : null}
-        <p className="text-xs text-muted">{sv.admin.statsGuestNote}</p>
+        {students === 0 ? (
+          <Card padding="lg" className="text-muted">
+            {sv.admin.overviewEmpty}
+          </Card>
+        ) : null}
       </section>
 
       {students > 0 ? (
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
           <Panel id="svarast" title={sv.admin.hardest} help={sv.admin.hardestHelp}>
             {hardest.length === 0 ? (
               <p className="text-sm text-muted">{suppressed.categories > 0 ? sv.admin.thresholdNote(threshold) : sv.admin.hardestNone}</p>
@@ -99,44 +131,45 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
             {tricky.length === 0 ? (
               <p className="text-sm text-muted">{suppressed.cards > 0 ? sv.admin.thresholdNote(threshold) : sv.admin.trickyNone}</p>
             ) : (
-              <table className="w-full text-sm" data-testid="tricky-table">
+              // Tabellen når ut i blockets luft (-mx-3) så att radernas hovring inte slutar kant i kant med texten.
+              <table className="-mx-3 w-[calc(100%+1.5rem)] text-sm" data-testid="tricky-table">
                 <thead>
-                  <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                    <th scope="col" className="w-[52%] py-2 pr-2 font-medium sm:w-[44%]">
+                  <tr className="border-b border-line text-left text-xs font-semibold text-subtle">
+                    <th scope="col" className="w-[52%] px-3 py-2 font-semibold sm:w-[44%]">
                       {sv.admin.colQuestion}
                     </th>
-                    <th scope="col" className="hidden w-[28%] py-2 pr-2 font-medium sm:table-cell">
+                    <th scope="col" className="hidden w-[28%] py-2 pr-3 font-semibold sm:table-cell">
                       {sv.admin.colCategory}
                     </th>
-                    <th scope="col" className="py-2 pr-2 text-right font-medium">
+                    <th scope="col" className="py-2 pr-3 text-right font-semibold">
                       {sv.admin.colLowShare}
                     </th>
-                    <th scope="col" className="py-2 text-right font-medium">
+                    <th scope="col" className="py-2 pr-3 text-right font-semibold">
                       {sv.admin.colRatings}
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-line">
                   {tricky.map((c) => {
                     const share = percent(c.low, c.ratings);
                     return (
-                      <tr key={c.card_id} className="border-b border-line last:border-b-0">
-                        <td className="max-w-0 py-2.5 pr-2 align-middle">
+                      <tr key={c.card_id} className="transition-colors duration-150 hover:bg-surface-2">
+                        <td className="max-w-0 px-3 py-2.5 align-middle">
                           <Link href={`/admin/deck/${deckId}/kort/${c.card_id}`} className="block truncate underline-offset-2 hover:underline" title={firstLine(c.front)}>
                             {firstLine(c.front)}
                           </Link>
                         </td>
-                        <td className="hidden max-w-0 py-2.5 pr-2 align-middle sm:table-cell">
+                        <td className="hidden max-w-0 py-2.5 pr-3 align-middle sm:table-cell">
                           {c.category_id && titleOf.has(c.category_id) ? (
                             <CategoryTag title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} />
                           ) : (
                             <span className="text-muted">–</span>
                           )}
                         </td>
-                        <td className="py-2.5 pr-2 text-right align-middle">
-                          <span className="inline-flex h-7 min-w-12 items-center justify-center rounded-md border border-rate-1 bg-rate-1/15 px-1.5 text-xs font-semibold tabular-nums text-fg">{share} %</span>
+                        <td className="py-2.5 pr-3 text-right align-middle">
+                          <span className="inline-flex h-7 min-w-12 items-center justify-center rounded-full border border-rate-1 bg-rate-1/15 px-2 text-xs font-bold tabular-nums text-fg">{share} %</span>
                         </td>
-                        <td className="py-2.5 text-right align-middle tabular-nums text-muted">{c.ratings}</td>
+                        <td className="py-2.5 pr-3 text-right align-middle tabular-nums text-muted">{c.ratings}</td>
                       </tr>
                     );
                   })}
@@ -144,26 +177,24 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
               </table>
             )}
             {suppressed.cards > 0 ? <p className="text-xs text-muted">{sv.admin.suppressedCards(suppressed.cards, threshold)}</p> : null}
-            <Link href={`/admin/deck/${deckId}/statistik`} className="text-sm text-accent underline-offset-2 hover:underline">
-              {sv.admin.allCardsDetail} →
-            </Link>
+            <MoreLink href={`/admin/deck/${deckId}/statistik`}>{sv.admin.allCardsDetail}</MoreLink>
           </Panel>
 
           {stats.activation ? (
             <Panel id="aktivering" title={sv.admin.activation} help={sv.admin.activationHelp}>
-              <dl className="grid grid-cols-3 gap-3" data-testid="activation-tiles">
-                <StatTile label={sv.admin.activationStarted} value={`${stats.activation.started}`} sub={sv.admin.tileStudentsSub} tone="green" />
-                <StatTile
+              <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3" data-testid="activation-tiles">
+                <StatBlock inset label={sv.admin.activationStarted} value={`${stats.activation.started}`} sub={sv.admin.tileStudentsSub} />
+                <StatBlock
+                  inset
                   label={sv.admin.activationFirst}
                   value={percentText(stats.activation.first_session_20, stats.activation.started)}
                   sub={sv.admin.activationFirstSub}
-                  tone="teal"
                 />
-                <StatTile
+                <StatBlock
+                  inset
                   label={sv.admin.activationReturned}
                   value={percentText(stats.activation.returned_3d, stats.activation.eligible)}
                   sub={sv.admin.activationReturnedSub(stats.activation.eligible)}
-                  tone="navy"
                 />
               </dl>
             </Panel>
@@ -208,9 +239,9 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
             ) : (
               <ul className="grid gap-2">
                 {openReports.slice(0, 3).map((r) => (
-                  <li key={r.id} className="rounded-md border border-line bg-bg px-3 py-2 text-sm">
+                  <li key={r.id} className="rounded-md bg-surface-2 px-4 py-3 text-sm">
                     <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                      <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="min-w-0 truncate font-medium underline-offset-2 hover:underline" title={firstLine(r.card_front)}>
+                      <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="min-w-0 truncate font-semibold underline-offset-2 hover:underline" title={firstLine(r.card_front)}>
                         {firstLine(r.card_front)}
                       </Link>
                       <span className="text-xs text-muted">{formatDateTime(r.created_at)}</span>
@@ -220,9 +251,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                 ))}
               </ul>
             )}
-            <Link href={`/admin/deck/${deckId}/rapporter`} className="text-sm text-accent underline-offset-2 hover:underline">
-              {sv.admin.allReports} →
-            </Link>
+            <MoreLink href={`/admin/deck/${deckId}/rapporter`}>{sv.admin.allReports}</MoreLink>
           </Panel>
         </div>
       ) : null}
@@ -232,14 +261,21 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
 
 function Panel({ id, title, help, children }: { id: string; title: string; help: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="grid grid-cols-[minmax(0,1fr)] gap-4 rounded-lg border border-line bg-surface p-5 shadow-card">
-      <div>
-        <h2 id={id} className="text-lg font-semibold">
-          {title}
-        </h2>
-        <p className="mt-1 text-sm text-muted">{help}</p>
-      </div>
-      {children}
+    <section aria-labelledby={id}>
+      <Card padding="lg">
+        <CardHeader id={id} title={title} description={help} />
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4">{children}</div>
+      </Card>
     </section>
+  );
+}
+
+/** "Alla kort i detalj", "Alla felrapporter": grön textlänk med en pil som glider vid hovring. */
+function MoreLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="group inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-accent underline-offset-2 hover:underline">
+      {children}
+      <ArrowRight size={15} aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5" />
+    </Link>
   );
 }

@@ -43,7 +43,7 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
     <figure className="grid gap-2">
       <figcaption className={hideTitle ? "sr-only" : "flex items-start justify-between gap-3"}>
         <div>
-          <span id={titleId} className="block text-sm font-medium">
+          <span id={titleId} className="block text-sm font-semibold">
             {title}
           </span>
           {help ? <span className="block text-xs text-muted">{help}</span> : null}
@@ -95,7 +95,7 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
                   {/* Osynlig, bredare träffyta */}
                   <rect x={PAD.left + i * slot} y={PAD.top} width={slot} height={innerH} fill="transparent" />
                   {p.value > 0 ? (
-                    <rect x={x} y={y(p.value)} width={barW} height={h} rx={3} className={active ? "fill-accent-hover" : (p.colorClass ?? "fill-chart-1")} />
+                    <rect x={x} y={y(p.value)} width={barW} height={h} rx={4} className={active ? "fill-accent-hover" : (p.colorClass ?? "fill-chart-1")} />
                   ) : (
                     <rect x={x} y={y(0) - 1} width={barW} height={1} className="fill-chart-grid" />
                   )}
@@ -111,7 +111,7 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
           {hover !== null && points[hover] ? (
             <div
               role="status"
-              className="pointer-events-none absolute -top-1 rounded-md border border-line bg-surface px-2 py-1 text-xs shadow-card"
+              className="anim-fade-in pointer-events-none absolute -top-2 whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs font-medium shadow-pop"
               style={{ left: `${((PAD.left + hover * slot + slot / 2) / W) * 100}%`, transform: "translateX(-50%)" }}
             >
               <span className="text-muted">{points[hover].label}</span> · {formatValue(points[hover].value)}

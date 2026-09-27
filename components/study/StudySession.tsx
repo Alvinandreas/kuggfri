@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Flag, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { percent } from "@/lib/text/percent";
 import { applyRating } from "@/lib/fsrs/apply-rating";
@@ -28,6 +28,7 @@ import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Flashcard } from "./Flashcard";
 import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
@@ -310,14 +311,14 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
 
   if (session.order.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-muted">{mode === "fsrs" ? sv.study.emptyFsrs : mode === "tricky" ? sv.study.emptyTricky : sv.study.empty}</p>
+      <Card padding="lg" className="anim-fade-up mx-auto mt-10 w-full max-w-xl text-center">
+        <p className="text-lg text-muted">{mode === "fsrs" ? sv.study.emptyFsrs : mode === "tricky" ? sv.study.emptyTricky : sv.study.empty}</p>
         <div className="mt-6">
           <LinkButton href={`/d/${deck.slug}`} variant="secondary">
             {sv.study.backToDeck}
           </LinkButton>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -386,7 +387,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${progressPct}%` }} />
       </div>
       {banner ? (
-        <p className="rounded-md bg-accent-soft px-3 py-2 text-center text-sm" data-testid="session-banner">
+        <p className="rounded-lg bg-accent-soft px-4 py-2.5 text-center text-sm font-medium text-accent-ink" data-testid="session-banner">
           {banner}
         </p>
       ) : null}
@@ -413,32 +414,33 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
 
       <div className="mt-3 grid grid-cols-[auto_1fr_auto] gap-2 lg:mx-auto lg:w-full lg:max-w-xl">
         <Button variant="secondary" onClick={previous} disabled={mode === "exam" || !canGoPrevious(session)} aria-label={sv.study.previous} data-testid="prev">
-          ←
+          <ArrowLeft size={18} aria-hidden />
         </Button>
         <Button onClick={flip} aria-pressed={flipped} data-testid="flip">
           {sv.study.flip}
         </Button>
         <Button variant="secondary" onClick={next} aria-label={mode === "fsrs" ? sv.study.skip : sv.study.next} data-testid="next">
-          →
+          <ArrowRight size={18} aria-hidden />
         </Button>
       </div>
 
       <div className="lg:mx-auto lg:w-full lg:max-w-xl">
         <RatingButtons disabled={!canRate} onRate={rate} intervals={intervals} />
-        <p className="mt-2 hidden text-center text-xs text-muted [@media(hover:hover)]:block" aria-hidden="true">
+        <p className="mt-3 hidden text-center text-xs text-subtle [@media(hover:hover)]:block" aria-hidden="true">
           {sv.study.keyboardHelp}
         </p>
       </div>
 
       {card ? (
         <>
-          <p className="mt-3 text-center">
+          <p className="mt-1 text-center">
             <button
               type="button"
               onClick={() => setReportOpen(true)}
-              className="-m-2 p-2 text-xs text-muted underline underline-offset-2 decoration-line-strong hover:text-fg"
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
               data-testid="report-open"
             >
+              <Flag size={13} aria-hidden />
               {sv.report.open}
             </button>
           </p>
@@ -447,11 +449,11 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       ) : null}
 
       {saveError ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+        <p role="alert" className="rounded-lg bg-danger-soft px-4 py-2.5 text-sm font-medium text-danger">
           {sv.study.saveError}
         </p>
       ) : queued > 0 ? (
-        <p role="status" className="rounded-md bg-surface-2 px-3 py-2 text-center text-sm text-muted" data-testid="queued-notice">
+        <p role="status" className="rounded-lg bg-surface-2 px-4 py-2.5 text-center text-sm text-muted" data-testid="queued-notice">
           {sv.study.queued(queued)}
         </p>
       ) : null}

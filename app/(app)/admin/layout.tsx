@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { forbidden, redirect } from "next/navigation";
+import { Plus, ShieldCheck } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { getAdminContext } from "@/lib/admin/access";
+
+/** Undermenyn: små piller, dämpade tills man hovrar. */
+const navLink =
+  "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg";
 
 /**
  * Server-side skydd av allt under /admin (utöver middleware).
@@ -15,17 +20,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!ctx) forbidden();
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <nav aria-label={sv.admin.title} className="flex items-center gap-4 border-b border-line pb-3 text-sm">
-        <Link href="/admin" className="-my-1 py-1 font-semibold">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:gap-8">
+      <nav aria-label={sv.admin.title} className="flex flex-wrap items-center gap-1">
+        <Link href="/admin" className="-ml-3.5 inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-bold transition-colors duration-150 hover:bg-surface-2">
+          <ShieldCheck size={16} aria-hidden className="text-accent" />
           {sv.admin.title}
         </Link>
         {ctx.isAdmin ? (
           <>
-            <Link href="/admin/deck" className="-my-1 py-1 text-muted hover:text-fg">
+            <Link href="/admin/deck" className={navLink}>
               {sv.admin.allDecks}
             </Link>
-            <Link href="/admin/deck/ny" className="-my-1 py-1 text-muted hover:text-fg">
+            <Link href="/admin/deck/ny" className={navLink}>
+              <Plus size={16} aria-hidden />
               {sv.admin.newDeck}
             </Link>
           </>

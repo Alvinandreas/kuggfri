@@ -12,7 +12,7 @@ export default async function NewDeckPage() {
   if (!ctx?.isAdmin) forbidden();
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{sv.admin.newDeck}</h1>
+      <h1 className="anim-fade-up text-3xl font-extrabold tracking-tight sm:text-4xl">{sv.admin.newDeck}</h1>
       <DeckForm />
     </div>
   );

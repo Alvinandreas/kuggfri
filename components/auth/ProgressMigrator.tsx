@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CircleCheckBig, LoaderCircle } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { hasLocalProgress } from "@/lib/progress/local-store";
 import { migrateLocalProgressToAccount } from "@/lib/progress/store";
@@ -44,9 +45,15 @@ export function ProgressMigrator({ userId }: { userId: string | null }) {
   }, [userId, router]);
 
   if (status === "idle") return null;
+  const Icon = status === "running" ? LoaderCircle : CircleCheckBig;
   return (
-    <p role="status" data-testid="migration-status" className="mx-auto mb-4 w-full max-w-[var(--content-width)] rounded-md bg-accent-soft px-4 py-2 text-sm">
-      {status === "running" ? sv.auth.migrating : sv.auth.migrated(count)}
+    <p
+      role="status"
+      data-testid="migration-status"
+      className="anim-fade-up mx-auto mb-6 flex w-full max-w-[var(--content-width)] items-center gap-3 rounded-lg bg-accent-soft px-4 py-3 text-sm font-medium text-accent-ink"
+    >
+      <Icon size={18} aria-hidden className={status === "running" ? "shrink-0 motion-safe:animate-spin" : "shrink-0"} />
+      <span>{status === "running" ? sv.auth.migrating : sv.auth.migrated(count)}</span>
     </p>
   );
 }

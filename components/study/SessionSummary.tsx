@@ -7,6 +7,7 @@ import type { SessionSummary as Summary } from "@/lib/fsrs/session";
 import { SELF_RATINGS, type StudyMode } from "@/lib/progress/types";
 import { formatRelative } from "@/lib/time/format";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { StatTile } from "@/components/stats/StatTile";
 import { ratingClass } from "./RatingButtons";
 import { CategoryTag } from "@/components/ui/CategoryTag";
@@ -51,17 +52,20 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
               </svg>
             </span>
           ) : null}
-          <h1 className="text-2xl font-semibold tracking-tight">{isExam ? sv.summary.examTitle : done ? sv.summary.doneTitle : sv.summary.title}</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">{isExam ? sv.summary.examTitle : done ? sv.summary.doneTitle : sv.summary.title}</h1>
         </div>
-        <p className="mt-1 text-muted" data-testid="summary-reviewed">
+        <p className="mt-2 text-lg text-muted" data-testid="summary-reviewed">
           {done ? sv.summary.doneBody : sv.summary.reviewed(summary.reviewed)}
         </p>
         {isExam ? (
-          <div className="mt-4 grid gap-1" data-testid="exam-result">
-            <p className="text-3xl font-semibold tabular-nums">{examPct} %</p>
-            <p className="text-sm">{sv.summary.examScore(examOk, summary.reviewed, examPct)}</p>
+          <Card padding="lg" className="mt-5 grid gap-1" data-testid="exam-result">
+            <p className="text-5xl font-extrabold tracking-tight tabular-nums">
+              {examPct}
+              <span className="text-2xl text-muted"> %</span>
+            </p>
+            <p className="mt-1 font-semibold">{sv.summary.examScore(examOk, summary.reviewed, examPct)}</p>
             <p className="text-sm text-muted">{sv.summary.examNote}</p>
-          </div>
+          </Card>
         ) : null}
         {done ? <p className="sr-only">{sv.summary.reviewed(summary.reviewed)}</p> : null}
       </header>
@@ -79,11 +83,11 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
         </dl>
       ) : null}
 
-      <section aria-labelledby="fordelning" className="rounded-lg border border-line bg-surface p-5">
-        <h2 id="fordelning" className="text-lg font-semibold">
+      <Card padding="lg" role="region" aria-labelledby="fordelning" className="anim-fade-up" style={{ ["--i" as string]: 1 }}>
+        <h2 id="fordelning" className="text-lg font-bold tracking-tight">
           {sv.summary.distribution}
         </h2>
-        <ol className="mt-3 grid gap-2">
+        <ol className="mt-4 grid gap-3">
           {SELF_RATINGS.map((r) => {
             const n = summary.distribution[r];
             return (
@@ -91,18 +95,18 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
                 <span>
                   {r} – {sv.study.rate[r]}
                 </span>
-                <span className="h-3 overflow-hidden rounded bg-surface-2" aria-hidden="true">
-                  <span className={`block h-full rounded ${barClass[r]}`} style={{ width: `${(n / max) * 100}%` }} />
+                <span className="h-2.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
+                  <span className={`block h-full rounded-full ${barClass[r]}`} style={{ width: `${(n / max) * 100}%` }} />
                 </span>
-                <span className="text-right tabular-nums text-muted">{n}</span>
+                <span className="text-right font-semibold tabular-nums">{n}</span>
               </li>
             );
           })}
         </ol>
-      </section>
+      </Card>
 
-      <section aria-labelledby="behover-arbete" className="rounded-lg border border-line bg-surface p-5">
-        <h2 id="behover-arbete" className="text-lg font-semibold">
+      <Card padding="lg" role="region" aria-labelledby="behover-arbete" className="anim-fade-up" style={{ ["--i" as string]: 2 }}>
+        <h2 id="behover-arbete" className="text-lg font-bold tracking-tight">
           {sv.summary.needsWork}
         </h2>
         {summary.needsWork.length === 0 ? (
@@ -111,14 +115,14 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th scope="col" className="py-2 pr-3 font-medium">
+                <tr className="border-b border-line text-left text-xs text-subtle">
+                  <th scope="col" className="py-2.5 pr-3 font-semibold">
                     {sv.summary.colQuestion}
                   </th>
-                  <th scope="col" className="py-2 pr-3 font-medium">
+                  <th scope="col" className="py-2.5 pr-3 font-semibold">
                     {sv.deck.selectionCategory}
                   </th>
-                  <th scope="col" className="py-2 text-right font-medium">
+                  <th scope="col" className="py-2.5 text-right font-semibold">
                     {sv.summary.colRating}
                   </th>
                 </tr>
@@ -129,12 +133,12 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
                   const title = categoryTitle(card?.category_id ?? null);
                   return (
                     <tr key={cardId} className="border-b border-line last:border-b-0">
-                      <td className="py-2.5 pr-3 align-middle">{firstLine(card?.front ?? "")}</td>
-                      <td className="py-2.5 pr-3 align-middle">
+                      <td className="py-3 pr-3 align-middle font-medium">{firstLine(card?.front ?? "")}</td>
+                      <td className="py-3 pr-3 align-middle">
                         {title && card?.category_id ? <CategoryTag title={title} colorIndex={colorIndex.get(card.category_id) ?? 0} /> : <span className="text-muted">–</span>}
                       </td>
-                      <td className="py-2.5 text-right align-middle">
-                        <span className={`inline-flex h-7 min-w-7 items-center justify-center rounded-md border px-1.5 text-xs font-semibold text-fg ${ratingClass[rating]}`}>
+                      <td className="py-3 text-right align-middle">
+                        <span className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full border px-2 text-xs font-bold text-fg ${ratingClass[rating]}`}>
                           {rating}
                         </span>
                       </td>
@@ -145,10 +149,10 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
             </table>
           </div>
         )}
-      </section>
+      </Card>
 
-      <section aria-labelledby="nasta" className="rounded-lg border border-line bg-surface p-5">
-        <h2 id="nasta" className="text-lg font-semibold">
+      <Card padding="lg" role="region" aria-labelledby="nasta" className="anim-fade-up" style={{ ["--i" as string]: 3 }}>
+        <h2 id="nasta" className="text-lg font-bold tracking-tight">
           {sv.summary.nextDue}
         </h2>
         <p className="mt-2 text-muted" data-testid="next-due">
@@ -158,28 +162,28 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
               ? sv.summary.nextDueCount(nextDue.count, formatRelative(nextDue.date))
               : sv.summary.nextDueNone}
         </p>
-      </section>
+      </Card>
 
       <div className="flex flex-wrap items-center gap-3">
-        <LinkButton href={`/d/${deckSlug}`} variant="primary">
+        <LinkButton href={`/d/${deckSlug}`} variant="primary" size="lg">
           {sv.summary.backToDeck}
         </LinkButton>
         {today?.continueHref ? (
-          <LinkButton href={today.continueHref} variant="secondary" data-testid="continue-new">
+          <LinkButton href={today.continueHref} variant="secondary" size="lg" data-testid="continue-new">
             {sv.summary.continueNew(today.continueCount)}
           </LinkButton>
         ) : (
-          <LinkButton href="/" variant="secondary">
+          <LinkButton href="/" variant="secondary" size="lg">
             {sv.summary.home}
           </LinkButton>
         )}
         {onPrevious ? (
-          <Button variant="ghost" onClick={onPrevious}>
+          <Button variant="ghost" size="lg" onClick={onPrevious}>
             {sv.study.previous}
           </Button>
         ) : null}
       </div>
-      {today?.continueHref ? <p className="-mt-3 text-xs text-muted">{sv.summary.continueHelp}</p> : null}
+      {today?.continueHref ? <p className="-mt-3 text-sm text-muted">{sv.summary.continueHelp}</p> : null}
     </div>
   );
 }

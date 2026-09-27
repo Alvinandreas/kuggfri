@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { BookOpen, RotateCcw } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { nextDueDate, queueStats } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
@@ -12,6 +13,9 @@ import { estimateMinutes } from "@/lib/study/plan";
 import { planDeckSession } from "@/lib/study/deck-plan";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card, CardHeader } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { CategoryTable, type SortMode } from "./CategoryTable";
 import { SessionPanel } from "./SessionPanel";
@@ -144,64 +148,78 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const selectedTitles = categories.filter((c) => selectedSet.has(c.id));
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-12">
-      {/* Vänster kolumn: innehåll och progress. På mobil ligger allt i ett flöde där Starta kommer före kategorierna. */}
-      <div className="contents lg:grid lg:gap-8">
-        <header className="order-1">
-          <h1 className="text-3xl font-semibold tracking-tight">{deck.title}</h1>
-          {deck.course_code ? (
-            <p className="mt-1 text-sm text-muted">
-              {sv.home.courseCode} {deck.course_code}
+    <div>
+      <header className="anim-fade-up mb-8">
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent-ink sm:inline-flex">
+            <BookOpen size={24} aria-hidden />
+          </span>
+          <div className="min-w-0">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{deck.title}</h1>
+            <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+              {deck.course_code ? (
+                <>
+                  <span>
+                    {sv.home.courseCode} {deck.course_code}
+                  </span>
+                  <span aria-hidden="true">·</span>
+                </>
+              ) : null}
+              <span>{sv.deck.totalCards(cards.length)}</span>
             </p>
-          ) : null}
-          {deck.description ? <p className="mt-3 text-muted">{deck.description}</p> : null}
-          <p className="mt-3 text-sm text-muted">{sv.deck.totalCards(cards.length)}</p>
-          {plan.phase.kind !== "none" && deck.exam_date ? (
-            <p className="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm" data-testid="exam-line">
-              <span className="font-medium">
-                {plan.phase.kind === "past" ? sv.deck.examDate(deck.exam_date) : sv.deck.examIn(plan.phase.daysLeft)}
-              </span>
-              <span className="text-muted">
-                {plan.phase.kind === "past"
-                  ? sv.deck.examPast
-                  : plan.phase.kind === "final"
-                    ? sv.deck.examFinalHelp
-                    : plan.newCardPlan?.catchUp && plan.newCardPlan.neededPerDay !== null
-                      ? sv.deck.examCatchUp(plan.newCardPlan.neededPerDay)
-                      : `${deck.exam_date}. ${sv.deck.examUpcomingHelp}`}
-              </span>
-            </p>
-          ) : null}
-        </header>
-
-        {/* Progress */}
-        <section aria-labelledby="progress-rubrik" className="order-3 rounded-lg border border-line bg-surface p-5 shadow-card">
-          <div className="flex items-center justify-between gap-3">
-            <h2 id="progress-rubrik" className="text-lg font-semibold">
-              {sv.deck.progressTitle}
-            </h2>
-            <button
-              type="button"
-              onClick={() => setConfirmReset(true)}
-              disabled={!store}
-              className="-m-2 p-2 text-xs text-muted underline underline-offset-2 hover:text-fg disabled:opacity-50"
-              title={sv.deck.resetLink}
-              data-testid="reset-deck"
-            >
-              {sv.deck.resetShort}
-            </button>
           </div>
-          {progress === null ? (
-            <p className="mt-2 text-muted">{sv.common.loading}</p>
-          ) : seen === 0 && reviews.length === 0 ? (
-            <div className="mt-2 grid gap-1" data-testid="first-visit">
-              <p className="font-medium">{sv.deck.firstVisitTitle}</p>
-              <p className="text-muted">
-                {sv.deck.firstVisitBody(Math.min(prefs.dailyNew, cards.length), estimateMinutes(Math.min(prefs.dailyNew, cards.length)))}
-              </p>
-            </div>
-          ) : (
-            <div className="mt-4">
+        </div>
+        {deck.description ? <p className="mt-4 max-w-3xl text-lg text-muted">{deck.description}</p> : null}
+        {plan.phase.kind !== "none" && deck.exam_date ? (
+          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm" data-testid="exam-line">
+            <Badge tone={plan.phase.kind === "past" ? "outline" : "accent"}>
+              {plan.phase.kind === "past" ? sv.deck.examDate(deck.exam_date) : sv.deck.examIn(plan.phase.daysLeft)}
+            </Badge>
+            <span className="text-muted">
+              {plan.phase.kind === "past"
+                ? sv.deck.examPast
+                : plan.phase.kind === "final"
+                  ? sv.deck.examFinalHelp
+                  : plan.newCardPlan?.catchUp && plan.newCardPlan.neededPerDay !== null
+                    ? sv.deck.examCatchUp(plan.newCardPlan.neededPerDay)
+                    : `${deck.exam_date}. ${sv.deck.examUpcomingHelp}`}
+            </span>
+          </p>
+        ) : null}
+      </header>
+
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
+        {/* Vänster kolumn: progress, kategorier och delning. På mobil ligger allt i ett flöde där Starta kommer före kategorierna. */}
+        <div className="contents lg:grid lg:gap-6">
+          {/* Progress */}
+          <Card padding="lg" role="region" aria-labelledby="progress-rubrik" className="anim-fade-up order-3" style={{ ["--i" as string]: 1 }}>
+            <CardHeader
+              id="progress-rubrik"
+              title={sv.deck.progressTitle}
+              action={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setConfirmReset(true)}
+                  disabled={!store}
+                  title={sv.deck.resetLink}
+                  data-testid="reset-deck"
+                >
+                  <RotateCcw size={15} aria-hidden />
+                  {sv.deck.resetShort}
+                </Button>
+              }
+            />
+            {progress === null ? (
+              <p className="text-muted">{sv.common.loading}</p>
+            ) : seen === 0 && reviews.length === 0 ? (
+              <div className="grid gap-1 rounded-lg bg-surface-2 p-4" data-testid="first-visit">
+                <p className="font-semibold">{sv.deck.firstVisitTitle}</p>
+                <p className="text-muted">
+                  {sv.deck.firstVisitBody(Math.min(prefs.dailyNew, cards.length), estimateMinutes(Math.min(prefs.dailyNew, cards.length)))}
+                </p>
+              </div>
+            ) : (
               <ProgressStats
                 cardIds={cardIds}
                 progress={progress}
@@ -220,42 +238,42 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
                       : sv.deck.nothingDue
                 }
               />
-            </div>
-          )}
-          {notice ? (
-            <p role="status" className="mt-3 text-sm text-accent">
-              {notice}
-            </p>
-          ) : null}
-        </section>
+            )}
+            {notice ? (
+              <p role="status" className="mt-4 text-sm font-medium text-accent-ink">
+                {notice}
+              </p>
+            ) : null}
+          </Card>
 
-        <CategoryTable
-          rows={categoryRows}
-          colorIndex={colorIndex}
-          selected={selectedSet}
-          mode={mode}
-          sortMode={sortMode}
-          onSortMode={setSortMode}
-          onToggle={toggleCategory}
-          onOnly={selectOnly}
-          onSelectAll={selectAll}
-        />
+          <CategoryTable
+            rows={categoryRows}
+            colorIndex={colorIndex}
+            selected={selectedSet}
+            mode={mode}
+            sortMode={sortMode}
+            onSortMode={setSortMode}
+            onToggle={toggleCategory}
+            onOnly={selectOnly}
+            onSelectAll={selectAll}
+          />
 
-        <ShareDeck slug={deck.slug} />
-      </div>
+          <ShareDeck slug={deck.slug} />
+        </div>
 
-      {/* Höger kolumn: läge, urval och Starta (sticky på desktop) */}
-      <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
-        <SessionPanel
-          mode={mode}
-          onMode={setMode}
-          plan={plan}
-          selectedTitles={selectedTitles}
-          colorIndex={colorIndex}
-          progressReady={progress !== null}
-          prefs={prefs}
-          onPrefs={updatePrefs}
-        />
+        {/* Höger kolumn: läge, urval och Starta (sticky på desktop) */}
+        <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
+          <SessionPanel
+            mode={mode}
+            onMode={setMode}
+            plan={plan}
+            selectedTitles={selectedTitles}
+            colorIndex={colorIndex}
+            progressReady={progress !== null}
+            prefs={prefs}
+            onPrefs={updatePrefs}
+          />
+        </div>
       </div>
 
       <ConfirmDialog

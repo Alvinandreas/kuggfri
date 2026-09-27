@@ -9,9 +9,11 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Markdown } from "@/components/markdown/Markdown";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { CheckboxField } from "@/components/ui/Choice";
 import { Select } from "@/components/ui/Select";
-
-const textareaClass = "w-full rounded-md border border-line-strong bg-surface px-3 py-2 font-mono text-sm text-fg";
+import { TextArea } from "@/components/ui/TextArea";
+import { TextField } from "@/components/ui/TextField";
 
 type Props = {
   deckId: string;
@@ -63,77 +65,89 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
 
   return (
     <form onSubmit={onSubmit} className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <p className="text-sm text-muted">{sv.admin.markdownHelp}</p>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
-          <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-            <span>{sv.admin.front}</span>
-            <textarea value={front} onChange={(e) => setFront(e.target.value)} rows={5} required maxLength={5000} className={textareaClass} data-testid="card-front" />
-          </label>
-          <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-            <span>{sv.admin.back}</span>
-            <textarea value={back} onChange={(e) => setBack(e.target.value)} rows={12} required maxLength={20000} className={textareaClass} data-testid="card-back" />
-          </label>
-          <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-            <span>{sv.admin.hint}</span>
-            <input value={hint} onChange={(e) => setHint(e.target.value)} maxLength={500} className="h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg" />
-          </label>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-              <span>{sv.admin.category}</span>
-              <Select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-                <option value="">{sv.admin.noCategory}</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </Select>
-            </label>
-            <label className="flex items-center gap-2 self-end text-sm">
-              <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="h-4 w-4 accent-[var(--accent)]" />
-              {sv.admin.active}
-            </label>
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+        <Card padding="lg" className="grid grid-cols-[minmax(0,1fr)] gap-5">
+          <p className="text-sm text-muted">{sv.admin.markdownHelp}</p>
+          <TextArea
+            label={sv.admin.front}
+            mono
+            value={front}
+            onChange={(e) => setFront(e.target.value)}
+            rows={5}
+            required
+            maxLength={5000}
+            data-testid="card-front"
+          />
+          <TextArea
+            label={sv.admin.back}
+            mono
+            value={back}
+            onChange={(e) => setBack(e.target.value)}
+            rows={12}
+            required
+            maxLength={20000}
+            data-testid="card-back"
+          />
+          <TextField label={sv.admin.hint} value={hint} onChange={(e) => setHint(e.target.value)} maxLength={500} />
+          <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
+            <div>
+              <label htmlFor="kort-kategori" className="mb-1.5 block text-sm font-semibold">
+                {sv.admin.category}
+              </label>
+              <Select
+                id="kort-kategori"
+                label={sv.admin.category}
+                value={categoryId}
+                onChange={setCategoryId}
+                options={[{ value: "", label: sv.admin.noCategory }, ...categories.map((c) => ({ value: c.id, label: c.title }))]}
+              />
+            </div>
+            <div className="flex min-h-12 items-center">
+              <CheckboxField label={sv.admin.active} checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+            </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-4 lg:sticky lg:top-4 lg:self-start">
+        <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-4 lg:sticky lg:top-6">
           <div>
-            <p className="text-sm font-medium">{sv.admin.preview}</p>
-            <p className="text-xs text-muted">{sv.admin.previewHelp}</p>
+            <p className="text-sm font-semibold text-subtle">{sv.admin.preview}</p>
+            <p className="text-sm text-muted">{sv.admin.previewHelp}</p>
           </div>
+          {/* Samma form som studentens kort: ytan, kategoritaggen och sidans namn överst. */}
           {[
             { label: sv.study.front, text: front, key: "front" },
             { label: sv.study.back, text: back, key: "back" },
           ].map((side) => (
-            <div
+            <section
               key={side.key}
-              className="rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6"
+              className={`flex min-h-48 flex-col rounded-lg border bg-surface p-5 shadow-card sm:p-7 ${side.key === "back" ? "border-accent/40" : "border-line"}`}
               aria-label={`${sv.admin.preview}: ${side.label}`}
               data-testid={`preview-${side.key}`}
             >
               <div className="mb-4 flex items-center justify-between gap-3">
                 {previewCategory ? (
-                  <CategoryTag title={previewCategory.title} colorIndex={colorIndex.get(previewCategory.id) ?? 0} size="md" />
+                  <CategoryTag title={previewCategory.title} colorIndex={colorIndex.get(previewCategory.id) ?? 0} size="lg" />
                 ) : (
                   <span className="text-xs text-muted">{sv.admin.noCategory}</span>
                 )}
-                <span className="text-xs uppercase tracking-wide text-muted">{side.label}</span>
+                <span className="shrink-0 text-xs uppercase tracking-wide text-muted">{side.label}</span>
               </div>
-              <Markdown text={side.text || "…"} variant="card" />
+              <div className={`flex flex-1 py-2 ${side.key === "front" ? "text-center" : ""}`}>
+                <Markdown text={side.text || "…"} variant="card" className="m-auto w-full" />
+              </div>
               {side.key === "front" && hint.trim() ? (
-                <p className="mt-4 rounded-md bg-surface-2 px-3 py-2 text-sm text-muted">
-                  {sv.study.hint}: {hint}
+                <p className="mt-4 border-t border-line pt-3 text-center text-sm">
+                  <span className="font-medium text-muted">{sv.study.hint}: </span>
+                  {hint}
                 </p>
               ) : null}
-            </div>
+            </section>
           ))}
         </div>
       </div>
 
       {message ? (
-        <p role="status" className={`text-sm ${message.ok ? "text-accent" : "text-danger"}`}>
+        <p role="status" className={`text-sm font-medium ${message.ok ? "text-accent" : "text-danger"}`}>
           {message.text}
         </p>
       ) : null}

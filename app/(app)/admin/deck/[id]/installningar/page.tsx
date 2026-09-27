@@ -22,10 +22,10 @@ export default async function AdminSettingsPage({ params }: { params: Params }) 
   const examiners = isAdmin ? await getDeckExaminers(data.deck.id) : [];
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
-      <section aria-labelledby="deck-form" className="grid grid-cols-[minmax(0,1fr)] gap-3">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-10">
+      <section aria-labelledby="deck-form" className="grid grid-cols-[minmax(0,1fr)] gap-4">
         <div>
-          <h2 id="deck-form" className="text-lg font-semibold">
+          <h2 id="deck-form" className="text-xl font-bold tracking-tight">
             {sv.admin.deckSettings}
           </h2>
           <p className="mt-1 text-sm text-muted">{sv.admin.deckSettingsHelp}</p>
@@ -33,9 +33,9 @@ export default async function AdminSettingsPage({ params }: { params: Params }) 
         <DeckForm deck={data.deck} canDelete={isAdmin} />
       </section>
       {isAdmin ? (
-        <section aria-labelledby="examinatorer" className="grid grid-cols-[minmax(0,1fr)] gap-3">
+        <section aria-labelledby="examinatorer" className="grid grid-cols-[minmax(0,1fr)] gap-4">
           <div>
-            <h2 id="examinatorer" className="text-lg font-semibold">
+            <h2 id="examinatorer" className="text-xl font-bold tracking-tight">
               {sv.admin.examiners}
             </h2>
             <p className="mt-1 text-sm text-muted">{sv.admin.examinersHelp}</p>

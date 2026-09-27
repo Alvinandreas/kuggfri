@@ -8,14 +8,18 @@ import { estimateKnowledge } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
-import { buildProgressStats } from "@/lib/stats/progress-stats";
+import { buildProgressStats, type ProgressStats } from "@/lib/stats/progress-stats";
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
-import { parseExamDate } from "@/lib/study/plan";
-import type { SelectableCard } from "@/lib/study/selection";
+import { estimateMinutes, parseExamDate } from "@/lib/study/plan";
+import { categoryStats, type SelectableCard } from "@/lib/study/selection";
+import { percent } from "@/lib/text/percent";
 import { BarChart } from "@/components/stats/BarChart";
+import { RadarBars, RadarChart, type RadarAxis } from "@/components/stats/RadarChart";
+import { ShareReadiness } from "@/components/stats/ShareReadiness";
+import { StatTile } from "@/components/stats/StatTile";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
-import { Card, CardLink, SectionTitle } from "@/components/ui/Card";
+import { Card, CardHeader, CardLink, SectionTitle } from "@/components/ui/Card";
 import { Countdown } from "@/components/ui/Countdown";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 
@@ -34,14 +38,14 @@ type Props = { userId: string | null; firstName: string; decks: HomeDeck[] };
 type DeckView = {
   deck: HomeDeck;
   plan: DeckPlan;
+  /** Kunskap just nu enligt FSRS, 0–1. */
   knowledge: number;
-  reviewed: number;
-  perCategory: { id: string; title: string; share: number }[];
+  /** Nyckeltal för just den här kursen. */
+  stats: ProgressStats;
+  axes: RadarAxis[];
   lastActivity: number;
   exam: Date | null;
 };
-
-const TONES = ["accent", "chart-2", "chart-3"] as const;
 
 /** Tentor på Chalmers börjar oftast 08.30; nedräkningen siktar dit. */
 function examStart(date: string | null): Date | null {
@@ -55,12 +59,18 @@ function Skeleton({ className }: { className: string }) {
   return <div aria-hidden className={`animate-pulse rounded-lg bg-surface-2 ${className}`} />;
 }
 
+/**
+ * Hemsidan: dagens pass, hur det går i kursen (kunskapsestimat, nyckeltal), kunskap per
+ * kategori i radardiagrammet och aktiviteten de senaste två veckorna. Progressen laddas i
+ * klienten med samma moduler som decksidan, så siffrorna är alltid desamma på båda ställena.
+ */
 export function HomeDashboard({ userId, firstName, decks }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [reviews, setReviews] = useState<ReviewEntry[]>([]);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [hour, setHour] = useState<number | null>(null);
+  const [axisHover, setAxisHover] = useState<number | null>(null);
 
   const allIds = useMemo(() => decks.flatMap((d) => d.cards.map((c) => c.id)), [decks]);
 
@@ -95,33 +105,38 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
 
   const views: DeckView[] = useMemo(() => {
     const now = new Date();
+    const p = progress ?? {};
     return decks.map((deck) => {
       const ids = deck.cards.map((c) => c.id);
       const idSet = new Set(ids);
-      const k = estimateKnowledge(ids, progress ?? {}, now);
-      const perCategory = deck.categories.map((c) => {
-        const catIds = deck.cards.filter((card) => card.category_id === c.id).map((card) => card.id);
-        return { id: c.id, title: c.title, share: estimateKnowledge(catIds, progress ?? {}, now).share };
+      const perCategory = categoryStats(
+        deck.cards,
+        p,
+        deck.categories.map((c) => c.id),
+      );
+      const byId = new Map(perCategory.map((s) => [s.categoryId, s] as const));
+      const axes = deck.categories.map((c, i) => {
+        const s = byId.get(c.id);
+        return { key: c.id, label: c.title, colorIndex: i, total: s?.total ?? 0, partial: s?.partial ?? 0, learned: s?.learned ?? 0 };
       });
-      const lastActivity = reviews.reduce((max, r) => (idSet.has(r.card_id) ? Math.max(max, Date.parse(r.reviewed_at)) : max), 0);
       return {
         deck,
         plan: planDeckSession({ deck, cards: deck.cards, progress, reviews, mode: "fsrs", selectedIds: [], dailyNew: prefs.dailyNew, now }),
-        knowledge: k.share,
-        reviewed: k.reviewed,
-        perCategory,
-        lastActivity,
+        knowledge: estimateKnowledge(ids, p, now).share,
+        stats: buildProgressStats({ cardIds: ids, progress: p, reviews, weekdaysOnly: prefs.weekdaysOnly, now }),
+        axes,
+        lastActivity: reviews.reduce((max, r) => (idSet.has(r.card_id) ? Math.max(max, Date.parse(r.reviewed_at)) : max), 0),
         exam: examStart(deck.exam_date),
       };
     });
-  }, [decks, progress, reviews, prefs.dailyNew]);
+  }, [decks, progress, reviews, prefs.dailyNew, prefs.weekdaysOnly]);
 
   // Huvudkursen: den man senast pluggat i, annars den första.
   const primary = useMemo(() => [...views].sort((a, b) => b.lastActivity - a.lastActivity)[0] ?? null, [views]);
   const others = views.filter((v) => v !== primary);
   const loading = progress === null;
   const leftToday = views.reduce((n, v) => n + v.plan.sessionCards, 0);
-  const anyStarted = views.some((v) => v.reviewed > 0);
+  const anyStarted = views.some((v) => v.stats.seen > 0);
 
   const lead = loading
     ? sv.dashboard.loading
@@ -145,16 +160,10 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
           </p>
         </div>
         {overall ? (
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong px-4 font-bold"
-              title={sv.dashboard.streakLabel}
-              data-testid="home-streak"
-            >
-              <Flame size={18} aria-hidden className={overall.streak > 0 ? "text-chart-3" : "text-subtle"} />
-              {sv.dashboard.streak(overall.streak)}
-            </span>
-          </div>
+          <span className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong px-4 font-bold" title={sv.dashboard.streakLabel} data-testid="home-streak">
+            <Flame size={18} aria-hidden className={overall.streak > 0 ? "text-chart-3" : "text-subtle"} />
+            {sv.dashboard.streak(overall.streak)}
+          </span>
         ) : null}
       </header>
 
@@ -163,26 +172,26 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
           {sv.home.empty}
         </Card>
       ) : (
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <CourseBlock view={primary} loading={loading} />
-          {/* Under xl flyter sidokolumnen in i huvudflödet, med dagens pass först: knappen ska synas utan att scrolla. */}
-          <div className="contents xl:grid xl:content-start xl:gap-6">
-            <TodayCard view={primary} loading={loading} className="order-first xl:order-none" />
-            <StatsCard loading={loading} stats={overall} />
-            {overall && overall.hasReviews ? (
-              <Card padding="md" className="anim-fade-up" style={{ ["--i" as string]: 4 }}>
-                <p className="mb-2 text-sm font-semibold text-subtle">{sv.dashboard.activity}</p>
-                <div className="mx-auto max-w-md">
+        <div className="grid gap-6">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
+            <CourseCard view={primary} loading={loading} />
+            {/* Under xl flyter sidokolumnen in i flödet med dagens pass först: knappen ska synas utan att scrolla. */}
+            <div className="contents xl:grid xl:content-start xl:gap-6">
+              <TodayCard view={primary} loading={loading} className="order-first xl:order-none" />
+              {overall && overall.hasReviews ? (
+                <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 4 }}>
+                  <CardHeader title={sv.stats.reviewsPerDay} description={sv.stats.reviewsPerDayHelp} spacing="sm" />
                   <BarChart
-                    title={sv.dashboard.activity}
+                    title={sv.stats.reviewsPerDay}
                     hideTitle
                     points={overall.series.map((p) => ({ key: p.day, label: p.label, value: p.reviews }))}
                     formatValue={(v) => sv.stats.cards(v)}
                   />
-                </div>
-              </Card>
-            ) : null}
+                </Card>
+              ) : null}
+            </div>
           </div>
+          <KnowledgeCard view={primary} loading={loading} hover={axisHover} onHover={setAxisHover} />
         </div>
       )}
 
@@ -199,19 +208,17 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
           </SectionTitle>
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {others.map((v, i) => (
-              <li key={v.deck.id} className="anim-fade-up" style={{ ["--i" as string]: i + 4 }}>
+              <li key={v.deck.id} className="anim-fade-up" style={{ ["--i" as string]: i + 5 }}>
                 <CardLink href={`/d/${v.deck.slug}`} padding="lg" className="h-full">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-lg font-bold tracking-tight">{v.deck.title}</h3>
-                    {v.plan.sessionCards > 0 && v.reviewed > 0 ? (
-                      <Badge tone="accent">{sv.dashboard.cardsLeft(v.plan.sessionCards)}</Badge>
-                    ) : v.reviewed === 0 ? (
+                    {v.stats.seen === 0 ? (
                       <Badge>{sv.dashboard.notStarted}</Badge>
+                    ) : v.plan.sessionCards > 0 ? (
+                      <Badge tone="accent">{sv.dashboard.cardsLeft(v.plan.sessionCards)}</Badge>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm text-muted">
-                    {[v.deck.course_code, sv.home.cards(v.deck.cards.length)].filter(Boolean).join(" · ")}
-                  </p>
+                  <p className="mt-1 text-sm text-muted">{[v.deck.course_code, sv.home.cards(v.deck.cards.length)].filter(Boolean).join(" · ")}</p>
                   <div className="mt-5 flex items-center gap-3">
                     <ProgressBar value={v.knowledge} label={`${sv.dashboard.knowledge}: ${v.deck.title}`} />
                     <span className="text-sm font-semibold tabular-nums">{Math.round(v.knowledge * 100)} %</span>
@@ -226,8 +233,9 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
   );
 }
 
-function CourseBlock({ view, loading }: { view: DeckView; loading: boolean }) {
-  const { deck, exam, knowledge, perCategory } = view;
+/** Kursen i överblick: kunskapsestimat, fyra nyckeltal och delning. */
+function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
+  const { deck, exam, knowledge, stats } = view;
   const examFuture = exam !== null && exam.getTime() > Date.now();
   return (
     <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 1 }} data-testid="home-course">
@@ -258,49 +266,94 @@ function CourseBlock({ view, loading }: { view: DeckView; loading: boolean }) {
         </div>
       </div>
 
-      <div className="mt-7 grid gap-7 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-        <div className="sm:border-r sm:border-line sm:pr-8" title={sv.dashboard.knowledgeHelp}>
+      <div className="mt-7 grid gap-6 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:items-center">
+        <div title={sv.dashboard.knowledgeHelp}>
           {loading ? (
-            <Skeleton className="h-14 w-28" />
+            <Skeleton className="h-16 w-32" />
           ) : (
-            <p className="text-5xl font-extrabold tracking-tight" data-testid="home-knowledge">
+            <p className="text-6xl font-extrabold leading-none tracking-tight" data-testid="home-knowledge">
               {Math.round(knowledge * 100)}
-              <span className="text-2xl text-muted"> %</span>
+              <span className="text-3xl text-muted"> %</span>
             </p>
           )}
-          <p className="mt-1 font-semibold">{sv.dashboard.knowledge}</p>
+          <p className="mt-2 font-bold">{sv.dashboard.knowledge}</p>
+          <ProgressBar value={loading ? 0 : knowledge} label={sv.dashboard.knowledge} size="md" className="mt-3" />
+          <p className="mt-2 text-sm text-muted">{loading ? " " : sv.deck.seen(stats.seen, stats.totalCards)}</p>
         </div>
-        <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-          {perCategory.map((c, i) => (
-            <div key={c.id} className="min-w-0">
-              <div className="mb-2 flex items-baseline justify-between gap-2 text-sm">
-                <span className="truncate font-medium">{c.title}</span>
-                <span className="shrink-0 tabular-nums text-muted">{loading ? "–" : `${Math.round(c.share * 100)} %`}</span>
-              </div>
-              <ProgressBar value={loading ? 0 : c.share} label={c.title} tone={TONES[i % TONES.length]} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 gap-3">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-24" />
+            ))}
+          </div>
+        ) : (
+          <dl className="grid grid-cols-2 gap-3">
+            <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${percent(stats.learned, stats.totalCards)} % av ${stats.totalCards}`} tone="green" />
+            <StatTile
+              label={sv.stats.streak}
+              help={sv.stats.streakHelp}
+              value={`${stats.streak}`}
+              sub={stats.freezeUsedRecently ? sv.summary.freezeUsed : sv.summary.freezesLeft(stats.freezesLeft)}
+              tone="navy"
+            />
+            <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
+            <StatTile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
+          </dl>
+        )}
       </div>
+
+      {!loading && stats.knowledge.reviewed > 0 ? (
+        <div className="mt-6 border-t border-line pt-5">
+          <ShareReadiness
+            card={{
+              deckTitle: deck.title,
+              share: stats.knowledge.share,
+              streak: stats.streak,
+              reviewed: stats.knowledge.reviewed,
+              total: stats.totalCards,
+              url: `kuggfri.com/d/${deck.slug}`,
+              date: new Date(),
+            }}
+          />
+        </div>
+      ) : null}
+    </Card>
+  );
+}
+
+/** Radardiagrammet och kategoristaplarna bredvid varandra; hover följs åt mellan dem. */
+function KnowledgeCard({ view, loading, hover, onHover }: { view: DeckView; loading: boolean; hover: number | null; onHover: (i: number | null) => void }) {
+  if (view.axes.length < 3) return null;
+  return (
+    <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 3 }} data-testid="home-radar">
+      <CardHeader title={sv.stats.radar} description={sv.stats.radarHelp} />
+      {loading ? (
+        <Skeleton className="h-72" />
+      ) : (
+        <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+          <RadarChart title={sv.stats.radar} hideTitle size="lg" axes={view.axes} hover={hover} onHover={onHover} />
+          <RadarBars axes={view.axes} hover={hover} onHover={onHover} columns={2} />
+        </div>
+      )}
     </Card>
   );
 }
 
 function TodayCard({ view, loading, className = "" }: { view: DeckView; loading: boolean; className?: string }) {
-  const { plan, reviewed } = view;
+  const { plan, stats } = view;
   const done = !loading && plan.nothingDue;
   return (
     <Card padding="lg" className={`anim-fade-up ${className}`} style={{ ["--i" as string]: 2 }} data-testid="home-today">
-      <p className="text-sm font-semibold text-subtle">{sv.dashboard.today}</p>
+      <p className="text-sm font-semibold text-muted">{sv.dashboard.today}</p>
       {loading ? (
         <div className="mt-3 grid gap-3">
-          <Skeleton className="h-7 w-40" />
+          <Skeleton className="h-9 w-40" />
           <Skeleton className="h-12 w-full rounded-full" />
         </div>
       ) : done ? (
         <>
-          <p className="mt-2 flex items-center gap-2 text-xl font-bold tracking-tight">
-            <CircleCheckBig size={22} className="text-accent" aria-hidden />
+          <p className="mt-2 flex items-center gap-2 text-2xl font-extrabold tracking-tight">
+            <CircleCheckBig size={24} className="text-accent" aria-hidden />
             {sv.dashboard.doneTitle}
           </p>
           <p className="mt-1 text-sm text-muted">{sv.dashboard.doneBody}</p>
@@ -312,38 +365,16 @@ function TodayCard({ view, loading, className = "" }: { view: DeckView; loading:
         </>
       ) : (
         <>
-          <p className="mt-2 text-3xl font-extrabold tracking-tight tabular-nums">{sv.stats.cards(plan.sessionCards)}</p>
-          <p className="mt-1 text-sm text-muted">{sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)}</p>
+          <p className="mt-2 text-4xl font-extrabold tracking-tight tabular-nums">{sv.stats.cards(plan.sessionCards)}</p>
+          <p className="mt-1 text-sm text-muted">
+            {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)} · cirka {estimateMinutes(plan.sessionCards)} min
+          </p>
           <LinkButton href={plan.startHref} size="lg" className="mt-5 w-full" data-testid="home-start">
-            {reviewed > 0 ? sv.dashboard.continue : sv.dashboard.startFirst}
+            {stats.seen > 0 ? sv.dashboard.continue : sv.dashboard.startFirst}
             <ArrowRight size={18} aria-hidden />
           </LinkButton>
         </>
       )}
-    </Card>
-  );
-}
-
-function StatsCard({ loading, stats }: { loading: boolean; stats: ReturnType<typeof buildProgressStats> | null }) {
-  const items: Array<[string, string]> = stats
-    ? [
-        [sv.dashboard.reviewsToday, `${stats.reviewsToday}`],
-        [sv.dashboard.learned, `${stats.learned}`],
-        [sv.dashboard.avg7, stats.avg7 === null ? "–" : stats.avg7.toFixed(1)],
-      ]
-    : [];
-  return (
-    <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 3 }}>
-      <dl className="grid grid-cols-3 gap-3">
-        {loading
-          ? [0, 1, 2].map((i) => <Skeleton key={i} className="h-14" />)
-          : items.map(([label, value]) => (
-              <div key={label}>
-                <dt className="text-xs font-semibold text-subtle">{label}</dt>
-                <dd className="mt-1 text-2xl font-extrabold tabular-nums tracking-tight">{value}</dd>
-              </div>
-            ))}
-      </dl>
     </Card>
   );
 }

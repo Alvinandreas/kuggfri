@@ -2,6 +2,7 @@
 
 import { sv } from "@/lib/i18n/sv";
 import { SELF_RATINGS, type SelfRating } from "@/lib/progress/types";
+import { cx } from "@/components/ui/cx";
 
 type Props = {
   disabled: boolean;
@@ -35,12 +36,15 @@ export function RatingButtons({ disabled, onRate, intervals }: Props) {
             onClick={() => onRate(r)}
             aria-label={`${r} – ${sv.study.rate[r]}${intervals ? `, ${intervals[r]}` : ""}`}
             data-testid={`rate-${r}`}
-            className={`flex flex-col items-center justify-center rounded-md border-2 text-fg transition-[opacity,transform] active:scale-[0.97] disabled:opacity-35 ${
-              intervals ? "h-[4.25rem]" : "h-14"
-            } ${ratingClass[r]} ${disabled ? "" : "hover:opacity-85"}`}
+            className={cx(
+              "flex select-none flex-col items-center justify-center rounded-lg border-2 px-1 text-fg transition-[opacity,transform] duration-150 ease-out active:scale-[0.96] disabled:opacity-35",
+              intervals ? "h-[4.5rem]" : "h-[3.75rem]",
+              ratingClass[r],
+              !disabled && "hover:-translate-y-0.5 hover:opacity-90",
+            )}
           >
-            <span className="text-lg font-semibold leading-none">{r}</span>
-            <span className="mt-1 text-[0.65rem] leading-none">{sv.study.rate[r]}</span>
+            <span className="text-xl font-extrabold leading-none">{r}</span>
+            <span className="mt-1 text-[0.7rem] font-semibold leading-none">{sv.study.rate[r]}</span>
             {intervals ? (
               <span className="mt-1 text-[0.6rem] leading-none text-muted tabular-nums" aria-hidden="true">
                 {intervals[r]}

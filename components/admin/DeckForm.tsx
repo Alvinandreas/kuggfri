@@ -5,11 +5,12 @@ import { useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { deleteDeckAction, saveDeckAction, setDeckPublishedAction } from "@/lib/admin/actions";
 import type { DeckRow } from "@/lib/supabase/database.types";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-
-const inputClass = "h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg";
-const textareaClass = "w-full rounded-md border border-line-strong bg-surface px-3 py-2 text-fg";
+import { TextArea } from "@/components/ui/TextArea";
+import { TextField } from "@/components/ui/TextField";
 
 export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete?: boolean }) {
   const router = useRouter();
@@ -72,87 +73,87 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid grid-cols-[minmax(0,1fr)] gap-4 rounded-lg border border-line bg-surface p-5">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.deckTitle}</span>
-          <input name="title" required maxLength={200} defaultValue={deck?.title ?? ""} className={inputClass} data-testid="deck-title" />
-        </label>
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.slug}</span>
-          <input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" defaultValue={deck?.slug ?? ""} className={inputClass} data-testid="deck-slug" />
-          <span className="text-xs text-muted">{sv.admin.slugHelp}</span>
-        </label>
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.courseCode}</span>
-          <input name="course_code" maxLength={50} defaultValue={deck?.course_code ?? ""} className={inputClass} />
-        </label>
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.examDate}</span>
-          <input name="exam_date" type="date" defaultValue={deck?.exam_date ?? ""} className={inputClass} data-testid="deck-exam-date" />
-          <span className="text-xs text-muted">{sv.admin.examDateHelp}</span>
-        </label>
-      </div>
-      <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-        <span>{sv.admin.description}</span>
-        <textarea name="description" rows={2} maxLength={2000} defaultValue={deck?.description ?? ""} className={textareaClass} />
-      </label>
-      <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-        <span>{sv.admin.sourceCredit}</span>
-        <textarea name="source_credit" rows={3} maxLength={2000} defaultValue={deck?.source_credit ?? ""} className={textareaClass} />
-      </label>
+    <Card padding="lg">
+      <form onSubmit={onSubmit} className="grid grid-cols-[minmax(0,1fr)] gap-5">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <TextField label={sv.admin.deckTitle} name="title" required maxLength={200} defaultValue={deck?.title ?? ""} data-testid="deck-title" />
+          <TextField
+            label={sv.admin.slug}
+            hint={sv.admin.slugHelp}
+            name="slug"
+            required
+            pattern="[a-z0-9]+(-[a-z0-9]+)*"
+            defaultValue={deck?.slug ?? ""}
+            data-testid="deck-slug"
+          />
+          <TextField label={sv.admin.courseCode} name="course_code" maxLength={50} defaultValue={deck?.course_code ?? ""} />
+          <TextField
+            label={sv.admin.examDate}
+            hint={sv.admin.examDateHelp}
+            name="exam_date"
+            type="date"
+            defaultValue={deck?.exam_date ?? ""}
+            data-testid="deck-exam-date"
+          />
+        </div>
+        <TextArea label={sv.admin.description} name="description" rows={2} maxLength={2000} defaultValue={deck?.description ?? ""} />
+        <TextArea label={sv.admin.sourceCredit} name="source_credit" rows={3} maxLength={2000} defaultValue={deck?.source_credit ?? ""} />
 
-      {message ? (
-        <p role="status" className={`text-sm ${message.ok ? "text-accent" : "text-danger"}`}>
-          {message.text}
-        </p>
-      ) : null}
+        {message ? (
+          <p role="status" className={`text-sm font-medium ${message.ok ? "text-accent" : "text-danger"}`}>
+            {message.text}
+          </p>
+        ) : null}
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Button type="submit" disabled={pending} data-testid="deck-save">
-          {pending ? sv.admin.saving : sv.common.save}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-5">
+          <Button type="submit" disabled={pending} data-testid="deck-save">
+            {pending ? sv.admin.saving : sv.common.save}
+          </Button>
+          {deck ? (
+            <>
+              <Button type="button" variant="secondary" onClick={togglePublish} disabled={pending} data-testid="deck-publish">
+                {published ? sv.admin.unpublish : sv.admin.publish}
+              </Button>
+              <Badge tone={published ? "accent" : "neutral"} className="ml-1">
+                <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${published ? "bg-accent-ink" : "bg-muted"}`} />
+                {published ? sv.admin.published : sv.admin.unpublished}
+              </Badge>
+              <span className="flex-1" />
+              {canDelete ? (
+                <Button type="button" variant="danger" size="sm" onClick={() => setConfirmDelete(true)} disabled={pending}>
+                  {sv.admin.deleteDeck}
+                </Button>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+
         {deck ? (
           <>
-            <Button type="button" variant="secondary" onClick={togglePublish} disabled={pending} data-testid="deck-publish">
-              {published ? sv.admin.unpublish : sv.admin.publish}
-            </Button>
-            <span className={`text-sm ${published ? "text-accent" : "text-muted"}`}>{published ? sv.admin.published : sv.admin.unpublished}</span>
-            <span className="flex-1" />
-            {canDelete ? (
-              <Button type="button" variant="danger" size="sm" onClick={() => setConfirmDelete(true)} disabled={pending}>
-                {sv.admin.deleteDeck}
-              </Button>
-            ) : null}
+            <ConfirmDialog
+              open={confirmDelete}
+              title={sv.admin.deleteDeck}
+              body={sv.admin.deleteDeckConfirm(deck.title)}
+              danger
+              requireWord={deck.title}
+              requireWordLabel={sv.admin.deleteDeckWord(deck.title)}
+              busy={pending}
+              onConfirm={onDelete}
+              onCancel={() => setConfirmDelete(false)}
+            />
+            <ConfirmDialog
+              open={confirmUnpublish}
+              title={sv.admin.unpublishTitle}
+              body={sv.admin.unpublishConfirm}
+              confirmLabel={sv.admin.unpublish}
+              danger
+              busy={pending}
+              onConfirm={() => setPublishedTo(false)}
+              onCancel={() => setConfirmUnpublish(false)}
+            />
           </>
         ) : null}
-      </div>
-
-      {deck ? (
-        <>
-          <ConfirmDialog
-            open={confirmDelete}
-            title={sv.admin.deleteDeck}
-            body={sv.admin.deleteDeckConfirm(deck.title)}
-            danger
-            requireWord={deck.title}
-            requireWordLabel={sv.admin.deleteDeckWord(deck.title)}
-            busy={pending}
-            onConfirm={onDelete}
-            onCancel={() => setConfirmDelete(false)}
-          />
-          <ConfirmDialog
-            open={confirmUnpublish}
-            title={sv.admin.unpublishTitle}
-            body={sv.admin.unpublishConfirm}
-            confirmLabel={sv.admin.unpublish}
-            danger
-            busy={pending}
-            onConfirm={() => setPublishedTo(false)}
-            onCancel={() => setConfirmUnpublish(false)}
-          />
-        </>
-      ) : null}
-    </form>
+      </form>
+    </Card>
   );
 }

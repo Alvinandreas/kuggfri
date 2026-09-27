@@ -6,10 +6,12 @@ import { sv } from "@/lib/i18n/sv";
 import { addExaminerAction, removeExaminerAction } from "@/lib/admin/actions";
 import type { DeckExaminer } from "@/lib/admin/queries";
 import { formatDateTime } from "@/lib/time/format";
+import { Avatar } from "@/components/ui/Avatar";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-
-const inputClass = "h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-fg";
+import { TextField } from "@/components/ui/TextField";
 
 /** Admins verktyg för att ge och ta ifrån examinatorsrätt på ett deck. */
 export function ExaminerManager({ deckId, examiners }: { deckId: string; examiners: DeckExaminer[] }) {
@@ -44,37 +46,49 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
   }
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-4 rounded-lg border border-line bg-surface p-5">
+    <Card padding="lg" className="grid grid-cols-[minmax(0,1fr)] gap-5">
       {examiners.length === 0 ? (
         <p className="text-sm text-muted">{sv.admin.noExaminers}</p>
       ) : (
         <ul className="grid grid-cols-[minmax(0,1fr)] gap-2" data-testid="examiner-list">
           {examiners.map((x) => (
-            <li key={x.user_id ?? x.email} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-bg px-3 py-2 text-sm">
-              <div className="min-w-0">
-                <span className="font-medium">{x.display_name ? `${x.display_name} · ` : ""}</span>
-                <span className="break-all">{x.email}</span>
-                {x.pending ? <span className="ml-2 rounded-full bg-surface-2 px-2 py-0.5 text-xs text-muted">{sv.admin.examinerPending}</span> : null}
-                <span className="block text-xs text-muted">{formatDateTime(x.created_at)}</span>
+            <li key={x.user_id ?? x.email} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-surface-2 px-4 py-3 text-sm">
+              <div className="flex min-w-0 items-center gap-3">
+                <Avatar name={x.display_name || x.email} size={36} />
+                <div className="min-w-0">
+                  <span className="font-semibold">{x.display_name ? `${x.display_name} · ` : ""}</span>
+                  <span className="break-all">{x.email}</span>
+                  {x.pending ? (
+                    <Badge tone="outline" className="ml-2">
+                      {sv.admin.examinerPending}
+                    </Badge>
+                  ) : null}
+                  <span className="block text-xs text-muted">{formatDateTime(x.created_at)}</span>
+                </div>
               </div>
-              <Button size="sm" variant="secondary" disabled={pending} onClick={() => setRemoving(x)}>
+              <Button size="sm" variant="outline" disabled={pending} onClick={() => setRemoving(x)}>
                 {sv.admin.removeExaminer}
               </Button>
             </li>
           ))}
         </ul>
       )}
-      <form onSubmit={onAdd} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm">
-          <span>{sv.admin.examinerEmail}</span>
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} data-testid="examiner-email" autoComplete="off" />
-        </label>
-        <Button type="submit" disabled={pending} data-testid="examiner-add">
+      <form onSubmit={onAdd} className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+        <TextField
+          label={sv.admin.examinerEmail}
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          data-testid="examiner-email"
+          autoComplete="off"
+        />
+        <Button type="submit" size="lg" disabled={pending} data-testid="examiner-add">
           {sv.admin.addExaminer}
         </Button>
       </form>
       {message ? (
-        <p role="status" className={`text-sm ${message.ok ? "text-accent" : "text-danger"}`}>
+        <p role="status" className={`text-sm font-medium ${message.ok ? "text-accent" : "text-danger"}`}>
           {message.text}
         </p>
       ) : null}
@@ -87,6 +101,6 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
         onConfirm={onRemove}
         onCancel={() => setRemoving(null)}
       />
-    </div>
+    </Card>
   );
 }

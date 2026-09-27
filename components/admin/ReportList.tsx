@@ -8,7 +8,10 @@ import { deleteReportAction, setReportStatusAction } from "@/lib/admin/actions";
 import type { AdminReport } from "@/lib/admin/queries";
 import { firstLine } from "@/lib/text/first-line";
 import { formatDateTime } from "@/lib/time/format";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { cx } from "@/components/ui/cx";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function ReportList({ deckId, reports }: { deckId: string; reports: AdminReport[] }) {
@@ -26,37 +29,44 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
     });
   }
 
-  if (reports.length === 0) return <p className="text-muted">{sv.admin.reportsNone}</p>;
+  if (reports.length === 0)
+    return (
+      <Card padding="lg" className="text-muted">
+        {sv.admin.reportsNone}
+      </Card>
+    );
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
       {error ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-3 py-2 text-sm text-danger">
+        <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
           {error}
         </p>
       ) : null}
       <ul className="grid grid-cols-[minmax(0,1fr)] gap-3">
         {reports.map((r) => {
           const open = r.status === "open";
+          // Öppna rapporter är fyllda block; åtgärdade är bara konturer, så att de öppna syns först.
           return (
             <li
               key={r.id}
               data-testid="report-row"
-              className={`grid gap-2 rounded-lg border p-4 ${open ? "border-line-strong bg-surface" : "border-line bg-surface-2/50"}`}
+              className={cx(
+                "grid gap-3 rounded-lg border p-5",
+                open ? "border-line bg-surface dark:border-transparent" : "border-line-strong/70 bg-transparent",
+              )}
             >
               <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${open ? "bg-accent-soft text-fg" : "bg-surface-2 text-muted"}`}>
-                  {open ? sv.admin.reportStatusOpen : sv.admin.reportStatusResolved}
-                </span>
+                <Badge tone={open ? "accent" : "neutral"}>{open ? sv.admin.reportStatusOpen : sv.admin.reportStatusResolved}</Badge>
                 <span className="text-muted">{formatDateTime(r.created_at)}</span>
               </div>
               <p className="text-sm">
                 <span className="text-muted">{sv.admin.reportCard}: </span>
-                <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="font-medium underline underline-offset-2 decoration-line-strong hover:decoration-fg">
+                <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="font-semibold underline decoration-line-strong underline-offset-2 hover:decoration-fg">
                   {firstLine(r.card_front)}
                 </Link>
               </p>
-              <p className="whitespace-pre-wrap rounded-md bg-bg px-3 py-2 text-sm">{r.message}</p>
+              <p className="whitespace-pre-wrap rounded-md bg-surface-2 px-4 py-3 text-sm">{r.message}</p>
               <p className="text-sm text-muted">
                 {sv.admin.reportContact}: {r.contact ? r.contact : sv.admin.reportAnonymous}
               </p>

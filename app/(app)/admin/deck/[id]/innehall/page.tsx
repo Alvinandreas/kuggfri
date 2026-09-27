@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { CategoryOverview, type CategoryCounts } from "@/components/admin/CategoryOverview";
-import { LinkButton } from "@/components/ui/Button";
+import { Download, Plus } from "lucide-react";
+import { LinkButton, buttonClass } from "@/components/ui/Button";
 
 type Params = Promise<{ id: string }>;
 
@@ -31,16 +32,14 @@ export default async function AdminContentPage({ params }: { params: Params }) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">{sv.admin.categories}</h2>
+        <h2 className="text-xl font-bold tracking-tight">{sv.admin.categories}</h2>
         <div className="flex flex-wrap gap-2">
           <LinkButton href={`/admin/deck/${deck.id}/kort/ny`} size="sm">
+            <Plus size={16} aria-hidden />
             {sv.admin.newCard}
           </LinkButton>
-          <a
-            href={`/admin/deck/${deck.id}/export`}
-            download={`${deck.slug}.json`}
-            className="inline-flex h-9 items-center rounded-md border border-line-strong bg-surface px-3 text-sm font-medium hover:bg-surface-2"
-          >
+          <a href={`/admin/deck/${deck.id}/export`} download={`${deck.slug}.json`} className={buttonClass("outline", "sm")}>
+            <Download size={15} aria-hidden />
             {sv.admin.export}
           </a>
         </div>

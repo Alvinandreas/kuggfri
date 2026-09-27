@@ -458,8 +458,6 @@ export const sv = {
     statsCard: "Kort",
     statsRatings: "Antal skattningar",
     statsNone: "Ingen progress har registrerats ännu.",
-    statsGuestNote:
-      "Gästers progress ligger bara i deras webbläsare och syns inte här.",
     saved: "Sparat.",
     saving: "Sparar…",
     slugTaken: "Sluggen används redan.",
@@ -489,7 +487,7 @@ export const sv = {
     previewHelp: "Så här ser kortet ut för studenten.",
     reports: "Felrapporter",
     reportsHelp:
-      "Studenter kan flagga fel eller otydligheter direkt från kortet, även som gäster. Åtgärda i kortet, markera sedan rapporten som åtgärdad.",
+      "Studenter kan flagga fel eller otydligheter direkt från kortet. Åtgärda i kortet, markera sedan rapporten som åtgärdad.",
     reportsNone: "Inga felrapporter.",
     reportsOpen: "Öppna",
     reportsResolved: "Åtgärdade",

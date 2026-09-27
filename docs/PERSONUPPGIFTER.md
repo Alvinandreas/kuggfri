@@ -1,7 +1,7 @@
 # Personuppgifter: register, rutiner och ansvar
 
 Internt arbetsdokument. Den publika texten finns på `/integritet`
-([app/integritet/page.tsx](../app/integritet/page.tsx)); det här dokumentet är underlaget bakom den
+([app/(site)/integritet/page.tsx](<../app/(site)/integritet/page.tsx>)); det här dokumentet är underlaget bakom den
 och rutinerna vi följer. Uppdaterat 20 september 2026.
 
 **Grundregeln:** läggs en tabell, kolumn eller localStorage-nyckel med personuppgifter till ska den

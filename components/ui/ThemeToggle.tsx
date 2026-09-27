@@ -1,75 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
+import { useTheme, type Theme } from "@/lib/ui/theme";
 
-type Theme = "system" | "light" | "dark";
-const STORAGE_KEY = "kuggfri:theme";
 const ORDER: Theme[] = ["system", "light", "dark"];
 
-function readTheme(): Theme {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v === "light" || v === "dark" ? v : "system";
-  } catch {
-    return "system";
-  }
-}
-
-function applyTheme(theme: Theme) {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const dark = theme === "dark" || (theme === "system" && prefersDark);
-  document.documentElement.classList.toggle("dark", dark);
-}
-
+/** Kompakt knapp som stegar mellan systemets, ljust och mörkt läge (sajtens sidhuvud). */
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("system");
-
-  useEffect(() => {
-    setTheme(readTheme());
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => applyTheme(readTheme());
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  function cycle() {
-    const next = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length] ?? "system";
-    setTheme(next);
-    try {
-      if (next === "system") localStorage.removeItem(STORAGE_KEY);
-      else localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      // localStorage kan vara blockerat; temat gäller då bara tills sidan laddas om.
-    }
-    applyTheme(next);
-  }
-
+  const [theme, setTheme] = useTheme();
   const label = sv.theme[theme];
+  const Icon = theme === "dark" ? Moon : theme === "light" ? Sun : Monitor;
 
   return (
     <button
       type="button"
-      onClick={cycle}
+      onClick={() => setTheme(ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length] ?? "system")}
       aria-label={`${sv.theme.label}: ${label}`}
       title={`${sv.theme.label}: ${label}`}
-      className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md text-muted hover:bg-surface-2 hover:text-fg"
+      className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-fg"
     >
-      {theme === "dark" ? (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-        </svg>
-      ) : theme === "light" ? (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" />
-        </svg>
-      ) : (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <rect x="3" y="4" width="18" height="13" rx="2" />
-          <path d="M8 21h8M12 17v4" />
-        </svg>
-      )}
+      <Icon size={18} strokeWidth={1.8} aria-hidden />
     </button>
+  );
+}
+
+/**
+ * Tre lägen sida vid sida, för profilmenyn och kontosidan. inMenu gör knapparna till
+ * menyposter (menuitemradio) så att piltangenterna i menyn når dem.
+ */
+export function ThemeSwitcher({ className = "", inMenu = false }: { className?: string; inMenu?: boolean }) {
+  const [theme, setTheme] = useTheme();
+  const options: Array<{ value: Theme; Icon: typeof Sun }> = [
+    { value: "system", Icon: Monitor },
+    { value: "light", Icon: Sun },
+    { value: "dark", Icon: Moon },
+  ];
+  return (
+    <div role={inMenu ? "none" : "radiogroup"} aria-label={inMenu ? undefined : sv.theme.label} className={`inline-flex rounded-full bg-surface-2 p-0.5 ${className}`.trim()}>
+      {options.map(({ value, Icon }) => {
+        const active = theme === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            role={inMenu ? "menuitemradio" : "radio"}
+            tabIndex={inMenu ? -1 : undefined}
+            aria-checked={active}
+            aria-label={sv.theme[value]}
+            title={sv.theme[value]}
+            onClick={() => setTheme(value)}
+            className={`inline-flex h-7 w-9 items-center justify-center rounded-full transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-focus ${
+              active ? "bg-inverse text-inverse-fg" : "text-muted hover:text-fg"
+            }`}
+          >
+            <Icon size={15} strokeWidth={2} aria-hidden />
+          </button>
+        );
+      })}
+    </div>
   );
 }

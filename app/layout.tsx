@@ -1,13 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import localFont from "next/font/local";
 import { headers } from "next/headers";
 import { sv } from "@/lib/i18n/sv";
 import { NONCE_HEADER } from "@/lib/security/headers";
-import { getCurrentUser } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/supabase/env";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ProgressMigrator } from "@/components/auth/ProgressMigrator";
+
+// Figtree (OFL) buntas från npm i stället för att hämtas från Google vid bygget: bygget
+// fungerar offline och besökarens webbläsare pratar aldrig med Google. Latin-delen täcker å, ä och ö.
+const figtree = localFont({
+  src: "../node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2",
+  weight: "300 900",
+  variable: "--font-figtree",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   // Absolut bas för delningsbilderna: utan den blir og:image en relativ adress som
@@ -53,19 +59,22 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f6f5f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#151514" },
+    { media: "(prefers-color-scheme: dark)", color: "#101111" },
   ],
 };
 
-/** Sätter temat innan första målningen så att sidan inte blinkar. */
-const themeScript = `(function(){try{var t=localStorage.getItem('kuggfri:theme');var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
+/**
+ * Sätter temat och sidomenyns läge innan första målningen så att sidan inte blinkar
+ * eller hoppar när den hopfällda menyn annars skulle ha ritats utfälld först.
+ */
+const themeScript = `(function(){try{var h=document.documentElement;var t=localStorage.getItem('kuggfri:theme');var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);h.classList.toggle('dark',d);if(localStorage.getItem('kuggfri:sidebar')==='collapsed')h.dataset.sidebar='collapsed';}catch(e){}})();`;
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [user, headerList] = await Promise.all([getCurrentUser(), headers()]);
+  const headerList = await headers();
   // Nonce från middleware, så att temaskriptet släpps igenom av innehållspolicyn.
   const nonce = headerList.get(NONCE_HEADER) ?? undefined;
   return (
-    <html lang="sv" suppressHydrationWarning>
+    <html lang="sv" className={figtree.variable} suppressHydrationWarning>
       <head>
         {/* React skickar medvetet inte nonce till klienten, så attributet skiljer sig mellan
             server och klient. Skriptet har redan körts när hydreringen sker; varningen
@@ -79,12 +88,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         >
           {sv.app.skipToContent}
         </a>
-        <Header />
-        <main id="innehall" className="mx-auto w-full max-w-[var(--content-width)] flex-1 px-4 pb-16 pt-6 sm:px-6">
-          <ProgressMigrator userId={user?.id ?? null} />
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

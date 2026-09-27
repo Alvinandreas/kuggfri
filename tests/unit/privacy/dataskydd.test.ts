@@ -17,7 +17,7 @@ const migrations = readdirSync(join(ROOT, "supabase", "migrations"))
   .join("\n");
 
 const exportRoute = read("app", "api", "konto", "export", "route.ts");
-const privacyPage = read("app", "integritet", "page.tsx");
+const privacyPage = read("app", "(site)", "integritet", "page.tsx");
 
 /** Tabeller som knyter rader till ett konto: allt sådant är personuppgifter. */
 function tablesWithUserId(sql: string): string[] {
@@ -92,7 +92,7 @@ describe("integritetspolicyn beskriver det appen faktiskt gör", () => {
 
   for (const key of keys) {
     it(`${key} är beskriven i policyn`, () => {
-      expect(privacyPage, `${key} saknas i app/integritet/page.tsx`).toContain(key);
+      expect(privacyPage, `${key} saknas i app/(site)/integritet/page.tsx`).toContain(key);
     });
   }
 

@@ -169,6 +169,9 @@ export default function PrivacyPage() {
           <li>
             <code>kuggfri:theme</code> – ditt val av ljust eller mörkt läge.
           </li>
+          <li>
+            <code>kuggfri:sidebar</code> – om du fällt ihop sidomenyn.
+          </li>
         </ul>
         <p>
           Allt detta försvinner om du rensar webbplatsdata. Skapar du senare ett konto flyttas progressen och

@@ -4,7 +4,7 @@ import { useEffect, useState, type ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChevronsLeft, CircleHelp, House, Library, Menu as MenuIcon, Palette, Settings2, X, type LucideProps } from "lucide-react";
+import { BookOpen, ChartNoAxesColumn, ChevronsLeft, CircleHelp, House, Info, Library, Menu as MenuIcon, Palette, Settings2, X, type LucideProps } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
@@ -64,6 +64,7 @@ function SectionLabel({ children }: { children: string }) {
 function SidebarContent({ user, canAdmin, isAdmin, courses, pathname, top }: SidebarProps & { pathname: string; top: React.ReactNode }) {
   const study: NavLink[] = [
     { href: "/hem", label: sv.shell.home, icon: House },
+    { href: "/statistik", label: sv.shell.myStats, icon: ChartNoAxesColumn },
     courses.length === 1 && courses[0]
       ? { href: `/d/${courses[0].slug}`, label: courses[0].title, icon: BookOpen, also: ["/d/"] }
       : { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d/"] },
@@ -94,7 +95,8 @@ function SidebarContent({ user, canAdmin, isAdmin, courses, pathname, top }: Sid
         ) : null}
       </nav>
       <div className="space-y-0.5 px-3 pb-4">
-        <NavItem link={{ href: "/om", label: sv.shell.help, icon: CircleHelp }} pathname={pathname} />
+        <NavItem link={{ href: "/hjalp", label: sv.shell.help, icon: CircleHelp }} pathname={pathname} />
+        <NavItem link={{ href: "/om", label: sv.shell.about, icon: Info }} pathname={pathname} />
         <ProfileMenu user={user} placement="right-end" />
       </div>
     </>

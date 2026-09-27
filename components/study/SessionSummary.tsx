@@ -23,6 +23,8 @@ type Props = {
   today: TodaySummary | null;
   deckSlug: string;
   onPrevious?: () => void;
+  /** Duggans tid ("4:07") när tidtagning var vald. */
+  duration?: string | null;
 };
 
 const barClass: Record<1 | 2 | 3 | 4 | 5, string> = {
@@ -33,7 +35,7 @@ const barClass: Record<1 | 2 | 3 | 4 | 5, string> = {
   5: "bg-rate-5",
 };
 
-export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, today, deckSlug, onPrevious }: Props) {
+export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, today, deckSlug, onPrevious, duration = null }: Props) {
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));
   const categoryTitle = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null);
   const done = today?.done ?? false;
@@ -64,6 +66,11 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
               <span className="text-2xl text-muted"> %</span>
             </p>
             <p className="mt-1 font-semibold">{sv.summary.examScore(examOk, summary.reviewed, examPct)}</p>
+            {duration ? (
+              <p className="font-semibold text-muted" data-testid="exam-duration">
+                {sv.dugga.duration(duration)}
+              </p>
+            ) : null}
             <p className="text-sm text-muted">{sv.summary.examNote}</p>
           </Card>
         ) : null}

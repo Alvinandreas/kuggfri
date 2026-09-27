@@ -39,7 +39,7 @@ function OutOfFive({ value }: { value: number | null }) {
   if (value === null) return <>–</>;
   return (
     <>
-      {value.toFixed(1)}
+      {value.toFixed(1).replace(".", ",")}
       <span className="text-[0.55em] font-bold text-muted"> / 5</span>
     </>
   );
@@ -151,7 +151,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                               <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
                                 <div className={`h-full rounded-full ${ratingFill[ratingStep(avg)] ?? "bg-rate-3"}`} style={{ width: `${(avg / 5) * 100}%` }} />
                               </div>
-                              <span className="w-14 shrink-0 text-right font-bold tabular-nums">{avg.toFixed(1)} / 5</span>
+                              <span className="w-14 shrink-0 text-right font-bold tabular-nums">{avg.toFixed(1).replace(".", ",")} / 5</span>
                             </div>
                           </td>
                           <td className="py-3 pr-4 text-right tabular-nums text-muted">{c.ratings}</td>

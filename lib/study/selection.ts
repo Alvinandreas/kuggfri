@@ -88,7 +88,7 @@ function orderByWeakness(ids: readonly string[], progress: ProgressMap, random: 
  * - free: urvalet, svagast först, blandat inom samma skattning.
  * - tricky: bara kluriga kort ur urvalet, svagast först, blandat inom samma skattning.
  * - random: hela decket i slumpad ordning (urvalet ignoreras).
- * - exam: EXAM_SIZE slumpade kort ur urvalet, som en provtenta.
+ * - exam: examSize (standard EXAM_SIZE) slumpade kort ur urvalet, som en dugga.
  */
 export function selectCardIds(input: {
   cards: readonly SelectableCard[];
@@ -101,6 +101,8 @@ export function selectCardIds(input: {
   maxNew?: number;
   /** Schemalagt läge de sista dagarna före tentan: alla kort, svagast först. */
   finalReview?: boolean;
+  /** Dugga: antal frågor. Undefined = EXAM_SIZE. */
+  examSize?: number;
 }): string[] {
   const random = input.random ?? Math.random;
   const ordered = [...input.cards].sort((a, b) => a.sort_order - b.sort_order);
@@ -109,7 +111,7 @@ export function selectCardIds(input: {
   }
   const filtered = filterCards(ordered, input.progress, input.selection);
   if (input.mode === "exam") {
-    return shuffleIds(filtered.map((c) => c.id), random).slice(0, EXAM_SIZE);
+    return shuffleIds(filtered.map((c) => c.id), random).slice(0, input.examSize ?? EXAM_SIZE);
   }
   if (input.mode === "fsrs") {
     const ids = filtered.map((c) => c.id);

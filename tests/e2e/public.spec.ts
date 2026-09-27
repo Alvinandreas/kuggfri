@@ -26,6 +26,8 @@ test.describe("utan konto", () => {
   test("informationssidorna går att nå utan konto", async ({ page }) => {
     await page.goto("/om");
     await expect(page).toHaveURL(/\/om$/);
+    await page.goto("/hjalp");
+    await expect(page).toHaveURL(/\/hjalp$/);
     await page.goto("/integritet");
     await expect(page).toHaveURL(/\/integritet$/);
     await expectNoSeriousA11yViolations(page);

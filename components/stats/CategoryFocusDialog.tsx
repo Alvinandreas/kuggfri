@@ -38,7 +38,6 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
       fsrs: planDeckSession({ ...base, mode: "fsrs" }),
       tricky: planDeckSession({ ...base, mode: "tricky" }),
       free: planDeckSession({ ...base, mode: "free" }),
-      exam: planDeckSession({ ...base, mode: "exam" }),
     };
   }, [category, deck, cards, progress, reviews, dailyNew]);
 
@@ -90,7 +89,7 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
               title={sv.focus.freeArea}
               meta={`${sv.home.cards(plans.free.selectionCount)} · ${sv.deck.modeFreeShort}`}
             />
-            <ActionRow href={plans.exam.startHref} icon={GraduationCap} title={sv.focus.examArea} meta={sv.deck.metaExam(plans.exam.selectionCount)} />
+            <ActionRow href={`/d/${deck.slug}?lage=exam&omrade=${encodeURIComponent(category.id)}`} icon={GraduationCap} title={sv.focus.examArea} meta={sv.dugga.areaMeta} />
           </ActionList>
         </div>
       ) : null}

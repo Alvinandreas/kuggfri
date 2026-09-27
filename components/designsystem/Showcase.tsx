@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ArrowRight, BookOpen, CalendarClock, Copy, Flame, GraduationCap, MoreHorizontal, Pencil, Settings, Share2, Target, Trash2 } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarClock, Copy, Flag, Flame, GraduationCap, Info, MoreHorizontal, Pencil, Settings, Share2, Target, Trash2, Volume2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button, IconButton, LinkButton } from "@/components/ui/Button";
 import { Card, CardLink, SectionTitle } from "@/components/ui/Card";
@@ -15,8 +15,12 @@ import { TextArea } from "@/components/ui/TextArea";
 import { Select } from "@/components/ui/Select";
 import { CheckboxField, ChoiceCard, OptionTile } from "@/components/ui/Choice";
 import { ActionList, ActionRow } from "@/components/ui/ActionRow";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { StatTile } from "@/components/stats/StatTile";
+import { ActivityHeatmap } from "@/components/stats/ActivityHeatmap";
+import { LineChart } from "@/components/stats/LineChart";
+import { localDayKey } from "@/lib/time/day";
 import { ToggleRow } from "@/components/ui/Toggle";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
 
@@ -45,6 +49,19 @@ const CATEGORY_OPTIONS = [
 
 // Ett tentadatum en bit fram, så att nedräkningen har något att räkna.
 const EXAM = new Date(Date.now() + ((7 * 24 + 20) * 60 + 42) * 60_000);
+
+// Påhittad aktivitet för aktivitetskartan: ett jämnt mönster med vilodagar, utan slump så
+// att servern och webbläsaren ritar samma sak.
+const DEMO_ACTIVITY = new Map(
+  Array.from({ length: 140 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    return [localDayKey(d), i % 7 === 3 || i % 11 === 5 ? 0 : ((i * 37) % 23) + (i < 40 ? 12 : 2)] as const;
+  }),
+);
+const DEMO_GROWTH_LABELS = ["1/9", "2/9", "3/9", "4/9", "5/9", "6/9", "7/9", "8/9", "9/9", "10/9", "11/9", "12/9", "13/9", "14/9"];
+const DEMO_SEEN = [12, 24, 24, 38, 50, 61, 61, 75, 88, 96, 104, 104, 117, 129];
+const DEMO_LEARNED = [2, 5, 6, 11, 15, 21, 22, 28, 33, 40, 46, 47, 55, 61];
 
 function Section({ title, lead, children }: { title: string; lead?: string; children: ReactNode }) {
   return (
@@ -344,6 +361,27 @@ export function Showcase() {
         </Modal>
       </Section>
 
+      <Section title="Aktivitet och utveckling" lead="Två diagram från Min statistik: aktivitetskartan (en ruta per dag, piltangenterna flyttar) och linjediagrammet med hårkors och förklaring.">
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card padding="lg">
+            <ActivityHeatmap counts={DEMO_ACTIVITY} weeks={20} title="Aktivitet" help="Repetitioner per dag, de senaste 20 veckorna" />
+          </Card>
+          <Card padding="lg">
+            <LineChart
+              title="Så växer din kunskap"
+              help="Sedda och inlärda kort, totalt"
+              area
+              labels={DEMO_GROWTH_LABELS}
+              series={[
+                { key: "seen", label: "Sedda kort", tone: "chart-2", values: DEMO_SEEN },
+                { key: "learned", label: "Inlärda kort", tone: "chart-1", values: DEMO_LEARNED },
+              ]}
+              formatValue={(v) => `${v}`}
+            />
+          </Card>
+        </div>
+      </Section>
+
       <Section title="Fält" lead="Mjuka fält utan hård kant; fokus ger en grön ring. Rullgardinen är en egen lista i menyernas stil, inte webbläsarens.">
         <div className="grid gap-4 lg:grid-cols-2">
           <Card padding="lg" className="grid gap-4">
@@ -374,7 +412,7 @@ export function Showcase() {
             {(
               [
                 ["fsrs", "Schemalagd repetition", "Bara kort som är nya eller förfallna."],
-                ["exam", "Provtenta", "30 slumpade kort, som på tentan."],
+                ["exam", "Dugga", "Testa dig som på tentan, med egna regler."],
               ] as const
             ).map(([v, t, d]) => (
               <ChoiceCard key={v} name="demo-mode" value={v} checked={mode === v} onChange={() => setMode(v)} title={t} description={d} />
@@ -387,8 +425,28 @@ export function Showcase() {
         <fieldset className="grid gap-3 sm:grid-cols-3">
           <legend className="sr-only">Läge</legend>
           <OptionTile name="demo-tile" value="fsrs" checked={mode === "fsrs"} onChange={() => setMode("fsrs")} icon={CalendarClock} title="Schemalagd repetition" description="Nya och förfallna kort." meta="92 kort i dag" />
-          <OptionTile name="demo-tile" value="exam" checked={mode === "exam"} onChange={() => setMode("exam")} icon={GraduationCap} title="Provtenta" description="30 frågor som på tentan." meta="30 frågor" />
+          <OptionTile name="demo-tile" value="exam" checked={mode === "exam"} onChange={() => setMode("exam")} icon={GraduationCap} title="Dugga" description="Testa dig som på tentan." meta="20 frågor" />
         </fieldset>
+      </Section>
+
+      <Section title="Ikonmeny med etiketter" lead="Ikonknappar med en etikett som visas vid hovring och fokus, som menyn under skattningsknapparna i passet.">
+        <Card padding="lg" className="flex justify-center gap-2">
+          <Tooltip label="Så funkar det">
+            <IconButton label="Så funkar det" variant="secondary">
+              <Info size={18} aria-hidden />
+            </IconButton>
+          </Tooltip>
+          <Tooltip label="Stäng av ljudet">
+            <IconButton label="Stäng av ljudet" variant="secondary">
+              <Volume2 size={18} aria-hidden />
+            </IconButton>
+          </Tooltip>
+          <Tooltip label="Rapportera fel på kortet">
+            <IconButton label="Rapportera fel på kortet" variant="secondary">
+              <Flag size={17} aria-hidden />
+            </IconButton>
+          </Tooltip>
+        </Card>
       </Section>
 
       <Section title="Handlingsrader" lead="Genvägar rakt in i något: plugga ett område, ta de kluriga korten. Används i radardialogen och på hemsidan.">

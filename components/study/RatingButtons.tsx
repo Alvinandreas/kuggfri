@@ -3,6 +3,7 @@
 import { sv } from "@/lib/i18n/sv";
 import { SELF_RATINGS, type SelfRating } from "@/lib/progress/types";
 import { cx } from "@/components/ui/cx";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 type Props = {
   disabled: boolean;
@@ -29,28 +30,29 @@ export function RatingButtons({ disabled, onRate, intervals }: Props) {
       <legend className="sr-only">{sv.study.rateLabel}</legend>
       <div className="grid grid-cols-5 gap-2">
         {SELF_RATINGS.map((r) => (
+          // Namnet på skattningen står i etiketten vid hovring och i infodialogen, inte på knappen.
+          <Tooltip key={r} label={sv.study.rate[r]} className="w-full">
           <button
-            key={r}
             type="button"
             disabled={disabled}
             onClick={() => onRate(r)}
             aria-label={`${r} – ${sv.study.rate[r]}${intervals ? `, ${intervals[r]}` : ""}`}
             data-testid={`rate-${r}`}
             className={cx(
-              "flex select-none flex-col items-center justify-center rounded-lg border-2 px-1 text-fg transition-[opacity,transform] duration-150 ease-out active:scale-[0.96] disabled:opacity-35",
-              intervals ? "h-[4.5rem]" : "h-[3.75rem]",
+              "flex w-full select-none flex-col items-center justify-center rounded-lg border-2 px-1 text-fg transition-[opacity,transform] duration-150 ease-out active:scale-[0.96] disabled:opacity-35",
+              intervals ? "h-16" : "h-14",
               ratingClass[r],
               !disabled && "hover:-translate-y-0.5 hover:opacity-90",
             )}
           >
             <span className="text-xl font-extrabold leading-none">{r}</span>
-            <span className="mt-1 text-[0.7rem] font-semibold leading-none">{sv.study.rate[r]}</span>
             {intervals ? (
               <span className="mt-1 text-[0.6rem] leading-none text-muted tabular-nums" aria-hidden="true">
                 {intervals[r]}
               </span>
             ) : null}
           </button>
+          </Tooltip>
         ))}
       </div>
     </fieldset>

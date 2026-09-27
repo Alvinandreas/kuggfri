@@ -39,7 +39,7 @@ export default async function AdminDeckListPage() {
                 <BookOpen size={22} aria-hidden />
               </span>
               <div className="min-w-0 flex-1">
-                {/* Hela raden är klickbar via länkens ::after; "Visa decket" ligger ovanpå (z-10). */}
+                {/* Hela raden är klickbar via länkens ::after; "Visa kursen" ligger ovanpå (z-10). */}
                 <Link href={`/admin/deck/${d.id}`} className="text-lg font-bold tracking-tight after:absolute after:inset-0 after:rounded-lg">
                   {d.title}
                 </Link>

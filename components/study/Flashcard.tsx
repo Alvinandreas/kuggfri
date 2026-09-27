@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Star, Volume2, VolumeX } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
-import { buttonClass } from "@/components/ui/Button";
+import { buttonClass, IconButton } from "@/components/ui/Button";
 import { CategoryTag } from "@/components/ui/CategoryTag";
+import { Tooltip } from "@/components/ui/Tooltip";
+import { useSoundEnabled } from "@/lib/ui/sound";
 import { ratingClass } from "./RatingButtons";
 
 type Props = {
@@ -22,6 +24,9 @@ type Props = {
   feedback: SelfRating | null;
   /** Vändes snabbt men skattades 1–2: tydligare återkoppling och kortet stannar längre (hypercorrection). */
   confidentWrong?: boolean;
+  /** Stjärnmärkt av studenten (bokmärke). */
+  starred: boolean;
+  onToggleStar: () => void;
   onFlip: () => void;
   onToggleHint: () => void;
   onSwipeLeft: () => void;
@@ -46,6 +51,8 @@ export function Flashcard({
   showHint,
   feedback,
   confidentWrong = false,
+  starred,
+  onToggleStar,
   onFlip,
   onToggleHint,
   onSwipeLeft,
@@ -104,7 +111,7 @@ export function Flashcard({
           style={{ touchAction: "pan-y" }}
         >
           <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line dark:border-transparent`}>
-            <FaceHeader label={sv.study.front} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
+            <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} starred={starred} onToggleStar={onToggleStar} />
             {/* m-auto på innehållet (inte items-center på behållaren): centrerat när det får plats,
                 scrollbart från toppen när det inte gör det, så inget hamnar under rubrikraden. */}
             <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2 text-center">
@@ -130,11 +137,10 @@ export function Flashcard({
                 )}
               </div>
             ) : null}
-            <p className="mt-4 text-center text-xs font-medium text-subtle">{sv.study.flipHint}</p>
           </section>
 
           <section aria-label={sv.study.back} aria-hidden={!flipped} inert={!flipped} className={`${faceClass} flip-back border border-accent/40`}>
-            <FaceHeader label={sv.study.back} categoryTitle={categoryTitle} colorIndex={categoryColorIndex} />
+            <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} starred={starred} onToggleStar={onToggleStar} />
             <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2">
               <Markdown text={back} className="m-auto w-full" />
             </div>
@@ -152,11 +158,43 @@ export function Flashcard({
   );
 }
 
-function FaceHeader({ label, categoryTitle, colorIndex }: { label: string; categoryTitle: string | null; colorIndex: number }) {
+/** Kategori till vänster; stjärna och ljud till höger, som på Knowts kort. Knapparna vänder inte kortet. */
+function FaceHeader({
+  categoryTitle,
+  colorIndex,
+  starred,
+  onToggleStar,
+}: {
+  categoryTitle: string | null;
+  colorIndex: number;
+  starred: boolean;
+  onToggleStar: () => void;
+}) {
+  const [soundOn, setSoundOn] = useSoundEnabled();
   return (
-    <div className="mb-4 flex items-center justify-between gap-3">
+    <div className="mb-4 flex items-start justify-between gap-3">
       {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} size="lg" /> : <span />}
-      <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-subtle">{label}</span>
+      <div className="flex shrink-0 items-center gap-1.5">
+        <Tooltip label={starred ? sv.session.unstar : sv.session.star} side="bottom">
+          <IconButton
+            label={starred ? sv.session.unstar : sv.session.star}
+            variant="outline"
+            size="sm"
+            onClick={onToggleStar}
+            aria-pressed={starred}
+            data-testid="card-star"
+            // Inline: klasser kan inte skriva över knappens kant- och textfärg förutsägbart.
+            style={starred ? { color: "var(--chart-3)", borderColor: "var(--chart-3)" } : undefined}
+          >
+            <Star size={16} aria-hidden fill={starred ? "currentColor" : "none"} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip label={soundOn ? sv.session.soundOn : sv.session.soundOff} side="bottom">
+          <IconButton label={soundOn ? sv.session.soundOn : sv.session.soundOff} variant="outline" size="sm" onClick={() => setSoundOn(!soundOn)} aria-pressed={!soundOn}>
+            {soundOn ? <Volume2 size={16} aria-hidden /> : <VolumeX size={16} aria-hidden />}
+          </IconButton>
+        </Tooltip>
+      </div>
     </div>
   );
 }

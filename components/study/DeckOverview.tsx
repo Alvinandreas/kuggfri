@@ -9,6 +9,8 @@ import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } fr
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
+import { DEFAULT_DUGGA, duggaExamSize, type DuggaSettings } from "@/lib/study/dugga";
+import { useStars } from "@/lib/progress/stars";
 import { Badge } from "@/components/ui/Badge";
 import { CategoryTable, type SortMode } from "./CategoryTable";
 import { ModePicker } from "./ModePicker";
@@ -30,6 +32,9 @@ type Props = {
   categories: { id: string; title: string }[];
   cards: SelectableCard[];
   userId: string | null;
+  /** Förvalt läge och område (?lage=, ?omrade=), t.ex. från Duggan på hemsidan. */
+  initialMode?: StudyMode;
+  initialAreaId?: string | null;
 };
 
 /**
@@ -37,12 +42,15 @@ type Props = {
  * statistik om hur det går ligger på hemsidan; här finns bara det som behövs för att
  * komma igång, och passets inställningar.
  */
-export function DeckOverview({ deck, categories, cards, userId }: Props) {
+export function DeckOverview({ deck, categories, cards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [reviews, setReviews] = useState<ReviewEntry[]>([]);
-  const [mode, setMode] = useState<StudyMode>("fsrs");
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [mode, setMode] = useState<StudyMode>(initialMode);
+  const [selectedIds, setSelectedIds] = useState<string[]>(initialAreaId ? [initialAreaId] : []);
+  const [dugga, setDugga] = useState<DuggaSettings>(DEFAULT_DUGGA);
+  const [onlyStarred, setOnlyStarred] = useState(false);
+  const { stars } = useStars();
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
 
@@ -124,13 +132,20 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     setSelectedIds((prev) => prev.filter((id) => (perCategory.find((s) => s.categoryId === id)?.tricky ?? 0) > 0));
   }, [mode, perCategory]);
 
+  // Bara stjärnmärkta: planen räknar på de markerade korten, så siffrorna stämmer med passet.
+  const starredCount = useMemo(() => cards.filter((c) => stars.has(c.id)).length, [cards, stars]);
+  const planCards = useMemo(() => (onlyStarred ? cards.filter((c) => stars.has(c.id)) : cards), [onlyStarred, cards, stars]);
+
   // En plan per läge med samma urval: ger lägesrutornas siffror och det valda passet.
   const plans = useMemo(
     () =>
       Object.fromEntries(
-        MODES.map((m) => [m, planDeckSession({ deck, cards, progress, reviews, mode: m, selectedIds, dailyNew: prefs.dailyNew })]),
+        MODES.map((m) => [
+          m,
+          planDeckSession({ deck, cards: planCards, progress, reviews, mode: m, selectedIds, dailyNew: prefs.dailyNew, examSize: duggaExamSize(dugga.size) }),
+        ]),
       ) as Record<StudyMode, DeckPlan>,
-    [deck, cards, progress, reviews, selectedIds, prefs.dailyNew],
+    [deck, planCards, progress, reviews, selectedIds, prefs.dailyNew, dugga.size],
   );
   const plan = plans[mode];
   const selectedTitles = categories.filter((c) => selectedSet.has(c.id));
@@ -209,6 +224,11 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
             totalCards={cards.length}
             prefs={prefs}
             onPrefs={updatePrefs}
+            dugga={dugga}
+            onDugga={setDugga}
+            onlyStarred={onlyStarred && starredCount > 0}
+            onOnlyStarred={setOnlyStarred}
+            starredCount={starredCount}
           />
         </div>
       </div>

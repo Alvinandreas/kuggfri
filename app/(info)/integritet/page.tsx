@@ -150,7 +150,7 @@ export default function PrivacyPage() {
                 />
                 <Row
                   what="Studiesessioner"
-                  why="När en session började och slutade, vilket deck och hur många kort. Ger dig statistiken på kontosidan."
+                  why="När en session började och slutade, vilken kurs och hur många kort. Ger dig din statistik."
                   basis="Avtal"
                   retention="Tills du raderar kontot"
                 />
@@ -206,6 +206,12 @@ export default function PrivacyPage() {
             </li>
             <li>
               <code>kuggfri:sidebar</code> – om du fällt ihop sidomenyn.
+          </li>
+          <li>
+            <code>kuggfri:sound</code> – om du stängt av ljudet när du skattar kort.
+          </li>
+          <li>
+            <code>kuggfri:stars:v1</code> – vilka kort du har stjärnmärkt.
             </li>
           </ul>
           <p>Allt detta försvinner om du rensar webbplatsdata.</p>

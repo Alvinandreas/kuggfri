@@ -4,6 +4,7 @@ import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { isStudyMode, type StudyMode } from "@/lib/progress/types";
 import { parseSelection } from "@/lib/study/selection";
+import { parseDugga } from "@/lib/study/dugga";
 import { StudySession } from "@/components/study/StudySession";
 import { sv } from "@/lib/i18n/sv";
 
@@ -27,12 +28,16 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const rawExtra = Array.isArray(query.nya) ? query.nya[0] : query.nya;
   const parsedExtra = rawExtra ? Number.parseInt(rawExtra, 10) : Number.NaN;
   const extraNew = Number.isFinite(parsedExtra) && parsedExtra > 0 ? Math.min(200, parsedExtra) : null;
+  const dugga = mode === "exam" ? parseDugga(query) : null;
+  const onlyStarred = (Array.isArray(query.stjarnor) ? query.stjarnor[0] : query.stjarnor) === "1";
 
   return (
     <StudySession
-      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}`}
+      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(dugga)}-${onlyStarred}`}
       deck={{ id: data.deck.id, slug: data.deck.slug, title: data.deck.title, exam_date: data.deck.exam_date }}
       extraNew={extraNew}
+      dugga={dugga}
+      onlyStarred={onlyStarred}
       categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
       cards={data.cards.map((c) => ({
         id: c.id,

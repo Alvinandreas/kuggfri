@@ -8,6 +8,7 @@ describe("isPublicPath", () => {
     "/registrera",
     "/glomt-losenord",
     "/om",
+    "/hjalp",
     "/integritet",
     "/auth/confirm",
     "/api/cron/daily",
@@ -31,6 +32,7 @@ describe("isPublicPath", () => {
     "/d/materialteknik/plugga",
     "/opengraph-image/extra",
     "/om/",
+    "/hjalp/",
     "/integritetx",
   ])("%s kräver konto", (p) => expect(isPublicPath(p)).toBe(false));
 });

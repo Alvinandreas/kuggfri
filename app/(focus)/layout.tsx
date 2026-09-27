@@ -9,7 +9,7 @@ export default async function FocusLayout({ children }: Readonly<{ children: Rea
   const user = await getCurrentUser();
   if (!user) redirect("/");
   return (
-    <main id="innehall" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-10 pt-4 sm:px-6 sm:pt-6">
+    <main id="innehall" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-12 pt-8 sm:px-6 sm:pt-12">
       {children}
     </main>
   );

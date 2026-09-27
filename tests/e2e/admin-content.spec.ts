@@ -145,14 +145,14 @@ test.describe("examinator", () => {
     await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
     await expect(page.getByTestId("overview-students")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Alla deck" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Nytt deck" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Alla kurser" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Ny kurs" })).toHaveCount(0);
     const deckUrl = page.url();
 
-    // Inställningar: inget "Ta bort deck", ingen examinatorlista.
+    // Inställningar: inget "Ta bort kurs", ingen examinatorlista.
     await page.goto(`${deckUrl}/installningar`);
-    await expect(page.getByRole("heading", { name: "Deckets inställningar" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Ta bort deck" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Kursens inställningar" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ta bort kurs" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Examinatorer" })).toHaveCount(0);
 
     // Kan inte skapa deck.

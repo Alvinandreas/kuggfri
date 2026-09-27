@@ -40,8 +40,12 @@ fungerar direkt.
 ```bash
 npm run verify:unit   # typecheck + lint + Vitest (FSRS, migrering, import, RLS)
 npm run test:e2e      # Playwright, kräver att supabase start körs och att npm run db:reset körts
-npm run verify        # allt ovan, ska vara grönt före varje commit
+npm run verify        # allt ovan
 ```
+
+`verify:unit` ska vara grönt före varje commit. E2E-sviten (`test:e2e`, cirka 20 minuter) körs
+bara när Alvin ber om en genomgång av tjänsten, eller före en lansering; under
+iterationsrundorna märker han själv om något går sönder.
 
 RLS-testerna kör som standard mot PGlite (riktig Postgres i process) med samma migrationsfiler.
 Sätt `DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres` för att köra dem mot

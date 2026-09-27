@@ -32,6 +32,9 @@ export function PublicLayout({ children, wide = false }: { children: ReactNode; 
           <Link href="/om" className="hover:text-fg">
             {sv.footer.about}
           </Link>
+          <Link href="/hjalp" className="hover:text-fg">
+            {sv.help.title}
+          </Link>
           <Link href="/integritet" className="hover:text-fg">
             {sv.footer.privacy}
           </Link>

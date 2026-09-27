@@ -8,7 +8,7 @@
  * inloggning, och det är så en kurslänk visar en förhandsvisning i en gruppchatt.
  * API-vägarna skyddar sig själva (cron- och revalideringshemlighet, kontokontroll).
  */
-const PUBLIC_EXACT = new Set(["/", "/logga-in", "/registrera", "/glomt-losenord", "/om", "/integritet", "/manifest.webmanifest", "/robots.txt"]);
+const PUBLIC_EXACT = new Set(["/", "/logga-in", "/registrera", "/glomt-losenord", "/om", "/hjalp", "/integritet", "/manifest.webmanifest", "/robots.txt"]);
 
 const PUBLIC_PREFIXES = ["/auth/", "/api/", "/kurs/"];
 

@@ -44,9 +44,8 @@ type DeckView = {
   stats: ProgressStats;
   axes: RadarAxis[];
   categoryStats: CategoryStats[];
-  /** Genvägar på hemsidan: kluriga kort och provtenta över hela kursen. */
+  /** Genväg på hemsidan: kluriga kort över hela kursen. */
   trickyPlan: DeckPlan;
-  examPlan: DeckPlan;
   lastActivity: number;
   exam: Date | null;
 };
@@ -132,7 +131,6 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
         axes,
         categoryStats: perCategory,
         trickyPlan: planDeckSession({ deck, cards: deck.cards, progress, reviews, mode: "tricky", selectedIds: [], dailyNew: prefs.dailyNew, now }),
-        examPlan: planDeckSession({ deck, cards: deck.cards, progress, reviews, mode: "exam", selectedIds: [], dailyNew: prefs.dailyNew, now }),
         lastActivity: reviews.reduce((max, r) => (idSet.has(r.card_id) ? Math.max(max, Date.parse(r.reviewed_at)) : max), 0),
         exam: examStart(deck.exam_date),
       };
@@ -300,7 +298,7 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
             tone="navy"
           />
           <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
-          <StatTile label={sv.dashboard.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
+          <StatTile label={sv.dashboard.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1).replace(".", ",")} sub="av 5" tone="violet" />
         </dl>
       )}
     </Card>
@@ -342,7 +340,7 @@ function KnowledgeCard({
 
 /** Dagens pass med en stor knapp, och genvägar till kluriga kort och provtenta. */
 function TodayCard({ view, loading, className = "" }: { view: DeckView; loading: boolean; className?: string }) {
-  const { plan, stats, trickyPlan, examPlan } = view;
+  const { plan, stats, trickyPlan } = view;
   const done = !loading && plan.nothingDue;
   return (
     <Card padding="lg" className={`anim-fade-up flex flex-col ${className}`} style={{ ["--i" as string]: 2 }} data-testid="home-today">
@@ -371,7 +369,8 @@ function TodayCard({ view, loading, className = "" }: { view: DeckView; loading:
           <p className="mt-1 text-sm text-muted" data-testid="home-today-plan">
             {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)} · cirka {estimateMinutes(plan.sessionCards)} min
           </p>
-          <LinkButton href={plan.startHref} size="lg" className="mt-5 w-full" data-testid="home-start">
+          {/* Till kurssidan, där läge och områden väljs; dagens pass är förvalt där. */}
+          <LinkButton href={`/d/${view.deck.slug}`} size="lg" className="mt-5 w-full" data-testid="home-start">
             {stats.seen > 0 ? sv.dashboard.continue : sv.dashboard.startFirst}
             <ArrowRight size={18} aria-hidden />
           </LinkButton>
@@ -387,7 +386,7 @@ function TodayCard({ view, loading, className = "" }: { view: DeckView; loading:
               meta={`${sv.deck.summaryTricky(trickyPlan.selectionCount)} · cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
             />
           ) : null}
-          <ActionRow href={examPlan.startHref} icon={GraduationCap} title={sv.deck.modeExam} meta={sv.deck.metaExam(examPlan.selectionCount)} />
+          <ActionRow href={`/d/${view.deck.slug}?lage=exam`} icon={GraduationCap} title={sv.deck.modeExam} meta={sv.dugga.homeMeta} />
         </ActionList>
       ) : null}
     </Card>

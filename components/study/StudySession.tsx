@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Flag, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Timer, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { percent } from "@/lib/text/percent";
 import { applyRating } from "@/lib/fsrs/apply-rating";
@@ -24,15 +24,21 @@ import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { filterCards, selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
 import { examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
 import { buildSessionResult, type SessionResult } from "@/lib/study/session-result";
+import { duggaExamSize, type DuggaSettings } from "@/lib/study/dugga";
+import { readStars, useStars } from "@/lib/progress/stars";
+import { playRatingSound } from "@/lib/ui/sound";
 import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
+import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Flashcard } from "./Flashcard";
 import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
+import { SessionHelpDialog } from "./SessionHelpDialog";
 import { SessionSummary } from "./SessionSummary";
+import { SessionToolbar } from "./SessionToolbar";
 import type { StudyCard } from "./types";
 
 export type { StudyCard };
@@ -46,6 +52,10 @@ type Props = {
   userId: string | null;
   /** Uttryckligt antal nya kort för den här sessionen (från "Ta N nya kort till"), utöver dagsmålet. */
   extraNew: number | null;
+  /** Duggans regler (antal frågor, ledtrådar, tidtagning); null i övriga lägen. */
+  dugga: DuggaSettings | null;
+  /** Bara stjärnmärkta kort. */
+  onlyStarred: boolean;
 };
 
 type SessionPlan = {
@@ -67,7 +77,16 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }
 
-export function StudySession({ deck, categories, cards, mode, selection, userId, extraNew }: Props) {
+/** "4:07" eller "1:02:09". */
+function clock(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = String(total % 60).padStart(2, "0");
+  return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
+}
+
+export function StudySession({ deck, categories, cards, mode, selection, userId, extraNew, dugga, onlyStarred }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [reviews, setReviews] = useState<ReviewEntry[]>([]);
@@ -78,6 +97,9 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   const [flippedKey, setFlippedKey] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const { stars, toggle: toggleStar } = useStars();
+  const [elapsed, setElapsed] = useState(0);
   const [announce, setAnnounce] = useState("");
   const [saveError, setSaveError] = useState(false);
   const [queued, setQueued] = useState(0);
@@ -99,11 +121,14 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
   const cardsRef = useRef(cards);
   cardsRef.current = cards;
-  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}`;
+  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${JSON.stringify(dugga)}|${onlyStarred}`;
   useEffect(() => {
     if (!store) return;
     let cancelled = false;
     (async () => {
+      // Bara stjärnmärkta: urvalet krymper till de kort studenten markerat.
+      const starred = onlyStarred ? new Set(readStars()) : null;
+      const pool = starred ? cardsRef.current.filter((c) => starred.has(c.id)) : cardsRef.current;
       const ids = cardsRef.current.map((c) => c.id);
       let loaded: ProgressMap = {};
       let history: ReviewEntry[] = [];
@@ -117,7 +142,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       const now = new Date();
       const currentPrefs = readPrefs(window.localStorage);
       const phase = examPhase(parseExamDate(deck.exam_date), now);
-      const inSelection = filterCards(cardsRef.current, loaded, selection);
+      const inSelection = filterCards(pool, loaded, selection);
       const newRemaining = inSelection.filter((c) => !loaded[c.id] || loaded[c.id]?.state === 0).length;
       const plan = planNewCards({
         newRemaining,
@@ -127,7 +152,8 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       });
       const finalReview = mode === "fsrs" && phase.kind === "final";
       const maxNew = mode === "fsrs" && !finalReview ? (extraNew ?? plan.limit) : undefined;
-      const order = selectCardIds({ cards: cardsRef.current, progress: loaded, mode, selection, now, maxNew, finalReview });
+      const examSize = dugga ? duggaExamSize(dugga.size) : undefined;
+      const order = selectCardIds({ cards: pool, progress: loaded, mode, selection, now, maxNew, finalReview, examSize });
       setPrefs(currentPrefs);
       setProgress(loaded);
       setReviews(history);
@@ -140,6 +166,15 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     // selection och extraNew ingår via selectionKey.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store, mode, selectionKey, deck.exam_date]);
+
+  const timing = !!dugga?.timer && !!session && !session.finished;
+  useEffect(() => {
+    if (!timing) return;
+    const tick = () => setElapsed(Date.now() - startedAt.current.getTime());
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [timing]);
 
   const schedule = useMemo<ScheduleOptions | undefined>(
     () => (sessionPlan?.phase.kind === "upcoming" ? { maxInterval: sessionPlan.phase.maxInterval } : undefined),
@@ -165,6 +200,9 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     // Endast när kortet (eller dess position) byts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardKey]);
+
+  // Ledtrådar: alltid, utom i en dugga där studenten valt bort dem.
+  const hintAllowed = mode !== "exam" || !!dugga?.hints;
 
   const flip = useCallback(() => {
     if (!card || !cardKey) return;
@@ -213,6 +251,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       setAnnounce(confident ? `${sv.study.ratedAnnounce(rating)} ${sv.study.confidentWrong}` : sv.study.ratedAnnounce(rating));
       // Stämpla kortet, låt det glida ut, och visa först därefter nästa kort (på framsidan).
       setFeedback(rating);
+      playRatingSound(rating);
       feedbackTimer.current = setTimeout(
         () => {
           setFeedback(null);
@@ -268,7 +307,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           break;
         case "h":
         case "H":
-          if (card?.hint) {
+          if (card?.hint && hintAllowed) {
             e.preventDefault();
             setShowHint((v) => !v);
           }
@@ -278,7 +317,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [flip, rate, next, previous, card, mode]);
+  }, [flip, rate, next, previous, card, mode, hintAllowed]);
 
   const canRate = flipped && !!card && feedback === null;
 
@@ -349,6 +388,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         today={result?.today ?? null}
         deckSlug={deck.slug}
         onPrevious={mode !== "exam" && canGoPrevious(session) ? previous : undefined}
+        duration={dugga?.timer ? clock(elapsed) : null}
       />
     );
   }
@@ -364,7 +404,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           : null;
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl gap-4">
+    <div className="mx-auto grid w-full max-w-4xl gap-5">
       <h1 className="sr-only">
         {deck.title} – {sv.study.position(position + 1, total)}
       </h1>
@@ -379,9 +419,18 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           </span>
           <span className="truncate">{deck.title}</span>
         </Link>
-        <span data-testid="remaining" className="shrink-0 rounded-full bg-surface-2 px-3 py-1 font-semibold tabular-nums">
-          {mode === "exam" ? sv.study.examProgress(position + 1, total) : sv.study.remaining(remaining(session))}
-        </span>
+        <div className="flex shrink-0 items-center gap-2">
+          {dugga ? <Badge tone="accent">{sv.dugga.badge}</Badge> : null}
+          {dugga?.timer ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1 font-semibold tabular-nums" aria-label={`${sv.dugga.elapsed}: ${clock(elapsed)}`} data-testid="dugga-timer">
+              <Timer size={14} aria-hidden />
+              {clock(elapsed)}
+            </span>
+          ) : null}
+          <span data-testid="remaining" className="rounded-full bg-surface-2 px-3 py-1 font-semibold tabular-nums">
+            {mode === "exam" ? sv.study.examProgress(position + 1, total) : sv.study.remaining(remaining(session))}
+          </span>
+        </div>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
         <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${progressPct}%` }} />
@@ -398,13 +447,15 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
           cardId={card.id}
           front={card.front}
           back={card.back}
-          hint={mode === "exam" ? null : card.hint}
+          hint={hintAllowed ? card.hint : null}
           categoryTitle={categoryTitle(card.category_id)}
           categoryColorIndex={card.category_id ? (colorIndex.get(card.category_id) ?? 0) : 0}
           flipped={flipped}
           showHint={showHint}
           feedback={feedback}
           confidentWrong={confidentWrong}
+          starred={stars.has(card.id)}
+          onToggleStar={() => toggleStar(card.id)}
           onFlip={flip}
           onToggleHint={() => setShowHint((v) => !v)}
           onSwipeLeft={onSwipeLeft}
@@ -426,27 +477,11 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
 
       <div className="lg:mx-auto lg:w-full lg:max-w-xl">
         <RatingButtons disabled={!canRate} onRate={rate} intervals={intervals} />
-        <p className="mt-3 hidden text-center text-xs text-subtle [@media(hover:hover)]:block" aria-hidden="true">
-          {sv.study.keyboardHelp}
-        </p>
       </div>
 
-      {card ? (
-        <>
-          <p className="mt-1 text-center">
-            <button
-              type="button"
-              onClick={() => setReportOpen(true)}
-              className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
-              data-testid="report-open"
-            >
-              <Flag size={13} aria-hidden />
-              {sv.report.open}
-            </button>
-          </p>
-          <ReportDialog open={reportOpen} cardId={card.id} onClose={() => setReportOpen(false)} />
-        </>
-      ) : null}
+      <SessionToolbar onInfo={() => setHelpOpen(true)} onReport={() => setReportOpen(true)} canReport={!!card} />
+      <SessionHelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
+      {card ? <ReportDialog open={reportOpen} cardId={card.id} onClose={() => setReportOpen(false)} /> : null}
 
       {saveError ? (
         <p role="alert" className="rounded-lg bg-danger-soft px-4 py-2.5 text-sm font-medium text-danger">

@@ -113,7 +113,10 @@ test.describe("hemsidan", () => {
     await expect(page.getByTestId("home-knowledge")).toHaveText(/^0\s*%$/);
     await expectNoSeriousA11yViolations(page);
 
+    // Fortsätt plugga leder till kurssidan, där dagens pass är förvalt.
     await page.getByTestId("home-start").click();
+    await page.waitForURL(new RegExp(`/d/${DECK_SLUG}$`));
+    await page.getByTestId("start-session").click();
     await expect(page.getByTestId("flashcard")).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
   });
@@ -182,10 +185,11 @@ test.describe("dosering", () => {
   });
 });
 
-test.describe("provtenta", () => {
+test.describe("dugga", () => {
   test("slumpade kort ur en kategori, ingen tillbaka, resultat i procent, progressen orörd", async ({ page }) => {
     await page.goto(`/d/${DECK_SLUG}`);
-    await page.getByLabel("Provtenta").check();
+    await page.getByLabel("Dugga").check();
+    await expect(page.getByTestId("dugga-settings")).toBeVisible();
     await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check({ force: true });
     await expect(page.getByTestId("start-info")).toContainText("6 kort");
     await page.getByTestId("start-session").click();

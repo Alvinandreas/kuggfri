@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
+import { BookOpen, LifeBuoy } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getDecksForAbout } from "@/lib/content/queries";
 import { Logo } from "@/components/layout/Logo";
+import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
 export const metadata: Metadata = { title: sv.about.title };
 
 /**
+ * Om Kuggfri: vad tjänsten är, varför den finns, kurserna och vem som står bakom.
+ * Hur man använder den står på /hjalp.
+ *
  * Löptexten. Rubrikens avstånd uppåt kommer från .prose-body (globals.css) och ligger
  * utanför Tailwinds lager; här läggs bara det till som prose-body inte redan styr.
  */
@@ -31,9 +35,15 @@ export default async function AboutPage() {
           <p>{sv.about.whyBody}</p>
         </section>
 
-        <section className={sectionClass}>
-          <h2>{sv.about.how}</h2>
-          <p>{sv.about.howBody}</p>
+        {/* Länken till hjälpen ligger utanför .prose-body, som annars färgar och stryker under den. */}
+        <section>
+          <div className={sectionClass}>
+            <h2>{sv.about.how}</h2>
+            <p>{sv.about.howBody}</p>
+          </div>
+          <ActionList className="mt-4">
+            <ActionRow href="/hjalp" icon={LifeBuoy} title={sv.help.fromAbout} meta={sv.help.fromAboutMeta} />
+          </ActionList>
         </section>
 
         {/* Kurslistan ligger utanför .prose-body, som annars ger listan punkter och indrag. */}
@@ -62,6 +72,17 @@ export default async function AboutPage() {
               </li>
             ))}
           </ul>
+        </section>
+
+        {/* Samma uppgifter som i integritetspolicyn: ändras det ena ska det andra följa med. */}
+        <section className={sectionClass}>
+          <h2>Vem står bakom</h2>
+          <p>
+            Kuggfri byggs och drivs ideellt av en student vid Chalmers tekniska högskola. Tjänsten är inte en del av
+            Chalmers IT-miljö. Frågor om en kurs innehåll ställer du till den som sammanställt kursen, se
+            krediteringen ovan. Hittar du ett fel i ett enskilt kort rapporterar du det direkt från kortet, så
+            hamnar det hos kursens examinator.
+          </p>
         </section>
 
         <section>

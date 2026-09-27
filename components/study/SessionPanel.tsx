@@ -7,6 +7,7 @@ import type { StudyMode } from "@/lib/progress/types";
 import type { StudyPrefs } from "@/lib/progress/prefs";
 import type { DeckPlan } from "@/lib/study/deck-plan";
 import { DAILY_NEW_CHOICES, estimateMinutes } from "@/lib/study/plan";
+import { DUGGA_SIZES, duggaQuery, type DuggaSettings, type DuggaSize } from "@/lib/study/dugga";
 import { Badge } from "@/components/ui/Badge";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -38,15 +39,41 @@ type Props = {
   totalCards: number;
   prefs: StudyPrefs;
   onPrefs: (prefs: StudyPrefs) => void;
+  dugga: DuggaSettings;
+  onDugga: (settings: DuggaSettings) => void;
+  onlyStarred: boolean;
+  onOnlyStarred: (on: boolean) => void;
+  starredCount: number;
 };
 
 /**
  * Ditt pass: vad som startar när man trycker på knappen (läge, urval, antal kort och tid),
  * och passets inställningar. Står fast i höger kolumn på desktop.
  */
-export function SessionPanel({ mode, plan, selectedTitles, colorIndex, progressReady, firstVisit, totalCards, prefs, onPrefs }: Props) {
+export function SessionPanel({
+  mode,
+  plan,
+  selectedTitles,
+  colorIndex,
+  progressReady,
+  firstVisit,
+  totalCards,
+  prefs,
+  onPrefs,
+  dugga,
+  onDugga,
+  onlyStarred,
+  onOnlyStarred,
+  starredCount,
+}: Props) {
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
   const firstCount = Math.min(prefs.dailyNew, totalCards);
+  const isDugga = mode === "exam";
+  // Duggans regler och stjärnfiltret följer med i adressen till passet.
+  const suffix = `${isDugga ? duggaQuery(dugga) : ""}${onlyStarred ? "&stjarnor=1" : ""}`;
+  // Hur många kort urvalet har innan duggans tak, för alternativet "Alla (N)".
+  const available = plan.selectionCards.length;
+  const sizeOptions = DUGGA_SIZES.map((n) => ({ value: String(n), label: n === "alla" ? sv.dugga.questionsAll(available) : sv.dugga.questionsOption(n) }));
 
   return (
     <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
@@ -79,10 +106,28 @@ export function SessionPanel({ mode, plan, selectedTitles, colorIndex, progressR
         </div>
       ) : null}
 
+      {isDugga ? (
+        <div className="grid gap-3 rounded-lg bg-surface-2 p-4" data-testid="dugga-settings">
+          <p className="font-bold">{sv.dugga.settingsTitle}</p>
+          <div>
+            <p className="mb-1.5 text-sm font-semibold">{sv.dugga.questions}</p>
+            <Select
+              label={sv.dugga.questions}
+              value={String(dugga.size)}
+              onChange={(v) => onDugga({ ...dugga, size: (v === "alla" ? "alla" : Number(v)) as DuggaSize })}
+              options={sizeOptions}
+              data-testid="dugga-size"
+            />
+          </div>
+          <ToggleRow title={sv.dugga.hints} description={sv.dugga.hintsHelp} checked={dugga.hints} onChange={(v) => onDugga({ ...dugga, hints: v })} />
+          <ToggleRow title={sv.dugga.timer} description={sv.dugga.timerHelp} checked={dugga.timer} onChange={(v) => onDugga({ ...dugga, timer: v })} />
+        </div>
+      ) : null}
+
       <div className="grid gap-2">
         {canStart ? (
-          <Link href={plan.startHref} className={buttonClass("primary", "lg", "w-full")} data-testid="start-session">
-            {sv.deck.start}
+          <Link href={`${plan.startHref}${suffix}`} className={buttonClass("primary", "lg", "w-full")} data-testid="start-session">
+            {isDugga ? sv.dugga.start : sv.deck.start}
             <ArrowRight size={18} aria-hidden />
           </Link>
         ) : (
@@ -100,7 +145,7 @@ export function SessionPanel({ mode, plan, selectedTitles, colorIndex, progressR
             : `${sv.home.cards(selectionCount)} · cirka ${estimateMinutes(selectionCount)} min`}
         </span>
         {mode === "fsrs" && nothingDue && moreNew > 0 ? (
-          <Link href={plan.moreHref} className={buttonClass("outline", "md", "w-full")} data-testid="start-more">
+          <Link href={`${plan.moreHref}${suffix}`} className={buttonClass("outline", "md", "w-full")} data-testid="start-more">
             {sv.summary.continueNew(moreNew)}
           </Link>
         ) : null}
@@ -113,6 +158,13 @@ export function SessionPanel({ mode, plan, selectedTitles, colorIndex, progressR
             <Select label={sv.deck.dailyGoal} value={String(prefs.dailyNew)} onChange={(v) => onPrefs({ ...prefs, dailyNew: Number(v) })} options={DAILY_OPTIONS} data-testid="daily-new" />
             <p className="mt-1.5 text-muted">{sv.deck.dailyGoalHelp}</p>
           </div>
+          <ToggleRow
+            title={sv.session.onlyStarred}
+            description={sv.session.onlyStarredHelp(starredCount)}
+            checked={onlyStarred}
+            disabled={starredCount === 0}
+            onChange={onOnlyStarred}
+          />
           <ToggleRow
             title={sv.deck.weekdaysOnly}
             description={sv.deck.weekdaysOnlyHelp}

@@ -46,6 +46,8 @@ export function planDeckSession(input: {
   /** Valda kategorier. Tom lista = hela kursen. */
   selectedIds: readonly string[];
   dailyNew: number;
+  /** Duggans antal frågor. Undefined = EXAM_SIZE. */
+  examSize?: number;
   now?: Date;
 }): DeckPlan {
   const now = input.now ?? new Date();
@@ -60,7 +62,7 @@ export function planDeckSession(input: {
   // Slumpläget går alltid genom hela kursen, oavsett vilka kategorier som är valda.
   const effectiveSelection: Selection = input.mode === "random" ? { kind: "all" } : categorySelection;
   const selectionCount =
-    input.mode === "random" ? input.cards.length : input.mode === "exam" ? Math.min(EXAM_SIZE, selectionCards.length) : selectionCards.length;
+    input.mode === "random" ? input.cards.length : input.mode === "exam" ? Math.min(input.examSize ?? EXAM_SIZE, selectionCards.length) : selectionCards.length;
   const startHref = `/d/${input.deck.slug}/plugga?mode=${input.mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
 
   const phase = examPhase(parseExamDate(input.deck.exam_date), now);

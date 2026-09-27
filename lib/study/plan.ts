@@ -21,7 +21,7 @@ export const INTRO_MARGIN_DAYS = 4;
 /** De sista dagarna före tentan körs slutrepetition av hela urvalet. */
 export const FINAL_REVIEW_DAYS = 2;
 
-/** Provtentan: så många slumpade kort ur urvalet. */
+/** Duggan: så många slumpade kort ur urvalet om inget annat valts (se lib/study/dugga.ts). */
 export const EXAM_SIZE = 30;
 
 export function estimateMinutes(cards: number): number {

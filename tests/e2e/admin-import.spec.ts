@@ -16,7 +16,7 @@ test.describe("admin", () => {
 
   test("6. admin importerar en CSV och korten dyker upp i decket", async ({ page }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
-    await expect(page.getByRole("heading", { name: "Deck" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Kurser" })).toBeVisible();
     // Titeln strömmas efter skelettet i dev-läge; vänta in den innan axe körs.
     await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
@@ -103,7 +103,7 @@ test.describe("admin", () => {
 
     await page.goto(`${deckAdminUrl}/installningar`);
     await page.getByTestId("deck-publish").click();
-    await expect(page.getByText("Decket är publicerat och synligt för studenterna.")).toBeVisible();
+    await expect(page.getByText("Kursen är publicerad och synlig för studenterna.")).toBeVisible();
     await expect.poll(async () => (await visitor.request.get(`/d/${slug}`)).status(), { timeout: 15_000 }).toBe(200);
     await visitor.close();
 
@@ -120,13 +120,13 @@ test.describe("admin", () => {
     await page.goto(`${deckAdminUrl}/installningar`);
     await page.getByTestId("deck-publish").click();
     await page.getByRole("dialog").getByRole("button", { name: "Avpublicera" }).click();
-    await expect(page.getByText("Decket är avpublicerat.")).toBeVisible();
+    await expect(page.getByText("Kursen är avpublicerad.")).toBeVisible();
     await page.goto(`/d/${slug}`);
     await expect(page.getByTestId("unpublished-banner")).toBeVisible();
 
     // Ta bort decket: kräver att titeln skrivs in.
     await page.goto(`${deckAdminUrl}/installningar`);
-    await page.getByRole("button", { name: "Ta bort deck" }).click();
+    await page.getByRole("button", { name: "Ta bort kurs" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("button", { name: "Bekräfta" })).toBeDisabled();
     await dialog.getByRole("textbox").fill(title);

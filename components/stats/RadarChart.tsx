@@ -162,15 +162,6 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
                 );
               })}
             </svg>
-            {hover !== null && axes[hover] ? (
-              <div role="status" className="anim-fade-in pointer-events-none absolute left-1/2 top-0 max-w-[95%] -translate-x-1/2 truncate whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs shadow-pop">
-                <span className="font-medium">{axes[hover].label}</span>
-                <span className="text-muted"> · </span>
-                {sv.stats.seriesLearned} {axes[hover].learned}/{axes[hover].total}
-                <span className="text-muted"> · </span>
-                {sv.stats.seriesPartial} {axes[hover].partial}/{axes[hover].total}
-              </div>
-            ) : null}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted" aria-hidden="true">
             <span className="inline-flex items-center gap-1.5">

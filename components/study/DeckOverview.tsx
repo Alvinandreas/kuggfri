@@ -13,11 +13,17 @@ import { DEFAULT_DUGGA, duggaExamSize, type DuggaSettings } from "@/lib/study/du
 import { useStars } from "@/lib/progress/stars";
 import { Badge } from "@/components/ui/Badge";
 import { CategoryTable, type SortMode } from "./CategoryTable";
-import { ModePicker } from "./ModePicker";
+import { ModePicker, type PickerMode } from "./ModePicker";
+import { StarredDialog } from "./StarredDialog";
 import { SessionPanel } from "./SessionPanel";
 import { ShareDeck } from "./ShareDeck";
 
 const MODES: StudyMode[] = ["fsrs", "tricky", "free", "random", "exam"];
+
+/** Läget som passet faktiskt körs i: Stjärnmärkta är fri repetition av de markerade korten. */
+function runMode(pick: PickerMode): StudyMode {
+  return pick === "starred" ? "free" : pick;
+}
 
 type Props = {
   deck: {
@@ -30,7 +36,8 @@ type Props = {
     exam_date: string | null;
   };
   categories: { id: string; title: string }[];
-  cards: SelectableCard[];
+  /** Med frågetexten, för listan över stjärnmärkta kort. */
+  cards: (SelectableCard & { front: string })[];
   userId: string | null;
   /** Förvalt läge och område (?lage=, ?omrade=), t.ex. från Duggan på hemsidan. */
   initialMode?: StudyMode;
@@ -46,10 +53,11 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [reviews, setReviews] = useState<ReviewEntry[]>([]);
-  const [mode, setMode] = useState<StudyMode>(initialMode);
+  const [pick, setPick] = useState<PickerMode>(initialMode);
+  const mode = runMode(pick);
+  const [starredOpen, setStarredOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>(initialAreaId ? [initialAreaId] : []);
   const [dugga, setDugga] = useState<DuggaSettings>(DEFAULT_DUGGA);
-  const [onlyStarred, setOnlyStarred] = useState(false);
   const { stars } = useStars();
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
@@ -134,20 +142,20 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
 
   // Bara stjärnmärkta: planen räknar på de markerade korten, så siffrorna stämmer med passet.
   const starredCount = useMemo(() => cards.filter((c) => stars.has(c.id)).length, [cards, stars]);
-  const planCards = useMemo(() => (onlyStarred ? cards.filter((c) => stars.has(c.id)) : cards), [onlyStarred, cards, stars]);
+  const starredCards = useMemo(() => cards.filter((c) => stars.has(c.id)), [cards, stars]);
 
   // En plan per läge med samma urval: ger lägesrutornas siffror och det valda passet.
   const plans = useMemo(
-    () =>
-      Object.fromEntries(
-        MODES.map((m) => [
-          m,
-          planDeckSession({ deck, cards: planCards, progress, reviews, mode: m, selectedIds, dailyNew: prefs.dailyNew, examSize: duggaExamSize(dugga.size) }),
-        ]),
-      ) as Record<StudyMode, DeckPlan>,
-    [deck, planCards, progress, reviews, selectedIds, prefs.dailyNew, dugga.size],
+    () => {
+      const base = { deck, progress, reviews, selectedIds, dailyNew: prefs.dailyNew, examSize: duggaExamSize(dugga.size) };
+      return {
+        ...Object.fromEntries(MODES.map((m) => [m, planDeckSession({ ...base, cards, mode: m })])),
+        starred: planDeckSession({ ...base, cards: starredCards, mode: "free" }),
+      } as Record<PickerMode, DeckPlan>;
+    },
+    [deck, cards, starredCards, progress, reviews, selectedIds, prefs.dailyNew, dugga.size],
   );
-  const plan = plans[mode];
+  const plan = plans[pick];
   const selectedTitles = categories.filter((c) => selectedSet.has(c.id));
 
   return (
@@ -195,7 +203,7 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
         {/* Vänster: läge, områden och delning. På mobil kommer passet (Starta) direkt efter lägena. */}
         <div className="contents lg:grid lg:gap-8">
           <div className="order-1 lg:order-none">
-            <ModePicker mode={mode} onMode={setMode} plans={plans} progressReady={progress !== null} totalCards={cards.length} />
+            <ModePicker mode={pick} onMode={setPick} plans={plans} progressReady={progress !== null} totalCards={cards.length} />
           </div>
           <CategoryTable
             rows={categoryRows}
@@ -215,6 +223,7 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
 
         <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
           <SessionPanel
+            pick={pick}
             mode={mode}
             plan={plan}
             selectedTitles={selectedTitles}
@@ -226,10 +235,10 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
             onPrefs={updatePrefs}
             dugga={dugga}
             onDugga={setDugga}
-            onlyStarred={onlyStarred && starredCount > 0}
-            onOnlyStarred={setOnlyStarred}
             starredCount={starredCount}
+            onShowStarred={() => setStarredOpen(true)}
           />
+          <StarredDialog open={starredOpen} onClose={() => setStarredOpen(false)} cards={cards} categories={tableCategories} colorIndex={colorIndex} />
         </div>
       </div>
     </div>

@@ -46,7 +46,7 @@ export default async function DeckPage({ params, searchParams }: { params: Param
           exam_date: data.deck.exam_date,
         }}
         categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
-        cards={data.cards.map((c) => ({ id: c.id, category_id: c.category_id, sort_order: c.sort_order }))}
+        cards={data.cards.map((c) => ({ id: c.id, category_id: c.category_id, sort_order: c.sort_order, front: c.front }))}
         userId={user?.id ?? null}
         initialMode={isStudyMode(rawMode) ? rawMode : "fsrs"}
         initialAreaId={rawArea && data.categories.some((c) => c.id === rawArea) ? rawArea : null}

@@ -149,7 +149,7 @@ test.describe("dosering", () => {
 
     // Vänt kort visar intervall per skattning i schemalagt läge.
     await page.getByTestId("flip").click();
-    await expect(page.getByTestId("rate-4")).toContainText(/om \d+ dagar|i morgon/);
+    await expect(page.getByTestId("rate-4")).toHaveAttribute("aria-label", /om \d+ dagar|i morgon/);
     // Tillbaka till framsidan så att hjälpfunktionen kan vända själv.
     await page.getByTestId("flip").click();
     await expect(page.getByTestId("flashcard")).toHaveAttribute("data-flipped", "false");

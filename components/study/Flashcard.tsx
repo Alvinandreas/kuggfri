@@ -22,8 +22,6 @@ type Props = {
   showHint: boolean;
   /** Skattning som just gavs: kortet stämplas och glider ut åt vänster. */
   feedback: SelfRating | null;
-  /** Vändes snabbt men skattades 1–2: tydligare återkoppling och kortet stannar längre (hypercorrection). */
-  confidentWrong?: boolean;
   /** Stjärnmärkt av studenten (bokmärke). */
   starred: boolean;
   onToggleStar: () => void;
@@ -50,7 +48,6 @@ export function Flashcard({
   flipped,
   showHint,
   feedback,
-  confidentWrong = false,
   starred,
   onToggleStar,
   onFlip,
@@ -96,7 +93,7 @@ export function Flashcard({
 
   return (
     <div className="card-stack" data-testid="flashcard" data-card-id={cardId} data-flipped={flipped}>
-      <div className={`flip-scene card-enter ${feedback !== null ? (confidentWrong ? "card-leave-slow" : "card-leave") : ""}`.trim()}>
+      <div className={`flip-scene card-enter ${feedback !== null ? "card-leave" : ""}`.trim()}>
         <div
           className={`flip-inner grid cursor-pointer select-none rounded-lg ${feedback !== null ? `rate-pulse rate-pulse-${feedback}` : ""} ${
             feedback !== null && feedback <= 2 ? "rate-shake" : ""
@@ -146,11 +143,6 @@ export function Flashcard({
             </div>
             {feedback !== null ? <Stamp rating={feedback} /> : null}
             {feedback !== null && feedback >= 4 ? <span aria-hidden="true" className={`rate-burst rate-burst-${feedback}`} /> : null}
-            {feedback !== null && confidentWrong ? (
-              <p className="confident-note mt-3 rounded-lg border border-rate-1/70 bg-rate-1/15 px-4 py-2.5 text-center text-sm font-medium" data-testid="confident-note">
-                {sv.study.confidentWrong}
-              </p>
-            ) : null}
           </section>
         </div>
       </div>

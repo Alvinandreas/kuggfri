@@ -25,6 +25,10 @@ export const sv = {
     admin: "Admin",
     designSystem: "Designsystem",
     myStats: "Min statistik",
+    infoNav: "Hjälp och information",
+    infoPager: "Fler informationssidor",
+    previous: "Föregående",
+    next: "Nästa",
     help: "Hjälp",
     collapse: "Fäll ihop sidomenyn",
     expand: "Fäll ut sidomenyn",
@@ -174,7 +178,7 @@ export const sv = {
       },
       star: {
         title: "Stjärnmärk",
-        body: "Stjärnan på kortet markerar det. Välj ”Bara stjärnmärkta kort” i inställningarna för passet för att plugga bara dem.",
+        body: "Stjärnan på kortet markerar det. Välj läget ”Stjärnmärkta” på kurssidan för att plugga bara dem, och se alla dina stjärnmärkta kort där.",
       },
     },
     homeBody:
@@ -221,7 +225,7 @@ export const sv = {
       },
     ],
     moreBody:
-      "Gäller det ett enskilt kort använder du flaggan under passet. Frågor om en kurs innehåll ställer du till den som sammanställt kursen; krediteringen finns på Om Kuggfri.",
+      "Gäller det ett enskilt kort använder du flaggan under passet. Frågor om kursens innehåll går till examinatorn, allt annat till den som driver Kuggfri.",
     aboutLink: "Om Kuggfri",
     aboutLinkMeta: "Vad Kuggfri är, kurserna och vem som bygger det",
     /** Länkblocket på Om-sidan. */
@@ -395,6 +399,9 @@ export const sv = {
     start: "Starta",
     chooseMode: "Välj läge",
     // Korta förklaringar för lägesrutorna på kurssidan.
+    modeStarred: "Stjärnmärkta",
+    modeStarredShort: "Korten du markerat med en stjärna.",
+    modeStarredHelp: "Bläddra fritt bland dina stjärnmärkta kort. Påverkar inte schemat.",
     modeFsrsShort: "Nya och förfallna kort. Schemat sköter resten.",
     modeTrickyShort: "Bara korten du har svårast för.",
     modeFreeShort: "Bläddra fritt. Påverkar inte schemat.",
@@ -403,6 +410,7 @@ export const sv = {
     metaToday: (n: number) => (n === 1 ? "1 kort i dag" : `${n} kort i dag`),
     metaDone: "Klart för i dag",
     metaExam: (n: number) => (n === 1 ? "1 fråga" : `${n} frågor`),
+    metaStarred: (n: number) => (n === 1 ? "1 stjärnmärkt kort" : `${n} stjärnmärkta kort`),
     yourSession: "Ditt pass",
     sessionSettings: "Inställningar för passet",
     modeFsrs: "Schemalagd repetition",
@@ -523,9 +531,9 @@ export const sv = {
     rate: {
       1: "Inte alls",
       2: "Nästan",
-      3: "Med möda",
+      3: "Delvis",
       4: "Bra",
-      5: "Direkt",
+      5: "Klockrent",
     } as Record<1 | 2 | 3 | 4 | 5, string>,
     /** Kort intervalltext på knappen: när kortet kommer tillbaka. */
     keyboardHelp: "Mellanslag vänder · 1–5 skattar · ← → bläddrar · H ledtråd",
@@ -550,7 +558,6 @@ export const sv = {
     saveError: "Kunde inte spara skattningen. Kontrollera anslutningen.",
     queued: (n: number) => (n === 1 ? "1 skattning väntar på anslutning och skickas automatiskt." : `${n} skattningar väntar på anslutning och skickas automatiskt.`),
     examProgress: (i: number, total: number) => `Fråga ${i} av ${total}`,
-    confidentWrong: "Snabbt vänt, lågt skattat. Precis sådana kort fastnar bäst nu: läs svaret en gång till.",
   },
   summary: {
     title: "Sessionen är klar",
@@ -897,7 +904,7 @@ export const sv = {
       "Inga kostnader, ingen reklam, ingen spårning. Studenterna skapar ett konto med namn och e-post; all data lagras inom EU.",
     ],
     teachersOutro:
-      "Vill du använda Kuggfri i din kurs, med egen examinatorsvy? Hör av dig till den som sammanställt kursen, se krediteringen ovan.",
+      "Vill du använda Kuggfri i din kurs, med egen examinatorsvy? Hör av dig till den som driver Kuggfri, se kontaktuppgifterna ovan.",
     privacy: "Integritet",
     privacyBody:
       "Vi samlar inte in något utöver e-post, valfritt visningsnamn och studieprogress för den som väljer att skapa konto. Läs mer i integritetspolicyn.",
@@ -945,13 +952,15 @@ export const sv = {
       ["H", "Visa ledtråd"],
     ] as ReadonlyArray<readonly [string, string]>,
     helpButtonsTitle: "Knapparna",
-    helpStar: "Stjärnan markerar kort du vill återkomma till. Välj Bara stjärnmärkta kort under passets inställningar på kurssidan.",
+    helpStar: "Stjärnan markerar kort du vill återkomma till. Välj läget Stjärnmärkta på kurssidan för att plugga bara dem.",
     helpSound: "Högtalaren slår av och på ljudet när du skattar ett kort.",
     helpReport: "Flaggan skickar en felrapport om kortet till kursens examinator.",
     helpSwipe: "På mobilen kan du också svepa: vänster skattar 1, höger skattar 5.",
     helpSchedule: "Läs mer om schemat, lägena och duggan under Hjälp.",
-    onlyStarred: "Bara stjärnmärkta kort",
-    onlyStarredHelp: (n: number) => (n === 0 ? "Stjärnmärk kort under passet för att kunna plugga bara dem." : n === 1 ? "1 stjärnmärkt kort." : `${n} stjärnmärkta kort.`),
+    starredTitle: "Dina stjärnmärkta kort",
+    starredShow: (n: number) => (n === 1 ? "Visa ditt stjärnmärkta kort" : `Visa dina ${n} stjärnmärkta kort`),
+    starredEmpty: "Du har inte stjärnmärkt några kort än. Tryck på stjärnan uppe till höger på ett kort under passet.",
+    starredHelp: "Tryck på stjärnan för att ta bort ett kort ur listan.",
   },
   dugga: {
     settingsTitle: "Duggans regler",

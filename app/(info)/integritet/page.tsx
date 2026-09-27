@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import { Card } from "@/components/ui/Card";
+import { CONTACTS } from "@/lib/contact";
 
 export const metadata: Metadata = { title: sv.privacy.title };
 
@@ -86,8 +87,9 @@ export default function PrivacyPage() {
           <p>
             Kuggfri drivs ideellt av en student vid Chalmers tekniska högskola, som är personuppgiftsansvarig för
             behandlingen som beskrivs här. Tjänsten är inte en del av Chalmers IT-miljö, och Chalmers är inte
-            personuppgiftsansvarig. Kontaktuppgifter finns på <Link href="/om">Om Kuggfri</Link>. Vi har ingen
-            utsedd dataskyddsombud, eftersom verksamheten inte kräver det.
+            personuppgiftsansvarig. Frågor om dina uppgifter skickar du till{" "}
+            <a href={`mailto:${CONTACTS.operator.email}`}>{CONTACTS.operator.email}</a> ({CONTACTS.operator.name}). Vi har
+            ingen utsedd dataskyddsombud, eftersom verksamheten inte kräver det.
           </p>
         </section>
 

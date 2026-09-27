@@ -30,8 +30,8 @@ export function RatingButtons({ disabled, onRate, intervals }: Props) {
       <legend className="sr-only">{sv.study.rateLabel}</legend>
       <div className="grid grid-cols-5 gap-2">
         {SELF_RATINGS.map((r) => (
-          // Namnet på skattningen står i etiketten vid hovring och i infodialogen, inte på knappen.
-          <Tooltip key={r} label={sv.study.rate[r]} className="w-full">
+          // Namnet (och i schemalagt läge när kortet kommer tillbaka) står i etiketten vid hovring, inte på knappen.
+          <Tooltip key={r} label={intervals ? `${sv.study.rate[r]} · ${intervals[r]}` : sv.study.rate[r]} className="w-full">
           <button
             type="button"
             disabled={disabled}
@@ -40,17 +40,12 @@ export function RatingButtons({ disabled, onRate, intervals }: Props) {
             data-testid={`rate-${r}`}
             className={cx(
               "flex w-full select-none flex-col items-center justify-center rounded-lg border-2 px-1 text-fg transition-[opacity,transform] duration-150 ease-out active:scale-[0.96] disabled:opacity-35",
-              intervals ? "h-16" : "h-14",
+              "h-14",
               ratingClass[r],
               !disabled && "hover:-translate-y-0.5 hover:opacity-90",
             )}
           >
             <span className="text-xl font-extrabold leading-none">{r}</span>
-            {intervals ? (
-              <span className="mt-1 text-[0.6rem] leading-none text-muted tabular-nums" aria-hidden="true">
-                {intervals[r]}
-              </span>
-            ) : null}
           </button>
           </Tooltip>
         ))}

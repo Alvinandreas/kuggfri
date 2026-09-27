@@ -7,6 +7,7 @@ import { Logo } from "@/components/layout/Logo";
 import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { ContactCards } from "@/components/layout/ContactCards";
 
 export const metadata: Metadata = { title: sv.about.title };
 
@@ -79,11 +80,11 @@ export default async function AboutPage() {
           <h2>Vem står bakom</h2>
           <p>
             Kuggfri byggs och drivs ideellt av en student vid Chalmers tekniska högskola. Tjänsten är inte en del av
-            Chalmers IT-miljö. Frågor om en kurs innehåll ställer du till den som sammanställt kursen, se
-            krediteringen ovan. Hittar du ett fel i ett enskilt kort rapporterar du det direkt från kortet, så
-            hamnar det hos kursens examinator.
+            Chalmers IT-miljö. Hittar du ett fel i ett enskilt kort rapporterar du det direkt från kortet, så
+            hamnar det hos kursens examinator. Annars når du oss här:
           </p>
         </section>
+        <ContactCards />
 
         <section>
           <div className={sectionClass}>

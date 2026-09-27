@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, Star } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { StudyMode } from "@/lib/progress/types";
+import type { PickerMode } from "./ModePicker";
 import type { StudyPrefs } from "@/lib/progress/prefs";
 import type { DeckPlan } from "@/lib/study/deck-plan";
 import { DAILY_NEW_CHOICES, estimateMinutes } from "@/lib/study/plan";
@@ -18,7 +19,8 @@ import { ToggleRow } from "@/components/ui/Toggle";
 
 const DAILY_OPTIONS = DAILY_NEW_CHOICES.map((n) => ({ value: String(n), label: `${sv.deck.newCards(n)} per dag` }));
 
-const MODE_TITLES: Record<StudyMode, string> = {
+const MODE_TITLES: Record<PickerMode, string> = {
+  starred: sv.deck.modeStarred,
   fsrs: sv.deck.modeFsrs,
   tricky: sv.deck.modeTricky,
   free: sv.deck.modeFree,
@@ -27,6 +29,8 @@ const MODE_TITLES: Record<StudyMode, string> = {
 };
 
 type Props = {
+  /** Valt läge på kurssidan (Stjärnmärkta körs som fri repetition). */
+  pick: PickerMode;
   mode: StudyMode;
   plan: DeckPlan;
   /** Valda kategorier, i kursens ordning. Tom lista betyder hela kursen. */
@@ -41,9 +45,8 @@ type Props = {
   onPrefs: (prefs: StudyPrefs) => void;
   dugga: DuggaSettings;
   onDugga: (settings: DuggaSettings) => void;
-  onlyStarred: boolean;
-  onOnlyStarred: (on: boolean) => void;
   starredCount: number;
+  onShowStarred: () => void;
 };
 
 /**
@@ -51,6 +54,7 @@ type Props = {
  * och passets inställningar. Står fast i höger kolumn på desktop.
  */
 export function SessionPanel({
+  pick,
   mode,
   plan,
   selectedTitles,
@@ -62,22 +66,22 @@ export function SessionPanel({
   onPrefs,
   dugga,
   onDugga,
-  onlyStarred,
-  onOnlyStarred,
   starredCount,
+  onShowStarred,
 }: Props) {
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
   const firstCount = Math.min(prefs.dailyNew, totalCards);
   const isDugga = mode === "exam";
   // Duggans regler och stjärnfiltret följer med i adressen till passet.
-  const suffix = `${isDugga ? duggaQuery(dugga) : ""}${onlyStarred ? "&stjarnor=1" : ""}`;
+  const isStarred = pick === "starred";
+  const suffix = `${isDugga ? duggaQuery(dugga) : ""}${isStarred ? "&stjarnor=1" : ""}`;
   // Hur många kort urvalet har innan duggans tak, för alternativet "Alla (N)".
   const available = plan.selectionCards.length;
   const sizeOptions = DUGGA_SIZES.map((n) => ({ value: String(n), label: n === "alla" ? sv.dugga.questionsAll(available) : sv.dugga.questionsOption(n) }));
 
   return (
     <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
-      <CardHeader id="pass-rubrik" title={sv.deck.yourSession} action={<Badge tone="accent">{MODE_TITLES[mode]}</Badge>} spacing="none" />
+      <CardHeader id="pass-rubrik" title={sv.deck.yourSession} action={<Badge tone="accent">{MODE_TITLES[pick]}</Badge>} spacing="none" />
 
       {firstVisit ? (
         <div className="flex gap-3 rounded-lg bg-surface-2 p-4 text-sm" data-testid="first-visit">
@@ -87,6 +91,18 @@ export function SessionPanel({
             <p className="mt-0.5 text-muted">{sv.deck.firstVisitBody(firstCount, estimateMinutes(firstCount))}</p>
           </div>
         </div>
+      ) : null}
+
+      {isStarred ? (
+        <button
+          type="button"
+          onClick={onShowStarred}
+          className="flex items-center gap-3 rounded-lg bg-surface-2 p-4 text-left transition-colors hover:bg-surface-3"
+          data-testid="show-starred"
+        >
+          <Star size={18} aria-hidden fill="currentColor" style={{ color: "var(--chart-3)" }} className="shrink-0" />
+          <span className="font-semibold">{starredCount === 0 ? sv.session.starredTitle : sv.session.starredShow(starredCount)}</span>
+        </button>
       ) : null}
 
       {mode !== "random" ? (
@@ -158,13 +174,6 @@ export function SessionPanel({
             <Select label={sv.deck.dailyGoal} value={String(prefs.dailyNew)} onChange={(v) => onPrefs({ ...prefs, dailyNew: Number(v) })} options={DAILY_OPTIONS} data-testid="daily-new" />
             <p className="mt-1.5 text-muted">{sv.deck.dailyGoalHelp}</p>
           </div>
-          <ToggleRow
-            title={sv.session.onlyStarred}
-            description={sv.session.onlyStarredHelp(starredCount)}
-            checked={onlyStarred}
-            disabled={starredCount === 0}
-            onChange={onOnlyStarred}
-          />
           <ToggleRow
             title={sv.deck.weekdaysOnly}
             description={sv.deck.weekdaysOnlyHelp}

@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { cx } from "@/components/ui/cx";
+import { ContactCards } from "@/components/layout/ContactCards";
 
 export const metadata: Metadata = { title: sv.help.title };
 
@@ -318,6 +319,7 @@ export default function HelpPage() {
         </HelpSection>
 
         <HelpSection id="mer-hjalp" lead={t.moreBody}>
+          <ContactCards />
           <ActionList>
             <ActionRow href="/om" icon={Info} title={t.aboutLink} meta={t.aboutLinkMeta} />
           </ActionList>

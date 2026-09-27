@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BookOpen, CircleCheckBig, Flame } from "lucide-react";
+import { ArrowRight, BookOpen, CircleCheckBig, Flame, GraduationCap, Target } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { estimateKnowledge } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
@@ -11,13 +11,13 @@ import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { buildProgressStats, type ProgressStats } from "@/lib/stats/progress-stats";
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
 import { estimateMinutes, parseExamDate } from "@/lib/study/plan";
-import { categoryStats, type SelectableCard } from "@/lib/study/selection";
+import { categoryStats, type CategoryStats, type SelectableCard } from "@/lib/study/selection";
 import { percent } from "@/lib/text/percent";
-import { BarChart } from "@/components/stats/BarChart";
 import { RadarBars, RadarChart, type RadarAxis } from "@/components/stats/RadarChart";
-import { ShareReadiness } from "@/components/stats/ShareReadiness";
+import { CategoryFocusDialog } from "@/components/stats/CategoryFocusDialog";
 import { StatTile } from "@/components/stats/StatTile";
 import { Badge } from "@/components/ui/Badge";
+import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { LinkButton } from "@/components/ui/Button";
 import { Card, CardHeader, CardLink, SectionTitle } from "@/components/ui/Card";
 import { Countdown } from "@/components/ui/Countdown";
@@ -43,6 +43,10 @@ type DeckView = {
   /** Nyckeltal för just den här kursen. */
   stats: ProgressStats;
   axes: RadarAxis[];
+  categoryStats: CategoryStats[];
+  /** Genvägar på hemsidan: kluriga kort och provtenta över hela kursen. */
+  trickyPlan: DeckPlan;
+  examPlan: DeckPlan;
   lastActivity: number;
   exam: Date | null;
 };
@@ -71,6 +75,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [hour, setHour] = useState<number | null>(null);
   const [axisHover, setAxisHover] = useState<number | null>(null);
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   const allIds = useMemo(() => decks.flatMap((d) => d.cards.map((c) => c.id)), [decks]);
 
@@ -125,6 +130,9 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
         knowledge: estimateKnowledge(ids, p, now).share,
         stats: buildProgressStats({ cardIds: ids, progress: p, reviews, weekdaysOnly: prefs.weekdaysOnly, now }),
         axes,
+        categoryStats: perCategory,
+        trickyPlan: planDeckSession({ deck, cards: deck.cards, progress, reviews, mode: "tricky", selectedIds: [], dailyNew: prefs.dailyNew, now }),
+        examPlan: planDeckSession({ deck, cards: deck.cards, progress, reviews, mode: "exam", selectedIds: [], dailyNew: prefs.dailyNew, now }),
         lastActivity: reviews.reduce((max, r) => (idSet.has(r.card_id) ? Math.max(max, Date.parse(r.reviewed_at)) : max), 0),
         exam: examStart(deck.exam_date),
       };
@@ -173,25 +181,23 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
         </Card>
       ) : (
         <div className="grid gap-6">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
             <CourseCard view={primary} loading={loading} />
-            {/* Under xl flyter sidokolumnen in i flödet med dagens pass först: knappen ska synas utan att scrolla. */}
-            <div className="contents xl:grid xl:content-start xl:gap-6">
-              <TodayCard view={primary} loading={loading} className="order-first xl:order-none" />
-              {overall && overall.hasReviews ? (
-                <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 4 }}>
-                  <CardHeader title={sv.stats.reviewsPerDay} description={sv.stats.reviewsPerDayHelp} spacing="sm" />
-                  <BarChart
-                    title={sv.stats.reviewsPerDay}
-                    hideTitle
-                    points={overall.series.map((p) => ({ key: p.day, label: p.label, value: p.reviews }))}
-                    formatValue={(v) => sv.stats.cards(v)}
-                  />
-                </Card>
-              ) : null}
-            </div>
+            {/* På smala skärmar kommer dagens pass först: knappen ska synas utan att scrolla. */}
+            <TodayCard view={primary} loading={loading} className="order-first xl:order-none" />
           </div>
-          <KnowledgeCard view={primary} loading={loading} hover={axisHover} onHover={setAxisHover} />
+          <KnowledgeCard view={primary} loading={loading} hover={axisHover} onHover={setAxisHover} onSelect={setFocusIndex} />
+          <CategoryFocusDialog
+            open={focusIndex !== null}
+            onClose={() => setFocusIndex(null)}
+            deck={primary.deck}
+            cards={primary.deck.cards}
+            category={focusIndex === null ? null : (primary.axes[focusIndex] ? { id: primary.axes[focusIndex].key, title: primary.axes[focusIndex].label, colorIndex: focusIndex } : null)}
+            stats={focusIndex === null ? undefined : primary.categoryStats.find((c) => c.categoryId === primary.axes[focusIndex]?.key)}
+            progress={progress}
+            reviews={reviews}
+            dailyNew={prefs.dailyNew}
+          />
         </div>
       )}
 
@@ -233,12 +239,12 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
   );
 }
 
-/** Kursen i överblick: kunskapsestimat, fyra nyckeltal och delning. */
+/** Kursen i överblick: kunskapsestimat och fyra nyckeltal på en rad. */
 function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
   const { deck, exam, knowledge, stats } = view;
   const examFuture = exam !== null && exam.getTime() > Date.now();
   return (
-    <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 1 }} data-testid="home-course">
+    <Card padding="lg" className="anim-fade-up flex flex-col" style={{ ["--i" as string]: 1 }} data-testid="home-course">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent-ink">
@@ -249,25 +255,16 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
             <p className="text-sm text-muted">{[deck.course_code, sv.home.cards(deck.cards.length)].filter(Boolean).join(" · ")}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {exam && examFuture ? (
-            <Countdown to={exam} label={sv.dashboard.examCountdown} />
-          ) : exam ? (
-            <Badge tone="outline">{sv.dashboard.examPast}</Badge>
-          ) : null}
-          <Link
-            href={`/d/${deck.slug}`}
-            aria-label={`${sv.dashboard.courseSettings}: ${deck.title}`}
-            title={sv.dashboard.courseSettings}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-strong transition-colors hover:bg-surface-2"
-          >
-            <ArrowUpRight size={18} aria-hidden />
-          </Link>
-        </div>
+        {exam && examFuture ? (
+          <Countdown to={exam} label={sv.dashboard.examCountdown} />
+        ) : exam ? (
+          <Badge tone="outline">{sv.dashboard.examPast}</Badge>
+        ) : null}
       </div>
 
-      <div className="mt-7 grid gap-6 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:items-center">
-        <div title={sv.dashboard.knowledgeHelp}>
+      {/* Kunskapsestimatet: stort tal till vänster, stapel och underlag till höger. */}
+      <div className="mt-7 flex flex-wrap items-end gap-x-8 gap-y-4" title={sv.dashboard.knowledgeHelp}>
+        <div>
           {loading ? (
             <Skeleton className="h-16 w-32" />
           ) : (
@@ -277,73 +274,78 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
             </p>
           )}
           <p className="mt-2 font-bold">{sv.dashboard.knowledge}</p>
-          <ProgressBar value={loading ? 0 : knowledge} label={sv.dashboard.knowledge} size="md" className="mt-3" />
-          <p className="mt-2 text-sm text-muted">{loading ? " " : sv.deck.seen(stats.seen, stats.totalCards)}</p>
         </div>
-        {loading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-24" />
-            ))}
-          </div>
-        ) : (
-          <dl className="grid grid-cols-2 gap-3">
-            <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${percent(stats.learned, stats.totalCards)} % av ${stats.totalCards}`} tone="green" />
-            <StatTile
-              label={sv.stats.streak}
-              help={sv.stats.streakHelp}
-              value={`${stats.streak}`}
-              sub={stats.freezeUsedRecently ? sv.summary.freezeUsed : sv.summary.freezesLeft(stats.freezesLeft)}
-              tone="navy"
-            />
-            <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
-            <StatTile label={sv.stats.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
-          </dl>
-        )}
+        <div className="min-w-48 flex-1 pb-1">
+          <ProgressBar value={loading ? 0 : knowledge} label={sv.dashboard.knowledge} size="md" />
+          <p className="mt-2 text-sm text-muted" data-testid="home-seen">
+            {loading ? " " : sv.deck.seen(stats.seen, stats.totalCards)}
+          </p>
+        </div>
       </div>
 
-      {!loading && stats.knowledge.reviewed > 0 ? (
-        <div className="mt-6 border-t border-line pt-5">
-          <ShareReadiness
-            card={{
-              deckTitle: deck.title,
-              share: stats.knowledge.share,
-              streak: stats.streak,
-              reviewed: stats.knowledge.reviewed,
-              total: stats.totalCards,
-              url: `kuggfri.com/d/${deck.slug}`,
-              date: new Date(),
-            }}
-          />
+      {loading ? (
+        <div className="mt-auto grid grid-cols-2 gap-3 pt-6 sm:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
         </div>
-      ) : null}
+      ) : (
+        <dl className="mt-auto grid grid-cols-2 gap-3 pt-6 sm:grid-cols-4">
+          <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${percent(stats.learned, stats.totalCards)} % av ${stats.totalCards}`} tone="green" />
+          <StatTile
+            label={sv.stats.streak}
+            help={sv.stats.streakHelp}
+            value={`${stats.streak}`}
+            sub={stats.freezeUsedRecently ? sv.summary.freezeUsed : sv.summary.freezesLeft(stats.freezesLeft)}
+            tone="navy"
+          />
+          <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
+          <StatTile label={sv.dashboard.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1)} sub="av 5" tone="violet" />
+        </dl>
+      )}
     </Card>
   );
 }
 
-/** Radardiagrammet och kategoristaplarna bredvid varandra; hover följs åt mellan dem. */
-function KnowledgeCard({ view, loading, hover, onHover }: { view: DeckView; loading: boolean; hover: number | null; onHover: (i: number | null) => void }) {
+/**
+ * Radardiagrammet och kategoristaplarna bredvid varandra; hover följs åt mellan dem, och
+ * ett klick på ett område (i diagrammet eller listan) öppnar det i en dialog.
+ */
+function KnowledgeCard({
+  view,
+  loading,
+  hover,
+  onHover,
+  onSelect,
+}: {
+  view: DeckView;
+  loading: boolean;
+  hover: number | null;
+  onHover: (i: number | null) => void;
+  onSelect: (i: number) => void;
+}) {
   if (view.axes.length < 3) return null;
   return (
     <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 3 }} data-testid="home-radar">
-      <CardHeader title={sv.stats.radar} description={sv.stats.radarHelp} />
+      <CardHeader title={sv.stats.radar} description={sv.focus.hint} />
       {loading ? (
         <Skeleton className="h-72" />
       ) : (
         <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
-          <RadarChart title={sv.stats.radar} hideTitle size="lg" axes={view.axes} hover={hover} onHover={onHover} />
-          <RadarBars axes={view.axes} hover={hover} onHover={onHover} columns={2} />
+          <RadarChart title={sv.stats.radar} hideTitle size="lg" axes={view.axes} hover={hover} onHover={onHover} onSelect={onSelect} />
+          <RadarBars axes={view.axes} hover={hover} onHover={onHover} columns={2} onSelect={onSelect} />
         </div>
       )}
     </Card>
   );
 }
 
+/** Dagens pass med en stor knapp, och genvägar till kluriga kort och provtenta. */
 function TodayCard({ view, loading, className = "" }: { view: DeckView; loading: boolean; className?: string }) {
-  const { plan, stats } = view;
+  const { plan, stats, trickyPlan, examPlan } = view;
   const done = !loading && plan.nothingDue;
   return (
-    <Card padding="lg" className={`anim-fade-up ${className}`} style={{ ["--i" as string]: 2 }} data-testid="home-today">
+    <Card padding="lg" className={`anim-fade-up flex flex-col ${className}`} style={{ ["--i" as string]: 2 }} data-testid="home-today">
       <p className="text-sm font-semibold text-muted">{sv.dashboard.today}</p>
       {loading ? (
         <div className="mt-3 grid gap-3">
@@ -366,7 +368,7 @@ function TodayCard({ view, loading, className = "" }: { view: DeckView; loading:
       ) : (
         <>
           <p className="mt-2 text-4xl font-extrabold tracking-tight tabular-nums">{sv.stats.cards(plan.sessionCards)}</p>
-          <p className="mt-1 text-sm text-muted">
+          <p className="mt-1 text-sm text-muted" data-testid="home-today-plan">
             {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)} · cirka {estimateMinutes(plan.sessionCards)} min
           </p>
           <LinkButton href={plan.startHref} size="lg" className="mt-5 w-full" data-testid="home-start">
@@ -375,6 +377,19 @@ function TodayCard({ view, loading, className = "" }: { view: DeckView; loading:
           </LinkButton>
         </>
       )}
+      {!loading ? (
+        <ActionList className="mt-6 border-t border-line pt-5">
+          {trickyPlan.selectionCount > 0 && stats.seen > 0 ? (
+            <ActionRow
+              href={trickyPlan.startHref}
+              icon={Target}
+              title={sv.deck.modeTricky}
+              meta={`${sv.deck.summaryTricky(trickyPlan.selectionCount)} · cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
+            />
+          ) : null}
+          <ActionRow href={examPlan.startHref} icon={GraduationCap} title={sv.deck.modeExam} meta={sv.deck.metaExam(examPlan.selectionCount)} />
+        </ActionList>
+      ) : null}
     </Card>
   );
 }

@@ -27,6 +27,8 @@ type Props = {
   size?: "md" | "lg";
   /** Rubriken finns redan i blockets huvud: visa den bara för skärmläsare. */
   hideTitle?: boolean;
+  /** Gör varje område klickbart (och nåbart med tangentbordet), t.ex. för att öppna det. */
+  onSelect?: (index: number) => void;
 };
 
 /** Kategorins färg (samma som taggen), som SVG-fyllning. */
@@ -51,7 +53,7 @@ function polar(angle: number, r: number): [number, number] {
  * Fylld yta = andel inlärda kort, streckad kontur = andel studerade. Ren SVG med hover per
  * axel och en tabellvy.
  */
-export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size = "md", hideTitle = false }: Props) {
+export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size = "md", hideTitle = false, onSelect }: Props) {
   const [hoverState, setHoverState] = useState<number | null>(null);
   const hover = hoverProp === undefined ? hoverState : hoverProp;
   const setHover = (i: number | null) => {
@@ -104,7 +106,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
       {(
         <div className="grid gap-3">
           <div className="relative">
-            <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-labelledby={titleId} className={`mx-auto h-auto w-full ${size === "lg" ? "max-w-[24rem]" : "max-w-[20rem]"}`} onMouseLeave={() => setHover(null)}>
+            <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role={onSelect ? "group" : "img"} aria-labelledby={titleId} className={`mx-auto h-auto w-full ${size === "lg" ? "max-w-[24rem]" : "max-w-[20rem]"}`} onMouseLeave={() => setHover(null)}>
               {RINGS.map((f) => (
                 <polygon key={f} points={axes.map((_, i) => polar(angle(i), R * f).join(",")).join(" ")} fill="none" className="stroke-chart-grid" strokeWidth={1} />
               ))}
@@ -122,10 +124,35 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
                 const [lx, ly] = polar(angle(i), LABEL_R);
                 const [px, py] = learnedPts[i] ?? [CX, CY];
                 const active = hover === i;
-                const [hx, hy] = polar(angle(i), R * 0.55);
+                // Träffytan är en tårtbit kring axeln, ut till och med numret: grannarnas ytor
+                // överlappar aldrig, så ett klick nära ett område öppnar just det området.
+                const half = n === 0 ? 0 : Math.PI / n;
+                const [ax, ay] = polar(angle(i) - half, LABEL_R + 12);
+                const [bx, by] = polar(angle(i) + half, LABEL_R + 12);
+                const wedge = `M${CX} ${CY} L${ax.toFixed(1)} ${ay.toFixed(1)} A${LABEL_R + 12} ${LABEL_R + 12} 0 0 1 ${bx.toFixed(1)} ${by.toFixed(1)} Z`;
                 return (
-                  <g key={a.key} onMouseEnter={() => setHover(i)}>
-                    <circle cx={hx} cy={hy} r={R * 0.5} fill="transparent" />
+                  <g
+                    key={a.key}
+                    onMouseEnter={() => setHover(i)}
+                    {...(onSelect
+                      ? {
+                          role: "button",
+                          tabIndex: 0,
+                          "aria-label": sv.focus.open(a.label),
+                          className: "cursor-pointer outline-none",
+                          onClick: () => onSelect(i),
+                          onFocus: () => setHover(i),
+                          onBlur: () => setHover(null),
+                          onKeyDown: (e: React.KeyboardEvent) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              onSelect(i);
+                            }
+                          },
+                        }
+                      : {})}
+                  >
+                    <path d={wedge} fill="transparent" />
                     <circle cx={px} cy={py} r={active ? 5 : 3.5} className={active ? "fill-accent-hover stroke-bg" : "fill-chart-1 stroke-bg"} strokeWidth={1.5} />
                     <circle cx={lx} cy={ly} r={active ? 10 : 8.5} fill={active ? "var(--accent)" : tagFill(a.colorIndex)} className="transition-[r] duration-150" />
                     <text x={lx} y={ly + 3.5} textAnchor="middle" className={active ? "fill-accent-fg" : "fill-fg"} fontSize={10} fontWeight={700}>
@@ -190,11 +217,14 @@ export function RadarBars({
   hover,
   onHover,
   columns = 1,
+  onSelect,
 }: {
   axes: RadarAxis[];
   hover: number | null;
   onHover: (i: number | null) => void;
   columns?: 1 | 2;
+  /** Gör raderna till knappar som öppnar området. */
+  onSelect?: (index: number) => void;
 }) {
   return (
     <ol className={`grid gap-x-6 gap-y-1 ${columns === 2 ? "sm:grid-cols-2" : ""}`} aria-label={sv.deck.selectionCategory} data-testid="radar-bars">
@@ -202,12 +232,13 @@ export function RadarBars({
         const learned = a.total === 0 ? 0 : (a.learned / a.total) * 100;
         const partial = a.total === 0 ? 0 : (a.partial / a.total) * 100;
         return (
-          <li
-            key={a.key}
-            onMouseEnter={() => onHover(i)}
-            onMouseLeave={() => onHover(null)}
-            className={`grid gap-1.5 rounded-md px-2 py-1.5 transition-colors ${hover === i ? "bg-surface-2" : ""}`}
-          >
+          <li key={a.key} onMouseEnter={() => onHover(i)} onMouseLeave={() => onHover(null)}>
+            <RowShell
+              onSelect={onSelect ? () => onSelect(i) : undefined}
+              label={sv.focus.open(a.label)}
+              className={`grid w-full gap-1.5 rounded-md px-2 py-1.5 text-left transition-colors ${hover === i ? "bg-surface-2" : ""}`}
+              onFocus={() => onHover(i)}
+            >
             <div className="flex min-w-0 items-center gap-2.5 text-sm">
               <span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-fg ${tagBgClass(a.colorIndex)}`}>{i + 1}</span>
               <span className="min-w-0 flex-1 truncate font-medium" title={a.label}>
@@ -219,9 +250,32 @@ export function RadarBars({
               <div className="h-full bg-chart-1 transition-[width] duration-700 ease-out" style={{ width: `${learned}%` }} />
               <div className="h-full bg-chart-1/35 transition-[width] duration-700 ease-out" style={{ width: `${partial}%` }} />
             </div>
+            </RowShell>
           </li>
         );
       })}
     </ol>
+  );
+}
+
+/** En knapp när raden går att öppna, annars en vanlig behållare. */
+function RowShell({
+  onSelect,
+  label,
+  className,
+  onFocus,
+  children,
+}: {
+  onSelect?: () => void;
+  label: string;
+  className: string;
+  onFocus: () => void;
+  children: React.ReactNode;
+}) {
+  if (!onSelect) return <div className={className}>{children}</div>;
+  return (
+    <button type="button" onClick={onSelect} onFocus={onFocus} aria-label={label} className={`${className} cursor-pointer hover:bg-surface-2`}>
+      {children}
+    </button>
   );
 }

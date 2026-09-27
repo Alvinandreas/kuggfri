@@ -1,25 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BookOpen, RotateCcw } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import { nextDueDate, queueStats } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
-import { ProgressStats } from "@/components/stats/ProgressStats";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } from "@/lib/study/selection";
-import { formatRelative } from "@/lib/time/format";
-import { estimateMinutes } from "@/lib/study/plan";
-import { planDeckSession } from "@/lib/study/deck-plan";
+import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Card, CardHeader } from "@/components/ui/Card";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { CategoryTable, type SortMode } from "./CategoryTable";
+import { ModePicker } from "./ModePicker";
 import { SessionPanel } from "./SessionPanel";
 import { ShareDeck } from "./ShareDeck";
+
+const MODES: StudyMode[] = ["fsrs", "tricky", "free", "random", "exam"];
 
 type Props = {
   deck: {
@@ -36,6 +32,11 @@ type Props = {
   userId: string | null;
 };
 
+/**
+ * Kurssidan: här börjar man plugga. Välj läge, välj områden om man vill, starta. All
+ * statistik om hur det går ligger på hemsidan; här finns bara det som behövs för att
+ * komma igång, och passets inställningar.
+ */
 export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
@@ -43,9 +44,6 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   const [mode, setMode] = useState<StudyMode>("fsrs");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sortMode, setSortMode] = useState<SortMode>("deck");
-  const [confirmReset, setConfirmReset] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
 
   useEffect(() => {
@@ -64,25 +62,26 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
   );
   const colorIndex = useMemo(() => categoryColorIndex(tableCategories), [tableCategories]);
 
-  const reload = useCallback(async () => {
+  useEffect(() => {
     if (!store) return;
-    try {
-      const [p, r] = await Promise.all([store.load(cardIds), store.loadReviews(cardIds)]);
-      setProgress(p);
-      setReviews(r);
-    } catch {
-      setProgress({});
-      setReviews([]);
-    }
+    let cancelled = false;
+    Promise.all([store.load(cardIds), store.loadReviews(cardIds)])
+      .then(([p, r]) => {
+        if (cancelled) return;
+        setProgress(p);
+        setReviews(r);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setProgress({});
+        setReviews([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [store, cardIds]);
 
-  useEffect(() => {
-    void reload();
-  }, [reload]);
-
-  const stats = useMemo(() => (progress ? queueStats(cardIds, progress, new Date()) : null), [cardIds, progress]);
-  const seen = useMemo(() => (progress ? cardIds.filter((id) => progress[id]).length : 0), [cardIds, progress]);
-  const nextDue = useMemo(() => (progress ? nextDueDate(cardIds, progress, new Date()) : null), [cardIds, progress]);
+  const firstVisit = progress !== null && reviews.length === 0 && !cardIds.some((id) => progress[id]);
 
   const perCategory = useMemo(
     () =>
@@ -125,26 +124,15 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
     setSelectedIds((prev) => prev.filter((id) => (perCategory.find((s) => s.categoryId === id)?.tricky ?? 0) > 0));
   }, [mode, perCategory]);
 
-  const plan = useMemo(
-    () => planDeckSession({ deck, cards, progress, reviews, mode, selectedIds, dailyNew: prefs.dailyNew }),
-    [deck, cards, progress, reviews, mode, selectedIds, prefs.dailyNew],
+  // En plan per läge med samma urval: ger lägesrutornas siffror och det valda passet.
+  const plans = useMemo(
+    () =>
+      Object.fromEntries(
+        MODES.map((m) => [m, planDeckSession({ deck, cards, progress, reviews, mode: m, selectedIds, dailyNew: prefs.dailyNew })]),
+      ) as Record<StudyMode, DeckPlan>,
+    [deck, cards, progress, reviews, selectedIds, prefs.dailyNew],
   );
-
-  async function doResetDeck() {
-    if (!store) return;
-    setBusy(true);
-    try {
-      await store.resetDeck({ deckId: deck.id, cardIds });
-      await reload();
-      setNotice(sv.deck.resetDone);
-    } catch {
-      setNotice(sv.errors.generic);
-    } finally {
-      setBusy(false);
-      setConfirmReset(false);
-    }
-  }
-
+  const plan = plans[mode];
   const selectedTitles = categories.filter((c) => selectedSet.has(c.id));
 
   return (
@@ -188,64 +176,12 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
         ) : null}
       </header>
 
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
-        {/* Vänster kolumn: progress, kategorier och delning. På mobil ligger allt i ett flöde där Starta kommer före kategorierna. */}
-        <div className="contents lg:grid lg:gap-6">
-          {/* Progress */}
-          <Card padding="lg" role="region" aria-labelledby="progress-rubrik" className="anim-fade-up order-3" style={{ ["--i" as string]: 1 }}>
-            <CardHeader
-              id="progress-rubrik"
-              title={sv.deck.progressTitle}
-              action={
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setConfirmReset(true)}
-                  disabled={!store}
-                  title={sv.deck.resetLink}
-                  data-testid="reset-deck"
-                >
-                  <RotateCcw size={15} aria-hidden />
-                  {sv.deck.resetShort}
-                </Button>
-              }
-            />
-            {progress === null ? (
-              <p className="text-muted">{sv.common.loading}</p>
-            ) : seen === 0 && reviews.length === 0 ? (
-              <div className="grid gap-1 rounded-lg bg-surface-2 p-4" data-testid="first-visit">
-                <p className="font-semibold">{sv.deck.firstVisitTitle}</p>
-                <p className="text-muted">
-                  {sv.deck.firstVisitBody(Math.min(prefs.dailyNew, cards.length), estimateMinutes(Math.min(prefs.dailyNew, cards.length)))}
-                </p>
-              </div>
-            ) : (
-              <ProgressStats
-                cardIds={cardIds}
-                progress={progress}
-                reviews={reviews}
-                weekdaysOnly={prefs.weekdaysOnly}
-                deck={{ title: deck.title, slug: deck.slug }}
-                categories={categories.map((c) => {
-                  const s = perCategory.find((p) => p.categoryId === c.id);
-                  return { id: c.id, title: c.title, total: s?.total ?? 0, partial: s?.partial ?? 0, learned: s?.learned ?? 0 };
-                })}
-                dueText={
-                  stats && stats.due + stats.new > 0
-                    ? `${sv.deck.dueNow(stats.due)}, ${sv.deck.newCards(stats.new)}`
-                    : nextDue
-                      ? `${sv.deck.nothingDue} ${sv.deck.nextDue(formatRelative(nextDue))}`
-                      : sv.deck.nothingDue
-                }
-              />
-            )}
-            {notice ? (
-              <p role="status" className="mt-4 text-sm font-medium text-accent-ink">
-                {notice}
-              </p>
-            ) : null}
-          </Card>
-
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
+        {/* Vänster: läge, områden och delning. På mobil kommer passet (Starta) direkt efter lägena. */}
+        <div className="contents lg:grid lg:gap-8">
+          <div className="order-1 lg:order-none">
+            <ModePicker mode={mode} onMode={setMode} plans={plans} progressReady={progress !== null} totalCards={cards.length} />
+          </div>
           <CategoryTable
             rows={categoryRows}
             colorIndex={colorIndex}
@@ -257,34 +193,25 @@ export function DeckOverview({ deck, categories, cards, userId }: Props) {
             onOnly={selectOnly}
             onSelectAll={selectAll}
           />
-
-          <ShareDeck slug={deck.slug} />
+          <div className="order-4 lg:order-none">
+            <ShareDeck slug={deck.slug} />
+          </div>
         </div>
 
-        {/* Höger kolumn: läge, urval och Starta (sticky på desktop) */}
         <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
           <SessionPanel
             mode={mode}
-            onMode={setMode}
             plan={plan}
             selectedTitles={selectedTitles}
             colorIndex={colorIndex}
             progressReady={progress !== null}
+            firstVisit={firstVisit}
+            totalCards={cards.length}
             prefs={prefs}
             onPrefs={updatePrefs}
           />
         </div>
       </div>
-
-      <ConfirmDialog
-        open={confirmReset}
-        title={sv.deck.resetConfirmTitle}
-        body={sv.deck.resetDeckConfirm(deck.title)}
-        danger
-        busy={busy}
-        onConfirm={doResetDeck}
-        onCancel={() => setConfirmReset(false)}
-      />
     </div>
   );
 }

@@ -4,31 +4,33 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
-import { getDeckForAdmin, getDeckStats } from "@/lib/admin/queries";
+import { getDeckForAdmin, getDeckOverviewStats, getDeckStats } from "@/lib/admin/queries";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
+import { CourseDistributions } from "@/components/admin/CourseOverview";
 import { StatBlock } from "@/components/admin/StatBlock";
 import { Card } from "@/components/ui/Card";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 
 export const metadata: Metadata = { title: sv.admin.allCardsDetail };
 
-/** Alla kort i detalj: snittskattning och repetitioner per kort, lägst först. */
+/** Mer statistik: fördelningarna från översikten och alla kort i detalj, lägst snitt först. */
 export default async function StatsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [data, stats] = await Promise.all([getDeckForAdmin(id), getDeckStats(id)]);
+  const [data, stats, overview] = await Promise.all([getDeckForAdmin(id), getDeckStats(id), getDeckOverviewStats(id)]);
   if (!data) notFound();
   const colorIndex = categoryColorIndex(data.categories);
   const categoryOf = new Map(data.cards.map((c) => [c.id, c.category_id] as const));
   const titleOf = new Map(data.categories.map((c) => [c.id, c.title] as const));
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
         <Link href={`/admin/deck/${id}`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
           <ArrowLeft size={15} aria-hidden />
           {sv.admin.tabOverview}
         </Link>
       </nav>
+      <CourseDistributions stats={overview} />
       <div>
         <h2 className="text-xl font-bold tracking-tight">{sv.admin.allCardsDetail}</h2>
         <p className="mt-1 text-sm text-muted">{sv.admin.statsDetailHelp}</p>

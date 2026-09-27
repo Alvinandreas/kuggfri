@@ -85,7 +85,7 @@ test.describe("admin: innehåll", () => {
     await s.goto(`/d/${DECK_SLUG}`);
     const uncategorized = s.getByTestId("category-row").filter({ hasText: "Utan kategori" });
     await expect(uncategorized).toBeVisible();
-    await expect(uncategorized).toContainText("0/1");
+    await expect(uncategorized).toContainText("1 kort");
     // Går att plugga urvalet "Utan kategori".
     await uncategorized.getByRole("checkbox").check();
     await s.getByRole("radio", { name: /Fri repetition/ }).check();

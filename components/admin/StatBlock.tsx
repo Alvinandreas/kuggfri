@@ -1,10 +1,10 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { cx } from "@/components/ui/cx";
 
 type Props = {
   label: string;
-  value: string;
+  value: ReactNode;
   sub?: string;
   help?: string;
   /** Gör hela blocket klickbart. Länken ligger i dd:t eftersom en <dl> bara får innehålla div/dt/dd. */

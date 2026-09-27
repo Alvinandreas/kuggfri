@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ArrowRight, BookOpen, Copy, Flame, MoreHorizontal, Pencil, Settings, Share2, Trash2 } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarClock, Copy, Flame, GraduationCap, MoreHorizontal, Pencil, Settings, Share2, Target, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button, IconButton, LinkButton } from "@/components/ui/Button";
 import { Card, CardLink, SectionTitle } from "@/components/ui/Card";
@@ -13,7 +13,8 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { TextField } from "@/components/ui/TextField";
 import { TextArea } from "@/components/ui/TextArea";
 import { Select } from "@/components/ui/Select";
-import { CheckboxField, ChoiceCard } from "@/components/ui/Choice";
+import { CheckboxField, ChoiceCard, OptionTile } from "@/components/ui/Choice";
+import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { StatTile } from "@/components/stats/StatTile";
 import { ToggleRow } from "@/components/ui/Toggle";
@@ -382,7 +383,24 @@ export function Showcase() {
         </div>
       </Section>
 
-      <Section title="Nyckeltal" lead="Samma rutor på hemsidan, decksidan, sammanfattningen och i kursöversikten.">
+      <Section title="Lägesrutor" lead="Stora val i ett rutnät, som lägena på kurssidan: ikon, rubrik, kort förklaring och vad valet ger just nu.">
+        <fieldset className="grid gap-3 sm:grid-cols-3">
+          <legend className="sr-only">Läge</legend>
+          <OptionTile name="demo-tile" value="fsrs" checked={mode === "fsrs"} onChange={() => setMode("fsrs")} icon={CalendarClock} title="Schemalagd repetition" description="Nya och förfallna kort." meta="92 kort i dag" />
+          <OptionTile name="demo-tile" value="exam" checked={mode === "exam"} onChange={() => setMode("exam")} icon={GraduationCap} title="Provtenta" description="30 frågor som på tentan." meta="30 frågor" />
+        </fieldset>
+      </Section>
+
+      <Section title="Handlingsrader" lead="Genvägar rakt in i något: plugga ett område, ta de kluriga korten. Används i radardialogen och på hemsidan.">
+        <Card padding="lg" className="max-w-xl">
+          <ActionList>
+            <ActionRow href="#" icon={CalendarClock} title="Plugga området" meta="14 kort i dag · cirka 4 min" primary />
+            <ActionRow href="#" icon={Target} title="Kluriga kort i området" meta="3 kluriga kort · cirka 1 min" />
+          </ActionList>
+        </Card>
+      </Section>
+
+      <Section title="Nyckeltal" lead="Samma rutor på hemsidan, i radardialogen och i sammanfattningen.">
         <Card padding="lg">
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatTile label="Inlärda kort" value="57" sub="39 % av 145" tone="green" />

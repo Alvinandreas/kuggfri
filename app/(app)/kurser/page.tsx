@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getPublishedDecks } from "@/lib/content/queries";
@@ -10,6 +11,8 @@ export const metadata: Metadata = { title: sv.home.title };
 
 export default async function CoursesPage() {
   const decks = await getPublishedDecks();
+  // Med en enda kurs finns inget att välja mellan: gå direkt till den.
+  if (decks.length === 1 && decks[0]) redirect(`/d/${decks[0].slug}`);
 
   return (
     <div>

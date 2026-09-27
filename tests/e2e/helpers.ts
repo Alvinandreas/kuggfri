@@ -111,11 +111,12 @@ export async function login(page: Page, email: string, password: string, next = 
   await page.waitForURL((url) => !url.pathname.startsWith("/logga-in"), { timeout: 20_000 });
 }
 
+/** "N av M kort sedda" från hemsidan, där all statistik ligger sedan Kuggfri 2.0. */
 export async function seenCountText(page: Page): Promise<string | null> {
-  await page.goto(`/d/${DECK_SLUG}`);
-  const seen = page.getByTestId("seen-count");
-  if (await seen.isVisible({ timeout: 5000 }).catch(() => false)) return seen.textContent();
-  return null;
+  await page.goto("/hem");
+  const seen = page.getByTestId("home-seen");
+  await expect(seen).toContainText(" av ");
+  return seen.textContent();
 }
 
 /** Senaste mejlet till adressen i Mailpit (lokala Supabase-stacken), som klartext. */

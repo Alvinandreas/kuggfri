@@ -369,20 +369,11 @@ dialog.ui-modal[open]::backdrop {
 .ui-check:checked::before {
   transform: scale(1);
 }
+/* Pricken ritas som en radiell gradient: den hamnar exakt i mitten oavsett storlek, till
+   skillnad från ett skalat pseudoelement som landar på halva pixlar. */
 .ui-radio:checked {
   border-color: var(--accent);
-}
-.ui-radio::before {
-  content: "";
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 9999px;
-  background: var(--accent);
-  transform: scale(0);
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-.ui-radio:checked::before {
-  transform: scale(1);
+  background: radial-gradient(circle at center, var(--accent) 0 4.5px, transparent 5px);
 }
 .ui-check:focus-visible,
 .ui-radio:focus-visible {

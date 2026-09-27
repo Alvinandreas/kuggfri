@@ -117,6 +117,19 @@ test.describe("hemsidan", () => {
     await expect(page.getByTestId("flashcard")).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
   });
+
+  test("ett område i radardiagrammet öppnas i en dialog och startar ett pass på bara det området", async ({ page }) => {
+    await page.goto("/hem");
+    await page.getByRole("button", { name: "Öppna Materialvalsprocessen" }).first().click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { name: "Materialvalsprocessen" })).toBeVisible();
+    await expect(dialog.getByTestId("focus-study")).toContainText("6 kort i dag");
+    await expectNoSeriousA11yViolations(page);
+    await dialog.getByTestId("focus-study").click();
+    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(page.getByTestId("remaining")).toHaveText("6 kort kvar");
+  });
 });
 
 test.describe("dosering", () => {
@@ -155,7 +168,8 @@ test.describe("dosering", () => {
     await page.goto(`/d/${DECK_SLUG}`);
     await expect(page.getByTestId("start-info")).toHaveText("Klar för i dag");
     await expect(page.getByTestId("start-more")).toContainText("Ta 20 nya kort till");
-    await expect(page.getByTestId("knowledge-now")).toContainText("baserat på 20 repeterade kort");
+    expect(await seenCountText(page)).toContain("20 av");
+    await page.goto(`/d/${DECK_SLUG}`);
 
     // Hemsidan säger samma sak.
     await page.goto("/hem");

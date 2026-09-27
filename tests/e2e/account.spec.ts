@@ -99,18 +99,10 @@ test.describe("konto", () => {
 
     await page.goto(`/d/${DECK_SLUG}`);
     await expect(page.getByTestId("first-visit")).toBeVisible();
-    await expect(page.getByTestId("seen-count")).toHaveCount(0);
-  });
-
-  test("decket kan nollställas via länken på deck-sidan", async ({ page }) => {
-    await register(page, uniqueEmail("decklank"), PASSWORD);
-    await studyCards(page, "fsrs", 2, 4);
-    await expect.poll(async () => seenCountText(page)).toContain("2 av");
-    await page.getByTestId("reset-deck").click();
-    await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
-    await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
-    await page.reload();
-    await expect(page.getByTestId("first-visit")).toBeVisible();
+    expect(await seenCountText(page)).toContain("0 av");
+    // Kurssidan har ingen nollställning längre; den finns bara under Konto.
+    await page.goto(`/d/${DECK_SLUG}`);
+    await expect(page.getByRole("button", { name: /Nollställ/ })).toHaveCount(0);
   });
 
   test("nollställ schemat behåller skattningarna", async ({ page }) => {
@@ -122,10 +114,9 @@ test.describe("konto", () => {
     await page.getByTestId("reset-schedule").click();
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByText("Klart. Progressen är nollställd.")).toBeVisible();
-    await page.goto(`/d/${DECK_SLUG}`);
     // Korten är kvar som sedda (skattningen finns) men räknas som nya igen.
-    await expect(page.getByTestId("seen-count")).toContainText("2 av");
-    await expect(page.getByTestId("due-info")).toContainText("nya kort");
+    expect(await seenCountText(page)).toContain("2 av");
+    await expect(page.getByTestId("home-today-plan")).toContainText("nya");
   });
 
   test("5. vanlig användare blir nekad på /admin med 403", async ({ page }) => {

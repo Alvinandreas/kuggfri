@@ -4,7 +4,7 @@ import { useEffect, useState, type ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronsLeft, CircleHelp, House, Library, Menu as MenuIcon, Palette, Settings2, X, type LucideProps } from "lucide-react";
+import { BookOpen, ChevronsLeft, CircleHelp, House, Library, Menu as MenuIcon, Palette, Settings2, X, type LucideProps } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
@@ -19,6 +19,8 @@ export type SidebarProps = {
   canAdmin: boolean;
   /** Global admin: ser också designsystemet. */
   isAdmin: boolean;
+  /** Publicerade kurser. Med en enda kurs pekar menyn direkt på den i stället för på Kurser. */
+  courses: { slug: string; title: string }[];
 };
 
 const SIDEBAR_KEY = "kuggfri:sidebar";
@@ -59,10 +61,12 @@ function SectionLabel({ children }: { children: string }) {
 }
 
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
-function SidebarContent({ user, canAdmin, isAdmin, pathname, top }: SidebarProps & { pathname: string; top: React.ReactNode }) {
+function SidebarContent({ user, canAdmin, isAdmin, courses, pathname, top }: SidebarProps & { pathname: string; top: React.ReactNode }) {
   const study: NavLink[] = [
     { href: "/hem", label: sv.shell.home, icon: House },
-    { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d/"] },
+    courses.length === 1 && courses[0]
+      ? { href: `/d/${courses[0].slug}`, label: courses[0].title, icon: BookOpen, also: ["/d/"] }
+      : { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d/"] },
   ];
   const admin: NavLink[] = [
     ...(canAdmin ? [{ href: "/admin", label: sv.shell.admin, icon: Settings2 }] : []),

@@ -27,7 +27,6 @@ type Props = {
   decks: DeckRef[];
   /** Efter återställningslänk: lyft fram lösenordsbytet. */
   focusPassword?: boolean;
-  reminderEmail?: boolean;
   digestEmail?: boolean;
   /** Examinatorer och admin ser även veckobrevets reglage. */
   isExaminer?: boolean;
@@ -54,7 +53,7 @@ function NoticeText({ notice }: { notice: Notice }) {
   );
 }
 
-export function AccountPanel({ userId, email, displayName, decks, focusPassword = false, reminderEmail = false, digestEmail = true, isExaminer = false }: Props) {
+export function AccountPanel({ userId, email, displayName, decks, focusPassword = false, digestEmail = true, isExaminer = false }: Props) {
   const [nameState, nameAction, namePending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateDisplayNameAction(fd),
     null,
@@ -73,7 +72,6 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
   const [notice, setNotice] = useState<Notice | null>(null);
   // Reglagen är knappar, inte formulärfält: värdet skickas i dolda fält med samma namn
   // och värde ("on") som kryssrutorna hade, så servern läser formuläret som förut.
-  const [reminderOn, setReminderOn] = useState(reminderEmail);
   const [digestOn, setDigestOn] = useState(digestEmail);
   // Pluggrytmen bor i localStorage (en bekvämlighet per enhet) och sparas direkt vid ändring.
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
@@ -178,21 +176,18 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         </div>
       </Card>
 
+      {/* Mejlinställningar finns bara för examinatorer (veckobrevet). Studenter får inga utskick
+          utöver det de själva begär, så de har inget att ställa in här. */}
+      {isExaminer ? (
       <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 3 }} role="region" aria-labelledby="paminnelser-rubrik">
         <CardHeader id="paminnelser-rubrik" title={sv.account.remindersTitle} description={sv.account.remindersHelp} />
         <form action={prefsAction} className="-mt-2 grid gap-4">
           <div className="divide-y divide-line">
-            <div data-testid="reminder-email">
-              {reminderOn ? <input type="hidden" name="reminder_email" value="on" /> : null}
-              <ToggleRow title={sv.account.reminderEmail} description={sv.account.reminderEmailHelp} checked={reminderOn} onChange={setReminderOn} />
+            <div data-testid="digest-email">
+              <input type="hidden" name="digest_form" value="1" />
+              {digestOn ? <input type="hidden" name="digest_email" value="on" /> : null}
+              <ToggleRow title={sv.account.digestEmail} description={sv.account.digestEmailHelp} checked={digestOn} onChange={setDigestOn} />
             </div>
-            {isExaminer ? (
-              <div data-testid="digest-email">
-                <input type="hidden" name="digest_form" value="1" />
-                {digestOn ? <input type="hidden" name="digest_email" value="on" /> : null}
-                <ToggleRow title={sv.account.digestEmail} description={sv.account.digestEmailHelp} checked={digestOn} onChange={setDigestOn} />
-              </div>
-            ) : null}
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Button type="submit" variant="outline" disabled={prefsPending} data-testid="save-email-prefs">
@@ -202,6 +197,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
           </div>
         </form>
       </Card>
+      ) : null}
 
       <Card padding="lg" className="anim-fade-up flex flex-wrap items-center justify-between gap-4" style={{ ["--i" as string]: 4 }} role="region" aria-labelledby="tema-rubrik">
         <h2 id="tema-rubrik" className="text-lg font-bold tracking-tight">

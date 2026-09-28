@@ -10,8 +10,16 @@ import { bearerMatches } from "@/lib/security/headers";
 export const dynamic = "force-dynamic";
 
 /**
- * Dagligt cron-jobb (vercel.json): gallring av gamla uppgifter, påminnelser till studenter som
- * valt det, och på måndagar examinatorns veckobrev. Anropas av Vercel med Authorization: Bearer CRON_SECRET.
+ * Påminnelser till studenter är avstängda (Alvin 28 sep 2026: studenterna får redan för många
+ * påminnelser; det enda mejl de får från Kuggfri är sådant de själva begär, t.ex. inloggnings- och
+ * bekräftelselänkar). Koden finns kvar men körs inte, så att den som tidigare slagit på
+ * påminnelser aldrig får något även när cron-jobbet körs för gallringen och veckobrevet.
+ */
+const STUDENT_REMINDERS_ENABLED = false;
+
+/**
+ * Dagligt cron-jobb (vercel.json): gallring av gamla uppgifter och på måndagar examinatorns
+ * veckobrev. Påminnelser till studenter är avstängda (STUDENT_REMINDERS_ENABLED). Anropas av Vercel med Authorization: Bearer CRON_SECRET.
  * ?digest=1 tvingar veckobrevet (för test). Utan SMTP-konfiguration skickas inget, men svaret
  * visar vad som skulle ha skickats.
  */
@@ -40,8 +48,10 @@ export async function GET(request: Request) {
   if (purgeErr) summary.errors.push(`purge_old_data: ${purgeErr.message}`);
   else summary.purged = (purged ?? {}) as Record<string, number>;
 
-  // Påminnelser
-  const { data: candidates, error: candErr } = await supabase.rpc("reminder_candidates");
+  // Påminnelser (avstängda, se STUDENT_REMINDERS_ENABLED)
+  const { data: candidates, error: candErr } = STUDENT_REMINDERS_ENABLED
+    ? await supabase.rpc("reminder_candidates")
+    : { data: [], error: null };
   if (candErr) summary.errors.push(`reminder_candidates: ${candErr.message}`);
   for (const c of candidates ?? []) {
     const decks = (c.decks ?? []) as ReminderDeck[];

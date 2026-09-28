@@ -61,7 +61,7 @@ export default function PrivacyPage() {
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>Vi skickar aldrig mejl du inte bett om. Påminnelser är avstängda tills du själv slår på dem.</span>
+            <span>Vi skickar bara mejl som du själv begär, till exempel en inloggningslänk eller ett nytt lösenord. Inga påminnelser, inga nyhetsbrev.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
@@ -164,7 +164,7 @@ export default function PrivacyPage() {
                 />
                 <Row
                   what="Inställningar för mejl"
-                  why="Om du vill ha påminnelser, och för examinatorer om de vill ha veckobrevet."
+                  why="För examinatorer: om de vill ha veckobrevet."
                   basis="Samtycke"
                   retention="Tills du ändrar valet eller raderar kontot"
                 />
@@ -227,11 +227,6 @@ export default function PrivacyPage() {
               själv begär dem.
             </li>
             <li>
-              <strong>Påminnelser.</strong> Avstängda som standard. Slår du på dem under <Link href="/konto">Konto</Link>{" "}
-              får du högst ett mejl per dag, bara när du har kort att repetera, inget efter kursens tenta, och inget
-              alls efter två veckor utan repetition. Du kan stänga av dem när som helst.
-            </li>
-            <li>
               <strong>Veckobrev till examinatorer.</strong> Bara för den som är examinator för en kurs, med kursens
               sammanställda statistik. Kan stängas av under Konto.
             </li>
@@ -271,8 +266,8 @@ export default function PrivacyPage() {
               <strong>Vercel</strong> – drift av webbplatsen. Serverkoden körs i Stockholm.
             </li>
             <li>
-              <strong>Hostinger</strong> – e-postutskick: både inloggnings- och bekräftelsemejl och de
-              påminnelser och sammanställningar som beskrivs ovan.
+              <strong>Hostinger</strong> – e-postutskick: inloggnings- och bekräftelsemejl, och veckobrevet
+              till examinatorer som beskrivs ovan.
             </li>
           </ul>
           <p>
@@ -330,8 +325,8 @@ export default function PrivacyPage() {
               berättigat intresse. Hör av dig, så slutar vi behandla uppgifterna för det ändamålet.
             </li>
             <li>
-              <strong>Återkalla samtycke.</strong> Stäng av påminnelser under Konto när du vill. Det påverkar inte
-              det som redan skickats.
+              <strong>Återkalla samtycke.</strong> Examinatorer stänger av veckobrevet under Konto när de vill. Det
+              påverkar inte det som redan skickats.
             </li>
             <li>
               <strong>Klagomål.</strong> Du kan klaga hos Integritetsskyddsmyndigheten (IMY), imy.se.

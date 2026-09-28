@@ -22,7 +22,6 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       userId={session.user.id}
       email={session.user.email ?? ""}
       displayName={session.profile?.display_name ?? ""}
-      reminderEmail={session.profile?.reminder_email ?? false}
       digestEmail={session.profile?.digest_email ?? true}
       isExaminer={isExaminer}
       decks={decks.map((d) => ({ id: d.id, slug: d.slug, title: d.title }))}

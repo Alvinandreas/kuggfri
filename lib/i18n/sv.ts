@@ -190,9 +190,9 @@ export const sv = {
       "Min statistik i menyn samlar din egen studiestatistik på ett ställe. Den bygger bara på dina egna repetitioner och syns bara för dig.",
     statsLink: "Öppna Min statistik",
     accountBody:
-      "Under Konto byter du namn och lösenord, slår på eller av påminnelser via mejl, laddar ner allt vi har om dig och nollställer progress eller raderar kontot. Påminnelser är avstängda tills du själv slår på dem.",
+      "Under Konto byter du namn och lösenord, laddar ner allt vi har om dig och nollställer progress eller raderar kontot. Kuggfri skickar bara mejl som du själv begär, till exempel en inloggningslänk eller ett nytt lösenord.",
     accountLink: "Konto och inställningar",
-    accountLinkMeta: "Namn, lösenord, påminnelser, dina data",
+    accountLinkMeta: "Namn, lösenord, dina data",
     privacyLink: "Integritetspolicy",
     privacyLinkMeta: "Vilka uppgifter som sparas och varför",
     faq: [
@@ -699,7 +699,7 @@ export const sv = {
     studyTitle: "Pluggrytm",
     studyHelp: "Gäller alla dina pass och sparas direkt, i den här webbläsaren.",
     remindersTitle: "Mejl",
-    remindersHelp: "Inga nyhetsbrev. Bara det du själv slår på här.",
+    remindersHelp: "För dig som är examinator. Studenter får inga utskick utöver det de själva begär.",
     reminderEmail: "Påminn mig när jag har kort att repetera",
     reminderEmailHelp:
       "Högst ett mejl per dag, sent på eftermiddagen, bara när det finns förfallna kort och inget efter tentan. Har du inte repeterat på två veckor slutar vi skicka.",

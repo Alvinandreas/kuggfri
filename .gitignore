@@ -64,3 +64,4 @@ supabase/.env
 
 # Kursmaterial från Canvas (kuggfri canvas), lämnar aldrig datorn
 /material/
+/.next-dev3005/

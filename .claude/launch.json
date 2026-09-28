@@ -4,14 +4,29 @@
     {
       "name": "plugget-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000
     },
     {
       "name": "kuggfri-3001",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "set NEXT_DIST_DIR=.next-prod&& npx next start -p 3001"],
+      "runtimeArgs": [
+        "/c",
+        "set NEXT_DIST_DIR=.next-prod&& npx next start -p 3001"
+      ],
       "port": 3001
+    },
+    {
+      "name": "kuggfri-dev-3005",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "set NEXT_DIST_DIR=.next-dev3005&& npx next dev -p 3005"
+      ],
+      "port": 3005
     }
   ]
 }

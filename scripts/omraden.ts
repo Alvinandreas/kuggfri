@@ -10,6 +10,7 @@
  *   npm run kuggfri -- byt-typ <kurs> <kort>[,<kort>...] --typ <sjalvskattning|begrepp>
  *   npm run kuggfri -- mappa <kurs> <fil.tsv> [--skapa] [--ja]         kortnyckel<TAB>område[<TAB>typ] per rad
  *   npm run kuggfri -- ordna-omraden <kurs> <key>,<key>,...            ny ordning, filerna numreras om
+ *   npm run kuggfri -- ta-bort-omrade <kurs> <key>                     bara tomma områden
  *
  * Ett område som blir tomt tas inte bort automatiskt; ta bort det ur kurs.json när du vill
  * (apply raderar det i databasen när det saknas i filerna och inte har kort kvar).
@@ -215,6 +216,15 @@ function cmdOrdna(args: Args): void {
   say(`Ny ordning: ${order.join(", ")}.`);
 }
 
+function cmdTaBort(args: Args): void {
+  const [, courseKey, key] = args.positional;
+  const course = load(courseKey);
+  const area = findArea(course, key ?? "");
+  if (area.cards.length > 0) throw new Error(`Området ”${area.key}” har ${area.cards.length} kort. Flytta dem först.`);
+  saveCourse(ROOT, renumber({ ...course, categories: course.categories.filter((c) => c.key !== area.key) }));
+  say(`Tog bort det tomma området ${area.key}. apply tar bort det i databasen.`);
+}
+
 export function runOmraden(command: string, args: Args): void {
   switch (command) {
     case "omraden":
@@ -232,9 +242,11 @@ export function runOmraden(command: string, args: Args): void {
       return cmdMappa(args);
     case "ordna-omraden":
       return cmdOrdna(args);
+    case "ta-bort-omrade":
+      return cmdTaBort(args);
     default:
       throw new Error(`Okänt kommando: ${command}`);
   }
 }
 
-export const OMRADE_COMMANDS = ["omraden", "områden", "nytt-omrade", "byt-namn-omrade", "flytta", "byt-typ", "mappa", "ordna-omraden"];
+export const OMRADE_COMMANDS = ["omraden", "områden", "nytt-omrade", "byt-namn-omrade", "flytta", "byt-typ", "mappa", "ordna-omraden", "ta-bort-omrade"];

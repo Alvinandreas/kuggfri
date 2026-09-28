@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/Choice";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Menu, MenuItem, MenuSeparator } from "@/components/ui/Menu";
 import { Toast } from "@/components/ui/Toast";
-import { KindBadge, ReviewStatusBadge } from "./KindBadge";
+import { KindBadge, OriginalBadge, ReviewStatusBadge } from "./KindBadge";
 import { SortableList, rowActionClass } from "./SortableList";
 
 type Props = {
@@ -148,6 +148,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
               <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-muted">
                 <KindBadge kind={card.kind} compact />
                 <ReviewStatusBadge status={card.review_status} />
+                {card.original ? <OriginalBadge /> : null}
                 {card.is_active || card.review_status ? null : <Badge tone="outline">{sv.admin.inactive}</Badge>}
                 <span className="truncate">
                   {firstLine(card.back)}

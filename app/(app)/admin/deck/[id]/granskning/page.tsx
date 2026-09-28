@@ -3,12 +3,14 @@ import { forbidden, notFound } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
+import { getHistoryMeta, type HistoryMeta } from "@/lib/admin/history-queries";
+import { differsFromPublished } from "@/lib/admin/history";
 import { DEFAULT_REVIEW_FILTER, REVIEW_BUCKETS, reviewRelevant, type ReviewCard, type ReviewFilter } from "@/lib/admin/review";
 import { isCardKind } from "@/lib/cards/kinds";
 import { ReviewWorkspace } from "@/components/admin/ReviewWorkspace";
 
 type Params = Promise<{ id: string }>;
-type Search = Promise<{ omrade?: string; typ?: string; status?: string }>;
+type Search = Promise<{ omrade?: string; typ?: string; status?: string; andringar?: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
@@ -18,8 +20,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 /**
  * Granskningen: förslag (utkast) som väntar, avvisade förslag och kort som godkänts det
- * senaste dygnet. Filtret kan förväljas via adressen (?omrade=, ?typ=, ?status=), så att
- * innehållsöversikten kan länka rakt till ett områdes utkast.
+ * senaste dygnet. Filtret kan förväljas via adressen (?omrade=, ?typ=, ?status=, ?andringar=1),
+ * så att innehållsöversikten kan länka rakt till ett områdes utkast.
+ *
+ * Historiken i sammandrag (antal versioner och senast publicerade version) hämtas för korten i
+ * granskningen, så att ändringar av publicerade kort kan visas mot det studenterna såg.
  */
 export default async function ReviewPage({ params, searchParams }: { params: Params; searchParams: Search }) {
   const [{ id }, search] = await Promise.all([params, searchParams]);
@@ -28,7 +33,20 @@ export default async function ReviewPage({ params, searchParams }: { params: Par
   if (!data) notFound();
 
   const now = Date.now();
-  const cards: ReviewCard[] = reviewRelevant(data.cards, now).map((c) => ({
+  const relevant = reviewRelevant(data.cards, now);
+  const history: HistoryMeta = await getHistoryMeta(
+    data.deck.id,
+    relevant.map((c) => c.id),
+  ).catch(() => ({ counts: {}, published: {} }));
+  // Bara versioner som skiljer sig från kortet räknas som ändringar av publicerade kort (ett
+  // godkännande som ångrats lämnar en publicerad version med samma innehåll i historiken).
+  const published = Object.fromEntries(
+    relevant.flatMap((c) => {
+      const v = history.published[c.id];
+      return v && differsFromPublished(v, c) ? [[c.id, v] as const] : [];
+    }),
+  );
+  const cards: ReviewCard[] = relevant.map((c) => ({
     id: c.id,
     category_id: c.category_id,
     front: c.front,
@@ -44,6 +62,8 @@ export default async function ReviewPage({ params, searchParams }: { params: Par
     source: c.source,
     sort_order: c.sort_order,
     created_at: c.created_at,
+    original: c.original,
+    published_before: c.id in published,
   }));
 
   const areaIds = new Set(data.categories.map((c) => c.id));
@@ -51,6 +71,7 @@ export default async function ReviewPage({ params, searchParams }: { params: Par
     bucket: (REVIEW_BUCKETS as readonly string[]).includes(search.status ?? "") ? (search.status as ReviewFilter["bucket"]) : DEFAULT_REVIEW_FILTER.bucket,
     area: search.omrade === "ingen" || (search.omrade && areaIds.has(search.omrade)) ? search.omrade : "alla",
     kind: isCardKind(search.typ) ? search.typ : "alla",
+    changesOnly: search.andringar === "1",
   };
 
   return (
@@ -59,6 +80,8 @@ export default async function ReviewPage({ params, searchParams }: { params: Par
       areas={data.categories.map((c) => ({ id: c.id, title: c.title }))}
       cards={cards}
       initialFilter={filter}
+      historyCounts={history.counts}
+      publishedVersions={published}
       userId={ctx.userId}
       now={now}
     />

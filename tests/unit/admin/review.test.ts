@@ -4,8 +4,11 @@ import {
   approvalIssues,
   contentMatrix,
   countByArea,
+  countPublishedChanges,
   filterReviewCards,
   groupByArea,
+  groupReviewList,
+  isPublishedChange,
   nextAfterDecision,
   orderByArea,
   reviewBucket,
@@ -190,5 +193,68 @@ describe("contentMatrix", () => {
   it("visar tomma områden men ingen rad utan område om alla kort har ett", () => {
     const m = contentMatrix([card({ review_status: null, is_active: true })], areas);
     expect(m.rows.map((r) => r.title)).toEqual(["Metaller", "Polymerer"]);
+  });
+});
+
+describe("ändringar av publicerade kort", () => {
+  const all = { bucket: "vantar", area: "alla", kind: "alla" } as const;
+
+  it("ett utkast med tidigare publicerad version är en ändring", () => {
+    expect(isPublishedChange(card({ published_before: true }))).toBe(true);
+    expect(isPublishedChange(card())).toBe(false);
+    expect(isPublishedChange(approved(1, { published_before: true }))).toBe(false);
+  });
+
+  it("sorteras först bland dem som väntar, i övrigt i områdenas ordning", () => {
+    const a = card({ category_id: "a1" });
+    const b = card({ category_id: "a2", published_before: true });
+    const c = card({ category_id: "a1", published_before: true });
+    const d = card({ category_id: "a2" });
+    expect(filterReviewCards([a, b, c, d], all, areas, NOW).map((x) => x.id)).toEqual([c.id, b.id, a.id, d.id]);
+  });
+
+  it("sorteras inte först i andra högar", () => {
+    const a = card({ category_id: "a1", review_status: "avvisad" });
+    const b = card({ category_id: "a2", review_status: "avvisad", published_before: true });
+    expect(filterReviewCards([b, a], { ...all, bucket: "avvisade" }, areas, NOW).map((x) => x.id)).toEqual([a.id, b.id]);
+  });
+
+  it("filtret visar bara ändringar och räknas inom högen, området och typen", () => {
+    const a = card({ category_id: "a1", published_before: true });
+    const b = card({ category_id: "a2", published_before: true });
+    const c = card({ category_id: "a1" });
+    const d = card({ category_id: "a1", review_status: "avvisad", published_before: true });
+    const list = [a, b, c, d];
+    expect(filterReviewCards(list, { ...all, changesOnly: true }, areas, NOW).map((x) => x.id)).toEqual([a.id, b.id]);
+    expect(countPublishedChanges(list, all, NOW)).toBe(2);
+    expect(countPublishedChanges(list, { ...all, area: "a1" }, NOW)).toBe(1);
+    expect(countPublishedChanges(list, { ...all, bucket: "avvisade" }, NOW)).toBe(1);
+    expect(countPublishedChanges(list, { ...all, kind: "begrepp" }, NOW)).toBe(0);
+  });
+
+  it("listan får en egen grupp för ändringarna överst, resten per område", () => {
+    const a = card({ category_id: "a1" });
+    const b = card({ category_id: "a2", published_before: true });
+    const c = card({ category_id: "a2" });
+    const ordered = filterReviewCards([a, b, c], all, areas, NOW);
+    const groups = groupReviewList(ordered, areas);
+    expect(groups.map((g) => [g.key, g.changes, g.cards.map((x) => x.id)])).toEqual([
+      ["andringar", true, [b.id]],
+      ["a1", false, [a.id]],
+      ["a2", false, [c.id]],
+    ]);
+    // Samma ordning som navigeringen.
+    expect(groups.flatMap((g) => g.cards.map((x) => x.id))).toEqual(ordered.map((x) => x.id));
+  });
+
+  it("bara ändringar (eller inga) grupperas per område som vanligt", () => {
+    const a = card({ category_id: "a2", published_before: true });
+    const b = card({ category_id: "a1", published_before: true });
+    const ordered = filterReviewCards([a, b], all, areas, NOW);
+    expect(groupReviewList(ordered, areas).map((g) => [g.key, g.changes])).toEqual([
+      ["a1", false],
+      ["a2", false],
+    ]);
+    expect(groupReviewList([card({ category_id: null })], areas).map((g) => g.key)).toEqual(["ingen"]);
   });
 });

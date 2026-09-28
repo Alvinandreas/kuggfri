@@ -1,17 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, CheckCheck, Inbox, MessageSquareWarning, Pencil, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CheckCheck, GitCompareArrows, Inbox, Lightbulb, MessageSquareWarning, Pencil, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { moveCardsToCategoryAction, type ActionResult } from "@/lib/admin/actions";
 import { approveCardsAction, rejectCardAction, restoreReviewAction, setCardKindAction, type ReviewSnapshot } from "@/lib/admin/review-actions";
+import { rejectCorrectionAction, restoreCardVersionAction } from "@/lib/admin/history-actions";
+import { contentOf, correctionReason, restoreValues, type CardVersion } from "@/lib/admin/history";
 import {
   approvalIssues,
   countByArea,
+  countPublishedChanges,
   filterReviewCards,
-  groupByArea,
+  groupReviewList,
+  isPublishedChange,
   nextAfterDecision,
   reviewBucket,
   reviewProgress,
@@ -33,16 +37,23 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Select } from "@/components/ui/Select";
 import { TextArea } from "@/components/ui/TextArea";
 import { Toast } from "@/components/ui/Toast";
+import { ToggleRow } from "@/components/ui/Toggle";
 import { cx } from "@/components/ui/cx";
 import { CardEditor, type SavedCard } from "./CardEditor";
+import { CardHistory } from "./CardHistory";
 import { CardPreview } from "./CardPreview";
-import { KindBadge, ReviewStatusBadge } from "./KindBadge";
+import { KindBadge, OriginalBadge, ReviewStatusBadge } from "./KindBadge";
+import { VersionDiff } from "./VersionDiff";
 
 type Props = {
   deckId: string;
   areas: ReviewArea[];
   cards: ReviewCard[];
   initialFilter: ReviewFilter;
+  /** Antal tidigare versioner per kort (kort utan historik saknas). */
+  historyCounts: Record<string, number>;
+  /** Senast publicerade version per kort som någon gång varit publicerat (rättelser visas mot den). */
+  publishedVersions: Record<string, CardVersion>;
   /** Den inloggade granskaren (reviewed_by i den optimistiska uppdateringen). */
   userId: string;
   /** Serverns klocka vid renderingen, så att server och klient delar in korten likadant. */
@@ -50,6 +61,9 @@ type Props = {
 };
 
 type ToastState = { id: number; text: string; undo?: () => void; tone?: "default" | "danger" };
+
+/** Ett korts historik i granskningen: hämtad för ett visst antal versioner (count). */
+type HistoryEntry = { count: number; versions: CardVersion[] | null; error: boolean };
 
 const snapshot = (c: ReviewCard): ReviewSnapshot => ({
   id: c.id,
@@ -68,7 +82,7 @@ const TYPING_SELECTOR = 'input, textarea, select, [contenteditable="true"], [rol
  * område; höger kortet som studenten ser det, metadata och besluten. Besluten syns direkt
  * (optimistiskt) och rullas tillbaka om servern säger nej; det senaste går att ångra.
  */
-export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilter, userId, now: serverNow }: Props) {
+export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilter, historyCounts, publishedVersions, userId, now: serverNow }: Props) {
   const [cards, setCards] = useState(serverCards);
   const [now, setNow] = useState(serverNow);
   const [filter, setFilter] = useState(initialFilter);
@@ -79,6 +93,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
   const [bulkOpen, setBulkOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
+  const [histories, setHistories] = useState<Record<string, HistoryEntry>>({});
   const inFlight = useRef(new Map<string, number>());
   const listRef = useRef<HTMLDivElement>(null);
   // Senaste korten för Ångra-knappen, vars funktion skapades vid en tidigare rendering.
@@ -105,7 +120,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
   const areaTitle = useCallback((id: string | null) => (id ? (areas.find((a) => a.id === id)?.title ?? sv.admin.uncategorized) : sv.admin.uncategorized), [areas]);
   const visible = useMemo(() => filterReviewCards(cards, filter, areas, now), [cards, filter, areas, now]);
   const visibleIds = useMemo(() => visible.map((c) => c.id), [visible]);
-  const groups = useMemo(() => groupByArea(visible, areas), [visible, areas]);
+  const groups = useMemo(() => groupReviewList(visible, areas), [visible, areas]);
   const current = visible.find((c) => c.id === currentId) ?? visible[0] ?? null;
   const position = current ? visibleIds.indexOf(current.id) : -1;
   const progress = reviewProgress(cards, filter, now);
@@ -114,8 +129,34 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
     return { vantar: count("vantar"), avvisade: count("avvisade"), godkanda: count("godkanda") } satisfies Record<ReviewBucket, number>;
   }, [cards, filter, areas, now]);
   const pendingTotal = cards.filter((c) => c.review_status === "utkast").length;
+  const changesCount = countPublishedChanges(cards, filter, now);
   const issues = current ? approvalIssues(current) : [];
   const currentBucket = current ? reviewBucket(current, now) : null;
+  // Ändring av ett publicerat kort: den publicerade versionen att jämföra med.
+  const published = current && current.review_status !== null ? (publishedVersions[current.id] ?? null) : null;
+  const correcting = published !== null && current?.review_status === "utkast";
+  const reason = current ? correctionReason(current.source) : null;
+  const historyCount = current ? (historyCounts[current.id] ?? 0) : 0;
+  const historyEntry = current ? histories[current.id] : undefined;
+  const historyVersions = historyCount === 0 ? [] : historyEntry?.count === historyCount ? historyEntry.versions : null;
+
+  // Historiken hämtas när ett kort med historik visas (och igen när antalet versioner ändrats).
+  const fetchHistory = useCallback(
+    (id: string, count: number) => {
+      setHistories((h) => ({ ...h, [id]: { count, versions: null, error: false } }));
+      const settle = (entry: HistoryEntry) => setHistories((h) => (h[id]?.count === count ? { ...h, [id]: entry } : h));
+      fetch(`/admin/deck/${deckId}/kort/${id}/historik`, { cache: "no-store" })
+        .then((r) => (r.ok ? (r.json() as Promise<{ versions: CardVersion[] }>) : Promise.reject(new Error(String(r.status)))))
+        .then((body) => settle({ count, versions: body.versions, error: false }))
+        .catch(() => settle({ count, versions: null, error: true }));
+    },
+    [deckId],
+  );
+  useEffect(() => {
+    if (!current || historyCount === 0) return;
+    if (histories[current.id]?.count === historyCount) return;
+    fetchHistory(current.id, historyCount);
+  }, [current?.id, historyCount]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Byter kort: stäng redigering och avvisning, visa det nya kortet i listan.
   useEffect(() => {
@@ -215,6 +256,10 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
 
   function reject(note: string) {
     if (!current) return;
+    if (correcting && published) {
+      rejectCorrection(note, published);
+      return;
+    }
     const snaps = [snapshot(current)];
     const at = Date.now();
     const text = note.trim();
@@ -226,6 +271,91 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
     setRejectNote("");
     setToast({ id: at, text: sv.admin.reviewRejected(firstLine(current.front, { maxLength: 60 })), undo: () => undoDecision(snaps) });
     void run([current.id], () => rejectCardAction(deckId, current.id, text), () => restoreLocal(snaps));
+  }
+
+  function replaceCard(card: ReviewCard) {
+    setCards((prev) => prev.map((c) => (c.id === card.id ? card : c)));
+  }
+
+  /**
+   * Ångrar en innehållsändring (återställning eller avvisad rättelse): kortet får tillbaka
+   * versionen som triggern sparade (versionId) och, om withReview, sitt granskningsläge.
+   */
+  function undoContent(before: ReviewCard, versionId: number | null, withReview: boolean) {
+    setToast(null);
+    const after = latestCards.current.find((c) => c.id === before.id);
+    replaceCard(before);
+    setCurrentId(before.id);
+    void run(
+      [before.id],
+      async (): Promise<ActionResult> => {
+        if (versionId !== null) {
+          const restored = await restoreCardVersionAction(deckId, before.id, versionId);
+          if (!restored.ok) return restored;
+        }
+        return withReview ? restoreReviewAction(deckId, [snapshot(before)]) : { ok: true, data: undefined };
+      },
+      () => {
+        if (after) replaceCard(after);
+      },
+    ).then((ok) => {
+      if (ok !== null) setToast({ id: Date.now(), text: sv.admin.reviewUndone });
+    });
+  }
+
+  /**
+   * Avvisar en ändring av ett publicerat kort: kortet går tillbaka till den publicerade
+   * versionen och syns för studenterna igen. Förslaget finns kvar i historiken.
+   */
+  function rejectCorrection(note: string, version: CardVersion) {
+    if (!current) return;
+    const before = current;
+    const at = Date.now();
+    const text = note.trim();
+    commit(
+      patch(cards, [before.id], (c) => ({ ...c, ...restoreValues(version), review_note: text || null, reviewed_by: userId, reviewed_at: new Date(at).toISOString() })),
+      { advance: true, at },
+    );
+    setRejecting(false);
+    setRejectNote("");
+    const pending = run([before.id], () => rejectCorrectionAction(deckId, before.id, version.id, text), () => replaceCard(before));
+    setToast({
+      id: at,
+      text: sv.admin.correctionRejected(firstLine(version.front, { maxLength: 60 })),
+      undo: () => {
+        setToast(null);
+        void pending.then((data) => {
+          if (data) undoContent(before, data.undoVersionId, true);
+        });
+      },
+    });
+    // Servern kan ha lagt kortet utan område (om området tagits bort sedan versionen).
+    void pending.then((data) => {
+      if (data) setCards((prev) => patch(prev, [before.id], (c) => ({ ...c, ...data.content })));
+    });
+  }
+
+  /** Återställer en version ur historiken. Ångra lägger tillbaka versionen som ersattes. */
+  async function restoreFromHistory(version: CardVersion, n: number) {
+    if (!current) return;
+    const before = current;
+    mark([before.id], 1);
+    try {
+      const result = await restoreCardVersionAction(deckId, before.id, version.id).catch(() => null);
+      if (!result || !result.ok) {
+        setToast({ id: Date.now(), text: result && !result.ok ? result.error : sv.errors.generic, tone: "danger" });
+        return;
+      }
+      const { content, undoVersionId } = result.data;
+      if (undoVersionId === null) {
+        setToast({ id: Date.now(), text: sv.admin.historyUnchanged });
+        return;
+      }
+      commit(patch(latestCards.current, [before.id], (c) => ({ ...c, ...content })));
+      setToast({ id: Date.now(), text: sv.admin.historyRestored(n), undo: () => undoContent(before, undoVersionId, false) });
+    } finally {
+      mark([before.id], -1);
+    }
   }
 
   function moveCurrent(categoryId: string | null) {
@@ -337,7 +467,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
   const bulkCandidates = filter.bucket === "godkanda" ? [] : visible;
   const bulkValid = bulkCandidates.filter((c) => approvalIssues(c).length === 0);
   const bulkInvalid = bulkCandidates.length - bulkValid.length;
-  const filtersActive = filter.area !== "alla" || filter.kind !== "alla";
+  const filtersActive = filter.area !== "alla" || filter.kind !== "alla" || filter.changesOnly === true;
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[22rem_minmax(0,1fr)] lg:items-start" data-testid="review-workspace">
@@ -379,6 +509,21 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
             data-testid="review-kind-filter"
           />
         </div>
+        {changesCount > 0 || filter.changesOnly ? (
+          <div className="-my-2" data-testid="review-changes-filter">
+            <ToggleRow
+              title={
+                <span className="inline-flex items-center gap-2 text-sm font-semibold">
+                  {sv.admin.reviewChangesFilter}
+                  <span className="text-muted tabular-nums">{changesCount}</span>
+                </span>
+              }
+              description={<span className="text-xs">{sv.admin.reviewChangesFilterHelp}</span>}
+              checked={filter.changesOnly === true}
+              onChange={(changesOnly) => setFilter((f) => ({ ...f, changesOnly }))}
+            />
+          </div>
+        ) : null}
         <div data-testid="review-progress">
           <p className="mb-1.5 flex items-baseline justify-between text-sm">
             <span className="font-semibold">{sv.admin.reviewProgress(progress.done, progress.total)}</span>
@@ -402,6 +547,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
               <div className="flex min-w-0 items-center gap-2">
                 <h2 className="text-lg font-bold tracking-tight">{sv.admin.reviewPosition(position + 1, visible.length)}</h2>
                 <ReviewStatusBadge status={current.review_status} approved={currentBucket === "godkanda"} />
+                {current.original ? <OriginalBadge /> : null}
               </div>
               <div className="flex items-center gap-1">
                 <IconButton label={sv.admin.reviewPrev} variant="outline" size="sm" onClick={() => go(-1)} disabled={position <= 0} aria-keyshortcuts="K ArrowLeft" data-testid="review-prev">
@@ -412,6 +558,31 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                 </IconButton>
               </div>
             </div>
+
+            {published ? (
+              <Card padding="md" className="grid gap-4" data-testid="review-correction">
+                <div>
+                  <p className="flex items-center gap-2 font-semibold">
+                    <GitCompareArrows size={17} aria-hidden className="text-muted" />
+                    {sv.admin.correctionTitle}
+                  </p>
+                  {current.review_status === "utkast" ? <p className="mt-0.5 text-sm text-muted">{sv.admin.correctionHelp}</p> : null}
+                </div>
+                {reason ? <ReasonNote reason={reason} /> : null}
+                <VersionDiff
+                  before={published}
+                  after={{ ...contentOf(current), is_active: published.is_active, review_status: published.review_status }}
+                  areaTitle={areaTitle}
+                  mode="split"
+                  labels={{ before: sv.admin.correctionPublished, after: sv.admin.correctionProposed }}
+                  showUnchanged
+                  emptyText={sv.admin.correctionNoDiff}
+                  data-testid="review-correction-diff"
+                />
+              </Card>
+            ) : reason ? (
+              <ReasonNote reason={reason} />
+            ) : null}
 
             <Card padding="md" className="grid gap-4" data-testid="review-meta">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -515,6 +686,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
 
                 {rejecting ? (
                   <Card padding="md" className="anim-fade-up grid gap-3" data-testid="review-reject-panel">
+                    {correcting ? <p className="text-sm text-muted">{sv.admin.correctionRejectHelp}</p> : null}
                     <TextArea
                       label={sv.admin.reviewRejectNote}
                       hint={sv.admin.reviewRejectNoteHelp}
@@ -537,7 +709,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                     <div className="flex flex-wrap gap-2">
                       <Button variant="danger" onClick={() => reject(rejectNote)} data-testid="review-reject-confirm">
                         <X size={16} aria-hidden />
-                        {sv.admin.reviewRejectConfirm}
+                        {correcting ? sv.admin.correctionRejectConfirm : sv.admin.reviewRejectConfirm}
                       </Button>
                       <Button variant="ghost" onClick={() => setRejecting(false)}>
                         {sv.common.cancel}
@@ -554,7 +726,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                     ) : null}
                     <Button variant="danger" onClick={() => setRejecting(true)} aria-keyshortcuts="A" data-testid="review-reject">
                       <X size={17} aria-hidden />
-                      {sv.admin.reviewReject}
+                      {correcting ? sv.admin.correctionReject : sv.admin.reviewReject}
                     </Button>
                     <Button variant="secondary" onClick={() => setEditing({})} aria-keyshortcuts="R" data-testid="review-edit">
                       <Pencil size={16} aria-hidden />
@@ -563,6 +735,19 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                   </div>
                 )}
                 <Shortcuts />
+                <Card padding="md">
+                  <CardHistory
+                    key={current.id}
+                    versions={historyVersions}
+                    count={historyCount}
+                    error={historyEntry?.count === historyCount && historyEntry.error}
+                    onRetry={() => fetchHistory(current.id, historyCount)}
+                    current={contentOf(current)}
+                    areaTitle={areaTitle}
+                    now={now}
+                    onRestore={restoreFromHistory}
+                  />
+                </Card>
               </>
             )}
           </>
@@ -581,7 +766,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
               <>
                 <p className="font-semibold">{sv.admin.reviewNoMatch}</p>
                 {filtersActive ? (
-                  <Button variant="outline" size="sm" onClick={() => setFilter((f) => ({ ...f, area: "alla", kind: "alla" }))}>
+                  <Button variant="outline" size="sm" onClick={() => setFilter((f) => ({ ...f, area: "alla", kind: "alla", changesOnly: false }))}>
                     {sv.admin.reviewShowAll}
                   </Button>
                 ) : null}
@@ -598,11 +783,20 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
             <p className="sr-only">{sv.admin.reviewList}</p>
             {groups.map((g) => (
               <Disclosure
-                key={g.areaId ?? "ingen"}
+                key={g.key}
                 defaultOpen
                 summary={
                   <span className="flex min-w-0 items-center gap-2">
-                    {g.areaId ? <CategoryTag title={g.title ?? ""} colorIndex={colorIndex.get(g.areaId) ?? 0} /> : <span className="text-sm">{sv.admin.uncategorized}</span>}
+                    {g.changes ? (
+                      <span className="inline-flex items-center gap-1.5 text-sm">
+                        <GitCompareArrows size={14} aria-hidden className="text-muted" />
+                        {sv.admin.reviewChangesGroup}
+                      </span>
+                    ) : g.areaId ? (
+                      <CategoryTag title={g.title ?? ""} colorIndex={colorIndex.get(g.areaId) ?? 0} />
+                    ) : (
+                      <span className="text-sm">{sv.admin.uncategorized}</span>
+                    )}
                     <span className="text-xs font-medium text-muted tabular-nums">{g.cards.length}</span>
                   </span>
                 }
@@ -623,6 +817,12 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                           )}
                         >
                           <KindBadge kind={c.kind} compact />
+                          {isPublishedChange(c) && !g.changes ? (
+                            <span title={sv.admin.reviewChangeMarker} className="inline-flex shrink-0">
+                              <GitCompareArrows size={13} aria-hidden />
+                              <span className="sr-only">{sv.admin.reviewChangeMarker}</span>
+                            </span>
+                          ) : null}
                           <span className="min-w-0 flex-1 truncate">{firstLine(c.front, { maxLength: 120 }) || "…"}</span>
                           {approvalIssues(c).length > 0 && c.review_status !== null ? (
                             <span title={sv.admin.reviewCannotApprove} className="h-2 w-2 shrink-0 rounded-full bg-danger" />
@@ -662,6 +862,18 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
         onClose={() => setToast(null)}
         duration={toast?.undo ? 10000 : 5000}
       />
+    </div>
+  );
+}
+
+/** Motiveringen till en rättelse (källan "Rättelse: ..."). */
+function ReasonNote({ reason }: { reason: string }) {
+  return (
+    <div role="note" className="flex gap-3 rounded-md bg-accent-soft px-4 py-3 text-sm text-accent-ink" data-testid="review-correction-reason">
+      <Lightbulb size={17} aria-hidden className="mt-0.5 shrink-0" />
+      <p className="min-w-0 break-words">
+        <span className="font-semibold">{sv.admin.correctionWhy}</span> {reason}
+      </p>
     </div>
   );
 }

@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getCardForAdmin, getDeckForAdmin } from "@/lib/admin/queries";
-import { CardEditor } from "@/components/admin/CardEditor";
+import { getCardHistory } from "@/lib/admin/history-queries";
+import { CardEditPanel } from "@/components/admin/CardEditPanel";
+import { OriginalBadge } from "@/components/admin/KindBadge";
 import { LinkButton } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: sv.admin.editCard };
@@ -13,6 +15,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
   const { id, cardId } = await params;
   const [data, card] = await Promise.all([getDeckForAdmin(id), getCardForAdmin(cardId)]);
   if (!data || !card || card.deck_id !== data.deck.id) notFound();
+  const versions = await getCardHistory(data.deck.id, card.id).catch(() => []);
   const category = card.category_id ? (data.categories.find((c) => c.id === card.category_id) ?? null) : null;
   const backHref = `/admin/deck/${data.deck.id}/kategori/${category ? category.id : "ingen"}`;
   const siblings = data.cards.filter((c) => c.category_id === card.category_id);
@@ -31,10 +34,13 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
         </Link>
       </nav>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">
-          {sv.admin.editCard}
-          {index >= 0 ? <span className="ml-2 text-base font-medium tracking-normal text-muted">{sv.admin.cardPosition(index + 1, siblings.length)}</span> : null}
-        </h2>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <h2 className="text-2xl font-bold tracking-tight">
+            {sv.admin.editCard}
+            {index >= 0 ? <span className="ml-2 text-base font-medium tracking-normal text-muted">{sv.admin.cardPosition(index + 1, siblings.length)}</span> : null}
+          </h2>
+          {card.original ? <OriginalBadge /> : null}
+        </div>
         <div className="flex gap-2">
           {prev ? (
             <LinkButton href={`/admin/deck/${data.deck.id}/kort/${prev.id}`} variant="outline" size="sm">
@@ -50,7 +56,14 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
           ) : null}
         </div>
       </div>
-      <CardEditor deckId={data.deck.id} categories={data.categories.map((c) => ({ id: c.id, title: c.title }))} card={card} backHref={backHref} />
+      <CardEditPanel
+        deckId={data.deck.id}
+        categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
+        card={card}
+        backHref={backHref}
+        versions={versions}
+        now={Date.now()}
+      />
     </div>
   );
 }

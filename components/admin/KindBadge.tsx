@@ -1,4 +1,4 @@
-import { CheckCheck, CircleHelp, ListChecks, MessageSquareText, ToggleLeft, type LucideIcon } from "lucide-react";
+import { Award, CheckCheck, CircleHelp, ListChecks, MessageSquareText, ToggleLeft, type LucideIcon } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { CARD_KIND_LABEL, type CardKind } from "@/lib/cards/kinds";
 import { Badge } from "@/components/ui/Badge";
@@ -41,4 +41,16 @@ export function ReviewStatusBadge({ status, approved = false }: { status: "utkas
       </Badge>
     );
   return null;
+}
+
+/** Kortet hör till den beprövade originaluppsättningen (sätts av innehållsverktyget). */
+export function OriginalBadge() {
+  return (
+    <span title={sv.admin.originalHelp} className="inline-flex shrink-0" data-testid="original-badge">
+      <Badge tone="outline">
+        <Award size={12} aria-hidden />
+        {sv.admin.original}
+      </Badge>
+    </span>
+  );
 }

@@ -192,6 +192,24 @@ describe("cards", () => {
     expect(deleted).toHaveLength(1);
   });
 
+  it("varje innehållsändring sparar föregående version, som bara redaktörer kan läsa", async () => {
+    const [k] = await db.query<{ id: string }>(`insert into public.cards (deck_id, front, back) values ($1, 'Historik', 'v1') returning id`, [publishedDeck]);
+    await user(db, admin).query(`update public.cards set back = 'v2' where id = $1`, [k!.id]);
+    await user(db, admin).query(`update public.cards set sort_order = 99 where id = $1`, [k!.id]); // bara ordning: ingen version
+    await user(db, admin).query(`update public.cards set back = 'v3', original = true where id = $1`, [k!.id]);
+    const versions = await db.query<{ back: string; replaced_by: string | null; original: boolean }>(
+      `select back, replaced_by, original from public.card_versions where card_id = $1 order by id`,
+      [k!.id],
+    );
+    expect(versions.map((v) => v.back)).toEqual(["v1", "v2"]);
+    expect(versions[0]?.replaced_by).toBe(admin);
+    expect(await user(db, admin).query(`select id from public.card_versions where card_id = $1`, [k!.id])).toHaveLength(2);
+    expect(await user(db, alice).query(`select id from public.card_versions where card_id = $1`, [k!.id])).toHaveLength(0);
+    await expectDenied(user(db, admin).query(`insert into public.card_versions (card_id, deck_id, front, back, kind, is_active, original) values ($1, $2, 'x', 'y', 'begrepp', true, false)`, [k!.id, publishedDeck]));
+    await db.query(`delete from public.cards where id = $1`, [k!.id]);
+    expect(await db.query(`select id from public.card_versions where card_id = $1`, [k!.id])).toHaveLength(0);
+  });
+
   it("utkast i ett publicerat deck syns bara för redaktörer, och kan aldrig vara aktiva", async () => {
     const [utkast] = await db.query<{ id: string }>(
       `insert into public.cards (deck_id, front, back, is_active, review_status, kind, options)

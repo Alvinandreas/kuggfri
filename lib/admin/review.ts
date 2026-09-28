@@ -25,6 +25,10 @@ export type ReviewCard = {
   source: string | null;
   sort_order: number;
   created_at: string;
+  /** Del av originaluppsättningen (visas som en badge). */
+  original?: boolean;
+  /** Kortet har en tidigare publicerad version i historiken (ett utkast är då en ändring). */
+  published_before?: boolean;
 };
 
 export type ReviewArea = { id: string; title: string };
@@ -37,9 +41,23 @@ export type ReviewBucket = (typeof REVIEW_BUCKETS)[number];
 export type AreaFilter = "alla" | "ingen" | (string & {});
 export type KindFilter = "alla" | CardKind;
 
-export type ReviewFilter = { bucket: ReviewBucket; area: AreaFilter; kind: KindFilter };
+export type ReviewFilter = {
+  bucket: ReviewBucket;
+  area: AreaFilter;
+  kind: KindFilter;
+  /** Bara ändringar av publicerade kort (kort med en tidigare publicerad version). */
+  changesOnly?: boolean;
+};
 
-export const DEFAULT_REVIEW_FILTER: ReviewFilter = { bucket: "vantar", area: "alla", kind: "alla" };
+export const DEFAULT_REVIEW_FILTER: ReviewFilter = { bucket: "vantar", area: "alla", kind: "alla", changesOnly: false };
+
+/**
+ * Är utkastet en ändring av ett kort som tidigare varit publicerat? Sådana är dolda för
+ * studenterna tills de godkänts, så de visas först bland dem som väntar.
+ */
+export function isPublishedChange(card: Pick<ReviewCard, "review_status" | "published_before">): boolean {
+  return card.review_status === "utkast" && card.published_before === true;
+}
 
 /** Så länge räknas ett godkänt kort till "Godkända senaste dygnet". */
 export const RECENT_MS = 24 * 60 * 60 * 1000;
@@ -77,12 +95,28 @@ function matchesKind(card: Pick<ReviewCard, "kind">, kind: KindFilter): boolean 
   return kind === "alla" || card.kind === kind;
 }
 
-/** Korten som syns med filtret, i områdenas ordning (se orderByArea). */
+/**
+ * Korten som syns med filtret, i områdenas ordning (se orderByArea). Bland dem som väntar
+ * kommer ändringar av publicerade kort först (se isPublishedChange).
+ */
 export function filterReviewCards<C extends ReviewCard>(cards: readonly C[], filter: ReviewFilter, areas: readonly ReviewArea[], now: number): C[] {
-  return orderByArea(
-    cards.filter((c) => reviewBucket(c, now) === filter.bucket && matchesArea(c, filter.area) && matchesKind(c, filter.kind)),
+  const ordered = orderByArea(
+    cards.filter(
+      (c) =>
+        reviewBucket(c, now) === filter.bucket &&
+        matchesArea(c, filter.area) &&
+        matchesKind(c, filter.kind) &&
+        (!filter.changesOnly || c.published_before === true),
+    ),
     areas,
   );
+  if (filter.bucket !== "vantar") return ordered;
+  return [...ordered.filter(isPublishedChange), ...ordered.filter((c) => !isPublishedChange(c))];
+}
+
+/** Antal ändringar av publicerade kort i högen, inom område- och typfiltret (för filtrets etikett). */
+export function countPublishedChanges(cards: readonly ReviewCard[], filter: ReviewFilter, now: number): number {
+  return cards.filter((c) => c.published_before === true && reviewBucket(c, now) === filter.bucket && matchesArea(c, filter.area) && matchesKind(c, filter.kind)).length;
 }
 
 /**
@@ -158,6 +192,24 @@ export function step(ids: readonly string[], currentId: string | null, delta: -1
   if (i === -1) return ids[0]!;
   const to = i + delta;
   return to >= 0 && to < ids.length ? ids[to]! : ids[i]!;
+}
+
+export type ReviewListGroup<C> = AreaGroup<C> & { key: string; changes: boolean };
+
+/**
+ * Listans grupper för redan filtrerade och ordnade kort (filterReviewCards): står ändringar av
+ * publicerade kort först, och finns det även andra kort, får ändringarna en egen grupp överst.
+ * Resten grupperas per område. Ordningen blir densamma som listan, så Nästa följer det man ser.
+ */
+export function groupReviewList<C extends Pick<ReviewCard, "category_id" | "review_status" | "published_before">>(
+  orderedCards: readonly C[],
+  areas: readonly ReviewArea[],
+): ReviewListGroup<C>[] {
+  let lead = 0;
+  while (lead < orderedCards.length && isPublishedChange(orderedCards[lead]!)) lead++;
+  const byArea = (list: readonly C[]) => groupByArea(list, areas).map((g) => ({ ...g, key: g.areaId ?? "ingen", changes: false }));
+  if (lead === 0 || lead === orderedCards.length) return byArea(orderedCards);
+  return [{ key: "andringar", areaId: null, title: null, cards: orderedCards.slice(0, lead), changes: true }, ...byArea(orderedCards.slice(lead))];
 }
 
 /** Antal kort per område, i områdenas ordning (för bekräftelsen av massgodkännande). */

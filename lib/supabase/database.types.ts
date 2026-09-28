@@ -103,6 +103,31 @@ export type CardRow = {
   updated_at: string;
 };
 
+/**
+ * En tidigare version av ett kort (card_versions). Triggern sparar kortets FÖREGÅENDE innehåll
+ * vid varje innehållsändring; nuvarande version är raden i cards. Bara redaktörer läser, ingen
+ * skriver direkt.
+ */
+export type CardVersionRow = {
+  id: number;
+  card_id: string;
+  deck_id: string;
+  /** Versionen gällde fram till den här tidpunkten. */
+  replaced_at: string;
+  /** Vem som ersatte den; null = innehållsverktyget eller systemet. */
+  replaced_by: string | null;
+  category_id: string | null;
+  front: string;
+  back: string;
+  hint: string | null;
+  kind: CardRow["kind"];
+  options: Json | null;
+  is_active: boolean;
+  review_status: CardRow["review_status"];
+  source: string | null;
+  original: boolean;
+};
+
 export type CardProgressRow = {
   user_id: string;
   card_id: string;
@@ -243,6 +268,13 @@ export type Database = {
           "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original"
         >;
         Update: Partial<CardRow>;
+        Relationships: [];
+      };
+      card_versions: {
+        Row: CardVersionRow;
+        // Skrivs bara av triggern record_card_version.
+        Insert: never;
+        Update: never;
         Relationships: [];
       };
       card_progress: {

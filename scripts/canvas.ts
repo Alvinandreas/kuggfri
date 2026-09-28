@@ -367,11 +367,22 @@ function cmdQuizkort(k: Kurs): void {
       }
       if (seen.has(normal(front))) continue;
       seen.add(normal(front));
-      const options = choices.map((c) => ({ text: htmlTillText(c.item_body).replace(/\n+/g, " "), correct: right.has(c.id) }));
+      // Canvas kan ha tomma alternativ (t.ex. när "<hkl>" tolkats som en tagg i quizredigeraren).
+      // Ett tomt felalternativ stryks; saknas ett rätt alternativ går frågan inte att använda.
+      const all = choices.map((c) => ({ text: htmlTillText(c.item_body).replace(/\n+/g, " ").trim(), correct: right.has(c.id) }));
+      const options = all.filter((o) => o.text);
+      if (all.some((o) => !o.text && o.correct) || options.length < 2) {
+        skipped++;
+        continue;
+      }
       const correct = options.filter((o) => o.correct).map((o) => o.text);
       cards.push({
         key: uniqueKey(`quiz-${slugifyKey(front)}`, taken),
-        front: front.replace(/\n+/g, " "),
+        // "(två rätta svar)" o.d. behövs inte: passet visar själv hur många alternativ som ska väljas.
+        front: front
+          .replace(/\n+/g, " ")
+          .replace(/\s*\((?:ett|två|tre|fyra|[1-4]) rätta?(?: svar)?\)\s*/gi, " ")
+          .trim(),
         back: correct.length === 1 ? `Rätt svar: ${correct[0]}` : `Rätta svar: ${correct.join("; ")}`,
         hint: null,
         active: false,
@@ -386,7 +397,7 @@ function cmdQuizkort(k: Kurs): void {
     write(join(k.dir, "forslag", `quiz-${slugifyKey(name)}.md`), serializeCardFile({ title: name, cards }));
     say(`  ${name}: ${cards.length} frågor`);
   }
-  say(`Skrev ${total} utkastkort till material/${k.key}/forslag/ (${skipped} frågor av annan typ hoppades över).`);
+  say(`Skrev ${total} utkastkort till material/${k.key}/forslag/ (${skipped} frågor hoppades över: annan typ eller ofullständiga alternativ).`);
 }
 
 // ---------------------------------------------------------------------------

@@ -29,14 +29,6 @@ import { NextResponse, type NextRequest } from "next/server";
 const KAKA = "kuggfri-forhandsvisning";
 
 /**
- * Informationssidorna är alltid läsbara, även när tjänsten är stängd: vad Kuggfri är, hur
- * personuppgifter hanteras och hjälpen. Google kräver att startsida och integritetspolicy går
- * att nå för att godkänna inloggning med Google, och alla som får en länk ska kunna läsa
- * integritetspolicyn. Inget annat släpps igenom: inte registrering, inte API:t, inte cron.
- */
-export const ALLTID_OPPNA = new Set(["/om", "/integritet", "/hjalp"]);
-
-/**
  * Uppslag via hakparentes, inte punktnotation: Next.js ersätter `process.env.NAMN` med
  * sitt värde redan vid bygget, så en variabel som lagts till efteråt får ingen effekt
  * förrän man bygger om. `process.env["NAMN"]` läses i stället när requesten kommer.
@@ -70,7 +62,6 @@ function likaNycklar(given: string, förväntad: string): boolean {
  */
 export function maintenanceGate(request: NextRequest): NextResponse | null {
   if (!underUtveckling()) return null;
-  if (ALLTID_OPPNA.has(request.nextUrl.pathname)) return null;
 
 
   const nyckel = env("FORHANDSVISNING_NYCKEL");

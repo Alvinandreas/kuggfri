@@ -271,8 +271,8 @@ export default function PrivacyPage() {
             </li>
           </ul>
           <p>
-            <strong>Inloggning med Google.</strong> Väljer du &quot;Fortsätt med Google&quot; bekräftar Google vem du
-            är, och vi får ditt namn och din e-postadress. Google skickar också en länk till din profilbild; den
+            <strong>Inloggning med Google.</strong> Väljer du &quot;Fortsätt med Google&quot; loggar du in på Googles
+            egen sida. Google bekräftar vem du är, och vi får ditt namn och din e-postadress. Google skickar också en länk till din profilbild; den
             lagras i inloggningssystemet men visas och används inte. Google får veta att du loggar in på Kuggfri, men
             inget om vad du pluggar. För själva inloggningen hos Google gäller Googles integritetspolicy. Du kan
             alltid välja e-post och lösenord i stället.

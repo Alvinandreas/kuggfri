@@ -31,27 +31,21 @@ function supabaseOrigins(): string[] {
   }
 }
 
-/** Google Identity Services ("Fortsätt med Google"): skript, stilmall, knappens iframe och anrop. */
-const GOOGLE_GSI = "https://accounts.google.com/gsi/";
-
 export function buildCsp(nonce: string, isDev: boolean): string {
-  const connect = ["'self'", ...supabaseOrigins(), GOOGLE_GSI];
+  const connect = ["'self'", ...supabaseOrigins()];
   // Dev-servern behöver eval för hot reload och websocket till sig själv.
   if (isDev) connect.push("ws:", "http://localhost:*");
 
   return [
     "default-src 'self'",
-    // strict-dynamic: skript som våra betrodda skript laddar (Googles knapp) tillåts; värdlistan
-    // gäller bara äldre webbläsare som inte stöder strict-dynamic.
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${GOOGLE_GSI}client${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
     // Tailwind och KaTeX injicerar stilar; style-src-attr krävs för inline style-attribut.
-    `style-src 'self' 'unsafe-inline' ${GOOGLE_GSI}style`,
+    "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
     `connect-src ${connect.join(" ")}`,
     "frame-ancestors 'none'",
-    // Enda tillåtna iframen: Googles inloggningsknapp.
-    `frame-src ${GOOGLE_GSI}`,
+    "frame-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
@@ -66,9 +60,7 @@ export function buildCsp(nonce: string, isDev: boolean): string {
 export const STATIC_SECURITY_HEADERS = [
   { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
   { key: "X-Content-Type-Options", value: "nosniff" },
-  // Webbläsarnas standard: andra sajter får bara vår domän, aldrig sökvägen. Google-knappen
-  // kräver att domänen skickas (same-origin skickade inget och fick inloggningen att nekas).
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Referrer-Policy", value: "same-origin" },
   // Inramning är aldrig tillåten: appen har inget legitimt inbäddat läge, och en
   // inramad adminvy är en clickjacking-risk. CSP:ns frame-ancestors gör samma sak
   // för nyare webbläsare; den här finns för de äldre.
@@ -77,9 +69,9 @@ export const STATIC_SECURITY_HEADERS = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
   {
     key: "Permissions-Policy",
-    // identity-credentials-get: FedCM, som Googles knapp använder i nyare Chrome.
-    value:
-      'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), identity-credentials-get=(self "https://accounts.google.com")',
+    // identity-credentials-get: ingen webbläsardialog för inloggning (FedCM); Google-inloggningen
+    // sker på Googles egen sida.
+    value: "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), identity-credentials-get=()",
   },
 ] as const;
 

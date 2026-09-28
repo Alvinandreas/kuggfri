@@ -338,8 +338,8 @@ max_frequency = "5s"
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
 # `twitter`, `x`, `slack`, `spotify`, `workos`, `zoom`.
-# Inloggning med Google (28 sep 2026). Appen använder Googles egen knapp och signInWithIdToken,
-# så bara klient-id behövs lokalt; hemligheten används av OAuth-omdirigeringen i produktionen.
+# Inloggning med Google (28 sep 2026). Appen växlar själv koden mot en ID-token (app/auth/google)
+# och loggar in med signInWithIdToken, så Supabase behöver bara klient-id:t för att godta token.
 [auth.external.google]
 enabled = true
 client_id = "257077473861-4l08q0iunperpdo37l3uu2fbmjq7gugu.apps.googleusercontent.com"

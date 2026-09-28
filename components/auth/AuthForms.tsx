@@ -150,7 +150,7 @@ export function LoginFields({
         </div>
       ) : null}
 
-      {useLink ? null : <GoogleButton next={next} mode="login" />}
+      {useLink ? null : <GoogleButton next={next} />}
 
       {useLink ? (
         <form action={linkAction} className="grid gap-4">
@@ -205,7 +205,7 @@ export function RegisterFields({ next, heading, level = 1 }: { next: string; hea
   return (
     <div className="grid gap-5">
       {heading ?? <FormHeading title={sv.auth.registerTitle} />}
-      <GoogleButton next={next} mode="register" />
+      <GoogleButton next={next} />
       <form action={action} onSubmit={() => setRestarted(false)} className="grid gap-4">
         <input type="hidden" name="next" value={next} />
         <TextField

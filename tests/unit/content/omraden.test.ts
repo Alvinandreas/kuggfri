@@ -3,7 +3,7 @@ import { moveCards, setKind } from "../../../scripts/omraden";
 import type { ContentCard, ContentCourse } from "@/lib/content/model";
 
 function card(key: string, extra: Partial<ContentCard> = {}): ContentCard {
-  return { key, front: key, back: "b", hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, ...extra };
+  return { key, front: key, back: "b", hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, original: false, ...extra };
 }
 
 const course: ContentCourse = {

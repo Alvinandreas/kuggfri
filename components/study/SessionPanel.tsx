@@ -11,6 +11,7 @@ import { duggaQuery, type DuggaSettings } from "@/lib/study/dugga";
 import { Badge } from "@/components/ui/Badge";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
+import { ToggleRow } from "@/components/ui/Toggle";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { DuggaSettingsFields } from "./DuggaSettingsFields";
 
@@ -42,6 +43,8 @@ type Props = {
   onDugga: (settings: DuggaSettings) => void;
   starredCount: number;
   onShowStarred: () => void;
+  /** Valet "Bara originalkorten", eller null när kursen inte har både original och nya kort. */
+  original: { count: number; on: boolean; onChange: (next: boolean) => void } | null;
 };
 
 /**
@@ -63,13 +66,14 @@ export function SessionPanel({
   onDugga,
   starredCount,
   onShowStarred,
+  original,
 }: Props) {
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
   const firstCount = Math.min(dailyNew, totalCards);
   const isDugga = mode === "exam";
   // Duggans regler och stjärnfiltret följer med i adressen till passet.
   const isStarred = pick === "starred";
-  const suffix = `${isDugga ? duggaQuery(dugga) : ""}${isStarred ? "&stjarnor=1" : ""}`;
+  const suffix = `${isDugga ? duggaQuery(dugga) : ""}${isStarred ? "&stjarnor=1" : ""}${original?.on ? "&original=1" : ""}`;
 
   return (
     <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
@@ -111,6 +115,17 @@ export function SessionPanel({
             {mode === "tricky" ? sv.deck.summaryTricky(selectionCount) : sv.deck.summaryCards(selectionCount)}
             {progressReady && mode !== "tricky" ? ` · ${sv.deck.summaryLearned(plan.selectionLearned)}` : ""}
           </p>
+        </div>
+      ) : null}
+
+      {original ? (
+        <div className="-my-1 border-t border-line pt-2" data-testid="only-original">
+          <ToggleRow
+            title={sv.deck.onlyOriginal}
+            description={sv.deck.onlyOriginalHelp(original.count)}
+            checked={original.on}
+            onChange={original.onChange}
+          />
         </div>
       ) : null}
 

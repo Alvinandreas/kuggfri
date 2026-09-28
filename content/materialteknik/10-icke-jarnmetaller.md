@@ -2,6 +2,7 @@
 
 ## Vad kännetecknar Aluminium?
 key: vad-kannetecknar-aluminium
+original: ja
 
 * Lägre vikt än stål, densiteten är 2,7 kg/dm3
 * FCC struktur → god plastisk formbarhet
@@ -12,6 +13,7 @@ skyddande oxidskikt på ytan
 
 ## Vad kännetecknar Magnesium?
 key: vad-kannetecknar-magnesium
+original: ja
 
 * Låg densitet 1,8 kg/dm3
 * HCP struktur → begränsad plastisk formbarhet
@@ -23,6 +25,7 @@ key: vad-kannetecknar-magnesium
 
 ## Vad kännetecknar Titan?
 key: vad-kannetecknar-titan
+original: ja
 status: utkast
 källa: Rättelse: "Titan är den enda metallen som är biokompatibel" är en överdrift; tentasvaren anger bara att titan är biokompatibelt; Canvas, Fö 13 Aluminium och andra metaller, s. 13; Canvas, Fö 13 Aluminium och andra metaller, s. 14; Canvas, Svar Materialteknik 2019-10-26, s. 2; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 (korrigerad), uppgift 5
 
@@ -35,6 +38,7 @@ källa: Rättelse: "Titan är den enda metallen som är biokompatibel" är en ö
 
 ## Vad kännetecknar Koppar och dess legeringar?
 key: vad-kannetecknar-koppar-och-dess
+original: ja
 
 * Hög densitet 8,9 kg/dm3
 * Koppar: Utmärkt formbarhet, hög elektrisk och termisk
@@ -46,6 +50,7 @@ duktilitet, gjuts ofta
 
 ## Vad kännetecknar Nickel- och så kallade superlegeringar?
 key: vad-kannetecknar-nickel-och-sa-kallade
+original: ja
 
 * Medel densitet 7,9-8,7 kg/dm3
 * E-modul: 200-220 GPa
@@ -61,6 +66,7 @@ Zr, Fe, Hf
 
 ## Varför använder man inte alltid stål eftersom det är billigast?
 key: varfor-anvander-man-inte-alltid-stal
+original: ja
 
 Stål har bra mekaniska egenskaper, låg miljöbelastning per kilo och återfinns i många olika varianter för olika användningsområden till det billigaste priset, men aluminium har lägre densitet, fortfarande bra pris, är lättbearbetat och har bra naturligt korrosionsskydd.
 
@@ -69,6 +75,7 @@ Stål är bra, men i vissa situationer väljs andra material för att deras spec
 ## Åldring
 key: aldring
 typ: begrepp
+original: ja
 status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 27; Canvas, GLU 02 Fasdiagram, s. 1; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 18; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 19; Canvas, Short_dictionary_ v2026, s. 1; Canvas, Short_dictionary_ v2026, s. 10
 
@@ -83,6 +90,7 @@ Utskiljningarnas storlek beror på tid och temperatur, vilket ger underåldrat, 
 ## Superlegering
 key: superlegering
 typ: begrepp
+original: ja
 
 Vanligtvis legeringar med Ni-bas som har excellenta högtemperaturegenskaper, oxidations- och korrosionsmotstånd.
 

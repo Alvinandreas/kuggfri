@@ -58,6 +58,8 @@ type Props = {
   dugga: DuggaSettings | null;
   /** Bara stjärnmärkta kort. */
   onlyStarred: boolean;
+  /** Bara originalkorten (den beprövade uppsättningen). */
+  onlyOriginal?: boolean;
 };
 
 type SessionPlan = {
@@ -83,7 +85,9 @@ function clock(ms: number): string {
   return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
 }
 
-export function StudySession({ deck, categories, cards, mode, selection, userId, extraNew, dugga, onlyStarred }: Props) {
+export function StudySession({ deck, categories, cards: allCards, mode, selection, userId, extraNew, dugga, onlyStarred, onlyOriginal = false }: Props) {
+  // Bara originalkorten: allt i passet (kö, dagsplan, sammanfattning) räknar på dem.
+  const cards = useMemo(() => (onlyOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal]);
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [reviews, setReviews] = useState<ReviewEntry[]>([]);
@@ -114,7 +118,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
   // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
   const cardsRef = useRef(cards);
   cardsRef.current = cards;
-  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${JSON.stringify(dugga)}|${onlyStarred}`;
+  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${JSON.stringify(dugga)}|${onlyStarred}|${onlyOriginal}`;
   useEffect(() => {
     if (!store) return;
     let cancelled = false;

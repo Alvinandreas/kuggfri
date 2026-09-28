@@ -390,6 +390,7 @@ function cmdQuizkort(k: Kurs): void {
         options,
         review: "utkast",
         source: `Canvas, ${name}, fråga ${item.position}`,
+        original: false,
       });
     }
     if (cards.length === 0) continue;

@@ -33,6 +33,7 @@
  * `##` i kolumn noll startar ett nytt kort, utom inuti en kodstaket (```).
  * Typer: självskattning (standard), begrepp, sant-falskt, alternativ (lib/cards/kinds.ts).
  * `status: utkast` = förslag som väntar på granskning; ett utkast är aldrig aktivt.
+ * `original: ja` = del av den beprövade originaluppsättningen (korten före 28 sep 2026).
  */
 import type { ContentCard } from "./model";
 import { isValidKey } from "./model";
@@ -60,7 +61,7 @@ export type ParseResult = {
   issues: ParseIssue[];
 };
 
-const ATTRIBUTE_RE = /^(key|nyckel|ledtråd|ledtrad|hint|aktiv|active|typ|type|svar|answer|status|källa|kalla|source)\s*:\s*(.*)$/i;
+const ATTRIBUTE_RE = /^(key|nyckel|ledtråd|ledtrad|hint|aktiv|active|typ|type|svar|answer|status|källa|kalla|source|original)\s*:\s*(.*)$/i;
 
 const OPTION_RE = /^- \[( |x|X)\] (.+)$/;
 
@@ -114,6 +115,7 @@ type Pending = {
   unknownAnswer: string | null;
   review: ReviewStatus | null;
   source: string | null;
+  original: boolean;
   body: string[];
 };
 
@@ -171,6 +173,7 @@ export function parseCardFile(text: string): ParseResult {
       options: isAutoGraded(c.kind) ? options : null,
       review: c.review,
       source: c.source,
+      original: c.original,
     });
   };
 
@@ -199,6 +202,7 @@ export function parseCardFile(text: string): ParseResult {
         unknownAnswer: null,
         review: null,
         source: null,
+        original: false,
         body: [],
       };
       readingAttributes = true;
@@ -235,6 +239,7 @@ export function parseCardFile(text: string): ParseResult {
           if (isReviewStatus(v)) current.review = v;
           else if (v && v !== "publicerad" && v !== "granskad") issues.push({ line: lineNo, message: `Okänd status ”${value}” (utkast eller avvisad).` });
         } else if (name === "källa" || name === "kalla" || name === "source") current.source = value || null;
+        else if (name === "original") current.original = parseBool(value);
         else current.hint = value || null;
         return;
       }
@@ -261,6 +266,7 @@ export function serializeCardFile(file: CardFile): string {
       const answer = trueFalseAnswer(card.options);
       if (answer !== null) out.push(`svar: ${answer ? "sant" : "falskt"}`);
     }
+    if (card.original) out.push("original: ja");
     if (card.review) out.push(`status: ${card.review}`);
     if (card.source) out.push(`källa: ${card.source}`);
     if (card.hint) out.push(`ledtråd: ${card.hint}`);

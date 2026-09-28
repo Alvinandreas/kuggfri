@@ -2,6 +2,7 @@
 
 ## Vilka materialgrupper finns det?
 key: vilka-materialgrupper-finns-det
+original: ja
 
 * Metaller
 * Keramer
@@ -11,6 +12,7 @@ Ibland anses glas och elastomerer som separata materialgrupper men de kan annars
 
 ## Nämn minst två olika typer av atombindningar och redogör för deras karaktäristiska egenskaper.
 key: namn-minst-tva-olika-typer-av
+original: ja
 
 * Kovalent bindning:
   - Stark
@@ -33,6 +35,7 @@ polära bindningar
 
 ## Vad är en keram och vad kännetecknar dem?
 key: vad-ar-en-keram-och-vad-kannetecknar-dem
+original: ja
 
 * Oorganiska, kemiska föreningar
 mellan metall och icke-metall
@@ -52,6 +55,7 @@ isolerande
 
 ## Hur tillverkas vanligtvis en produkt gjord i någon form av keram?
 key: hur-tillverkas-vanligtvis-en-produkt
+original: ja
 
 * Keramer tillverkas av olika
 mineral
@@ -63,6 +67,7 @@ keramens smälttemperatur
 
 ## Vad är en metall och vad kännetecknar dem?
 key: vad-ar-en-metall-och-vad-kannetecknar
+original: ja
 
 * Vanliga metaller
   - Stål
@@ -90,6 +95,7 @@ borrning, svarvning, fräsning
 
 ## Vad är en polymer och vad kännetecknar dem?
 key: vad-ar-en-polymer-och-vad-kannetecknar
+original: ja
 
 * Organiska material som består
 av makromolekyler
@@ -108,6 +114,7 @@ isolerande
 
 ## Vad är en komposit och vad kännetecknar dem?
 key: vad-ar-en-komposit-och-vad-kannetecknar
+original: ja
 
 * Kombination av två eller flera
 material, ex. plast och kolfiber
@@ -122,6 +129,7 @@ partiklar
 
 ## Nämn minst två olika typer av tillverkningsmetoder.
 key: namn-minst-tva-olika-typer-av-2
+original: ja
 
 * Primär formning
 * Sekundär formning
@@ -130,6 +138,7 @@ key: namn-minst-tva-olika-typer-av-2
 
 ## "Materialegenskaper" brukar delas upp i ett antal underkategorier, nämn minst tre av dessa.
 key: materialegenskaper-brukar-delas-upp-i
+original: ja
 
 * Allmänna egenskaper
 * Mekaniska egenskaper
@@ -141,6 +150,7 @@ optiska egenskaper
 
 ## Ge minst två exempel på mekaniska egenskaper.
 key: ge-minst-tva-exempel-pa-mekaniska
+original: ja
 status: utkast
 källa: Rättelse: brottseghet beskrevs som den last vid vilken materialet går sönder, men brottseghet är materialets motstånd mot spricktillväxt; Canvas, Kapitel_02 Material och tillverkning databaser, s. 26; Canvas, Fo 8 Plasticitet, s. 26; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 28
 
@@ -157,6 +167,7 @@ spricktillväxt.
 
 ## Ge minst två exempel på elektriska, magnetiska och optiska egenskaper.
 key: ge-minst-tva-exempel-pa-elektriska
+original: ja
 
 * Elektrisk ledningsförmåga
 * Elektrisk isolering
@@ -168,6 +179,7 @@ elektronerna i materialet
 
 ## Ge minst två exempel på termiska egenskaper.
 key: ge-minst-tva-exempel-pa-termiska
+original: ja
 
 * Smälttemperatur
 * Min och max
@@ -178,6 +190,7 @@ användningstemperatur
 
 ## Ge minst två exempel på kemiska egenskaper.
 key: ge-minst-tva-exempel-pa-kemiska
+original: ja
 
 * Korrosion (“rostar”)
 * Oxidation (reagerar med syre)
@@ -186,6 +199,7 @@ key: ge-minst-tva-exempel-pa-kemiska
 
 ## Ge minst två exempel på miljöegenskaper.
 key: ge-minst-tva-exempel-pa-miljoegenskaper
+original: ja
 
 * CO₂ footprint: mängd CO₂-som
 bildas vid framställning
@@ -201,6 +215,7 @@ användning och skrotning
 ## Keram
 key: keram
 typ: begrepp
+original: ja
 aktiv: nej
 
 Ett material som är uppbyggt av en metall och en icke-metall (minst).
@@ -208,12 +223,14 @@ Ett material som är uppbyggt av en metall och en icke-metall (minst).
 ## Adhesiv förslitning
 key: adhesiv-forslitning
 typ: begrepp
+original: ja
 
 Vid nötningen binds materialen samman med atomära bindningar, och material rycks bort när ytorna glider mot varandra. De två materialen svetsas punktvis samman, och slits isär.
 
 ## Abrasiv förslitning
 key: abrasiv-forslitning
 typ: begrepp
+original: ja
 
 Förslitning som fås när ett hårt material/medium avverkar ytan.
 

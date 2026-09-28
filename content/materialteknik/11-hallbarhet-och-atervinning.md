@@ -2,6 +2,7 @@
 
 ## Vad i materialtillverkningsprocessen kräver energi och vad innebär detta för miljön?
 key: vad-i-materialtillverkningsprocessen
+original: ja
 
 Energiintensiva processer:
 
@@ -17,6 +18,7 @@ Miljöbelastning:
 
 ## Hur återanvändningsbara är egentligen metaller? Vad finns det för utmaningar med det?
 key: hur-ateranvandningsbara-ar-egentligen
+original: ja
 
 * Metallskrot är en utmärkt råvara för metalltillverkning
 * Kräver mindre energi än tillverkning från malm: 1/10 för Al och 1/3 för stål
@@ -34,6 +36,7 @@ legeringar
 
 ## Hur bra är aluminium sett ur ett hållbarhetsperspektiv?
 key: hur-bra-ar-aluminium-sett-ur-ett
+original: ja
 status: utkast
 källa: Rättelse: kortet sa att aluminium är det vanligaste grundämnet i jordskorpan, vilket inte stämmer och inte står i kursmaterialet; Canvas, Fö 13 Hållbarhet, s. 13; Canvas, Fö 13 Hållbarhet, s. 17; Canvas, Kapitel_03 Materialval, s. 45; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 5
 
@@ -49,6 +52,7 @@ Problem vid återvinning av aluminium:
 
 ## Hur bra är stål respektive rostfritt stål sett ur ett hållbarhetsperspektiv?
 key: hur-bra-ar-stal-respektive-rostfritt
+original: ja
 
 Stål:
 
@@ -68,6 +72,7 @@ Oftast inte bundna i rostfritt stål.
 
 ## Vad finns det för problem med återvinningen av blandat skrot?
 key: vad-finns-det-for-problem-med
+original: ja
 
 * Vid återanvändning av skrot är kontroll av legeringsämne ett problem
 * Överflödiga legeringsämne och förorenande metaller kan vara eller är oekonomiska att ta bort
@@ -75,6 +80,7 @@ key: vad-finns-det-for-problem-med
 
 ## Vad är "CO₂- footprint" respektive "Embodied Energy"?
 key: vad-ar-co-footprint-respektive-embodied
+original: ja
 
 CO₂ footprint:
 
@@ -94,6 +100,7 @@ För metaller:
 
 ## Hur ser tillgången på metaller i jordskorpan ut?
 key: hur-ser-tillgangen-pa-metaller-i
+original: ja
 
 * De vanligaste metallerna finns i stor omfattning i jordskorpan: Fe, Al, Mg, Ti
 * Vissa legeringsämnen finns i begränsad mängd i jordskorpan
@@ -102,6 +109,7 @@ jordartsmetaller, platina-gruppen, fissionsämne (U, Th, Pu), W, Ta, Nb, Ga, In
 
 ## Sammanfatta lite kort hur metaller lämpar sig för återvinning.
 key: sammanfatta-lite-kort-hur-metaller
+original: ja
 
 * Metaller lämpar sig väl för återvinning
   - Sparar resurser och energi
@@ -115,6 +123,7 @@ livscykeln
 ## CO₂-foot print
 key: co-foot-print
 typ: begrepp
+original: ja
 aktiv: nej
 
 Den mängd CO₂ som bildas vid produktion av ett kilo material.

@@ -2,6 +2,7 @@
 
 ## Hur mäts ett materials hårdhet?
 key: hur-mats-ett-materials-hardhet
+original: ja
 
 * Mäts med intryck
 * Olika metoder med
@@ -13,6 +14,7 @@ sträckgräns
 
 ## Vad kan det finnas för defekter i kristaller?
 key: vad-kan-det-finnas-for-defekter-i
+original: ja
 
 * Vakanser = atomer saknas
 * Inlösta atomer = atom av
@@ -23,6 +25,7 @@ atomplan
 
 ## Beskriv ingående vad dislokationer och dislokationsrörelser är och vad det innebär för materialet.
 key: beskriv-ingaende-vad-dislokationer-och
+original: ja
 
 Dislokationer är en typ av strukturmässig avvikelse i kristallen i form av "extra atomplan". De bryter alltså det annars uniforma mönstret hos kristallen.
 
@@ -42,6 +45,7 @@ band av plasticerat material
 
 ## Vad är en härdningsmekanism? Nämn minst två olika typer av härdningsmekanismer.
 key: vad-ar-en-hardningsmekanism-namn-minst
+original: ja
 
 En förändring av mikrostrukturen för att göra dislokationsrörelser svårare. Det resulterar i högre sträckgräns, hårdhet och ofta lägre brottförlängning. De olika typerna av härdningsmekanismer är:
 
@@ -52,6 +56,7 @@ En förändring av mikrostrukturen för att göra dislokationsrörelser svårare
 
 ## Vad är lösningshärdning och hur går det till?
 key: vad-ar-losningshardning-och-hur-gar-det
+original: ja
 
 * Atomer av annan sort löses in i
 kristallen
@@ -64,6 +69,7 @@ atomstorlek
 
 ## Vad är utskiljningshärdning och hur går det till?
 key: vad-ar-utskiljningshardning-och-hur-gar
+original: ja
 
 * Partiklar av annan fas
 bildas i materialet
@@ -75,6 +81,7 @@ fast form
 
 ## Vad är deformationshärdning och hur går det till?
 key: vad-ar-deformationshardning-och-hur-gar
+original: ja
 
 * Dislokationer hindrar andra
 dislokationer att röra sig (låser
@@ -88,6 +95,7 @@ hårdnande
 
 ## Vad är korngränshärdning och hur går det till?
 key: vad-ar-korngarnshardning-och-hur-gar
+original: ja
 
 * Minska storleken på kornen som utgör materialet så att antalet korngränser ökar
 * Korngränser hindrar
@@ -99,6 +107,7 @@ stål)
 ## Brottförlängning
 key: brottforlangning
 typ: begrepp
+original: ja
 
 Den plastiska förlängningen som kvarstår efter ett material har belastats till brott.
 
@@ -106,6 +115,7 @@ Den plastiska förlängningen som kvarstår efter ett material har belastats til
 key: ja-nej-malet-med-utskiljningshardning
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 30, 33, 35; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
 

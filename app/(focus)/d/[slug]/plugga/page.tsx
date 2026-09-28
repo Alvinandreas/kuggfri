@@ -31,14 +31,16 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const extraNew = Number.isFinite(parsedExtra) && parsedExtra > 0 ? Math.min(200, parsedExtra) : null;
   const dugga = mode === "exam" ? parseDugga(query) : null;
   const onlyStarred = (Array.isArray(query.stjarnor) ? query.stjarnor[0] : query.stjarnor) === "1";
+  const onlyOriginal = (Array.isArray(query.original) ? query.original[0] : query.original) === "1";
 
   return (
     <StudySession
-      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(dugga)}-${onlyStarred}`}
+      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(dugga)}-${onlyStarred}-${onlyOriginal}`}
       deck={{ id: data.deck.id, slug: data.deck.slug, title: data.deck.title, exam_date: data.deck.exam_date }}
       extraNew={extraNew}
       dugga={dugga}
       onlyStarred={onlyStarred}
+      onlyOriginal={onlyOriginal}
       categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
       cards={data.cards.map((c) => ({
         id: c.id,
@@ -49,6 +51,7 @@ export default async function StudyPage({ params, searchParams }: { params: Para
         sort_order: c.sort_order,
         kind: c.kind ?? "sjalvskattning",
         options: parseOptions(c.options),
+        original: c.original ?? false,
       }))}
       mode={mode}
       selection={selection}

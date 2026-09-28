@@ -2,6 +2,7 @@
 
 ## Vad beror ett materials densitet på för faktorer?
 key: vad-beror-ett-materials-densitet-pa-for
+original: ja
 
 * Atomvikten hos atomerna i materialet
 * Antalet atomer/volym
@@ -10,6 +11,7 @@ key: vad-beror-ett-materials-densitet-pa-for
 
 ## Atombindningar kan jämföras med linjära fjädrar. Hur kommer detta sig och varför gör man det?
 key: atombindningar-kan-jamforas-med-linjara
+original: ja
 
 Man brukar likna atombindningar med linjära fjädrar för att de har liknande egenskaper.
 Om:
@@ -27,6 +29,7 @@ avlastning
 
 ## Vad har ett materials atombindningar för inverkan på dess egenskaper?
 key: vad-har-ett-materials-atombindningar
+original: ja
 
 * Påverkar styvhet, termisk utvidgning,
 smälttemperatur, elektrisk ledningsförmåga m.m.
@@ -34,6 +37,7 @@ smälttemperatur, elektrisk ledningsförmåga m.m.
 
 ## Hur ser ett typiskt dragprov ut för ett sprött material?
 key: hur-ser-ett-typiskt-dragprov-ut-for-ett
+original: ja
 
 * Elastiskt beteende upp till
 brottgränsen
@@ -43,6 +47,7 @@ där brott sker
 
 ## Hur ser ett typiskt dragprov ut för ett segt material?
 key: hur-ser-ett-typiskt-dragprov-ut-for-ett-2
+original: ja
 
 * Elastiskt beteende upp till
 sträckgränsen
@@ -55,6 +60,7 @@ området
 
 ## Vilka egenskaper kan observeras/kartläggas med hjälp av dragprov?
 key: vilka-egenskaper-kan-observeras
+original: ja
 status: utkast
 källa: Rättelse: "seghet = arean under dragprovkurvan" (2025) krockar med 2026 års definition av seghet som motstånd mot spricktillväxt, som inte kan fås ur dragprov; arean beskrivs nu som brottarbete; Canvas, Kapitel_08 Seghet och Brott, s. 2, 7; Canvas, Fo 9 Brott och brottseghet, s. 11; Canvas, Kapitel_04 Elastisk deformation, s. 20; Canvas, Fo 7 Styvhet, s. 9
 
@@ -66,6 +72,7 @@ källa: Rättelse: "seghet = arean under dragprovkurvan" (2025) krockar med 2026
 
 ## Styvheten hos kompositer beror på fler faktorer än homogena material gör, nämn minst två av dessa.
 key: styvheten-hos-kompositer-beror-pa-fler
+original: ja
 
 Styvheten beror på:
 
@@ -80,6 +87,7 @@ Ex: Fiberriktning
 ## Vad är töjning?
 key: vad-ar-tojning
 typ: begrepp
+original: ja
 status: utkast
 källa: Rättelse: töjning beskrevs som den procentuella förlängningen, men är den relativa längdändringen, dimensionslös och negativ vid tryck; Canvas, Kapitel_04 Elastisk deformation, s. 6, 7, 22; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 2; Canvas, Fo 7 Styvhet, s. 12
 
@@ -98,6 +106,7 @@ Fukt m.m.
 ## Vad kännetecknar ett isotropt material?
 key: vad-kannetecknar-ett-isotropt-material
 typ: begrepp
+original: ja
 status: utkast
 källa: Rättelse: isotropi definierades som att materialet kan beskrivas med minst två elastiska konstanter, men definitionen är att egenskaperna är lika i alla riktningar; Canvas, Kapitel_04 Elastisk deformation, s. 15, 21, 23; Canvas, Short_dictionary_ v2026, s. 8; Canvas, Fo 7 Styvhet, s. 13
 
@@ -111,12 +120,14 @@ Ett isotropt material har samma egenskaper oavsett i vilken riktning de mäts. D
 ## Anisotropt
 key: anisotropt
 typ: begrepp
+original: ja
 
 Olika egenskaper i olika riktningar
 
 ## Styvhet
 key: styvhet
 typ: begrepp
+original: ja
 
 Ett mått på hur mycket ett material deformeras elastiskt när det utsätts för en last.
 
@@ -124,6 +135,7 @@ Ett mått på hur mycket ett material deformeras elastiskt när det utsätts fö
 key: ja-nej-basta-sattet-att-oka-e-modulen
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Kapitel_04 Elastisk deformation, s. 12, 24, 26; Canvas, Fo 7 Styvhet, s. 4, 5; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
 
@@ -133,6 +145,7 @@ E-modulen bestäms av atombindningarnas styvhet och antalet bindningar per area,
 key: ja-nej-dislokationer-ar-lika-viktiga
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 18, 30; Canvas, Kapitel_04 Elastisk deformation, s. 12; Canvas, Fo 7 Styvhet, s. 4; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
 

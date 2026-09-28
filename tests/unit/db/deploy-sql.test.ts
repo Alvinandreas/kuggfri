@@ -34,7 +34,7 @@ describe("supabase/deploy/full.sql", () => {
     const tables = await db.query<{ table_name: string }>(
       `select table_name from information_schema.tables where table_schema = 'public' order by table_name`,
     );
-    expect(tables.map((t) => t.table_name)).toEqual(["card_progress", "card_reports", "cards", "categories", "deck_examiner_invites", "deck_examiners", "decks", "email_log", "profiles", "review_log", "study_sessions"]);
+    expect(tables.map((t) => t.table_name)).toEqual(["card_progress", "card_reports", "card_versions", "cards", "categories", "deck_examiner_invites", "deck_examiners", "decks", "email_log", "profiles", "review_log", "study_sessions"]);
     // Utkast (review_status) är dolda för gäster; resten av seedens kort syns.
     const [all] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards`);
     const [drafts] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where review_status is not null`);

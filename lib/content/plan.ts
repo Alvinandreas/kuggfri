@@ -60,6 +60,7 @@ export type SnapshotCard = {
   options?: unknown;
   review_status?: string | null;
   source?: string | null;
+  original?: boolean | null;
 };
 
 export type DeckSnapshot = {
@@ -126,6 +127,7 @@ export type SyncPayload = {
       options: CardOption[] | null;
       review_status: ReviewStatus | null;
       source: string | null;
+      original: boolean;
     }[];
     update: {
       id: string;
@@ -141,6 +143,7 @@ export type SyncPayload = {
       options: CardOption[] | null;
       review_status: ReviewStatus | null;
       source: string | null;
+      original: boolean;
     }[];
     deactivate: string[];
     delete: string[];
@@ -184,13 +187,14 @@ function label(text: string): string {
 }
 
 /** De senare kortfälten ur en databasrad, med standardvärden för äldre ögonblicksbilder. */
-function laterFields(db: SnapshotCard): Pick<ContentCard, "kind" | "options" | "review" | "source"> {
+function laterFields(db: SnapshotCard): Pick<ContentCard, "kind" | "options" | "review" | "source" | "original"> {
   const kind = isCardKind(db.kind) ? db.kind : DEFAULT_CARD_KIND;
   return {
     kind,
     options: parseOptions(db.options),
     review: isReviewStatus(db.review_status) ? db.review_status : null,
     source: db.source ?? null,
+    original: db.original ?? false,
   };
 }
 
@@ -355,6 +359,7 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
       options: card.options,
       review_status: card.review,
       source: card.source,
+      original: card.original,
     };
 
     if (!db) {

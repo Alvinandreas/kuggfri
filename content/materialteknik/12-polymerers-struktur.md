@@ -2,6 +2,7 @@
 
 ## Nämn minst två olika typer av polymerer och vad som kännetecknar dem.
 key: namn-minst-tva-olika-typer-av-polymerer
+original: ja
 
 * Termoplaster
   - Långa polymerkedjor

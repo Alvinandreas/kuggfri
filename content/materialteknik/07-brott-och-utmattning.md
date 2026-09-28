@@ -1,24 +1,14 @@
 # Brott och utmattning
 
-## Vad är brottseghet?
-key: vad-ar-brottseghet
-typ: begrepp
-status: utkast
-källa: Rättelse: brottvillkoret var omvänt (kortet sa att brott sker när K1c > K1, så stod det också på en bild 2025); Canvas, Kapitel_08 Seghet och Brott, s. 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Fö 9 Brott och brottseghet, s. 7; Canvas, Fö 9 Brott och brottseghet, s. 10; Canvas, Kapitel_08 Seghet och Brott, s. 13; Canvas, Kapitel_08 Seghet och Brott, s. 18; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15
-
-Ett materials motstånd mot spricktillväxt. Brottsegheten $K_{1c}$ ($\text{MPa}\sqrt{\text{m}}$; 1 för lastmod 1, c för kritisk) är det kritiska värdet på spänningsintensitetsfaktorn.
-
-* En spricka växer när spänningsintensitetsfaktorn $K_1$ överskrider $K_{1c}$. Vid statisk last växer sprickan inte så länge $K_1$ är mindre än $K_{1c}$ (vid cyklisk last kan en utmattningsspricka däremot växa lite för varje cykel, se Paris lag).
-* $K_1 = Y\sigma\sqrt{\pi c}$ tar hänsyn till både last (spänningen $\sigma$) och spricklängd $c$.
-* Brottsegheten beror på energin som krävs för att driva sprickan: $K_{1c} = \sqrt{E\,G_c}$.
-
 ## Varför är spröda material extra känsliga för defekter?
 key: varfor-ar-sproda-material-extra
+original: ja
 
 Största förekommande defekten i en komponent ger störst spänning vilket innebär att brottet börjar där. Brottstyrkan blir då beroende av sannolikheten för att det finns en defekt i det belastade området och ju större komponenten är desto högre blir sannolikheten att det förekommer defekter. Eftersom sprickor uppträder lättare i spröda material blir de mer defektkänsliga.
 
 ## Vad har temperatur för inverkan på ett materials brottseghet?
 key: vad-har-temperatur-for-inverkan-pa-ett
+original: ja
 status: utkast
 källa: Rättelse: kortet sa att alla material blir sprödare när temperaturen sjunker, men metaller med FCC-struktur förblir duktila; Canvas, Kapitel_08 Seghet och Brott, s. 31; Canvas, Kapitel_08 Seghet och Brott, s. 37; Canvas, Fö 9 Brott och brottseghet, s. 3
 
@@ -28,6 +18,7 @@ Vid låga temperaturer blir vissa metaller och alla polymerer spröda. När temp
 
 ## Vad är skillnaden mellan ett segt- respektive sprött brott?
 key: vad-ar-skillnaden-mellan-ett-segt
+original: ja
 status: utkast
 källa: Rättelse: "deformeras plastiskt under en längre tid" var missvisande, det är mängden plastisk deformation och inte tiden som skiljer brotten åt; Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 1; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28
 
@@ -36,6 +27,7 @@ källa: Rättelse: "deformeras plastiskt under en längre tid" var missvisande, 
 
 ## Vad använder man för typ av test för att undersöka ett materials brottseghet?
 key: vad-anvander-man-for-typ-av-test-for
+original: ja
 status: utkast
 källa: Rättelse: kortet sa att brottseghet bestäms med slagprovning, men slagprovning mäter slagseghet; Canvas, Kapitel_08 Seghet och Brott, s. 8; Canvas, Kapitel_08 Seghet och Brott, s. 16; Canvas, Kapitel_08 Seghet och Brott, s. 21
 
@@ -46,6 +38,7 @@ Slagprovning (Charpy) med en anvisad provstav mäter i stället slagseghet, ener
 ## Brottseghet
 key: brottseghet
 typ: begrepp
+original: ja
 aktiv: nej
 
 Ett mått på materialets seghet, hur mycket energi som behövs för att driva en
@@ -54,6 +47,7 @@ spricka. Brott fås när spänningsintensiteten vid sprickspetsen är högre än
 ## Högcykelutmattning
 key: hogcykelutmattning
 typ: begrepp
+original: ja
 
 Utmattning är brott som uppkommer vid cyklisk belastning. Vid högcykelutmattning är belastningen under sträckgränsen, och materialet plasticerar bara lokalt
 vid sprickspetsen, vilket ger ett stort antal cykler till brott.
@@ -61,6 +55,7 @@ vid sprickspetsen, vilket ger ett stort antal cykler till brott.
 ## Slagseghet
 key: slagseghet
 typ: begrepp
+original: ja
 
 Den energi som går åt för att slå av en anvisad provstav. Ett mått på hur segt eller sprött materialet är.
 
@@ -68,6 +63,7 @@ Den energi som går åt för att slå av en anvisad provstav. Ett mått på hur 
 key: ja-nej-omslagstemperatur-finns-hos
 typ: sant-falskt
 svar: sant
+original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Kapitel_08 Seghet och Brott, s. 31; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 18; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Short_dictionary_ v2026, s. 2
 
@@ -79,6 +75,7 @@ Tentan 2020 hade påståendet med bara "rostfritt stål" och facit ja; det gäll
 key: ja-nej-utmattningsgransen-ar-antalet
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 6
 
@@ -88,6 +85,7 @@ Falskt. Utmattningsgränsen är en spänningsamplitud, inte ett antal cykler: un
 key: ja-nej-sproda-brott-foljer-alltid
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 9 Brott och brottseghet, s. 16; Canvas, Svar Materialteknik 2019-10-26, s. 2; Canvas, Kapitel_08 Seghet och Brott, s. 32
 
@@ -96,12 +94,14 @@ Falskt. En spröd brottyta kan vara både interkristallin (längs korngränserna
 ## Utmattningsgräns
 key: utmattningsgrans
 typ: begrepp
+original: ja
 
 Den spänning under vilken inte utmattning sker.
 
 ## Segt brott
 key: segt-brott
 typ: begrepp
+original: ja
 
 Ett brott som föregås av mycket plasticering. Lång töjning innan brott sker med andra ord.
 
@@ -307,3 +307,16 @@ källa: Canvas, Kapitel_08 Seghet och Brott, s. 17; Canvas, Kapitel_08 Seghet oc
 - [ ] 141 kN
 
 $F^* = \dfrac{K_{1c}\,b\,w}{1{,}64\sqrt{\pi c}} = \dfrac{25\cdot 10^6 \cdot 0{,}020 \cdot 0{,}050}{1{,}64\sqrt{\pi \cdot 0{,}010}} \approx 86$ kN. I exempel 8.2 räcker därför inte en provningsmaskin med maxlasten 50 kN. 141 kN fås om faktorn 1,64 glöms bort och 8,6 kN om en tiopotens blir fel.
+
+## Vad är brottseghet?
+key: vad-ar-brottseghet
+typ: begrepp
+original: ja
+status: utkast
+källa: Rättelse: brottvillkoret var omvänt (kortet sa att brott sker när K1c > K1, så stod det också på en bild 2025); Canvas, Kapitel_08 Seghet och Brott, s. 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Fö 9 Brott och brottseghet, s. 7; Canvas, Fö 9 Brott och brottseghet, s. 10; Canvas, Kapitel_08 Seghet och Brott, s. 13; Canvas, Kapitel_08 Seghet och Brott, s. 18; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15
+
+Ett materials motstånd mot spricktillväxt. Brottsegheten $K_{1c}$ ($\text{MPa}\sqrt{\text{m}}$; 1 för lastmod 1, c för kritisk) är det kritiska värdet på spänningsintensitetsfaktorn.
+
+* En spricka växer när spänningsintensitetsfaktorn $K_1$ överskrider $K_{1c}$. Vid statisk last växer sprickan inte så länge $K_1$ är mindre än $K_{1c}$ (vid cyklisk last kan en utmattningsspricka däremot växa lite för varje cykel, se Paris lag).
+* $K_1 = Y\sigma\sqrt{\pi c}$ tar hänsyn till både last (spänningen $\sigma$) och spricklängd $c$.
+* Brottsegheten beror på energin som krävs för att driva sprickan: $K_{1c} = \sqrt{E\,G_c}$.

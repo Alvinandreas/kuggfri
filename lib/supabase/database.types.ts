@@ -97,6 +97,8 @@ export type CardRow = {
   reviewed_at: string | null;
   /** Var innehållet kommer ifrån. */
   source: string | null;
+  /** Del av den beprövade originaluppsättningen (före 28 sep 2026). */
+  original: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -238,7 +240,7 @@ export type Database = {
         Row: CardRow;
         Insert: Optional<
           CardRow,
-          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source"
+          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original"
         >;
         Update: Partial<CardRow>;
         Relationships: [];

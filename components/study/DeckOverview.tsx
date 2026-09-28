@@ -20,6 +20,9 @@ import { ShareDeck } from "./ShareDeck";
 
 const MODES: StudyMode[] = ["fsrs", "tricky", "free", "random", "exam"];
 
+/** Per kurs och besökare: studenten som valt originalkorten ska slippa välja igen. */
+const ONLY_ORIGINAL_KEY = (deckId: string) => `kuggfri:bara-original:${deckId}`;
+
 /** Läget som passet faktiskt körs i: Stjärnmärkta är fri repetition av de markerade korten. */
 function runMode(pick: PickerMode): StudyMode {
   return pick === "starred" ? "free" : pick;
@@ -37,7 +40,7 @@ type Props = {
   };
   categories: { id: string; title: string }[];
   /** Med frågetexten, för listan över stjärnmärkta kort. */
-  cards: (SelectableCard & { front: string })[];
+  cards: (SelectableCard & { front: string; original: boolean })[];
   userId: string | null;
   /** Förvalt läge och område (?lage=, ?omrade=), t.ex. från Duggan på hemsidan. */
   initialMode?: StudyMode;
@@ -49,7 +52,7 @@ type Props = {
  * statistik om hur det går ligger på hemsidan; här finns bara det som behövs för att
  * komma igång, och passets inställningar.
  */
-export function DeckOverview({ deck, categories, cards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
+export function DeckOverview({ deck, categories, cards: allCards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
   const store = useProgressStore(userId);
   const [progress, setProgress] = useState<ProgressMap | null>(null);
   const [reviews, setReviews] = useState<ReviewEntry[]>([]);
@@ -61,13 +64,38 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
   const { stars } = useStars();
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
+  const [onlyOriginal, setOnlyOriginal] = useState(false);
 
   // Nya kort per dag ställs in under Konto; här läses bara värdet.
   useEffect(() => {
     setPrefs(readPrefs(window.localStorage));
-  }, []);
+    try {
+      setOnlyOriginal(window.localStorage.getItem(ONLY_ORIGINAL_KEY(deck.id)) === "1");
+    } catch {
+      // Utan lagring börjar valet avslaget.
+    }
+  }, [deck.id]);
 
-  const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
+  const changeOnlyOriginal = useCallback(
+    (next: boolean) => {
+      setOnlyOriginal(next);
+      try {
+        window.localStorage.setItem(ONLY_ORIGINAL_KEY(deck.id), next ? "1" : "0");
+      } catch {
+        // Valet gäller ändå för den här sidvisningen.
+      }
+    },
+    [deck.id],
+  );
+
+  // Bara originalkorten: den beprövade uppsättningen. Filtret gäller alla lägen och alla siffror
+  // på sidan, så att det som visas stämmer med passet som startas.
+  const originalCount = useMemo(() => allCards.filter((c) => c.original).length, [allCards]);
+  const offerOriginal = originalCount > 0 && originalCount < allCards.length;
+  const cards = useMemo(() => (onlyOriginal && offerOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal, offerOriginal]);
+
+  // Progress laddas för alla kort, så att valet Bara originalkorten inte hämtar om den.
+  const cardIds = useMemo(() => allCards.map((c) => c.id), [allCards]);
   // Kort utan kategori får en egen rad ("Utan kategori") så att de aldrig försvinner ur urvalet.
   const tableCategories = useMemo(
     () => (cards.some((c) => c.category_id === null) ? [...categories, { id: UNCATEGORIZED_ID, title: sv.deck.uncategorized }] : categories),
@@ -173,7 +201,7 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
                   <span aria-hidden="true">·</span>
                 </>
               ) : null}
-              <span>{sv.deck.totalCards(cards.length)}</span>
+              <span>{sv.deck.totalCards(allCards.length)}</span>
             </p>
           </div>
         </div>
@@ -233,6 +261,7 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
             onDugga={setDugga}
             starredCount={starredCount}
             onShowStarred={() => setStarredOpen(true)}
+            original={offerOriginal ? { count: originalCount, on: onlyOriginal, onChange: changeOnlyOriginal } : null}
           />
           <StarredDialog open={starredOpen} onClose={() => setStarredOpen(false)} cards={cards} categories={tableCategories} colorIndex={colorIndex} />
         </div>

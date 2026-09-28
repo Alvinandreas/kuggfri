@@ -2,6 +2,7 @@
 
 ## Vilka är de olika stegen i materialvalsprocessen?
 key: vilka-ar-de-olika-stegen-i
+original: ja
 status: utkast
 källa: Rättelse: iteration stod som ett femte steg, men strategin har fyra steg och iterationen är ett tillägg; Canvas, Kapitel_03 Materialval, s. 26, 42; Canvas, Ashby et al Materials 3 utgavan PRELIMINAR Lasanvisning och detaljerade larmal Kap 1-12, s. 2
 
@@ -14,6 +15,7 @@ Utöver de fyra stegen itererar man: materialvalet behöver ofta förfinas i fle
 
 ## Beskriv vad man gör i materialvalssteget: "Översätta".
 key: beskriv-vad-man-gor-i
+original: ja
 
 Översätta krav på komponenten till krav på materialet:
 
@@ -31,11 +33,13 @@ Ex. tvärsnitt, material
 
 ## Beskriv vad man gör i materialvalssteget: "Sålla".
 key: beskriv-vad-man-gor-i-2
+original: ja
 
 Ta bort alla material som inte fyller kraven. (Använder vi dessa material så kommer komponenten inte att fungera som vi vill.) Materialegenskaper som vi använder i målfunktionen bör vi inte heller använda vid sållningen. (Ex. inget krav på densitet om målet är låg vikt.)
 
 ## Beskriv vad man gör i materialvalssteget: "Rangordna".
 key: beskriv-vad-man-gor-i-3
+original: ja
 
 * Använd funktion, mål och fria variabler för att bestämma
 materialindex.
@@ -45,11 +49,13 @@ Ex: E-modul/pris, E-modul^(1/2)/densitet
 
 ## Beskriv vad man gör i materialvalssteget: "Sök dokumentation".
 key: beskriv-vad-man-gor-i-4
+original: ja
 
 Leta i dokumentation (handböcker, artiklar, standarder m.m.) för att se om det finns erfarenheter av materialet i liknande tillämpningar.
 
 ## Vad innebär det att iterera materialvalet, och varför är det viktigt?
 key: beskriv-vad-man-gor-i-5
+original: ja
 status: utkast
 källa: Rättelse: kortet sa att man utökar mängden material efter första iterationen, men kursen säger att man börjar brett med materialgrupperna och sedan begränsar sig; Canvas, Kapitel_03 Materialval, s. 26, 42; Canvas, Fo 2 Materialval, s. 9
 
@@ -57,12 +63,14 @@ Materialvalet måste ofta förfinas och förbättras i flera steg innan man hitt
 
 ## Vad har lastfall för inverkan på materialindexet?
 key: vad-har-lastfall-for-inverkan-pa
+original: ja
 aktiv: nej
 
 Lastfallet bestämmer vilket materialindex som är bäst lämpat för situationen. Materialindexet beskriver i sin tur hur bra ett material presterar i det aktuella lastfallet och kan därför med fördel användas för att rangordna en mängd material.
 
 ## Vad är ett lastfall och varför är det viktigt i materialvalsprocessen?
 key: vad-ar-ett-lastfall-och-varfor-ar-det
+original: ja
 status: utkast
 källa: Rättelse: påståendet att man ska använda det lastfall som förekommer oftast saknar stöd i kursmaterialet och är struket; dubbletten vad-har-lastfall-for-inverkan-pa är inaktiverad; Canvas, Fo 7 Styvhet, s. 15, 17; Canvas, Kapitel_03 Materialval, s. 33, 35
 
@@ -73,6 +81,7 @@ källa: Rättelse: påståendet att man ska använda det lastfall som förekomme
 
 ## Beskriv ingående vad ett materialindex är och hur det används.
 key: beskriv-ingaende-vad-ett-materialindex
+original: ja
 
 * Ett numeriskt värde M som talar om hur effektivt ett material är i
 ett visst lastfall och en viss form
@@ -83,6 +92,7 @@ ett visst lastfall och en viss form
 
 ## När ska man använda materialindex för styvhet, kontra sträckgräns?
 key: nar-ska-man-anvanda-materialindex-for
+original: ja
 
 * Använd materialindex för styvhet
 om deformationen är

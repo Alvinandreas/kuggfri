@@ -12,6 +12,9 @@
  *   npm run kuggfri -- seed
  *   npm run kuggfri -- canvas <inventera|hamta|text> <kurs>   (se scripts/canvas.ts)
  *   npm run kuggfri -- omraden|nytt-omrade|byt-namn-omrade|flytta|byt-typ|mappa|ordna-omraden ...   (se scripts/omraden.ts)
+ *   npm run kuggfri -- utgava <kurs> [--mal prod] [--commit <sha>] [--notering "..."]   spara ett läge
+ *   npm run kuggfri -- utgavor <kurs>                                              lista sparade lägen
+ *   npm run kuggfri -- aterga <kurs> <utgåva> [--kort k1,k2] [--mal prod] [--ja]   gå tillbaka (se scripts/utgavor.ts)
  *
  * Mål: `--mal lokal` (standard) eller `--mal prod` (det länkade Supabase-projektet).
  * Inga nycklar i repot: produktionen nås via Supabase CLI:ns egen inloggning.
@@ -29,6 +32,7 @@ import { courseFromSnapshot, planSync, EMPTY_SNAPSHOT, type ContentPlan, type De
 import { courseDir, deriveKey, listCourseKeys, loadCourse, saveCourse } from "@/lib/content/store";
 import { runCanvas } from "./canvas";
 import { OMRADE_COMMANDS, runOmraden } from "./omraden";
+import { countCourse, diffCourses, findUtgava, listUtgavor, restoreCards, restoreCourse, saveUtgava, utgavaId, type Utgava } from "./utgavor";
 
 const ROOT = process.cwd();
 
@@ -183,9 +187,9 @@ function fetchSnapshot(target: Target, deckId: string): DeckSnapshot {
 const KIND_LABEL: Record<string, string> = {
   "deck-create": "ny kurs",
   "deck-update": "kursuppgifter",
-  "category-create": "ny kategori",
-  "category-update": "kategori",
-  "category-delete": "kategori bort",
+  "category-create": "nytt område",
+  "category-update": "område",
+  "category-delete": "område bort",
   "card-create": "nytt kort",
   "card-update": "ändrat kort",
   "card-move": "flyttat kort",
@@ -339,7 +343,7 @@ function cmdKontrollera(args: Args): void {
   say(`${C.green}Inga problem.${C.reset}`);
 }
 
-function buildPlan(args: Args, key: string, target: Target): { course: ContentCourse; plan: ContentPlan } {
+function buildPlan(args: Args, key: string, target: Target): { course: ContentCourse; plan: ContentPlan; snapshot: DeckSnapshot } {
   const { course, issues } = loadCourse(ROOT, key);
   if (issues.length > 0) {
     for (const i of issues) say(`  ${C.red}${i.file}:${i.line}${C.reset} ${i.message}`);
@@ -350,7 +354,7 @@ function buildPlan(args: Args, key: string, target: Target): { course: ContentCo
     deleteMissing: args.flags.radera === true,
     force: args.flags.tvinga === true,
   });
-  return { course, plan };
+  return { course, plan, snapshot };
 }
 
 function cmdPlan(args: Args): void {
@@ -364,7 +368,7 @@ function cmdPlan(args: Args): void {
 async function cmdApply(args: Args): Promise<void> {
   const target = readTarget(args.flags);
   for (const key of resolveCourses(args)) {
-    const { plan } = buildPlan(args, key, target);
+    const { plan, snapshot } = buildPlan(args, key, target);
     printPlan(plan, target);
     if (plan.conflicts.length > 0) fail("Konflikter. Kör pull eller apply --tvinga.");
     if (plan.empty) continue;
@@ -384,6 +388,13 @@ async function cmdApply(args: Args): Promise<void> {
       } catch {
         fail("Backupen misslyckades. Inget har skrivits.");
       }
+    }
+
+    // Utgåva av läget som skrivs över, så att det alltid går att gå tillbaka (produktionen alltid,
+    // lokalt med --utgava). Den fångar även sådant som ändrats i admin sedan förra synken.
+    if (target.kind !== "local" || args.flags.utgava === true) {
+      const u = utgavaFromDatabase(key, target, snapshot, `Före apply (${gitHead() ?? "okänd commit"})`);
+      if (u) say(dim(`Sparade utgåvan ${u.id} (läget före ändringen): ${saveUtgava(ROOT, u).replace(ROOT, ".")}`));
     }
 
     const sql = `select public.sync_deck('${plan.deckId}'::uuid, ${sqlLiteral(JSON.stringify(plan.sync))}::jsonb) as data;`;
@@ -545,7 +556,7 @@ function cmdSeed(): void {
     }
     for (const c of plan.sync.cards.create) {
       out.push(
-        `insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash, kind, options, review_status, source) values (` +
+        `insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash, kind, options, review_status, source, original) values (` +
           [
             `'${c.id}'`,
             `'${plan.deckId}'`,
@@ -561,6 +572,7 @@ function cmdSeed(): void {
             c.options === null ? "null" : `${sqlLiteral(JSON.stringify(c.options))}::jsonb`,
             c.review_status === null ? "null" : sqlLiteral(c.review_status),
             c.source === null ? "null" : sqlLiteral(c.source),
+            String(c.original),
           ].join(", ") +
           `);`,
       );
@@ -572,6 +584,114 @@ function cmdSeed(): void {
   out.push("commit;", "");
   writeFileSync(join(ROOT, "supabase", "seed.sql"), out.join("\n"), "utf8");
   say(`${C.green}Skrev supabase/seed.sql${C.reset}: ${decks} kurser, ${cards} kort.`);
+}
+
+// ---------------------------------------------------------------------------
+// Utgåvor (scripts/utgavor.ts): spara ett läge och gå tillbaka till det
+// ---------------------------------------------------------------------------
+
+function kallaFor(target: Target): Utgava["kalla"] {
+  return target.kind === "local" ? "lokal" : "prod";
+}
+
+function gitHead(): string | null {
+  try {
+    return execFileSync("git", ["rev-parse", "--short", "HEAD"], { encoding: "utf8" }).trim();
+  } catch {
+    return null;
+  }
+}
+
+/** Kursen så som databasen ser ut just nu, som en utgåva (filnamn och nycklar från filerna). */
+function utgavaFromDatabase(key: string, target: Target, snapshot: DeckSnapshot, notering: string | null): Utgava | null {
+  if (!snapshot.deck) return null;
+  const current = existsSync(join(courseDir(ROOT, key), "kurs.json")) ? loadCourse(ROOT, key).course : null;
+  const course = courseFromSnapshot(snapshot, current, deriveKey);
+  const now = new Date();
+  return { id: utgavaId(now, kallaFor(target)), kurs: key, skapad: now.toISOString(), kalla: kallaFor(target), commit: gitHead(), notering, antal: countCourse(course), course };
+}
+
+/** Kursen så som filerna såg ut i en commit. */
+function utgavaFromCommit(key: string, commit: string, notering: string | null): Utgava {
+  const tmp = join(tmpdir(), `kuggfri-utgava-${Date.now()}`);
+  const dir = join(tmp, "content", key);
+  mkdirSync(dir, { recursive: true });
+  const files = execFileSync("git", ["ls-tree", "--name-only", commit, `content/${key}/`], { encoding: "utf8" })
+    .split(/\r?\n/)
+    .filter(Boolean);
+  if (files.length === 0) fail(`Kursen ${key} finns inte i ${commit}.`);
+  for (const f of files) {
+    writeFileSync(join(tmp, f), execFileSync("git", ["show", `${commit}:${f}`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }), "utf8");
+  }
+  try {
+    const { course } = loadCourse(tmp, key);
+    const now = new Date();
+    const sha = execFileSync("git", ["rev-parse", "--short", commit], { encoding: "utf8" }).trim();
+    return { id: utgavaId(now, "commit"), kurs: key, skapad: now.toISOString(), kalla: "commit", commit: sha, notering, antal: countCourse(course), course };
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
+function describeUtgava(u: Utgava): string {
+  const a = u.antal;
+  return `${C.bold}${u.id}${C.reset}  ${a.aktiva} aktiva, ${a.utkast} utkast, ${a.inaktiva} inaktiva, ${a.original} original${u.commit ? dim(`  (${u.commit})`) : ""}${u.notering ? `\n    ${u.notering}` : ""}`;
+}
+
+function cmdUtgava(args: Args): void {
+  const key = args.positional[1];
+  if (!key) fail('kuggfri utgava <kurs> [--mal prod] [--commit <sha>] [--notering "..."]');
+  const notering = typeof args.flags.notering === "string" ? args.flags.notering : null;
+  let u: Utgava | null;
+  if (typeof args.flags.commit === "string") {
+    u = utgavaFromCommit(key, args.flags.commit, notering);
+  } else {
+    const target = readTarget(args.flags);
+    u = utgavaFromDatabase(key, target, fetchSnapshot(target, deckIdFor(key)), notering);
+    if (!u) fail(`Kursen ${key} finns inte i ${targetName(target)}.`);
+  }
+  const path = saveUtgava(ROOT, u);
+  say(`${C.green}Sparade utgåvan${C.reset} ${describeUtgava(u)}`);
+  say(dim(`${path.replace(ROOT, ".")}  (committa mappen utgavor/ så att den finns på GitHub)`));
+}
+
+function cmdUtgavor(args: Args): void {
+  const key = args.positional[1];
+  if (!key) fail("kuggfri utgavor <kurs>");
+  const all = listUtgavor(ROOT, key);
+  if (all.length === 0) {
+    say("Inga utgåvor än. Skapa en med kuggfri utgava <kurs>.");
+    return;
+  }
+  for (const u of all) say(describeUtgava(u));
+}
+
+async function cmdAterga(args: Args): Promise<void> {
+  const key = args.positional[1];
+  const id = args.positional[2];
+  if (!key || !id) fail("kuggfri aterga <kurs> <utgåva> [--kort k1,k2] [--mal prod] [--ja]");
+  const u = findUtgava(listUtgavor(ROOT, key), id);
+  const { course: current, issues } = loadCourse(ROOT, key);
+  if (issues.length > 0) fail("Filerna har problem. Kör kontrollera först.");
+  const keys = typeof args.flags.kort === "string" ? args.flags.kort.split(",").map((k) => k.trim()).filter(Boolean) : null;
+  const next = keys ? restoreCards(current, u.course, keys) : restoreCourse(current, u.course);
+  const d = diffCourses(current, next);
+  say(`${C.bold}Återgå till ${u.id}${C.reset}${keys ? ` (${keys.length} kort)` : " (hela kursen)"}`);
+  say(`  ${d.andrade.length} kort får utgåvans innehåll eller område${d.baraI.length ? `, ${d.baraI.length} saknas i utgåvan och blir inaktiva` : ""}.`);
+  const nextActive = next.categories.flatMap((c) => c.cards).filter((c) => c.active).length;
+  say(`  Efteråt: ${nextActive} aktiva kort (i dag ${countCourse(current).aktiva}).`);
+  if (d.andrade.length === 0 && d.baraI.length === 0) {
+    say("Filerna stämmer redan med utgåvan. Kör apply om databasen inte gör det.");
+    return;
+  }
+  if (args.flags.ja !== true && !(await confirm("Skriva utgåvans kort till filerna och synka?"))) {
+    say("Avbrutet. Inget ändrat.");
+    return;
+  }
+  saveCourse(ROOT, next);
+  say(dim("Filerna är uppdaterade. Synkar (filerna vinner även över ändringar i admin)…"));
+  // --tvinga: att gå tillbaka är ett uttryckligt beslut som ska gälla även kort som redigerats i admin.
+  await cmdApply({ positional: ["apply", key], flags: { ...args.flags, tvinga: true } });
 }
 
 // Hjälptexten är filens egen inledande kommentar, läst fram till dess avslutande rad.
@@ -612,6 +732,13 @@ async function main(): Promise<void> {
       return cmdSeed();
     case "canvas":
       return runCanvas(args.positional);
+    case "utgava":
+      return cmdUtgava(args);
+    case "utgavor":
+      return cmdUtgavor(args);
+    case "aterga":
+    case "återgå":
+      return cmdAterga(args);
     case "hjalp":
     case "hjälp":
     case "--help":

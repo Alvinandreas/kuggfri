@@ -2,12 +2,14 @@
 
 ## Vad är ett fasdiagram och vad används det till?
 key: vad-ar-ett-fasdiagram-och-vad-anvands
+original: ja
 
 Ett fasdiagram visar vilka faser som är stabila vid vilka specifika temperaturer och sammansättningar av de ingående metallerna i en legering (även tryck m.m.). Gäller vid långsamma förlopp så att utjämning av koncentrationsskillnader kan ske m.h.a. diffusion = jämvikt uppnås.
 
 ## Vad är Ferrit och när uppstår det?
 key: vad-ar-ferrit-och-nar-uppstar-det
 typ: begrepp
+original: ja
 status: utkast
 källa: Rättelse: temperaturen följer nu 2026 års material och δ-ferriten nämns, så att "upp till 910 °C" inte läses som enda BCC-området; Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_Optisk_Mikroskopi_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
 
@@ -18,6 +20,7 @@ Ferrit ($lpha$-järn) är järn med BCC-struktur. I rent järn är det den stab
 ## Vad är Austenit och när uppstår det?
 key: vad-ar-austenit-och-nar-uppstar-det
 typ: begrepp
+original: ja
 status: utkast
 källa: Rättelse: "upp över 910 °C" gällde inte över ca 1394 °C, där rent järn blir delta-ferrit (BCC); Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_Optisk_Mikroskopi_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
 
@@ -26,18 +29,21 @@ Austenit ($\gamma$-järn) är järn med FCC-struktur. I rent järn är det den s
 ## Vad är cementit och när uppstår det?
 key: vad-ar-cementit-och-nar-uppstar-det
 typ: begrepp
+original: ja
 
 Cementit, Fe₃C, intermediär fas, 6,67 % C, mycket hård
 
 ## Metastabil
 key: metastabil
 typ: begrepp
+original: ja
 
 Ett tillstånd i ett lokalt energiminimum. För att uppnå tillståndet med lägst energi (stabilt) måste en energibarriär övervinnas genom tillförsel av termisk energi. Fasen har högre Gibbs fria energi men antar spontant inte den mer stabila fasen.
 
 ## Intermetall
 key: intermetall
 typ: begrepp
+original: ja
 status: utkast
 källa: Rättelse: definitionen var otydlig och saknade att fasen har (nära) stökiometrisk sammansättning; Canvas, GLU 02 Fasdiagram, s. 18, 21; Canvas, Fo 4 Fasdiagram, s. 13
 
@@ -46,6 +52,7 @@ En mellanliggande fas i fasdiagrammet som bara består av metaller (minst två).
 ## Eutektikum
 key: eutektikum
 typ: begrepp
+original: ja
 
 En strukturbeståndsdel som består av två faser. Eutektikum bildas vid konstant temperatur
 och koncentration genom en trefasreaktion där en smält fas L bildar två fasta faser: L → alpha + beta
@@ -54,6 +61,7 @@ och koncentration genom en trefasreaktion där en smält fas L bildar två fasta
 key: ja-nej-perlit-bildas-vid-en-eutektisk
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 17; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
 
@@ -62,12 +70,14 @@ Perlit bildas vid den eutektoida reaktionen, som sker i fast fas: austenit omvan
 ## Löslighetsgräns
 key: loslighetsgrans
 typ: begrepp
+original: ja
 
 Den högsta koncentration av ett ämne som kan lösas i en fas.
 
 ## Strukturbeståndsdel
 key: strukturbestandsdel
 typ: begrepp
+original: ja
 
 En urskiljbar del av materialet som består av en eller flera faser och kan ses som en enhet på
 något sätt. Kan vara en fas, eutektikum eller eutektoid.
@@ -75,6 +85,7 @@ något sätt. Kan vara en fas, eutektikum eller eutektoid.
 ## Fas
 key: fas
 typ: begrepp
+original: ja
 
 En del av materialet med homogena fysikaliska och kemiska egenskaper
 

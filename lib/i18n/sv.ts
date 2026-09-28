@@ -401,6 +401,8 @@ export const sv = {
     // Korta förklaringar för lägesrutorna på kurssidan.
     modeStarred: "Stjärnmärkta",
     modeStarredShort: "Korten du markerat med en stjärna.",
+    onlyOriginal: "Bara originalkorten",
+    onlyOriginalHelp: (n: number) => `De ${n} beprövade korten som två årskullar har pluggat på, utan de nya.`,
     modeStarredHelp: "Bläddra fritt bland dina stjärnmärkta kort. Påverkar inte schemat.",
     modeFsrsShort: "Nya och förfallna kort. Schemat sköter resten.",
     modeTrickyShort: "Bara korten du har svårast för.",

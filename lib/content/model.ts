@@ -25,6 +25,8 @@ export type ContentCard = {
   review: ReviewStatus | null;
   /** Var innehållet kommer ifrån (t.ex. en Canvasfil och sida). */
   source: string | null;
+  /** Del av den beprövade originaluppsättningen (korten före 28 sep 2026). */
+  original: boolean;
 };
 
 export type ContentCategory = {
@@ -143,7 +145,7 @@ function short(value: string): string {
  * rad ger tyst dataförlust.
  */
 /** Standardvärden för kortfält som tillkommit efter att hashen infördes (28 sep: uppgiftstyper). */
-const LATER_FIELD_DEFAULTS: Record<string, unknown> = { kind: DEFAULT_CARD_KIND, options: null, review: null, source: null };
+const LATER_FIELD_DEFAULTS: Record<string, unknown> = { kind: DEFAULT_CARD_KIND, options: null, review: null, source: null, original: false };
 
 export function cardContentHash(card: Omit<ContentCard, "key">, categoryKey: string | null): string {
   const fields = Object.entries(card)

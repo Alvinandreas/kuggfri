@@ -3,11 +3,13 @@
 ## Vad utgör stål?
 key: vad-utgor-stal
 typ: begrepp
+original: ja
 
 Stål är järn legerat med kol som beroende på kolhalt och tillverkningsförhållanden kan ges olika egenskaper.
 
 ## Beskriv vad en anlöpning är.
 key: beskriv-vad-en-anlopning-ar
+original: ja
 status: utkast
 källa: Rättelse: kortet angav fel temperatur (precis under ca 910 °C) och fel produkt (perlit + cementit); anlöpning sker vid måttlig temperatur och ger ferrit med fina cementitpartiklar; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, Lab_PM_M2_v2026, s. 11; Canvas, Lab_PM_M2_v2026, s. 13; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, Fö 12 Stål, s. 16; Canvas, Fö 12 Stål, s. 23; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 22; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 23
 
@@ -19,6 +21,7 @@ Anlöpning görs efter martensithärdning, eftersom martensiten är mycket hård
 
 ## Vilken inverkan har kolhalten på stålets egenskaper?
 key: vilken-inverkan-har-kolhalten-pa
+original: ja
 status: utkast
 källa: Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 18; Canvas, Fö 12 Stål, s. 25; Canvas, Fö 12 Stål, s. 26; Canvas, Övning 7 m lösningar, s. 5
 
@@ -29,17 +32,20 @@ Stål med högre kolhalt (maskinstål, 0,25 till 0,75 % C) kan härdas men är s
 ## Vad är martensit och hur uppstår det?
 key: vad-ar-martensit-och-hur-uppstar-det
 typ: begrepp
+original: ja
 
 Kan fås vid snabbkylning av stål från austenitområdet. Det är utöver det en metastabil fas med tetragonal struktur = distorderad BCC.
 
 ## Vad är ett TTT-diagram och vad används det till?
 key: vad-ar-ett-ttt-diagram-och-vad-anvands
+original: ja
 aktiv: nej
 
 TTT-diagram står för Time Temperature Transformation- diagram och används för att bestämma tid och temperatur för värmebehandlingar.
 
 ## Varför legerar man stål? Nämn minst två anledningar.
 key: varfor-legerar-man-stal-namn-minst-tva
+original: ja
 status: utkast
 källa: Canvas, Fö 12 Stål, s. 24; Canvas, Fö 12 Stål, s. 27; Canvas, Fö 12 Stål, s. 28; Canvas, Övning 7 m lösningar, s. 5
 
@@ -53,6 +59,7 @@ Stål legeras för att:
 
 ## Vad kännetecknar underkategorin: "Konstruktionsstål"?
 key: vad-kannetecknar-underkategorin
+original: ja
 
 * Kolhalt: < 0.25%
 
@@ -60,6 +67,7 @@ Konstruktionsstål kan delas in i två grupper; Kolstål och HSLA (High Strength
 
 ## Vad kännetecknar underkategorin: "Maskinstål"?
 key: vad-kannetecknar-underkategorin-2
+original: ja
 
 * Kolhalt: 0.25-0.75 %
 
@@ -67,6 +75,7 @@ Maskinstål kan härdas och är legerat för att öka härdbarheten. Dock är de
 
 ## Vad kännetecknar underkategorin: "Verktygsstål"?
 key: vad-kannetecknar-underkategorin-3
+original: ja
 
 * Kolhalt: 0.5-1.7 % C
 
@@ -74,6 +83,7 @@ Verktygsstål är legerat för att erhålla stabila karbider vid hög temperatur
 
 ## Vad kännetecknar underkategorin: "Rostfritt stål"?
 key: vad-kannetecknar-underkategorin-4
+original: ja
 
 Legeras med Cr för att få ett kromoxidskikt på ytan → korrosionsskydd
 
@@ -83,6 +93,7 @@ Legeras med Cr för att få ett kromoxidskikt på ytan → korrosionsskydd
 ## Vad innebär kalldeformation?
 key: vad-innebar-kalldeformation
 typ: begrepp
+original: ja
 
 Kallbearbetning, även känt som deformationshärdning eller kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
 
@@ -93,6 +104,7 @@ kallbearbetning → högre sträckgräns
 ## Vad innebär rekristallisation?
 key: vad-innebar-rekristallation
 typ: begrepp
+original: ja
 
 Rekristallisation är en process inom metallbearbetning där en deformerad metall omstrukturerar sin inre kristallstruktur för att minska spänningar och återställa dess ursprungliga egenskaper. När metallen deformeras plastiskt, till exempel genom valsning eller smidning, blir dess kristallstruktur och dislokationer störda, vilket leder till hårdare och sprödare egenskaper (detta kallas kallbearbetning).
 Rekristallisation sker när en deformerad metall värms upp till en specifik temperatur, kallad rekristallisationstemperaturen. Vid denna temperatur börjar nya, icke-deformerade korn att bildas inuti materialet. Dessa nya korn ersätter de gamla, deformerade kornen och bidrar till att:
@@ -104,6 +116,7 @@ Rekristallisation sker när en deformerad metall värms upp till en specifik tem
 ## Vad innebär varmdeformation?
 key: vad-innebar-varmdeformation
 typ: begrepp
+original: ja
 
 Varmdeformation är en process där metaller deformeras vid temperaturer som är högre än deras rekristallisationstemperatur (ofta över cirka 0,5 gånger smälttemperaturen i kelvin). Vid dessa temperaturer kan metallens kristallstruktur rekonstrueras samtidigt som deformationen sker, vilket gör att nya korn kan bildas kontinuerligt under bearbetningen. Detta innebär att materialet inte härdas, och det behåller sin duktilitet och formbarhet. Varmdeformation används ofta för stora formändringar, exempelvis vid smidning och valsning i höga temperaturer.
 
@@ -114,6 +127,7 @@ Kortfattat:
 
 ## Beskriv kortfattat vad skillnaden mellan kall- och varmdeformation är.
 key: beskriv-kortfattat-vad-skillnaden
+original: ja
 
 Skillnader kortfattat:
 
@@ -122,6 +136,7 @@ Skillnader kortfattat:
 
 ## Ge exempel på minst två plastiska formningsmetoder.
 key: ge-exempel-pa-minst-tva-plastiska
+original: ja
 
 Exempel:
 
@@ -132,6 +147,7 @@ Exempel:
 
 ## Redogör för vad gjutning innebär för materialet och ge exempel på minst två gjutningsmetoder.
 key: redogor-for-vad-gjutning-innebar-for
+original: ja
 
 * Gjutstruktur – Olika struktur i
 olika delar av gjutgodset
@@ -149,6 +165,7 @@ Exempel:
 
 ## Redogör för vad svetsning innebär för materialet och ge exempel på minst två svetsmetoder.
 key: redogor-for-vad-svetsning-innebar-for
+original: ja
 
 * Svets där materialet har smält och
 stelnat – gjutstruktur
@@ -161,6 +178,7 @@ Ex: TIG/MIG/MAG
 
 ## Beskriv stålets tillverkningsprocess i grova mått.
 key: beskriv-stalets-tillverkningsprocess-i
+original: ja
 
 * Utgångsmaterial: järnoxid
 * Reduceras i masugn:
@@ -182,6 +200,7 @@ Därefter behandlas stålet:
 
 ## Ge minst två exempel på värmebehandlingar för stål.
 key: ge-minst-tva-exempel-pa
+original: ja
 
 * Normalisering: austenitisering + långsam kylning → primär ferrit eller cementit + perlit. Andel perlit ges av kolhalten. Ger ”normal” mikrostruktur, lämpligt för konstruktioner där styvheten är viktig.
 * Mjukglödgning: värmning till temperatur under austenittemperatur (723 C) → diffusion och korntillväxt, sfäroidiserad perlit, lägre sträckgräns. Används för
@@ -194,6 +213,7 @@ Kolhalten avgör andelen cementit. Temperatur och tid för anlöpningen avgör s
 
 ## Nämn minst två produktionsmässiga anledningar till att man legerar stål.
 key: namn-minst-tva-produktionsmassiga
+original: ja
 aktiv: nej
 
 Stål legeras bland annat för att:
@@ -213,6 +233,7 @@ Stål legeras bland annat för att:
 ## TTT-diagram
 key: ttt-diagram
 typ: begrepp
+original: ja
 status: utkast
 källa: Canvas, Fö 12 Stål, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21
 
@@ -221,6 +242,7 @@ TTT-diagram (time, temperature, transformation) visar hur lång tid det tar för
 ## Mjukglödgning
 key: mjukglodgning
 typ: begrepp
+original: ja
 
 En värmebehandling av stål där man får sfäroidiserad perlit, vilket ger ett material med lägre sträckgräns men som är lättare att maskinarbeta. Stålet värms upp till en temperatur under austenitiseringstemperaturen, och
 diffusion ger sfäroidiserad cementit.
@@ -228,6 +250,7 @@ diffusion ger sfäroidiserad cementit.
 ## Verktygsstål
 key: verktygsstal
 typ: begrepp
+original: ja
 
 Höglegerat stål med hög kolhalt. Används i härdat tillstånd. Hårt och värmetåligt.
 
@@ -235,6 +258,7 @@ Höglegerat stål med hög kolhalt. Används i härdat tillstånd. Hårt och vä
 key: ja-nej-nar-ett-material-varmvalsas-sa
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 4; Canvas, Fö 12 Stål, s. 5; Canvas, Fö 12 Stål, s. 6
 
@@ -244,6 +268,7 @@ Falskt. Varmbearbetning sker över rekristallisationstemperaturen, så plastisk 
 key: ja-nej-i-stal-bildar-kol-cementit-men-i
 typ: sant-falskt
 svar: falskt
+original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 29; Canvas, Lab_PM_M2_v2026, s. 12; Canvas, Övning 7 m lösningar, s. 5
 

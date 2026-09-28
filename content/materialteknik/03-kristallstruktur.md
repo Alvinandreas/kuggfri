@@ -2,6 +2,7 @@
 
 ## Vad är skillnaden mellan kristallin- och amorf mikrostruktur?
 key: vad-ar-skillnaden-mellan-kristallin-och
+original: ja
 
 * Kristallin = ordnad struktur
   - Metaller, keramer, vissa polymerer
@@ -10,6 +11,7 @@ key: vad-ar-skillnaden-mellan-kristallin-och
 
 ## Vad är en enhetscell? Nämn minst två olika typer av enhetsceller.
 key: vad-ar-en-enhetscell-namn-minst-tva
+original: ja
 
 * En liten volym som kan beskriva hela kristallen
 * I varje punkt sitter det en atom eller molekyl
@@ -19,6 +21,7 @@ Ex: FCC (Face Centered Cubic), BCC (Body Centered Cubic), Triclinic, Simple Cubi
 
 ## Vad kännetecknar enhetscellen: "FCC"?
 key: vad-kannetecknar-enhetscellen-fcc
+original: ja
 status: utkast
 källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostfritt stål, eftersom det även finns ferritiska och martensitiska rostfria stål; packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 11, 15; Canvas, Fo 12 Stal, s. 28; Canvas, Short_dictionary_ v2026, s. 2
 
@@ -31,6 +34,7 @@ källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostf
 
 ## Vad kännetecknar enhetscellen: "BCC"?
 key: vad-kannetecknar-enhetscellen-bcc
+original: ja
 status: utkast
 källa: Rättelse: "Ex: Fe" angavs utan temperatur, men järn är BCC (ferrit) bara upp till ca 913 °C och därefter FCC (austenit); packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 2, 12, 16; Canvas, Short_dictionary_ v2026, s. 6; Canvas, Lab_PM_M2_v2026, s. 4
 
@@ -43,6 +47,7 @@ källa: Rättelse: "Ex: Fe" angavs utan temperatur, men järn är BCC (ferrit) b
 
 ## Det finns olika typer av hål i kristallstrukturer, vad innebär detta?
 key: det-finns-olika-typer-av-hal-i
+original: ja
 
 * Mellan atomerna finns
 hålrum med olika form
@@ -53,6 +58,7 @@ materialet (ex. C i Fe)
 
 ## Millerindex: Beskriv kortfattat vad det är och hur det tas fram.
 key: millerindex-beskriv-kortfattat-vad-det
+original: ja
 status: utkast
 källa: Rättelse: kortet påstod att riktningsindex inte kallas Millerindex, men GLU 1 2026 kallar dem "Millerindex för riktningar"; kortet beskrev också planets position i stället för orientering; Canvas, GLU 01 Kristallstrukturer, s. 19, 20
 
@@ -71,6 +77,7 @@ Riktningar beskrivs med riktningsvektorer i samma koordinatsystem, omvandlade ti
 ## Kristallin
 key: kristallin
 typ: begrepp
+original: ja
 
 Atomer eller molekyler som sitter i en ordnad struktur.
 

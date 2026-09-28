@@ -105,7 +105,7 @@ describe("nycklar", () => {
 });
 
 describe("innehållshashen", () => {
-  const base = { front: "F", back: "B", hint: null, active: true, kind: "sjalvskattning" as const, options: null, review: null, source: null };
+  const base = { front: "F", back: "B", hint: null, active: true, kind: "sjalvskattning" as const, options: null, review: null, source: null, original: false };
 
   it("ändras när något fält i kortet ändras", () => {
     const h = cardContentHash(base, "kat");
@@ -127,7 +127,7 @@ describe("innehållshashen", () => {
   it("påverkas inte av nyckeln eller av fältens ordning", () => {
     const medNyckel = { ...base, key: "k1" } as unknown as typeof base;
     expect(cardContentHash(medNyckel, "kat")).toBe(cardContentHash(base, "kat"));
-    const omkastad = { source: null, review: null, options: null, kind: "sjalvskattning" as const, active: true, hint: null, back: "B", front: "F" };
+    const omkastad = { original: false, source: null, review: null, options: null, kind: "sjalvskattning" as const, active: true, hint: null, back: "B", front: "F" };
     expect(cardContentHash(omkastad, "kat")).toBe(cardContentHash(base, "kat"));
   });
 
@@ -144,5 +144,6 @@ describe("innehållshashen", () => {
     expect(cardContentHash(alternativ, "kat")).not.toBe(cardContentHash({ ...alternativ, options: [{ text: "a", correct: false }, { text: "b", correct: true }] }, "kat"));
     expect(cardContentHash({ ...base, review: "utkast", active: false }, "kat")).not.toBe(cardContentHash({ ...base, active: false }, "kat"));
     expect(cardContentHash({ ...base, source: "Canvas" }, "kat")).not.toBe(h);
+    expect(cardContentHash({ ...base, original: true }, "kat")).not.toBe(h);
   });
 });

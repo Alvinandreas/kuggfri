@@ -59,6 +59,7 @@ export function convertCards(text: string, options: ConvertOptions): ConvertResu
       options: null,
       review: null,
       source: null,
+      original: false,
     });
   }
 

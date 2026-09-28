@@ -11,10 +11,12 @@
  *   npm run kuggfri -- mappa <kurs> <fil.tsv> [--skapa] [--ja]         kortnyckel<TAB>område[<TAB>typ] per rad
  *   npm run kuggfri -- ordna-omraden <kurs> <key>,<key>,...            ny ordning, filerna numreras om
  *   npm run kuggfri -- ta-bort-omrade <kurs> <key>                     bara tomma områden
+ *   npm run kuggfri -- markera-original <kurs> --commit <sha>          korten som fanns i den committen blir original
  *
  * Ett område som blir tomt tas inte bort automatiskt; ta bort det ur kurs.json när du vill
  * (apply raderar det i databasen när det saknas i filerna och inte har kort kvar).
  */
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { CARD_KIND_LABEL, CARD_KINDS, isAutoGraded, isCardKind, type CardKind } from "@/lib/cards/kinds";
 import { isValidKey, type ContentCard, type ContentCategory, type ContentCourse } from "@/lib/content/model";
@@ -225,6 +227,35 @@ function cmdTaBort(args: Args): void {
   say(`Tog bort det tomma området ${area.key}. apply tar bort det i databasen.`);
 }
 
+/**
+ * Markerar korten som fanns i en viss commit som original (den beprövade uppsättningen).
+ * Kort som inte fanns där avmarkeras inte: markeringen läggs bara till.
+ */
+function cmdMarkeraOriginal(args: Args): void {
+  const [, courseKey] = args.positional;
+  const commit = args.flags.commit;
+  if (!courseKey || typeof commit !== "string") throw new Error("kuggfri markera-original <kurs> --commit <sha>");
+  const course = load(courseKey);
+  const out = execFileSync("git", ["grep", "-h", "^key: ", commit, "--", `content/${courseKey}`], { encoding: "utf8" });
+  const keys = new Set(out.split(/\r?\n/).map((l) => l.replace(/^key:\s*/, "").trim()).filter(Boolean));
+  let marked = 0;
+  const found = new Set<string>();
+  const categories = course.categories.map((c) => ({
+    ...c,
+    cards: c.cards.map((card) => {
+      if (!keys.has(card.key)) return card;
+      found.add(card.key);
+      if (card.original) return card;
+      marked++;
+      return { ...card, original: true };
+    }),
+  }));
+  saveCourse(ROOT, { ...course, categories });
+  const missing = [...keys].filter((k) => !found.has(k));
+  say(`${marked} kort markerade som original (${found.size} av ${keys.size} nycklar från ${commit} finns kvar).`);
+  if (missing.length > 0) say(`Saknas i filerna: ${missing.join(", ")}`);
+}
+
 export function runOmraden(command: string, args: Args): void {
   switch (command) {
     case "omraden":
@@ -244,9 +275,11 @@ export function runOmraden(command: string, args: Args): void {
       return cmdOrdna(args);
     case "ta-bort-omrade":
       return cmdTaBort(args);
+    case "markera-original":
+      return cmdMarkeraOriginal(args);
     default:
       throw new Error(`Okänt kommando: ${command}`);
   }
 }
 
-export const OMRADE_COMMANDS = ["omraden", "områden", "nytt-omrade", "byt-namn-omrade", "flytta", "byt-typ", "mappa", "ordna-omraden", "ta-bort-omrade"];
+export const OMRADE_COMMANDS = ["omraden", "områden", "nytt-omrade", "byt-namn-omrade", "flytta", "byt-typ", "mappa", "ordna-omraden", "ta-bort-omrade", "markera-original"];

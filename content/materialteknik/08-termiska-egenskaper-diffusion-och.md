@@ -2,6 +2,7 @@
 
 ## Vad händer med material när temperaturen höjs?
 key: vad-hander-med-material-nar
+original: ja
 status: utkast
 källa: Rättelse: "atomerna börjar vibrera" var fel, atomerna vibrerar redan och det är amplituden som ökar med temperaturen; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 2; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 7
 
@@ -13,6 +14,7 @@ källa: Rättelse: "atomerna börjar vibrera" var fel, atomerna vibrerar redan o
 
 ## Beskriv utförligt vad smälttemperatur och glasomvandlingstemperatur är och vilka material respektive är relevant för.
 key: beskriv-utforligt-vad-smalttemperatur
+original: ja
 
 Smälttemperatur:
 
@@ -30,6 +32,7 @@ glasomvandlingstemperaturen "Tg".
 
 ## Vad definierar ett materials relevanta användningstemperatur?
 key: vad-definierar-ett-materials-relevanta
+original: ja
 
 Maximal användningstemperatur begränsas
 t.ex. av:
@@ -45,12 +48,14 @@ begränsas t.ex. av:
 
 ## Beskriv vad ett materials specifika värmekapacitet innebär för materialet.
 key: beskriv-vad-ett-materials-specifika
+original: ja
 aktiv: nej
 
 Värmekapacitet är ett mått på hur mycket energi som krävs för att höja temperaturen i ett material.
 
 ## Vad är termisk utvidgning respektive termiska spänningar?
 key: vad-ar-termisk-utvidgning-respektive
+original: ja
 status: utkast
 källa: Rättelse: "termiska gradienter" beskrevs som utvidgningens storlek och riktning på vektorform, men det är temperaturskillnader i materialet; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 13; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 16
 
@@ -65,6 +70,7 @@ Upprepade temperaturvariationer kan ge termisk utmattning.
 
 ## Vad har atombindningar med termisk utvidgning att göra?
 key: vad-har-atombindningar-med-termisk
+original: ja
 status: utkast
 källa: Rättelse: kortet påstod att utvidgningskoefficienten beror på temperaturen eftersom bindningsstyrkan gör det, vilket inte stöds av föreläsningen, och upprepade formeln från kortet ovan; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 14; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 26
 
@@ -74,6 +80,7 @@ Alla kristallina fasta ämnen expanderar ungefär 2 % från absoluta nollpunkten
 
 ## Vilka faktorer är avgörande för ett materials termiska ledningsförmåga?
 key: vilka-faktorer-ar-avgorande-for-ett
+original: ja
 status: utkast
 källa: Rättelse: "rena legeringar har bäst termisk ledningsförmåga" var självmotsägande (legering förbättrar inte ledningsförmågan), och energin går till område med låg temperatur (inte "låg energi"); Canvas, Fö 10 Material och värme, s. 10; Canvas, Fö 10 Material och värme, s. 11; Canvas, Fö 10 Material och värme, s. 12; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 20; Canvas, Quiz vecka 4, fråga 9; Canvas, Ashby et al Materials 3 utgåvan PRELIMINÄR Läsanvisning och detaljerade lärmål Kap 1-12, s. 4
 
@@ -88,6 +95,7 @@ Fononerna hindras och sprids av kristallstörningar, t.ex. dislokationer och inl
 
 ## Beskriv kort vad värmeflöde är och hur det beräknas
 key: beskriv-kort-vad-varmeflode-ar-och-hur
+original: ja
 status: utkast
 källa: Rättelse: kortet påstod att beräkning av värmeflöde inte ingår i kursen, men läsanvisningen 2026 kräver att man kan beräkna värmeflöde vid steady state; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 21; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 22; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 29; Canvas, Ashby et al Materials 3 utgåvan PRELIMINÄR Läsanvisning och detaljerade lärmål Kap 1-12, s. 5
 
@@ -100,6 +108,7 @@ Om temperaturen i stället ändras med tiden (transient värmeledning) styrs fö
 ## Vad är diffusion?
 key: vad-ar-diffusion
 typ: begrepp
+original: ja
 status: utkast
 källa: Rättelse: kortet blandade ihop atomdiffusion med temperaturspridning och beskrev diffusion som något som främst gäller gaser och vätskor; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1j; Canvas, GLU 02 Fasdiagram, s. 7; Canvas, Fö 10 Material och värme, s. 13
 
@@ -110,6 +119,7 @@ Diffusion i ett fast material är den temperaturberoende process där atomer fö
 
 ## Vilka är Ficks 1:a och 2:a lag?
 key: vilka-ar-ficks-1-a-och-2-a-lag
+original: ja
 
 Ficks lagar beskriver allmänt hur diffusion beter sig i ett material, det behöver nödvändigtvis inte vara relaterat till temperatur.
 
@@ -119,6 +129,7 @@ Man får en uppsättning partiella differentialekvationer som bäst löses numer
 
 ## Vad är krypning? Vad finns det för olika typer av krypning?
 key: vad-ar-krypning-vad-finns-det-for-olika
+original: ja
 aktiv: nej
 
 * Krypning sker vid över cirka ½ av smälttemperaturen
@@ -136,6 +147,7 @@ aktiv: nej
 
 ## Beskriv närmare vad diffusionskrypning är.
 key: beskriv-narmare-vad-diffusionskrypning
+original: ja
 
 Diffusionskrypning:
 
@@ -146,6 +158,7 @@ belastningsriktningen
 
 ## Beskriv närmare vad dislokationskrypning är.
 key: beskriv-narmare-vad-dislokationskrypning
+original: ja
 
 Dislokationskrypning:
 
@@ -157,6 +170,7 @@ komma runt hinder
 ## Vad är ett krypbrott?
 key: vad-ar-ett-krypbrott
 typ: begrepp
+original: ja
 
 Krypbrott fås när det har
 initierats porer som har tillväxt
@@ -165,6 +179,7 @@ till brott till följd av krypning.
 ## Krypning
 key: krypning
 typ: begrepp
+original: ja
 status: utkast
 källa: Canvas, Fö 10 Material och värme, s. 14; Canvas, Fö 10 Material och värme, s. 15; Canvas, Fö 10 Material och värme, s. 16; Canvas, Fö 10 Material och värme, s. 17; Canvas, Läsanvisningar Kapitel 12 och 13, s. 1; Canvas, Svar Materialteknik 2018-10-27, s. 1; Canvas, Svarsförslag Tentamen IMS085 2023-10-25, s. 1
 
@@ -175,6 +190,7 @@ Två mekanismer: diffusionskrypning och power-law-krypning (dislokationskrypning
 ## Aktiveringsenergi
 key: aktiveringsenergi
 typ: begrepp
+original: ja
 
 Den energibarriär som måste övervinnas m.h.a. termisk energi för att vissa processer skall kunna
 ske, t.ex. kemiska reaktioner, diffusion, krypning.
@@ -182,6 +198,7 @@ ske, t.ex. kemiska reaktioner, diffusion, krypning.
 ## Specifik värmekapacitet
 key: specifik-varmekapacitet
 typ: begrepp
+original: ja
 status: utkast
 källa: Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 8; Canvas, Short_dictionary_ v2026, s. 13; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 2
 
@@ -191,12 +208,14 @@ Specifik värmekapacitet, även kallad värmekapacitivitet, är den energi som k
 ## Diffusionskoefficient
 key: diffusionskoefficient
 typ: begrepp
+original: ja
 
 Ett mått på hur snabbt atomer rör sig (diffunderar) i ett material. Beror på temperaturen och vilka atomer som diffunderar, och i vilket material.
 
 ## Krypning (metaller)
 key: krypning-metaller
 typ: begrepp
+original: ja
 aktiv: nej
 
 Plastisk deformation som beror på tid, temperatur och last.
@@ -205,6 +224,7 @@ Plastisk deformation som beror på tid, temperatur och last.
 key: ja-nej-krypning-ar-ett-fenomen-som-bara
 typ: sant-falskt
 svar: sant
+original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 10 Material och värme, s. 14; Canvas, Svar Materialteknik 2018-10-27, s. 1; Canvas, Svarsförslag Tentamen IMS085 2023-10-25, s. 1
 

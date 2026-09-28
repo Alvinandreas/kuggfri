@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarClock, ChartNoAxesColumn, GraduationCap } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
@@ -50,6 +51,20 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
           );
         })}
       </ul>
+
+      {/* Startsidan länkar till vad Kuggfri är och hur personuppgifter hanteras (krav från Google
+          för inloggning med Google, och rimligt för alla som undrar innan de registrerar sig). */}
+      <nav aria-label={sv.landing.footerLabel} className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted lg:col-span-2" data-testid="landing-footer">
+        <Link href="/om" className="hover:text-fg">
+          {sv.landing.footerAbout}
+        </Link>
+        <Link href="/integritet" className="hover:text-fg">
+          {sv.landing.footerPrivacy}
+        </Link>
+        <Link href="/hjalp" className="hover:text-fg">
+          {sv.landing.footerHelp}
+        </Link>
+      </nav>
     </div>
   );
 }

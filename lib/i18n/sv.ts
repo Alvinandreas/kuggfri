@@ -61,6 +61,10 @@ export const sv = {
     courseCode: "Kurskod",
   },
   landing: {
+    footerLabel: "Om Kuggfri",
+    footerAbout: "Om",
+    footerPrivacy: "Integritet",
+    footerHelp: "Hjälp",
     eyebrow: "Flashcards för Chalmersstudenter",
     title: "Plugga smartare inför tentan.",
     lead: "Kuggfri visar rätt kort på rätt dag, så att det du lär dig sitter kvar till tentan. Gratis och utan reklam.",

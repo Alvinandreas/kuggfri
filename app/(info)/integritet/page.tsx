@@ -362,6 +362,31 @@ export default function PrivacyPage() {
             ändringar informerar vi dig i appen nästa gång du loggar in.
           </p>
         </section>
+
+        {/* Kort sammanfattning på engelska: för internationella studenter och för Googles granskning av
+            inloggning med Google. Den svenska texten ovan gäller. */}
+        <section className={sectionClass} lang="en" data-testid="privacy-english">
+          <h2>Summary in English</h2>
+          <p>
+            Kuggfri is a free, ad-free flashcard service for Chalmers courses, run on a non-profit basis by a Chalmers
+            student. We store your name, email address and your study progress so that the app can schedule your
+            reviews. We never sell or share your data for marketing, and we only send emails you ask for (sign-in and
+            confirmation links).
+          </p>
+          <p>
+            <strong>Google sign-in.</strong> If you choose &quot;Continue with Google&quot;, we receive your name, email
+            address and a link to your profile picture from Google. We use the name and email address only to create
+            and identify your Kuggfri account; the picture link is stored by the sign-in system but not displayed or
+            used. We request no other Google data, do not use Google data for advertising, and do not transfer it to
+            anyone else. Kuggfri&apos;s use of information received from Google APIs adheres to the Google API
+            Services User Data Policy, including the Limited Use requirements.
+          </p>
+          <p>
+            You can download or delete all your data at any time under Account. Questions:{" "}
+            <a href={`mailto:${CONTACTS.operator.email}`}>{CONTACTS.operator.email}</a>. The Swedish text above is the
+            authoritative version.
+          </p>
+        </section>
       </div>
     </article>
   );

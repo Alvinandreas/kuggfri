@@ -75,6 +75,14 @@ describe("maintenanceGate", () => {
     expect(html).not.toContain("materialteknik");
   });
 
+  it("släpper alltid igenom Om, Integritet och Hjälp, men inget annat", () => {
+    process.env.VERCEL = "1";
+    for (const path of ["/om", "/integritet", "/hjalp"]) expect(maintenanceGate(begäran(`https://kuggfri.com${path}`)), path).toBeNull();
+    for (const path of ["/", "/logga-in", "/registrera", "/hem", "/auth/google", "/api/cron/daily", "/om/annat", "/integritet/x"]) {
+      expect(maintenanceGate(begäran(`https://kuggfri.com${path}`))?.status, path).toBe(503);
+    }
+  });
+
   it("stänger även bakgrundsjobben, så inga mejl går ut", () => {
     process.env.UNDER_UTVECKLING = "1";
     expect(maintenanceGate(begäran("https://kuggfri.com/api/cron/daily"))?.status).toBe(503);

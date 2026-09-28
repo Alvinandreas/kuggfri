@@ -664,6 +664,22 @@ html[data-sidebar="collapsed"] .app-sidebar .nav-item {
   }
 }
 
+/* Bilder i kort (lib/content/images.ts). Ritade diagram (svg) är svart linjekonst på transparent
+   bakgrund och inverteras i mörkt läge; hue-rotate behåller ungefär färgernas kulör. Foton rörs inte. */
+.prose-card img,
+.prose-body img {
+  display: block;
+  max-width: 100%;
+  max-height: min(18rem, 45vh);
+  height: auto;
+  margin-inline: auto;
+  border-radius: var(--radius-sm);
+}
+.dark .prose-card img[src$=".svg"],
+.dark .prose-body img[src$=".svg"] {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 /* Markdown i kort */
 .prose-card {
   font-size: var(--text-card);

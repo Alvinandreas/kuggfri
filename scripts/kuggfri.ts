@@ -31,6 +31,7 @@ import { deckId as deckIdFor, flattenCards, type ContentCourse } from "@/lib/con
 import { courseFromSnapshot, planSync, EMPTY_SNAPSHOT, type ContentPlan, type DeckSnapshot } from "@/lib/content/plan";
 import { courseDir, deriveKey, listCourseKeys, loadCourse, saveCourse } from "@/lib/content/store";
 import { runCanvas } from "./canvas";
+import { imageFilePath, imageProblems, imageRefs } from "@/lib/content/images";
 import { OMRADE_COMMANDS, runOmraden } from "./omraden";
 import { countCourse, diffCourses, findUtgava, listUtgavor, restoreCards, restoreCourse, saveUtgava, utgavaId, type Utgava } from "./utgavor";
 
@@ -303,7 +304,7 @@ function cmdKontrollera(args: Args): void {
   for (const key of resolveCourses(args)) {
     const { course, issues } = loadCourse(ROOT, key);
     const cards = flattenCards(course);
-    say(`${C.bold}${key}${C.reset}: ${course.categories.length} kategorier, ${cards.length} kort`);
+    say(`${C.bold}${key}${C.reset}: ${course.categories.length} områden, ${cards.length} kort`);
     for (const issue of issues) {
       say(`  ${C.red}${issue.file}:${issue.line}${C.reset} ${issue.message}`);
       problems++;
@@ -333,6 +334,15 @@ function cmdKontrollera(args: Args): void {
       // Formateringsanmärkningar: typografi som brukar följa med från Brainscape-exporter.
       if (/[\u{1D400}-\u{1D7FF}]|[𝜎𝜀𝛼∆αβγσε]/u.test(card.back) || /=>/.test(card.back)) {
         say(`  ${C.yellow}typografi${C.reset} ${card.key}: unicode-matte eller "=>" (kan bli KaTeX respektive →)`);
+      }
+      // Bilder: rätt mapp, filen finns, beskrivande alt-text (lib/content/images.ts).
+      for (const ref of [...imageRefs(card.front), ...imageRefs(card.back)]) {
+        const imgProblems = imageProblems(ref, key);
+        if (imgProblems.length === 0 && !existsSync(join(ROOT, imageFilePath(ref.src)))) imgProblems.push(`Bildfilen ${imageFilePath(ref.src)} finns inte.`);
+        for (const p of imgProblems) {
+          say(`  ${C.red}bild${C.reset} ${card.key}: ${p}`);
+          problems++;
+        }
       }
       if (card.back.length > 1200) {
         say(`  ${C.yellow}lång baksida${C.reset} ${card.key}: ${card.back.length} tecken`);

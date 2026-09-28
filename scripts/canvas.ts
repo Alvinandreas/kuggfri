@@ -246,6 +246,18 @@ async function cmdHamta(k: Kurs): Promise<void> {
   const syllabus = (await (await get(k, `/api/v1/courses/${k.courseId}?include[]=syllabus_body`)).json()) as { syllabus_body?: string };
   if (syllabus.syllabus_body) write(join(k.dir, "sidor", "kursplan.md"), `# Kursplan (Canvas)\n\n${htmlTillText(syllabus.syllabus_body)}\n`);
 
+  // Anslag: bara lärarnas inlägg (titel, datum, text). Svar och författare hämtas aldrig.
+  const anslag = await getAll<{ title: string; posted_at: string | null; message: string | null }>(
+    k,
+    `/api/v1/courses/${k.courseId}/discussion_topics?only_announcements=true`,
+  );
+  const sorted = [...anslag].sort((a, b) => (b.posted_at ?? "").localeCompare(a.posted_at ?? ""));
+  write(
+    join(k.dir, "sidor", "anslag.md"),
+    `# Anslag (Canvas)\n\n${sorted.map((a) => `## ${a.title}\n_${a.posted_at?.slice(0, 10) ?? "odaterat"}_\n\n${htmlTillText(a.message ?? "")}\n`).join("\n")}`,
+  );
+  say(`  ${anslag.length} anslag`);
+
   let quizzar = 0;
   for (const q of inv.quizzes) {
     try {

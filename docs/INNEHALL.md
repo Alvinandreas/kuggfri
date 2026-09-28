@@ -158,6 +158,31 @@ uppgiftstyp), `nytt-omrade`, `byt-namn-omrade`, `flytta <kort,…> --till <områ
 `mappa <fil.tsv>` (kortnyckel, område, typ per rad; hela omstruktureringar i ett svep) och
 `ordna-omraden`. Kortnycklarna ändras aldrig, så studenternas progress följer med.
 
+### 3.2 Bilder
+
+Bilder skrivs som markdown på fram- eller baksidan:
+`![Järns unära fasdiagram](/kort/materialteknik/jarn-unart-fasdiagram.svg)`. Filen ligger i
+`public/kort/<kurs>/` och versionshanteras med korten (följer med när en utgåva återställs).
+`kontrollera` kräver att sökvägen ligger under `/kort/<kurs>/`, att filen finns, att formatet är
+svg/webp/png/jpg och att alt-texten beskriver bilden (minst 8 tecken). Bara den egna domänen är
+tillåten.
+
+- **Ritade diagram (svg)** är förstahandsvalet: svart linjekonst på transparent bakgrund (de
+  inverteras automatiskt i mörkt läge), text i sans-serif, siffror och etiketter som i
+  kursmaterialet. Varje diagram har `källa:` på kortet som för all annan text och granskas
+  enligt `docs/KALLKRITIK.md` (siffror, etiketter och form mot källan).
+- **Foton och figurer ur kursmaterialet** (webp, beskurna) bara med examinatorns tillstånd för
+  just den typen av material. Figurer ur läroböcker (Ashby, Osswald) används inte utan
+  uttryckligt ja, eftersom upphovsrätten ligger hos förlagen.
+
+### 3.3 Utgåvor och historik
+
+`kuggfri utgava <kurs>` sparar kursens läge i `utgavor/<kurs>/` (sker automatiskt före varje apply
+mot produktionen). `kuggfri utgavor <kurs>` listar dem och `kuggfri aterga <kurs> <utgåva>
+[--kort k1,k2]` går tillbaka, för hela kursen eller enstaka kort. Kortens tidigare versioner
+sparas dessutom i databasen (`card_versions`) och kan visas och återställas i admin. Den
+beprövade uppsättningen är märkt `original: ja`, och studenter kan välja att plugga bara den.
+
 Material från Canvas: `kuggfri canvas inventera|hamta|text|quizkort <kurs>` (`scripts/canvas.ts`)
 hämtar kursmaterialet till `material/<kurs>/` (gitignorerad; lämnar aldrig datorn) och gör
 quizfrågorna till utkastkort. Token: `CANVAS_TOKEN` i `.env.local`. Verktyget gör bara GET mot

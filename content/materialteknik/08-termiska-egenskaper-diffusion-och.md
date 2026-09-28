@@ -183,9 +183,26 @@ original: ja
 status: utkast
 källa: Canvas, Fö 10 Material och värme, s. 14; Canvas, Fö 10 Material och värme, s. 15; Canvas, Fö 10 Material och värme, s. 16; Canvas, Fö 10 Material och värme, s. 17; Canvas, Läsanvisningar Kapitel 12 och 13, s. 1; Canvas, Svar Materialteknik 2018-10-27, s. 1; Canvas, Svarsförslag Tentamen IMS085 2023-10-25, s. 1
 
+![Krypkurva: töjning mot tid med primär krypning, steady state-krypning och tertiär krypning fram till brott](/kort/materialteknik/krypkurva.svg)
+
 Långsam plastisk (permanent) deformation som beror på temperatur, tid och last. I metaller sker den vid temperaturer över cirka halva smälttemperaturen (i kelvin), och kryphastigheten ökar exponentiellt med temperaturen.
 
 Två mekanismer: diffusionskrypning och power-law-krypning (dislokationskrypning). Vilken mekanism som dominerar beror på temperatur och spänning. Förloppet delas in i primär krypning (snabb deformation tills dislokationerna möter hinder), steady state-krypning med konstant töjningshastighet och tertiär krypning, där skador uppstår i materialet.
+
+## I vilket stadium av krypkurvan är töjningshastigheten konstant?
+key: kryp-konstant-tojningshastighet
+typ: alternativ
+status: utkast
+källa: Canvas, Fö 10 Material och värme, s. 14
+
+- [x] Steady state-krypning
+- [ ] Primär krypning
+- [ ] Tertiär krypning
+- [ ] Den initiala elastiska töjningen
+
+![Krypkurva: töjning mot tid med primär krypning, steady state-krypning och tertiär krypning fram till brott](/kort/materialteknik/krypkurva.svg)
+
+Efter den initiala elastiska töjningen kommer primär krypning, en snabb deformation tills dislokationerna möter hinder. Sedan följer steady state-krypning med konstant töjningshastighet, där kurvan är rak. I tertiär krypning uppstår skador i materialet, töjningen ökar allt snabbare och provet går till brott.
 
 ## Aktiveringsenergi
 key: aktiveringsenergi

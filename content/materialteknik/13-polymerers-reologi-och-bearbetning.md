@@ -37,6 +37,8 @@ källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 7; Canvas, MTT085 PM 3
 - [ ] Den är det första området i viskositetsfunktionen, vid mycket höga skjuvhastigheter.
 - [ ] Den avser att segheten hos polymera material minskar.
 
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
+
 Viskositetsfunktionen har tre områden i ordning efter ökande skjuvhastighet: nollskjuvviskositeten vid låga skjuvhastigheter, det skjuvförtunnande området och oändlig-skjuv-viskositeten. I det skjuvförtunnande området sträcks kedjorna, orienteras i flödesriktningen och trasslas ur, så viskositeten minskar när skjuvhastigheten ökar. Det första området ligger alltså vid låga, inte höga, skjuvhastigheter. Skjuvförtunning gäller smältans viskositet, inte seghet.
 
 ## Vilka påståenden om skjuvhastigheten vid polymerbearbetning stämmer?
@@ -76,7 +78,9 @@ källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 10; Canvas, MTT085 PM 
 - [ ] Den är oberoende av temperaturen.
 - [ ] Den är densamma för alla polymersmältor.
 
-Viskositetsfunktionen ritas som viskositet mot skjuvhastighet i log-log-skala. Polymersmältor kallas skjuvförtunnande eftersom viskositeten minskar när de skjuvas snabbare; i nollskjuvområdet är den konstant, och den övre platån är svår att nå för smältor. Kurvorna sjunker när temperaturen höjs, och de skiljer sig mellan polymerer (t.ex. ABS, PC och PA6) och beror av molekylvikt och molekylviktsfördelning.
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
+
+Viskositetsfunktionen ritas som viskositet mot skjuvhastighet i log-log-skala. Polymersmältor kallas skjuvförtunnande eftersom viskositeten minskar när de skjuvas snabbare; i nollskjuvområdet är den konstant, och platån vid mycket höga skjuvhastigheter är svår att nå för smältor. Kurvorna sjunker när temperaturen höjs, och de skiljer sig mellan polymerer (t.ex. ABS, PC och PA6) och beror av molekylvikt och molekylviktsfördelning.
 
 ## Vilka påståenden om formsprutningscykeln stämmer?
 key: quiz-the-injection-molding-cycle
@@ -101,6 +105,8 @@ källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 2; Canvas, MTT085 Poly
 - [x] Den kan användas för att tillverka rör och tunna filmer.
 - [ ] Trycket byggs upp i inmatningszonen vid tratten.
 - [ ] Den smälter granulatet direkt i tratten.
+
+![Enskruvsextruder med tratt, cylinder, skruv, munstycke och de tre zonerna](/kort/materialteknik/enskruvsextruder.svg)
 
 I doseringszonen byggs det tryck upp som pressar smältan genom munstycket i extruderns ände; trycket är högst närmast munstycket, inte vid tratten. Munstycket ger produktens profil, t.ex. rör och slangfilm, och med film casting eller filmblåsning som sekundär formning blir det tunna filmer. Granulatet smälter inte i tratten; inmatningszonen kyls ofta just för att förhindra det.
 
@@ -127,6 +133,8 @@ källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 5; Canvas, MTT085 Poly
 - [x] De beskriver sambandet mellan en polymers densitet och temperatur, också i smält tillstånd.
 - [ ] Tryck, viskositet och temperatur.
 - [ ] De kvantifierar smältflödesindex.
+
+![pVT-diagram: amorf polymer med knäck vid Tg och delkristallin polymer med språng vid Tm](/kort/materialteknik/pvt-amorf-delkristallin.svg)
 
 Ett pVT-diagram visar specifik volym (volym per massa, alltså inversen av densiteten) som funktion av temperaturen vid olika tryck. I diagrammet syns t.ex. knäcken vid glasövergången för amorfa polymerer, språnget vid kristallisation för delkristallina och att högt tryck höjer Tg och Tm. Viskositet och MFI ingår inte i diagrammet.
 
@@ -217,6 +225,8 @@ typ: begrepp
 status: utkast
 källa: Canvas, MTT085 PM 3, s. 5-6; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 korrigerad, s. 1
 
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
+
 Att viskositeten hos en polymersmälta minskar när skjuvhastigheten ökar. Orsaken är att kedjorna i flödet sträcks, orienteras i flödesriktningen och trasslas ur (om molekylvikten är över intrasslingsmolekylvikten), så att de ger mindre motstånd mot flödet.
 
 ## Svetslinje (weld line)
@@ -258,16 +268,20 @@ key: reo-viskositetsfunktionens-omraden
 status: utkast
 källa: Canvas, MTT085 PM 3, s. 5-6; Canvas, 2025 MTT085 Fö17, s. 19; Canvas, Svar Materialteknik 2018-10-27, s. 3
 
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
+
 Viskositet mot skjuvhastighet i log-log-skala, med tre områden:
 
 1. **Nollskjuvviskositet** (platå vid låga skjuvhastigheter): spänningarna från flödet är i samma storleksordning som spänningarna från kedjornas termiska rörelse, så kedjorna behåller sin föredragna konformation. Nivån beror på material, molekylvikt och molekylviktsfördelning.
 2. **Skjuvförtunnande område:** kedjorna sträcks, orienteras i flödesriktningen och trasslas ur, och viskositeten minskar med ökande skjuvhastighet.
-3. **Oändlig-skjuv-viskositet** (övre platå): maximal sträckning, orientering och uttrassling är nådd, och viskositeten beror inte längre av skjuvhastigheten. Den är mycket svår att mäta för smältor och kan utelämnas i en skiss.
+3. **Oändlig-skjuv-viskositet** (platå vid mycket höga skjuvhastigheter, på lägre nivå än nollskjuvplatån): maximal sträckning, orientering och uttrassling är nådd, och viskositeten beror inte längre av skjuvhastigheten. Den är mycket svår att mäta för smältor och kan utelämnas i en skiss.
 
 ## Vad händer med polymeren i enskruvsextruderns tre zoner?
 key: reo-extruderns-zoner
 status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 2-3; Canvas, 05142_06a-3, s. 7; Canvas, MTT085 Tutorials-Part 3-5, s. 2; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 korrigerad, s. 1
+
+![Enskruvsextruder med tratt, cylinder, skruv, munstycke och de tre zonerna](/kort/materialteknik/enskruvsextruder.svg)
 
 Granulatet matas genom tratten in i cylindern.
 
@@ -345,6 +359,8 @@ svar: falskt
 status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 2-4; Canvas, Svarsförslag Tentamen MTT085 24-01, s. 3
 
+![Enskruvsextruder med tratt, cylinder, skruv, munstycke och de tre zonerna](/kort/materialteknik/enskruvsextruder.svg)
+
 Falskt. Trycket byggs upp i doseringszonen (metering zone) och är högst närmast munstycket, där det behövs för att pressa smältan genom munstycket. Inmatningszonen transporterar granulatet från tratten.
 
 ## Vid låga skjuvhastigheter, i nollskjuvområdet, orienteras polymerkedjorna kraftigt i flödesriktningen.
@@ -353,6 +369,8 @@ typ: sant-falskt
 svar: falskt
 status: utkast
 källa: Canvas, MTT085 PM 3, s. 6; Canvas, 2025 MTT085 Fö17, s. 28; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 6
+
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
 
 Falskt. Vid små eller långsamma deformationer hinner kedjornas termiska rörelse återställa deras föredragna konformation, så orienteringen ändras inte och viskositeten är konstant. Kedjorna orienteras först vid högre skjuvhastigheter, i det skjuvförtunnande området.
 
@@ -370,7 +388,9 @@ key: reo-sf-delkristallin-krymper-mer
 typ: sant-falskt
 svar: sant
 status: utkast
-källa: Canvas, 2025 MTT085 Fö19, s. 7; Canvas, MTT085 Tutorials-Part 3-5, s. 2
+källa: Canvas, 2025 MTT085 Fö19, s. 7, 9; Canvas, MTT085 Tutorials-Part 3-5, s. 2
+
+![pVT-diagram: amorf polymer med knäck vid Tg och delkristallin polymer med språng vid Tm](/kort/materialteknik/pvt-amorf-delkristallin.svg)
 
 Sant. Amorfa termoplaster förtätas minst vid stelning, eftersom kedjorna inte kan ordna sig i regelbundna, tätpackade kristaller. Delkristallina polymerer krymper mer; vid formsprutning motverkas det delvis med längre eftertryckstid och högre tryck.
 
@@ -486,3 +506,61 @@ källa: Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, Svar Materialtekn
 - [ ] Trycket påverkar bara viskositeten, inte övergångstemperaturerna.
 
 Högt tryck pressar ihop molekylerna, så det krävs mer termisk energi för att frigöra dem så att de kan flyta. Därför höjs Tg för amorfa och Tm för delkristallina termoplaster, vilket syns i pVT-diagrammen.
+
+## Vilket område i viskositetsfunktionen är det skjuvförtunnande? ![Viskositet mot skjuvhastighet i log-log-skala, uppdelad i områdena A, B och C från låg till hög skjuvhastighet](/kort/materialteknik/viskositetsfunktion-fraga.svg)
+key: reo-viskositet-omrade-skjuvfortunnande
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 PM 3, s. 5-6
+
+- [x] B
+- [ ] A
+- [ ] C
+
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
+
+B är det skjuvförtunnande området, där viskositeten minskar med ökande skjuvhastighet eftersom kedjorna sträcks, orienteras i flödesriktningen och trasslas ur. A är nollskjuvviskositeten, en platå vid låga skjuvhastigheter, och C är oändlig-skjuv-viskositeten, en platå vid mycket höga skjuvhastigheter som är svår att mäta för smältor.
+
+## Vilket område i viskositetsfunktionen motsvarar nollskjuvviskositeten $\eta_0$? ![Viskositet mot skjuvhastighet i log-log-skala, uppdelad i områdena A, B och C från låg till hög skjuvhastighet](/kort/materialteknik/viskositetsfunktion-fraga.svg)
+key: reo-viskositet-omrade-nollskjuv
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 PM 3, s. 5-6
+
+- [x] A
+- [ ] B
+- [ ] C
+
+![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
+
+Nollskjuvviskositeten är platån vid låga skjuvhastigheter (A). Där är spänningarna från flödet i samma storleksordning som spänningarna från kedjornas termiska rörelse, så kedjorna behåller sin föredragna konformation och viskositeten är konstant. Nivån beror på material, molekylvikt och molekylviktsfördelning.
+
+## I vilken zon i en enskruvsextruder smälter granulatet?
+key: reo-extruder-smaltzon
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L4-5, s. 2-3
+
+- [x] Smält- eller övergångszonen (transition zone)
+- [ ] Inmatningszonen (solids conveying zone)
+- [ ] Doseringszonen (metering zone)
+- [ ] I tratten, innan granulatet når skruven
+
+![Enskruvsextruder med tratt, cylinder, skruv, munstycke och de tre zonerna](/kort/materialteknik/enskruvsextruder.svg)
+
+Granulatet smälter och homogeniseras i smält- eller övergångszonen, i cylinderns uppvärmda del. Inmatningszonen transporterar och packar granulatet och kyls ofta så att det inte smälter och sätter igen inloppet. I doseringszonen byggs trycket upp som pressar smältan genom munstycket.
+
+## I ett pVT-diagram gör kurvan ett språng i specifik volym vid en viss temperatur. Vilken typ av polymer och vilken temperatur gäller det?
+key: reo-pvt-sprang
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L4-5, s. 9-10; Canvas, 2025 MTT085 Fö19, s. 8-9
+
+- [x] En delkristallin polymer, vid smälttemperaturen $T_m$
+- [ ] En amorf polymer, vid glasomvandlingstemperaturen $T_g$
+- [ ] En amorf polymer, vid smälttemperaturen $T_m$
+- [ ] En delkristallin polymer, vid glasomvandlingstemperaturen $T_g$
+
+![pVT-diagram: amorf polymer med knäck vid Tg och delkristallin polymer med språng vid Tm](/kort/materialteknik/pvt-amorf-delkristallin.svg)
+
+För en delkristallin polymer sjunker den specifika volymen språngvis vid $T_m$ när kristallisationen börjar under avsvalning. En amorf polymer har inget språng, bara en knäck vid $T_g$ där kurvan byter lutning från smälta till glas.

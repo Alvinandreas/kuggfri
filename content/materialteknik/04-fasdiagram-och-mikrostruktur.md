@@ -13,9 +13,13 @@ original: ja
 status: utkast
 källa: Rättelse: temperaturen följer nu 2026 års material och δ-ferriten nämns, så att "upp till 910 °C" inte läses som enda BCC-området; Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_Optisk_Mikroskopi_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
 
-Ferrit ($lpha$-järn) är järn med BCC-struktur. I rent järn är det den stabila fasen upp till ca 913 °C. Ferrit har låg löslighet av kol.
+![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
+
+Ferrit ($\alpha$-järn) är järn med BCC-struktur. I rent järn är det den stabila fasen upp till ca 913 °C. Ferrit har låg löslighet av kol.
 
 Över ca 1394 °C blir rent järn BCC igen, då kallat $\delta$-ferrit.
+
+Figuren följer Lab-PM:ets fasdiagram (912 °C); GLU 02 anger 913 °C.
 
 ## Vad är Austenit och när uppstår det?
 key: vad-ar-austenit-och-nar-uppstar-det
@@ -24,7 +28,11 @@ original: ja
 status: utkast
 källa: Rättelse: "upp över 910 °C" gällde inte över ca 1394 °C, där rent järn blir delta-ferrit (BCC); Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_Optisk_Mikroskopi_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
 
+![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
+
 Austenit ($\gamma$-järn) är järn med FCC-struktur. I rent järn är det den stabila fasen mellan ca 913 °C och ca 1394 °C. Austenit kan lösa upp till ca 2,1 % kol.
+
+Figuren följer Lab-PM:ets fasdiagram (912 °C); GLU 02 anger 913 °C.
 
 ## Vad är cementit och när uppstår det?
 key: vad-ar-cementit-och-nar-uppstar-det
@@ -63,7 +71,9 @@ typ: sant-falskt
 svar: falskt
 original: ja
 status: utkast
-källa: Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 17; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
+källa: Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 17; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Lab_PM_M2_v2026, s. 10
+
+![Förenklat Fe–C-diagram för stål med den eutektoida punkten S vid ca 0,8 % C och ca 723 °C](/kort/materialteknik/fe-c-stalhornet.svg)
 
 Perlit bildas vid den eutektoida reaktionen, som sker i fast fas: austenit omvandlas till ferrit och cementit vid ca 0,8 % C och ca 723 °C. En eutektisk reaktion utgår från smälta ($L \to \alpha + \beta$); i Fe-C sker den vid 4,3 % C och 1147 °C och är relevant för gjutjärn.
 
@@ -139,6 +149,8 @@ källa: Canvas, Quiz vecka 2, fråga 7; Canvas, GLU 02 Fasdiagram, s. 4, 16, 19,
 - [x] Perlit är inte en fas, men man kan ändå bestämma perlitens kolhalt och andel ur fasdiagrammet.
 - [ ] Austenit är ferrit med inlöst kol.
 
+![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
+
 Faserna i Fe-C-diagrammet är ferrit, austenit och cementit; martensit är en metastabil fas som bildas vid snabbkylning och finns inte i fasdiagrammet. Cementit (Fe₃C) innehåller 6,67 % C, mer än austenit (upp till 2,1 %) och ferrit (låg löslighet). Perlit är en strukturbeståndsdel av ferrit och cementit som bildas vid den eutektoida punkten (ca 0,8 % C), och dess andel kan räknas fram med hävstångsregeln. Austenit är en egen fas med annan kristallstruktur (FCC-järn) än ferrit (BCC-järn). Quizens alternativ "Om man löser in kol i ferrit så bildas austenit" är omformulerat, eftersom det inte är entydigt fel: vid t.ex. 850 °C är rent järn ferrit men ett stål med 0,3 % C austenit.
 
 ## Eutektiska och eutektoida reaktioner: vilka påståenden är sanna?
@@ -165,9 +177,11 @@ källa: Canvas, Quiz vecka 2, fråga 10; Canvas, GLU 02 Fasdiagram, s. 10, 13, 1
 - [ ] Hävstångsregeln gäller bara för faser i fast tillstånd.
 - [ ] Löslighetsgränsen talar om hur svårt det är att legera en metall.
 
+![Fasdiagrammet för Pb–Sn med eutektisk punkt vid 61,9 % Sn och 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+
 Vid obegränsad löslighet, t.ex. Cu-Ni, finns en enda fast fas vid alla sammansättningar under soliduslinjen. Löslighetsgränsen är den maximala koncentrationen av ett ämne som kan lösas in i ett annat, och den beror på temperaturen (i Pb-Sn är lösligheten av Sn i Pb störst, 18,3 %, vid 183 °C). Hävstångsregeln gäller i alla tvåfasområden, även där smälta och fast fas samexisterar.
 
-## Pb-40 % Sn svalnar långsamt från smälta. Hur stor andel är primär $\alpha$ respektive eutektikum strax under 183 °C?
+## Pb-40 % Sn svalnar långsamt från smälta. Hur stor andel är primär $\alpha$ respektive eutektikum strax under 183 °C? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: havstang-pbsn-40-strukturbestandsdelar
 typ: alternativ
 status: utkast
@@ -180,7 +194,7 @@ källa: Canvas, GLU 02 Fasdiagram, s. 14, 15, 17; Canvas, GLU_5-8 Mikrostruktur 
 
 Strax ovanför 183 °C består legeringen av Pb-rik fas $\alpha$ (18,3 % Sn) och smälta med eutektisk sammansättning (61,9 % Sn). Hävstångsregeln ger andelen primär $\alpha$ $= \frac{61{,}9-40}{61{,}9-18{,}3} = \frac{21{,}9}{43{,}6} \approx 0{,}50$. Resten, ca 50 %, är smälta som vid 183 °C stelnar till eutektikum. 73 % är andelen av fasen $\alpha$ totalt (primär $\alpha$ plus $\alpha$ i eutektikumet), inte av strukturbeståndsdelen primär $\alpha$.
 
-## Pb-40 % Sn strax under 183 °C: hur stora är andelarna av faserna $\alpha$ och $\beta$?
+## Pb-40 % Sn strax under 183 °C: hur stora är andelarna av faserna $\alpha$ och $\beta$? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: havstang-pbsn-40-faser
 typ: alternativ
 status: utkast
@@ -236,7 +250,9 @@ key: eutektoidiskt-stal-faser-strukturbestandsdel
 typ: sant-falskt
 svar: sant
 status: utkast
-källa: Canvas, Lab_PM_M2_v2026, s. 11, 12; Canvas, GLU 02 Fasdiagram, s. 19, 20
+källa: Canvas, Lab_PM_M2_v2026, s. 10, 11, 12; Canvas, GLU 02 Fasdiagram, s. 19, 20
+
+![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
 
 Under den eutektoida temperaturen består stålet av faserna ferrit och cementit, men de förekommer tillsammans som den enda strukturbeståndsdelen perlit (lameller av ferrit och cementit). Över den eutektoida temperaturen är stålet en enda fas, austenit, som också är den enda strukturbeståndsdelen.
 
@@ -250,6 +266,8 @@ källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18, 23; 
 - [ ] Perlit och cementit
 - [ ] Bara perlit
 - [ ] Martensit
+
+![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
 
 Vid långsam svalning bildas först primär (proeutektoid) ferrit, och vid den eutektoida temperaturen omvandlas resten av austeniten till perlit. Bara perlit fås vid ca 0,8 % C, och perlit med cementit i gränserna mellan perlitområdena i övereutektoida stål. Martensit bildas bara vid snabbkylning från austenitområdet.
 
@@ -267,8 +285,64 @@ key: stelning-pbsn-40
 status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10, 11; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 8; Canvas, GLU 02 Fasdiagram, s. 14
 
+![Fasdiagrammet för Pb–Sn med eutektisk punkt vid 61,9 % Sn och 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+
 * Ca 240 till 184 °C: Pb-rik fas ($\alpha$) bildas gradvis i jämvikt med smältan, upp till ca 50 %.
 * 183 °C: den kvarvarande smältan, som då har eutektisk sammansättning (61,9 % Sn), stelnar till eutektikum, en finfördelad blandning av $\alpha$ och $\beta$.
 * Under 183 °C: lösligheten av Sn i Pb minskar, så Sn-rik fas ($\beta$) skiljs ut som utskiljningar i den Pb-rika fasen.
 
 Resultatet är primär $\alpha$ (med $\beta$-utskiljningar) och eutektikum, ungefär hälften av varje.
+
+## Vilken fas är stabil i rent järn vid 1000 °C?
+key: jarn-fas-vid-1000
+typ: alternativ
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 4; Canvas, GLU 02 Fasdiagram, s. 4, 19
+
+- [x] Austenit ($\gamma$-järn, FCC)
+- [ ] Ferrit ($\alpha$-järn, BCC)
+- [ ] $\delta$-ferrit (BCC)
+- [ ] Smälta
+
+![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
+
+I rent järn är austenit stabil mellan ca 912 °C och 1394 °C, så vid 1000 °C är järnet austenitiskt (FCC). Ferrit ($\alpha$) är stabil under ca 912 °C, $\delta$-ferrit mellan 1394 °C och smältpunkten 1538 °C. GLU 02 anger omvandlingen ferrit–austenit till 913 °C, Lab-PM:ets fasdiagram 912 °C.
+
+## Rent järn har BCC-struktur både vid rumstemperatur och strax under smältpunkten.
+key: jarn-bcc-rumstemp-och-nara-smaltpunkten
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 3, 4; Canvas, GLU 02 Fasdiagram, s. 19
+
+![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
+
+Sant. Vid rumstemperatur är rent järn ferrit ($\alpha$-järn, BCC). Mellan 1394 °C och smältpunkten 1538 °C är det $\delta$-ferrit, som också är BCC. Däremellan, från ca 912 °C till 1394 °C, är järnet austenit (FCC).
+
+## En Pb–Sn-legering med 40 % Sn hålls vid 200 °C. Vilka faser finns? ![Fasdiagrammet för Pb–Sn med enfas- och tvåfasområden kring den eutektiska linjen vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+key: pbsn-40-vid-200
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 02 Fasdiagram, s. 14, 15; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10
+
+- [x] Pb-rik fast fas ($\alpha$) och smälta (L)
+- [ ] Bara smälta (L)
+- [ ] $\alpha$ och $\beta$
+- [ ] Bara $\alpha$
+
+Punkten 40 % Sn, 200 °C ligger ovanför den eutektiska linjen vid 183 °C men under likviduslinjen (som vid 40 % Sn ligger vid ca 240 °C), alltså i tvåfasområdet $\alpha$ + L. $\alpha$ + $\beta$ finns först under 183 °C, och ett rent $\alpha$-område finns vid 200 °C bara för låga Sn-halter.
+
+## Ett stål med 0,3 % C svalnar långsamt från austenitområdet. Vad händer mellan ca 820 °C och ca 723 °C?
+key: stal-03-primar-ferrit
+typ: alternativ
+status: utkast
+källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18; Canvas, GLU 02 Fasdiagram, s. 19
+
+- [x] Primär (proeutektoid) ferrit bildas ur austeniten.
+- [ ] Den eutektoida reaktionen bildar perlit.
+- [ ] Cementit skiljs ut i korngränserna.
+- [ ] Austeniten omvandlas till martensit.
+
+![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
+
+Mellan ca 820 °C och 723 °C ligger stålet i tvåfasområdet $\alpha$ + $\gamma$, där primär ferrit bildas. Vid 723 °C omvandlas den kvarvarande austeniten eutektoidt till perlit, så stålet består till slut av primär ferrit och perlit. Cementit i gränserna mellan perlitområdena hör till övereutektoida stål, och martensit bildas bara vid snabbkylning.

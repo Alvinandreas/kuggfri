@@ -79,7 +79,24 @@ original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 6
 
+![S–N-kurva med draghållfastheten och utmattningsgränsen vid tio miljoner cykler](/kort/materialteknik/s-n-kurva.svg)
+
 Falskt. Utmattningsgränsen är en spänningsamplitud, inte ett antal cykler: under den inträffar brott inte alls eller först efter ett mycket stort antal cykler (t.ex. fler än $10^7$). Antalet cykler till brott vid en viss spänningsamplitud är utmattningslivslängden $N_f$, som kan läsas av i S-N-kurvan.
+
+## Vad visar en S–N-kurva?
+key: sn-kurva-axlar
+typ: alternativ
+status: utkast
+källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5, 15
+
+- [x] Spänningsamplituden mot antalet cykler till brott, med antalet cykler i logaritmisk skala.
+- [ ] Spänningen mot töjningen i ett dragprov.
+- [ ] Spricktillväxten per cykel mot variationen i spänningsintensitetsfaktorn.
+- [ ] Antalet cykler till brott mot temperaturen.
+
+![S–N-kurva med draghållfastheten och utmattningsgränsen vid tio miljoner cykler](/kort/materialteknik/s-n-kurva.svg)
+
+S–N-kurvan har spänningsamplituden $\sigma_a$ på y-axeln och antalet cykler till brott $N_f$ i logaritmisk skala på x-axeln. Kurvan börjar vid draghållfastheten $\sigma_{ts}$ och planar ut mot utmattningsgränsen $\sigma_e$, där brott inte inträffar alls eller först efter mycket många cykler (t.ex. fler än $10^7$). Spänning mot töjning är dragprovskurvan, och spricktillväxt per cykel mot $\Delta K$ är diagrammet för spricktillväxt vid cyklisk belastning.
 
 ## Spröda brott följer alltid korngränserna.
 key: ja-nej-sproda-brott-foljer-alltid

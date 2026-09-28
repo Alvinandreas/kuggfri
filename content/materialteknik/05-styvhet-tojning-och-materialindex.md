@@ -62,13 +62,41 @@ området
 key: vilka-egenskaper-kan-observeras
 original: ja
 status: utkast
-källa: Rättelse: "seghet = arean under dragprovkurvan" (2025) krockar med 2026 års definition av seghet som motstånd mot spricktillväxt, som inte kan fås ur dragprov; arean beskrivs nu som brottarbete; Canvas, Kapitel_08 Seghet och Brott, s. 2, 7; Canvas, Fo 9 Brott och brottseghet, s. 11; Canvas, Kapitel_04 Elastisk deformation, s. 20; Canvas, Fo 7 Styvhet, s. 9
+källa: Rättelse: "seghet = arean under dragprovkurvan" (2025) krockar med 2026 års definition av seghet som motstånd mot spricktillväxt, som inte kan fås ur dragprov; arean beskrivs nu som brottarbete; Canvas, Kapitel_08 Seghet och Brott, s. 2, 7; Canvas, Fo 9 Brott och brottseghet, s. 11; Canvas, Kapitel_04 Elastisk deformation, s. 20; Canvas, Fo 7 Styvhet, s. 9; Canvas, Kapitel_03 Materialval, s. 15; Canvas, Fo 8 Plasticitet, s. 2
+
+![Spännings–töjningskurva från dragprov med E, Rp0,2, Rm och brottförlängning](/kort/materialteknik/dragprovkurva.svg)
 
 * E-modul (styvhet) GPa
 * Sträckgräns (börjar plasticera) MPa
 * Brottgräns (största spänningen innan brott) MPa
 * Brottförlängning (plastisk töjning efter brott) %
 * Arean under kurvan: brottarbetet, dvs. energin per volymenhet fram till brott. (Seghet i betydelsen motstånd mot spricktillväxt, brottseghet, kan däremot inte mätas med dragprov, eftersom provet saknar spricka.)
+
+## Hur bestäms sträckgränsen $R_{p0{,}2}$ ur en dragprovkurva?
+key: dragprov-rp02-bestamning
+typ: alternativ
+status: utkast
+källa: Canvas, Kapitel_03 Materialval, s. 15; Canvas, Kapitel_04 Elastisk deformation, s. 10; Canvas, Fo 8 Plasticitet, s. 2
+
+- [x] En linje dras parallellt med kurvans elastiska del, förskjuten 0,2 % töjning, och sträckgränsen är spänningen där linjen skär kurvan.
+- [ ] Den är kurvans högsta spänning.
+- [ ] Den är spänningen när provet går av.
+- [ ] Den är lutningen hos kurvans elastiska del.
+
+![Spännings–töjningskurva från dragprov med E, Rp0,2, Rm och brottförlängning](/kort/materialteknik/dragprovkurva.svg)
+
+Sträckgränsen bestäms med en standardiserad offsetmetod: $R_{p0{,}2}$ är spänningen vid 0,2 % kvarstående (plastisk) töjning. Kurvans högsta spänning är brottgränsen $R_m$ (draghållfastheten), och lutningen i det elastiska området är E-modulen, $E = \Delta\sigma/\Delta\varepsilon$.
+
+## Brottgränsen $R_m$ är spänningen i det ögonblick provstaven går av i ett dragprov av en seg metall.
+key: dragprov-rm-vid-brott
+typ: sant-falskt
+svar: falskt
+status: utkast
+källa: Canvas, Kapitel_03 Materialval, s. 15; Canvas, Kapitel_04 Elastisk deformation, s. 10; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 3
+
+![Spännings–töjningskurva från dragprov med E, Rp0,2, Rm och brottförlängning](/kort/materialteknik/dragprovkurva.svg)
+
+Falskt. Brottgränsen (draghållfastheten) $R_m$ är kurvans högsta spänning. För en seg metall sjunker den tekniska spänningen efter maximum, när provet får en midja, så spänningen vid brott är lägre än $R_m$.
 
 ## Styvheten hos kompositer beror på fler faktorer än homogena material gör, nämn minst två av dessa.
 key: styvheten-hos-kompositer-beror-pa-fler

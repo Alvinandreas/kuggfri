@@ -23,7 +23,9 @@ Ex: FCC (Face Centered Cubic), BCC (Body Centered Cubic), Triclinic, Simple Cubi
 key: vad-kannetecknar-enhetscellen-fcc
 original: ja
 status: utkast
-källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostfritt stål, eftersom det även finns ferritiska och martensitiska rostfria stål; packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 11, 15; Canvas, Fo 12 Stal, s. 28; Canvas, Short_dictionary_ v2026, s. 2
+källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostfritt stål, eftersom det även finns ferritiska och martensitiska rostfria stål; packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 11, 13, 15; Canvas, Fo 12 Stal, s. 28; Canvas, Short_dictionary_ v2026, s. 2
+
+![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
 
 * Face centered cubic
 * Ytcentrerad kubisk
@@ -36,7 +38,9 @@ källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostf
 key: vad-kannetecknar-enhetscellen-bcc
 original: ja
 status: utkast
-källa: Rättelse: "Ex: Fe" angavs utan temperatur, men järn är BCC (ferrit) bara upp till ca 913 °C och därefter FCC (austenit); packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 2, 12, 16; Canvas, Short_dictionary_ v2026, s. 6; Canvas, Lab_PM_M2_v2026, s. 4
+källa: Rättelse: "Ex: Fe" angavs utan temperatur, men järn är BCC (ferrit) bara upp till ca 913 °C och därefter FCC (austenit); packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 2, 12, 13, 16; Canvas, Short_dictionary_ v2026, s. 6; Canvas, Lab_PM_M2_v2026, s. 4
+
+![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
 
 * Body centered cubic
 * Rymdcentrerad kubisk
@@ -62,6 +66,8 @@ original: ja
 status: utkast
 källa: Rättelse: kortet påstod att riktningsindex inte kallas Millerindex, men GLU 1 2026 kallar dem "Millerindex för riktningar"; kortet beskrev också planets position i stället för orientering; Canvas, GLU 01 Kristallstrukturer, s. 19, 20
 
+![Planen (100), (110) och (111) markerade i var sin kub med axlarna x, y och z](/kort/materialteknik/millerindex-plan.svg)
+
 Millerindex beskriver ett atomplans orientering i kristallen (jämför med planets normal). Enhetscellen definierar koordinatsystemet. Så tas planets index fram:
 1. Bestäm planets skärningar med koordinataxlarna
 2. Invertera
@@ -73,6 +79,8 @@ Millerindex beskriver ett atomplans orientering i kristallen (jämför med plane
 Riktningar beskrivs med riktningsvektorer i samma koordinatsystem, omvandlade till heltal (bara riktningen spelar roll, inte längden). I GLU 1 kallas de "Millerindex för riktningar", även kallat riktningsindex:
 [hkl] = specifik riktning
 \<hkl> = familj av riktningar
+
+![Riktningarna 100, 110 och 111 som pilar från origo i var sin kub](/kort/materialteknik/millerindex-riktningar.svg)
 
 ## Kristallin
 key: kristallin
@@ -129,6 +137,8 @@ källa: Canvas, GLU 01 Kristallstrukturer, s. 11, 12; Canvas, Kapitel_04 Elastis
 - [x] HCP
 - [ ] BCC
 - [ ] Amorf struktur
+
+![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
 
 FCC och HCP är båda tätpackade med packningsgraden 0,74; de skiljer sig i staplingsföljden av de tätpackade skikten (ABCABC för FCC, ABAB för HCP). BCC har packningsgraden 0,68 och en amorf struktur högst 0,64.
 
@@ -192,3 +202,42 @@ källa: Canvas, GLU 01 Kristallstrukturer, s. 20
 - [ ] [021]
 
 Riktningsvektorn är (1/2, 1, 0). Riktningar omvandlas alltid till heltal, eftersom bara riktningen spelar roll och inte längden: multiplicera med 2 och riktningen blir [120]. Till skillnad från Millerindex för plan inverteras komponenterna inte.
+
+## Vilket Millerindex har det markerade planet? ![Kub med axlarna x, y och z och ett markerat plan som skär x- och y-axeln i 1 och är parallellt med z-axeln](/kort/materialteknik/millerindex-fraga-plan-1.svg)
+key: millerindex-markerat-plan-110
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 19
+
+- [x] (110)
+- [ ] (100)
+- [ ] (111)
+- [ ] (001)
+
+Planet skär x-axeln i 1 och y-axeln i 1 och är parallellt med z-axeln (skärningen ∞). Inverterat blir det 1, 1 och 0, alltså (110). (100) är kubens främre yta (x = 1), (111) skär alla tre axlarna i 1, och (001) skär bara z-axeln (kubens översida).
+
+## Planet i kuben skär koordinataxlarna. Vilket Millerindex har det? ![Kub med axlarna x, y och z och ett markerat plan som skär alla tre axlarna i 1](/kort/materialteknik/millerindex-fraga-plan-2.svg)
+key: millerindex-markerat-plan-111
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 19
+
+- [x] (111)
+- [ ] (110)
+- [ ] (100)
+- [ ] (001)
+
+Planet skär x-, y- och z-axeln i 1. Inverterat blir det 1, 1 och 1, alltså (111). (110) är parallellt med z-axeln, (100) är parallellt med både y- och z-axeln och (001) med både x- och y-axeln.
+
+## Vilket riktningsindex har den markerade riktningen? ![Kub med axlarna x, y och z och en pil från origo till hörnet (1, 1, 0)](/kort/materialteknik/millerindex-fraga-riktning-1.svg)
+key: riktningsindex-markerad-110
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 20
+
+- [x] [110]
+- [ ] [111]
+- [ ] [100]
+- [ ] [011]
+
+Pilen går från origo till hörnet (1, 1, 0), diagonalt över kubens undersida, så riktningen är [110]. [111] är rymddiagonalen till (1, 1, 1), [100] går längs x-axeln och [011] är diagonalen i kubens bakre yta x = 0, till (0, 1, 1).

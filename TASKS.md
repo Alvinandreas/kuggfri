@@ -439,6 +439,53 @@ Ersätter Resend-förslaget och de två äldre [?]-punkterna om SMTP och mallar 
 - [ ] Om Outlook/Safe Links förbrukar återställningslänkar i testet: mellansida med "Fortsätt"-knapp
       på `/auth/confirm`
 
+## Kvällen 28 sep: Canvas, uppgiftstyper, källgranskat innehåll och skyddsnät
+
+Alvin fick TA-åtkomst till MTT085 på Canvas med examinatorns tillstånd att använda materialet.
+
+**Pipeline och modell**
+- [x] `kuggfri canvas inventera|hamta|text|quizkort` (scripts/canvas.ts): bara GET, bara kurser på
+      tillåtelselistan, inga studentdata. 163 filer (1,7 GB), 13 quizzar, anslag och text per sida i
+      `material/materialteknik/` (gitignorerad, bara på Alvins dator)
+- [x] Uppgiftstyper Självskattning, Begrepp, Sant/Falskt, Alternativ (migration 20260928000000).
+      Automaträttade svar: rätt 3 → 4 → 5, fel 1; ingen omköning i passet; i dugga rätt 5, fel 1
+- [x] Utkast (`status: utkast`, alltid inaktiva, osynliga för studenter även via API) och källa
+- [x] Adminvyerna: Granskning (godkänn/avvisa/redigera, kortkommandon, ångra), redigerare för typ
+      och alternativ, flytta/slå ihop områden, översikt område × typ
+- [x] Områdesverktyg: `omraden`, `nytt-omrade`, `flytta`, `byt-typ`, `mappa`, `ordna-omraden`,
+      `ta-bort-omrade`, `markera-original`
+
+**Innehåll (docs/KALLKRITIK.md)**
+- [x] 14 områden efter analys av läsanvisning, föreläsningar 2026 och tentor 2018–2025 (fasdiagram,
+      brott och utmattning, tre polymerområden nya)
+- [x] Fyra skribenter + fyra oberoende granskare: 257 kort belagda, 49 rättade, 0 strukna.
+      Rättelser av publicerade kort ligger som utkast på samma nyckel (felet försvinner direkt)
+- [x] 60 quizfrågor (facit kontrollerat, svenska, förklaringar), 9 dubbletter inaktiverade,
+      ja/nej-kort → Sant/Falskt
+- [x] 16 källgranskade svg-diagram och 15 bildfrågor (bara på utkast)
+- [x] Källtyp ur `källa:` (lib/cards/sources.ts): föreläsning, tenta, quiz, övning, labb, bok,
+      ordlista, kursdokument
+- [?] **Johan/Alvin:** granska utkasten i admin → Granskning. Först "Ändringar av publicerade
+      kort" (42 kort som är dolda för studenterna tills de godkänns), sedan resten
+- [?] **Till Johan:** 2025-bilder på Canvas med samma fel som rättats (Fö 9 s. 7 K1c-villkoret,
+      Fö 12 s. 22 anlöpt martensit, Fö 13 s. 13 titan), GLU 5-8 s. 15 "ca 30 % primär ferrit"
+      (hävstångsregeln ger ca 60 %), olika värden 910/912/913 °C och 723/727 °C, 0,8/0,77 % C
+- [?] **Alvin:** tentadatum (inte i materialet eller anslagen; Studieportalen)
+
+**Skyddsnät**
+- [x] Utgåvor (`utgava`, `utgavor`, `aterga`), sparas i git; automatiskt före varje apply mot prod.
+      Utgåvan "Originaluppsättningen" (144 kort) finns
+- [x] Kortens historik (`card_versions`, migration 20260928000100) med diff och återställning i
+      admin; rättelser visas mot publicerad version
+- [x] 144 originalkort märkta; studenter kan välja "Bara originalkorten"
+
+**Kvar**
+- [ ] Molnlagring av källmaterialet (text och analys ca 5 MB i privat Supabase-bucket; originalen
+      kan hämtas om från Canvas eller lagras i R2/Supabase Pro)
+- [ ] Push: backup + återställningstest, `supabase db push` (två migrationer), `git push`,
+      `kuggfri plan --mal prod` genomgången med Alvin, sedan `apply --mal prod`
+- [ ] Bokfigurer (Ashby, Osswald) bara med Johans uttryckliga ja
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
 - [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte

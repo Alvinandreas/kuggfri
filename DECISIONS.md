@@ -365,3 +365,22 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 - **Bygget körs som eget steg före push** (docs/LANSERING.md steg 0), tills vidare utanför
   `npm run verify`. Vill du ha det i skriptet hör det hemma i `verify`, inte i `verify:unit`, så att
   den snabba slingan förblir snabb.
+
+## Beslut 2026-09-28 (kväll): Canvasmaterialet, uppgiftstyper och källkritik
+
+- **Terminologi:** kort hör till ett *område* (kursens ämnesindelning, tabellen categories) och har
+  en *uppgiftstyp* (Självskattning, Begrepp, Sant/Falskt, Alternativ).
+- **Automaträttade svar** påverkar schemat med viktning: första rätta svaret räknas som 3, andra i
+  rad 4, tredje 5; fel ger 1 och trappan börjar om. Kortets senaste skattning är räknaren.
+- **Källkritik är ett krav** (docs/KALLKRITIK.md): källa med fil och sida, oberoende kontroll mot
+  källan, utkast, mänskligt godkännande. 200 studenter lär sig av innehållet.
+- **Rättelser av publicerade kort** görs som utkast på samma nyckel: felet försvinner ur studievyn
+  direkt och rättelsen granskas; progressen finns kvar. Avvisa behåller publicerad version.
+- **Nytt får inte göra det gamla sämre:** originaluppsättningen (144 kort) är märkt och kan väljas
+  ensam av studenterna; utgåvor och korthistorik gör varje ändring återställbar.
+- **Bilder** är i första hand egna ritade svg-diagram ur kursmaterialets värden; bokfigurer bara med
+  examinatorns uttryckliga ja (upphovsrätten ligger hos förlagen).
+- **Canvastoken** är Alvins personliga TA-token och når alla hans kurser; verktyget är låst till en
+  tillåtelselista och gör bara GET. Nya kurser kräver den examinatorns tillstånd.
+- **E-post** från noreply@kuggfri.com via Hostinger; e-postbekräftelse på vid registrering;
+  inloggningslänken skapar inga nya konton.

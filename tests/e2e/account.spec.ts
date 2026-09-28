@@ -127,9 +127,9 @@ test.describe("konto", () => {
     const response = await page.goto("/admin");
     expect(response?.status()).toBe(403);
     await expect(page.getByRole("heading", { name: "Åtkomst nekad" })).toBeVisible();
-    // Admin-länken finns inte i menyn.
+    // Sidomenyn har inga genvägar till admin.
     await page.goto("/hem");
-    await expect(page.getByRole("link", { name: "Admin" })).toHaveCount(0);
+    await expect(page.getByTestId("sidebar-admin")).toHaveCount(0);
   });
 
   test("ladda ner mina data och radera konto", async ({ page, context }) => {

@@ -10,8 +10,8 @@ import { formatDateTime } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { BarChart } from "@/components/stats/BarChart";
 import { Card, CardHeader } from "@/components/ui/Card";
-import { CategoryTag } from "@/components/ui/CategoryTag";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
+import { AreaLink } from "./AreaLink";
 import { StatBlock } from "./StatBlock";
 
 type Category = { id: string; title: string; cardCount: number };
@@ -144,7 +144,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                       return (
                         <tr key={c.category_id} className="transition-colors duration-150 hover:bg-surface-2">
                           <td className="py-3 pl-6 pr-4 sm:pl-7">
-                            <CategoryTag title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" />
+                            <AreaLink deckId={deckId} areaId={c.category_id} title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" />
                           </td>
                           <td className="py-3 pr-4">
                             <div className="flex items-center gap-3">
@@ -197,7 +197,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                         </td>
                         <td className="py-3 pr-4">
                           {c.category_id && titleOf.has(c.category_id) ? (
-                            <CategoryTag title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" />
+                            <AreaLink deckId={deckId} areaId={c.category_id} title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" />
                           ) : (
                             <span className="text-muted">–</span>
                           )}

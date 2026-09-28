@@ -9,7 +9,7 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CourseDistributions } from "@/components/admin/CourseOverview";
 import { StatBlock } from "@/components/admin/StatBlock";
 import { Card } from "@/components/ui/Card";
-import { CategoryTag } from "@/components/ui/CategoryTag";
+import { AreaLink } from "@/components/admin/AreaLink";
 
 export const metadata: Metadata = { title: sv.admin.allCardsDetail };
 
@@ -67,7 +67,7 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
                       </Link>
                     </td>
                     <td className="hidden py-2.5 pr-3 sm:table-cell">
-                      {cat ? <CategoryTag title={titleOf.get(cat) ?? ""} colorIndex={colorIndex.get(cat) ?? 0} /> : <span className="text-muted">–</span>}
+                      {cat && titleOf.has(cat) ? <AreaLink deckId={id} areaId={cat} title={titleOf.get(cat) ?? ""} colorIndex={colorIndex.get(cat) ?? 0} /> : <span className="text-muted">–</span>}
                     </td>
                     <td className="py-2.5 pr-3 text-right tabular-nums">{c.avg_rating === null ? "–" : c.avg_rating.toFixed(2)}</td>
                     <td className="py-2.5 pr-3 text-right tabular-nums">{c.rating_count}</td>

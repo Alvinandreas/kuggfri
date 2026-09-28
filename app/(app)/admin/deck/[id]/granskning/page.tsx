@@ -6,11 +6,12 @@ import { getDeckForAdmin } from "@/lib/admin/queries";
 import { getHistoryMeta, type HistoryMeta } from "@/lib/admin/history-queries";
 import { differsFromPublished } from "@/lib/admin/history";
 import { DEFAULT_REVIEW_FILTER, REVIEW_BUCKETS, reviewRelevant, type ReviewCard, type ReviewFilter } from "@/lib/admin/review";
+import { isSourceFilter } from "@/lib/admin/sources";
 import { isCardKind } from "@/lib/cards/kinds";
 import { ReviewWorkspace } from "@/components/admin/ReviewWorkspace";
 
 type Params = Promise<{ id: string }>;
-type Search = Promise<{ omrade?: string; typ?: string; status?: string; andringar?: string }>;
+type Search = Promise<{ omrade?: string; typ?: string; status?: string; andringar?: string; kalla?: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 /**
  * Granskningen: förslag (utkast) som väntar, avvisade förslag och kort som godkänts det
- * senaste dygnet. Filtret kan förväljas via adressen (?omrade=, ?typ=, ?status=, ?andringar=1),
+ * senaste dygnet. Filtret kan förväljas via adressen (?omrade=, ?typ=, ?status=, ?andringar=1, ?kalla=),
  * så att innehållsöversikten kan länka rakt till ett områdes utkast.
  *
  * Historiken i sammandrag (antal versioner och senast publicerade version) hämtas för korten i
@@ -72,6 +73,7 @@ export default async function ReviewPage({ params, searchParams }: { params: Par
     area: search.omrade === "ingen" || (search.omrade && areaIds.has(search.omrade)) ? search.omrade : "alla",
     kind: isCardKind(search.typ) ? search.typ : "alla",
     changesOnly: search.andringar === "1",
+    source: isSourceFilter(search.kalla) ? search.kalla : "alla",
   };
 
   return (

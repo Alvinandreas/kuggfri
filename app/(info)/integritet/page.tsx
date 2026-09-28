@@ -80,7 +80,7 @@ export default function PrivacyPage() {
         </ul>
       </Card>
 
-      <div className="mt-4 grid gap-3">
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-3">
 
         <section className={sectionClass}>
           <h2>Vem ansvarar för dina uppgifter</h2>
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
         <section className={sectionClass}>
           <h2 id="uppgifter-rubrik">Vilka uppgifter vi behandlar, varför och hur länge</h2>
           <p>
-            Den som bara läser landningssidan, den här sidan eller Om Kuggfri lämnar inga personuppgifter. För den
+            Den som bara läser landningssidan, den här sidan eller Om-sidan lämnar inga personuppgifter. För den
             som skapar konto behandlar vi följande. ”Berättigat intresse”
             betyder artikel 6.1 f i dataskyddsförordningen, ”avtal” artikel 6.1 b och ”samtycke” artikel 6.1 a.
           </p>

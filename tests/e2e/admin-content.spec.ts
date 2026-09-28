@@ -137,10 +137,12 @@ test.describe("examinator", () => {
 
   test("ser bara sin kurs, kan redigera ett kort, men varken skapa deck eller ta bort det", async ({ page }) => {
     await login(page, examiner.email, examiner.password, "/hem");
-    // Adminlänken står i sidomenyn; på mobil ligger den i den utdragbara menyn.
+    // Genvägarna till kursens adminflikar står i sidomenyn; på mobil i den utdragbara menyn.
     const openMenu = page.getByRole("button", { name: "Öppna menyn" });
     if (await openMenu.isVisible()) await openMenu.click();
-    await expect(page.getByRole("link", { name: "Admin" }).filter({ visible: true })).toBeVisible();
+    const adminNav = page.getByTestId("sidebar-admin").filter({ visible: true });
+    await expect(adminNav.getByRole("link", { name: "Översikt" })).toBeVisible();
+    await expect(adminNav.getByRole("link", { name: "Alla kurser" })).toHaveCount(0);
     await page.goto("/admin");
     await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");

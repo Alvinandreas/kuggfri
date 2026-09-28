@@ -67,3 +67,13 @@ export function normalizeKindInput(kindRaw: unknown, optionsRaw: unknown): { ok:
   if (issues.length > 0) return { ok: false, error: issues.join(" ") };
   return { ok: true, kind, options };
 }
+
+/**
+ * Ny ordning för hela listan när bara en filtrerad del av den har sorterats om: de synliga
+ * korten tar de platser de synliga korten hade, i sin nya ordning; resten står kvar.
+ */
+export function mergeSubsetOrder(allIds: readonly string[], reorderedSubset: readonly string[]): string[] {
+  const subset = new Set(reorderedSubset);
+  let next = 0;
+  return allIds.map((id) => (subset.has(id) ? (reorderedSubset[next++] ?? id) : id));
+}

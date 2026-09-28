@@ -12,7 +12,7 @@ import { ContactCards } from "@/components/layout/ContactCards";
 export const metadata: Metadata = { title: sv.about.title };
 
 /**
- * Om Kuggfri: vad tjänsten är, varför den finns, kurserna och vem som står bakom.
+ * Om: vad tjänsten är, varför den finns, kurserna och vem som står bakom.
  * Hur man använder den står på /hjalp.
  *
  * Löptexten. Rubrikens avstånd uppåt kommer från .prose-body (globals.css) och ligger
@@ -26,7 +26,7 @@ export default async function AboutPage() {
     <article className="mx-auto w-full max-w-[46rem]">
       <header className="anim-fade-up mb-4">
         <Logo height={64} decorative />
-        <h1 className="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">{sv.about.title}</h1>
+        <h1 className="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">{sv.about.heading}</h1>
         <p className="mt-3 text-lg leading-relaxed text-muted">{sv.about.intro}</p>
       </header>
 
@@ -106,13 +106,8 @@ export default async function AboutPage() {
 
         <section className={sectionClass}>
           <h2>{sv.about.privacy}</h2>
-          <p>
-            {sv.about.privacyBody}{" "}
-            <Link href="/integritet" className="text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent">
-              {sv.footer.privacy}
-            </Link>
-            .
-          </p>
+          {/* Ingen länk här: Integritet står i sidomenyn och i flikarna överst. */}
+          <p>{sv.about.privacyBody}</p>
         </section>
       </div>
     </article>

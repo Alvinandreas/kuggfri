@@ -4,20 +4,53 @@ import { useEffect, useState, type ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChartNoAxesColumn, ChevronsLeft, CircleHelp, House, Info, Library, Menu as MenuIcon, Palette, Settings2, X, type LucideProps } from "lucide-react";
+import {
+  BookOpen,
+  ChartNoAxesColumn,
+  ChevronsLeft,
+  CircleHelp,
+  ClipboardCheck,
+  Flag,
+  House,
+  Info,
+  Layers,
+  LayoutDashboard,
+  LayoutList,
+  Library,
+  Menu as MenuIcon,
+  Palette,
+  Settings2,
+  ShieldCheck,
+  Upload,
+  X,
+  type LucideProps,
+} from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
+import type { AdminNavDeck } from "@/lib/admin/nav";
 import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
 import { Logo } from "@/components/layout/Logo";
 import { ProfileMenu, type ShellUser } from "@/components/layout/ProfileMenu";
 
-type NavLink = { href: string; label: string; icon: ComponentType<LucideProps>; /** Fler sökvägsprefix där posten räknas som aktiv. */ also?: string[] };
+type NavLink = {
+  href: string;
+  label: string;
+  icon: ComponentType<LucideProps>;
+  /** Aktiv bara på exakt href (och also), inte på undersidor. */
+  exact?: boolean;
+  /** Fler sökvägar där posten räknas som aktiv, med undersidor. */
+  also?: string[];
+  /** Räknare till höger (utkast, öppna felrapporter); 0 visas inte. */
+  badge?: number;
+  /** Vad räknaren betyder, i tooltip och skärmläsartext. */
+  badgeLabel?: string;
+};
 
 export type SidebarProps = {
   user: ShellUser;
-  /** Admin eller examinator: ser adminlänken. */
-  canAdmin: boolean;
-  /** Global admin: ser också designsystemet. */
+  /** Kurser användaren får administrera (admin: alla, examinator: sina). Tom lista = inga adminflikar. */
+  adminDecks: AdminNavDeck[];
+  /** Global admin: ser också Alla kurser och designsystemet. */
   isAdmin: boolean;
   /** Publicerade kurser. Med en enda kurs pekar menyn direkt på den i stället för på Kurser. */
   courses: { slug: string; title: string }[];
@@ -25,54 +58,109 @@ export type SidebarProps = {
 
 const SIDEBAR_KEY = "kuggfri:sidebar";
 
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+function under(pathname: string, path: string): boolean {
+  return pathname === path || pathname.startsWith(`${path}/`);
 }
 
-function NavItem({ link, pathname }: { link: NavLink; pathname: string }) {
-  const active = isActive(pathname, link.href) || (link.also ?? []).some((p) => pathname.startsWith(p));
+function isActive(pathname: string, link: NavLink): boolean {
+  const own = link.exact ? pathname === link.href : under(pathname, link.href);
+  return own || (link.also ?? []).some((p) => under(pathname, p));
+}
+
+function NavItem({ link, pathname, drawer }: { link: NavLink; pathname: string; drawer?: boolean }) {
+  const active = isActive(pathname, link);
   const Icon = link.icon;
+  const badge = link.badge ?? 0;
+  const label = badge > 0 && link.badgeLabel ? `${link.label}, ${link.badgeLabel}` : link.label;
   return (
     <Link
       href={link.href}
-      aria-label={link.label}
-      title={link.label}
+      aria-label={label}
+      title={label}
       aria-current={active ? "page" : undefined}
       className={cx(
         "nav-item flex h-10 items-center gap-3 rounded-md px-3 text-[0.95rem] font-medium transition-colors duration-150",
         active ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg",
       )}
     >
-      <Icon size={19} strokeWidth={active ? 2.2 : 1.9} aria-hidden className="shrink-0" />
-      <span data-sidebar-label className="truncate">
+      <span className="relative inline-flex shrink-0">
+        <Icon size={19} strokeWidth={active ? 2.2 : 1.9} aria-hidden />
+        {/* Hopfälld sidomeny: räknaren blir en prick på ikonen (antalet står i tooltipen). */}
+        {badge > 0 && !drawer ? (
+          <span data-sidebar-collapsed-only aria-hidden className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-accent" />
+        ) : null}
+      </span>
+      <span data-sidebar-label className="min-w-0 flex-1 truncate">
         {link.label}
       </span>
+      {badge > 0 ? (
+        <span
+          data-sidebar-label
+          aria-hidden
+          className="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-bold tabular-nums text-accent-fg"
+        >
+          {badge}
+        </span>
+      ) : null}
     </Link>
   );
 }
 
-function SectionLabel({ children }: { children: string }) {
+function SectionLabel({ children, hint }: { children: string; hint?: string }) {
   return (
     <p data-sidebar-label className="px-3 pb-1.5 pt-5 text-xs font-semibold text-subtle">
       {children}
+      {hint ? (
+        <span className="block truncate pt-0.5 font-medium" title={hint}>
+          {hint}
+        </span>
+      ) : null}
     </p>
   );
 }
 
+/** Kursen som adminposterna gäller: den i adressen (/admin/deck/<id>/…), annars den första. */
+function selectedDeck(decks: AdminNavDeck[], pathname: string): AdminNavDeck | undefined {
+  const id = /^\/admin\/deck\/([^/]+)/.exec(pathname)?.[1];
+  return decks.find((d) => d.id === id) ?? decks[0];
+}
+
+/**
+ * Genvägar till adminflikarna för en kurs, i samma ordning som flikraden (DeckTabs) och
+ * med samma regler för vilken som är aktiv. Admin, och den som har fler kurser, får också
+ * Alla kurser (adminstartsidan, där Ny kurs finns); admin dessutom designsystemet.
+ */
+function adminLinks(decks: AdminNavDeck[], isAdmin: boolean, pathname: string): NavLink[] {
+  const deck = selectedDeck(decks, pathname);
+  const links: NavLink[] = [];
+  if (deck) {
+    const base = `/admin/deck/${deck.id}`;
+    links.push(
+      { href: base, label: sv.admin.tabOverview, icon: LayoutDashboard, exact: true, also: [`${base}/statistik`] },
+      { href: `${base}/innehall`, label: sv.admin.tabContent, icon: Layers, also: [`${base}/kategori`, `${base}/kort`] },
+      { href: `${base}/granskning`, label: sv.admin.tabReview, icon: ClipboardCheck, badge: deck.pendingDrafts, badgeLabel: sv.shell.pendingDrafts(deck.pendingDrafts) },
+      { href: `${base}/rapporter`, label: sv.admin.tabReports, icon: Flag, badge: deck.openReports, badgeLabel: sv.shell.openReports(deck.openReports) },
+      { href: `${base}/import`, label: sv.admin.tabImport, icon: Upload },
+      { href: `${base}/installningar`, label: sv.admin.tabSettings, icon: Settings2 },
+    );
+  }
+  if (isAdmin || decks.length > 1) links.push({ href: "/admin/deck", label: sv.shell.allCourses, icon: LayoutList, exact: true, also: ["/admin/deck/ny"] });
+  if (isAdmin) links.push({ href: "/designsystem", label: sv.shell.designSystem, icon: Palette });
+  return links;
+}
+
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
-function SidebarContent({ user, canAdmin, isAdmin, courses, pathname, top }: SidebarProps & { pathname: string; top: React.ReactNode }) {
+function SidebarContent({ user, adminDecks, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
   const study: NavLink[] = [
     { href: "/hem", label: sv.shell.home, icon: House },
     { href: "/statistik", label: sv.shell.myStats, icon: ChartNoAxesColumn },
     courses.length === 1 && courses[0]
-      ? { href: `/d/${courses[0].slug}`, label: courses[0].title, icon: BookOpen, also: ["/d/"] }
-      : { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d/"] },
+      ? { href: `/d/${courses[0].slug}`, label: courses[0].title, icon: BookOpen, also: ["/d"] }
+      : { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d"] },
   ];
-  const admin: NavLink[] = [
-    ...(canAdmin ? [{ href: "/admin", label: sv.shell.admin, icon: Settings2 }] : []),
-    ...(isAdmin ? [{ href: "/designsystem", label: sv.shell.designSystem, icon: Palette }] : []),
-  ];
+  const admin = adminLinks(adminDecks, isAdmin, pathname);
+  // Med fler kurser står kursens namn under rubriken, så att det syns vilken kurs genvägarna gäller.
+  const adminHint = adminDecks.length > 1 ? selectedDeck(adminDecks, pathname)?.title : undefined;
   return (
     <>
       {top}
@@ -80,23 +168,24 @@ function SidebarContent({ user, canAdmin, isAdmin, courses, pathname, top }: Sid
         <SectionLabel>{sv.shell.sectionStudy}</SectionLabel>
         <div className="space-y-0.5">
           {study.map((l) => (
-            <NavItem key={l.href} link={l} pathname={pathname} />
+            <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
           ))}
         </div>
         {admin.length > 0 ? (
           <>
-            <SectionLabel>{sv.shell.sectionAdmin}</SectionLabel>
-            <div className="space-y-0.5">
+            <SectionLabel hint={adminHint}>{sv.shell.sectionAdmin}</SectionLabel>
+            <div className="space-y-0.5" data-testid="sidebar-admin">
               {admin.map((l) => (
-                <NavItem key={l.href} link={l} pathname={pathname} />
+                <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
               ))}
             </div>
           </>
         ) : null}
       </nav>
       <div className="space-y-0.5 px-3 pb-4">
-        <NavItem link={{ href: "/hjalp", label: sv.shell.help, icon: CircleHelp }} pathname={pathname} />
-        <NavItem link={{ href: "/om", label: sv.shell.about, icon: Info }} pathname={pathname} />
+        <NavItem link={{ href: "/hjalp", label: sv.shell.help, icon: CircleHelp }} pathname={pathname} drawer={drawer} />
+        <NavItem link={{ href: "/om", label: sv.shell.about, icon: Info }} pathname={pathname} drawer={drawer} />
+        <NavItem link={{ href: "/integritet", label: sv.shell.privacy, icon: ShieldCheck }} pathname={pathname} drawer={drawer} />
         <ProfileMenu user={user} placement="right-end" />
       </div>
     </>
@@ -197,7 +286,7 @@ export function Sidebar(props: SidebarProps) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <button type="button" aria-label={sv.shell.closeMenu} tabIndex={-1} onClick={() => setDrawerOpen(false)} className="anim-fade-in absolute inset-0 bg-overlay" />
           <aside aria-label={sv.shell.mainNav} className="anim-drawer absolute inset-y-0 left-0 flex w-[min(18rem,85vw)] flex-col bg-sidebar shadow-pop">
-            <SidebarContent {...props} pathname={pathname} top={drawerTop} />
+            <SidebarContent {...props} pathname={pathname} top={drawerTop} drawer />
           </aside>
         </div>
       ) : null}

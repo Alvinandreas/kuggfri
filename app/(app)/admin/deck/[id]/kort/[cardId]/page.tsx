@@ -7,6 +7,8 @@ import { getCardForAdmin, getDeckForAdmin } from "@/lib/admin/queries";
 import { getCardHistory } from "@/lib/admin/history-queries";
 import { CardEditPanel } from "@/components/admin/CardEditPanel";
 import { OriginalBadge } from "@/components/admin/KindBadge";
+import { SourceList } from "@/components/admin/SourceBadges";
+import { Card, CardHeader } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: sv.admin.editCard };
@@ -56,6 +58,10 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
           ) : null}
         </div>
       </div>
+      <Card padding="md" data-testid="card-sources">
+        <CardHeader title={sv.admin.sourcesTitle} as="h3" spacing="sm" />
+        <SourceList source={card.source} original={card.original} />
+      </Card>
       <CardEditPanel
         deckId={data.deck.id}
         categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}

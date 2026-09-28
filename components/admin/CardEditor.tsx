@@ -42,7 +42,10 @@ type Props = {
   onCancel?: () => void;
   /** Starta med en annan typ än kortets (granskningen byter typ via redigeraren). */
   initialKind?: CardKind;
-  /** Förhandsvisningen under formuläret i stället för bredvid (smal yta, som i granskningen). */
+  /**
+   * Inbäddad yta (granskningen): förhandsvisningen hamnar bredvid formuläret när ytan själv är
+   * bred nog (containerfråga), annars under det.
+   */
   stacked?: boolean;
 };
 
@@ -129,8 +132,8 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
   }
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} onKeyDown={onFormKeyDown} className="grid grid-cols-[minmax(0,1fr)] gap-6" data-testid="card-editor">
-      <div className={cx("grid gap-6", stacked ? "2xl:grid-cols-2 2xl:items-start" : "lg:grid-cols-2 lg:items-start")}>
+    <form ref={formRef} onSubmit={onSubmit} onKeyDown={onFormKeyDown} className={cx("grid grid-cols-[minmax(0,1fr)] gap-6", stacked && "@container")} data-testid="card-editor">
+      <div className={cx("grid gap-6", stacked ? "@4xl:grid-cols-2 @4xl:items-start" : "lg:grid-cols-2 lg:items-start")}>
         <Card padding="lg" className="grid grid-cols-[minmax(0,1fr)] gap-5">
           {reviewStatus ? (
             <div className="flex flex-wrap items-center gap-2 rounded-md bg-surface-2 px-4 py-3 text-sm text-muted">
@@ -226,7 +229,7 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
           </div>
         </Card>
 
-        <div className={cx("grid grid-cols-[minmax(0,1fr)] content-start gap-4", stacked ? "2xl:sticky 2xl:top-6" : "lg:sticky lg:top-6")}>
+        <div className={cx("grid grid-cols-[minmax(0,1fr)] content-start gap-4", stacked ? "@4xl:sticky @4xl:top-6" : "lg:sticky lg:top-6")}>
           <div>
             <p className="text-sm font-semibold text-subtle">{sv.admin.preview}</p>
             <p className="text-sm text-muted">{sv.admin.previewHelp}</p>

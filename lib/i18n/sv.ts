@@ -22,13 +22,14 @@ export const sv = {
     sectionAdmin: "Administrera",
     home: "Hem",
     courses: "Kurser",
-    admin: "Admin",
+    /** Genvägen till adminstartsidan med alla kurser (och Ny kurs för admin). */
+    allCourses: "Alla kurser",
     designSystem: "Designsystem",
+    /** Räknarna på adminflikarnas genvägar, i tooltip och skärmläsartext. */
+    pendingDrafts: (n: number) => (n === 1 ? "1 utkast väntar" : `${n} utkast väntar`),
+    openReports: (n: number) => (n === 1 ? "1 öppen felrapport" : `${n} öppna felrapporter`),
     myStats: "Min statistik",
     infoNav: "Hjälp och information",
-    infoPager: "Fler informationssidor",
-    previous: "Föregående",
-    next: "Nästa",
     help: "Hjälp",
     collapse: "Fäll ihop sidomenyn",
     expand: "Fäll ut sidomenyn",
@@ -38,7 +39,7 @@ export const sv = {
     account: "Konto och inställningar",
     theme: "Tema",
     privacy: "Integritet",
-    about: "Om Kuggfri",
+    about: "Om",
     logout: "Logga ut",
   },
   footer: {
@@ -226,8 +227,6 @@ export const sv = {
     ],
     moreBody:
       "Gäller det ett enskilt kort använder du flaggan under passet. Frågor om kursens innehåll går till examinatorn, allt annat till den som driver Kuggfri.",
-    aboutLink: "Om Kuggfri",
-    aboutLinkMeta: "Vad Kuggfri är, kurserna och vem som bygger det",
     /** Länkblocket på Om-sidan. */
     fromAbout: "Så använder du Kuggfri",
     fromAboutMeta: "Kom igång, lägena, skattningsskalan och vanliga frågor.",
@@ -1094,9 +1093,40 @@ export const sv = {
     matrixDrafts: "Utkast",
     matrixTotal: "Totalt",
     matrixDraftsLink: (n: number, area: string) => `${n} utkast i ${area}, till granskningen`,
+    matrixNoDrafts: "Inga utkast",
+    openArea: (area: string) => `Öppna området ${area}`,
+    // Källor på korten
+    sourcesTitle: "Källor",
+    sourceFilter: "Källtyp",
+    sourceAll: "Alla källor",
+    sourceWhyChanged: "Varför ändrat:",
+    sourceOriginalHelp: "Originalkorten skrevs innan källor började anges.",
+    sourceNoneHelp: "Kortet saknar källa. Lägg till en via Redigera.",
+    sourceRefs: (n: number) => (n === 1 ? "1 hänvisning" : `${n} hänvisningar`),
+    sourceFilterHelp: "Visa bara kort med en viss sorts källa.",
+    // Granskningens arbetsyta
+    reviewFilters: "Filter",
+    reviewFiltersActive: (n: number) => `Filter (${n})`,
+    reviewClearFilters: "Rensa filter",
+    reviewShowList: "Visa listan",
+    reviewHideList: "Dölj listan",
+    reviewListCount: (n: number) => `Förslag (${n})`,
+    reviewChangesShort: "Bara ändringar",
+    reviewEditing: "Redigerar förslaget",
+    reviewEditingHelp: "Listan är dold medan du redigerar. Spara eller avbryt för att fortsätta granska.",
+    reviewStatusCorrection: "Rättelse av publicerat kort",
+    reviewCurrent: "Förslaget som granskas",
+    reviewActions: "Beslut",
+    correctionShowTextDiff: "Visa ändringar i texten",
+    correctionChanged: "Ändrat",
+    correctionChangedFields: (fields: string) => `Ändrat: ${fields}.`,
+    correctionRendered: "Så ser studenten kortet, före och efter",
   },
   about: {
-    title: "Om Kuggfri",
+    /** Sidtiteln i fliken, som posten i sidomenyn. */
+    title: "Om",
+    /** Rubriken på sidan, under logotypen. */
+    heading: "Om Kuggfri",
     intro:
       "Kuggfri är en fri flashcard-tjänst för kurser på Chalmers. Den är byggd av en student, för studenter, och kostar ingenting.",
     why: "Varför",

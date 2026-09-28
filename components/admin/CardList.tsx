@@ -1,11 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { ChevronDown, FolderInput, Trash2 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
 import { deleteCardAction, moveCardsToCategoryAction, reorderCardsAction } from "@/lib/admin/actions";
+import { mergeSubsetOrder } from "@/lib/admin/card-form";
+import { SOURCE_TAGS, SOURCE_TAG_LABEL, countBySourceTag, matchesSource, type SourceFilter } from "@/lib/admin/sources";
 import type { CardRow } from "@/lib/supabase/database.types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -13,8 +15,10 @@ import { Card } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Choice";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Menu, MenuItem, MenuSeparator } from "@/components/ui/Menu";
+import { Select } from "@/components/ui/Select";
 import { Toast } from "@/components/ui/Toast";
-import { KindBadge, OriginalBadge, ReviewStatusBadge } from "./KindBadge";
+import { KindBadge, ReviewStatusBadge } from "./KindBadge";
+import { SourceBadges } from "./SourceBadges";
 import { SortableList, rowActionClass } from "./SortableList";
 
 type Props = {
@@ -33,6 +37,9 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
   const [deleting, setDeleting] = useState<CardRow | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
+  const [source, setSource] = useState<SourceFilter>("alla");
+  const sourceCounts = useMemo(() => countBySourceTag(cards), [cards]);
+  const shown = useMemo(() => cards.filter((c) => matchesSource(c, source)), [cards, source]);
 
   // Markeringen gäller bara kort som fortfarande finns i listan (efter flytt eller borttagning).
   useEffect(() => {
@@ -79,7 +86,8 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
       </Card>
     );
 
-  const allSelected = selected.size === cards.length;
+  const allSelected = shown.length > 0 && shown.every((c) => selected.has(c.id));
+  const sourceOptions = SOURCE_TAGS.filter((t) => sourceCounts[t] > 0 || t === source);
   const targets = categories.filter((c) => c.id !== currentCategoryId);
 
   return (
@@ -93,7 +101,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
             if (input) input.indeterminate = selected.size > 0 && !allSelected;
           }}
         >
-          <Checkbox checked={allSelected} onChange={(e) => setSelected(e.target.checked ? new Set(cards.map((c) => c.id)) : new Set())} />
+          <Checkbox checked={allSelected} onChange={(e) => setSelected(e.target.checked ? new Set(shown.map((c) => c.id)) : new Set())} />
           {selected.size > 0 ? sv.admin.selectedCount(selected.size) : sv.admin.selectAll}
         </label>
         {selected.size > 0 ? (
@@ -126,12 +134,24 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
             </Button>
           </>
         ) : null}
+        {sourceOptions.length > 1 || source !== "alla" ? (
+          <Select<SourceFilter>
+            size="sm"
+            fit
+            label={sv.admin.sourceFilter}
+            value={source}
+            onChange={setSource}
+            options={[{ value: "alla", label: `${sv.admin.sourceAll} (${cards.length})` }, ...sourceOptions.map((t) => ({ value: t, label: `${SOURCE_TAG_LABEL[t]} (${sourceCounts[t]})` }))]}
+            className="ml-auto min-w-44"
+            data-testid="card-source-filter"
+          />
+        ) : null}
       </div>
 
       <SortableList
-        items={cards}
+        items={shown}
         label={sv.admin.cards}
-        onReorder={(ids) => handle(reorderCardsAction(deckId, ids))}
+        onReorder={(ids) => handle(reorderCardsAction(deckId, source === "alla" ? ids : mergeSubsetOrder(cards.map((c) => c.id), ids)))}
         href={(card) => `/admin/deck/${deckId}/kort/${card.id}`}
         hrefLabel={(card) => firstLine(card.front)}
         linkTestId="admin-card-front"
@@ -148,7 +168,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
               <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-muted">
                 <KindBadge kind={card.kind} compact />
                 <ReviewStatusBadge status={card.review_status} />
-                {card.original ? <OriginalBadge /> : null}
+                <SourceBadges source={card.source} original={card.original} max={2} className="shrink-0 flex-nowrap max-sm:hidden" />
                 {card.is_active || card.review_status ? null : <Badge tone="outline">{sv.admin.inactive}</Badge>}
                 <span className="truncate">
                   {firstLine(card.back)}

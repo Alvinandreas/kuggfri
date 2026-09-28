@@ -14,6 +14,11 @@ type Props = {
   area: { title: string; colorIndex: number } | null;
   /** Mindre luft, för granskningsvyn där många kort gås igenom efter varandra. */
   compact?: boolean;
+  /**
+   * Fram- och baksidan bredvid varandra när ytan är bred nog (containerfråga: kräver en
+   * förälder med klassen @container). Annars under varandra.
+   */
+  sideBySide?: boolean;
 };
 
 /**
@@ -21,7 +26,7 @@ type Props = {
  * det rätta markerat) och baksidan, som heter Förklaring för automaträttade typer.
  * Samma markdown- och KaTeX-renderare som studievyn.
  */
-export function CardPreview({ front, back, hint, kind, options, area, compact = false }: Props) {
+export function CardPreview({ front, back, hint, kind, options, area, compact = false, sideBySide = false }: Props) {
   const auto = isAutoGraded(kind);
   const sides = [
     { key: "front", label: kind === "sant-falskt" ? sv.admin.statement : kind === "begrepp" ? sv.admin.concept : sv.study.front, text: front },
@@ -29,7 +34,7 @@ export function CardPreview({ front, back, hint, kind, options, area, compact = 
   ] as const;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
+    <div className={cx("grid grid-cols-[minmax(0,1fr)] gap-4", sideBySide && "@3xl:grid-cols-2")}>
       {sides.map((side) => (
         <section
           key={side.key}

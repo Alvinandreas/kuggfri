@@ -320,9 +320,6 @@ export default function HelpPage() {
 
         <HelpSection id="mer-hjalp" lead={t.moreBody}>
           <ContactCards />
-          <ActionList>
-            <ActionRow href="/om" icon={Info} title={t.aboutLink} meta={t.aboutLinkMeta} />
-          </ActionList>
         </HelpSection>
       </div>
     </article>

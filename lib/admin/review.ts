@@ -7,6 +7,7 @@
  * Terminologi: ett kort hör till ett OMRÅDE (tabellen categories) och har en UPPGIFTSTYP.
  */
 import { CARD_KINDS, isAutoGraded, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
+import { matchesSource, type SourceFilter } from "@/lib/admin/sources";
 
 /** Det granskningsvyn behöver veta om ett kort. CardRow uppfyller typen. */
 export type ReviewCard = {
@@ -47,9 +48,11 @@ export type ReviewFilter = {
   kind: KindFilter;
   /** Bara ändringar av publicerade kort (kort med en tidigare publicerad version). */
   changesOnly?: boolean;
+  /** Källtyp (se lib/admin/sources); saknas = alla. */
+  source?: SourceFilter;
 };
 
-export const DEFAULT_REVIEW_FILTER: ReviewFilter = { bucket: "vantar", area: "alla", kind: "alla", changesOnly: false };
+export const DEFAULT_REVIEW_FILTER: ReviewFilter = { bucket: "vantar", area: "alla", kind: "alla", changesOnly: false, source: "alla" };
 
 /**
  * Är utkastet en ändring av ett kort som tidigare varit publicerat? Sådana är dolda för
@@ -95,6 +98,13 @@ function matchesKind(card: Pick<ReviewCard, "kind">, kind: KindFilter): boolean 
   return kind === "alla" || card.kind === kind;
 }
 
+/** Område, uppgiftstyp och källtyp (allt utom status och "bara ändringar"). */
+type ScopeFilter = Pick<ReviewFilter, "area" | "kind" | "source">;
+
+function matchesScope(card: Pick<ReviewCard, "category_id" | "kind" | "source" | "original">, filter: ScopeFilter): boolean {
+  return matchesArea(card, filter.area) && matchesKind(card, filter.kind) && matchesSource(card, filter.source);
+}
+
 /**
  * Korten som syns med filtret, i områdenas ordning (se orderByArea). Bland dem som väntar
  * kommer ändringar av publicerade kort först (se isPublishedChange).
@@ -104,8 +114,7 @@ export function filterReviewCards<C extends ReviewCard>(cards: readonly C[], fil
     cards.filter(
       (c) =>
         reviewBucket(c, now) === filter.bucket &&
-        matchesArea(c, filter.area) &&
-        matchesKind(c, filter.kind) &&
+        matchesScope(c, filter) &&
         (!filter.changesOnly || c.published_before === true),
     ),
     areas,
@@ -114,9 +123,9 @@ export function filterReviewCards<C extends ReviewCard>(cards: readonly C[], fil
   return [...ordered.filter(isPublishedChange), ...ordered.filter((c) => !isPublishedChange(c))];
 }
 
-/** Antal ändringar av publicerade kort i högen, inom område- och typfiltret (för filtrets etikett). */
+/** Antal ändringar av publicerade kort i högen, inom område-, typ- och källfiltret (för filtrets etikett). */
 export function countPublishedChanges(cards: readonly ReviewCard[], filter: ReviewFilter, now: number): number {
-  return cards.filter((c) => c.published_before === true && reviewBucket(c, now) === filter.bucket && matchesArea(c, filter.area) && matchesKind(c, filter.kind)).length;
+  return cards.filter((c) => c.published_before === true && reviewBucket(c, now) === filter.bucket && matchesScope(c, filter)).length;
 }
 
 /**
@@ -153,13 +162,13 @@ export function groupByArea<C extends Pick<ReviewCard, "category_id">>(orderedCa
 
 /**
  * Förloppet "12 av 48 granskade": av korten som väntar eller fått ett beslut det senaste
- * dygnet (inom område- och typfiltret), hur många har fått ett beslut.
+ * dygnet (inom område-, typ- och källfiltret), hur många har fått ett beslut.
  */
-export function reviewProgress(cards: readonly ReviewCard[], filter: Pick<ReviewFilter, "area" | "kind">, now: number): { done: number; total: number } {
+export function reviewProgress(cards: readonly ReviewCard[], filter: ScopeFilter, now: number): { done: number; total: number } {
   let done = 0;
   let total = 0;
   for (const c of cards) {
-    if (!matchesArea(c, filter.area) || !matchesKind(c, filter.kind)) continue;
+    if (!matchesScope(c, filter)) continue;
     if (c.review_status === "utkast") total++;
     else if (reviewedRecently(c, now)) {
       done++;

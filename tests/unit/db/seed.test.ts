@@ -51,9 +51,10 @@ describe("seed", () => {
     }
   });
 
-  it("gäster (anon) kan läsa hela det publicerade innehållet", async () => {
+  it("gäster (anon) kan läsa hela det publicerade innehållet, men inga utkast", async () => {
     const cards = await anon(db).query(`select id from public.cards`);
-    expect(cards).toHaveLength(expectedCards);
+    const drafts = courses.reduce((n, c) => n + flattenCards(c).filter(({ card }) => card.review !== null).length, 0);
+    expect(cards).toHaveLength(expectedCards - drafts);
     const cats = await anon(db).query(`select id from public.categories`);
     expect(cats).toHaveLength(expectedCategories);
   });

@@ -35,8 +35,12 @@ describe("supabase/deploy/full.sql", () => {
       `select table_name from information_schema.tables where table_schema = 'public' order by table_name`,
     );
     expect(tables.map((t) => t.table_name)).toEqual(["card_progress", "card_reports", "cards", "categories", "deck_examiner_invites", "deck_examiners", "decks", "email_log", "profiles", "review_log", "study_sessions"]);
+    // Utkast (review_status) är dolda för gäster; resten av seedens kort syns.
+    const [all] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards`);
+    const [drafts] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where review_status is not null`);
     const cards = await anon(db).query(`select id from public.cards`);
-    expect(cards).toHaveLength(144);
+    expect(all!.n).toBeGreaterThanOrEqual(144);
+    expect(cards).toHaveLength(all!.n - drafts!.n);
   });
 
   it("innehåller varje migrations fullständiga innehåll, inte bara filnamnet", async () => {

@@ -1,0 +1,327 @@
+# Stål, värmebehandling och bearbetning
+
+## Vad utgör stål?
+key: vad-utgor-stal
+typ: begrepp
+
+Stål är järn legerat med kol som beroende på kolhalt och tillverkningsförhållanden kan ges olika egenskaper.
+
+## Beskriv vad en anlöpning är.
+key: beskriv-vad-en-anlopning-ar
+status: utkast
+källa: Rättelse: kortet angav fel temperatur (precis under ca 910 °C) och fel produkt (perlit + cementit); anlöpning sker vid måttlig temperatur och ger ferrit med fina cementitpartiklar; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, Lab_PM_M2_v2026, s. 11; Canvas, Lab_PM_M2_v2026, s. 13; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, Fö 12 Stål, s. 16; Canvas, Fö 12 Stål, s. 23; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 22; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 23
+
+Anlöpning görs efter martensithärdning, eftersom martensiten är mycket hård men ofta för spröd. Det härdade stålet värms till en måttlig temperatur, under den eutektoida temperaturen 727 °C (i föreläsningens exempel ca 200 till 650 °C, i labb-PM ca 500 °C).
+
+* Martensiten sönderfaller till anlöpt martensit: ferrit med mycket små cementitpartiklar (inte perlit)
+* Hårdheten och sträckgränsen sjunker något, men segheten ökar kraftigt
+* Temperatur och tid avgör cementitpartiklarnas storlek, så hårdheten kan styras med anlöpningstemperaturen
+
+## Vilken inverkan har kolhalten på stålets egenskaper?
+key: vilken-inverkan-har-kolhalten-pa
+status: utkast
+källa: Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 18; Canvas, Fö 12 Stål, s. 25; Canvas, Fö 12 Stål, s. 26; Canvas, Övning 7 m lösningar, s. 5
+
+Kolet bildar cementit ($\text{Fe}_3\text{C}$), en mycket hård fas. Vid långsam kylning ger 0 % C bara ferrit, under 0,8 % C ferrit och perlit, 0,8 % C bara perlit och över 0,8 % C perlit och cementit. Mer kol ger alltså mindre ferrit och mer cementit, och stålet blir hårdare och starkare men mindre duktilt. I härdade stål ger mer kol fler karbider, med samma effekt.
+
+Stål med högre kolhalt (maskinstål, 0,25 till 0,75 % C) kan härdas men är svårare att svetsa än konstruktionsstål (under 0,25 % C).
+
+## Vad är martensit och hur uppstår det?
+key: vad-ar-martensit-och-hur-uppstar-det
+typ: begrepp
+
+Kan fås vid snabbkylning av stål från austenitområdet. Det är utöver det en metastabil fas med tetragonal struktur = distorderad BCC.
+
+## Vad är ett TTT-diagram och vad används det till?
+key: vad-ar-ett-ttt-diagram-och-vad-anvands
+aktiv: nej
+
+TTT-diagram står för Time Temperature Transformation- diagram och används för att bestämma tid och temperatur för värmebehandlingar.
+
+## Varför legerar man stål? Nämn minst två anledningar.
+key: varfor-legerar-man-stal-namn-minst-tva
+status: utkast
+källa: Canvas, Fö 12 Stål, s. 24; Canvas, Fö 12 Stål, s. 27; Canvas, Fö 12 Stål, s. 28; Canvas, Övning 7 m lösningar, s. 5
+
+Stål legeras för att:
+
+* lösningshärda ferriten
+* öka härdbarheten: stora legeringsatomer fördröjer bildningen av perlit, så det finns mer tid att bilda martensit
+* ge andra karbider än cementit, med stabilare högtemperaturegenskaper (t.ex. i verktygsstål)
+* ge korrosionsmotstånd: med krom bildas ett skyddande kromoxidskikt (rostfritt stål)
+* stabilisera austenit vid rumstemperatur (nickel i austenitiska rostfria stål)
+
+## Vad kännetecknar underkategorin: "Konstruktionsstål"?
+key: vad-kannetecknar-underkategorin
+
+* Kolhalt: < 0.25%
+
+Konstruktionsstål kan delas in i två grupper; Kolstål och HSLA (High Strength Low Alloy)-steels, där låg kolhalt definieras som < 0.25%. Båda är svetsbara men kan ej härdas. Kolstål är billigt och används i exempelvis byggnader eller skepp. HSLA tillverkas mha en termomekanisk process som ger fin mikrostruktur och således hög sträckgräns. Används till exempel i fordonsplåtar och broar.
+
+## Vad kännetecknar underkategorin: "Maskinstål"?
+key: vad-kannetecknar-underkategorin-2
+
+* Kolhalt: 0.25-0.75 %
+
+Maskinstål kan härdas och är legerat för att öka härdbarheten. Dock är det svårare att svetsa än exempelvis konstruktionsstål. Exempel på användningsområden är järnvägsräls, handverktyg, maskindelar etc.
+
+## Vad kännetecknar underkategorin: "Verktygsstål"?
+key: vad-kannetecknar-underkategorin-3
+
+* Kolhalt: 0.5-1.7 % C
+
+Verktygsstål är legerat för att erhålla stabila karbider vid hög temperatur. Används i exempelvis gjutformar, pressverktyg, skärverktyg och kullager.
+
+## Vad kännetecknar underkategorin: "Rostfritt stål"?
+key: vad-kannetecknar-underkategorin-4
+
+Legeras med Cr för att få ett kromoxidskikt på ytan → korrosionsskydd
+
+* Ni, stabiliserar austenit vid rumstemperatur
+* Tre typer: ferritiska (billiga), austenitiska (bäst korrosionsmotstånd, lågtemperaturegenskaper), martensitiska (kan härdas)
+
+## Vad innebär kalldeformation?
+key: vad-innebar-kalldeformation
+typ: begrepp
+
+Kallbearbetning, även känt som deformationshärdning eller kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
+
+Mycket högre dislokationsdensitet efter
+kallbearbetning → högre sträckgräns
+(deformationshärdning)
+
+## Vad innebär rekristallisation?
+key: vad-innebar-rekristallation
+typ: begrepp
+
+Rekristallisation är en process inom metallbearbetning där en deformerad metall omstrukturerar sin inre kristallstruktur för att minska spänningar och återställa dess ursprungliga egenskaper. När metallen deformeras plastiskt, till exempel genom valsning eller smidning, blir dess kristallstruktur och dislokationer störda, vilket leder till hårdare och sprödare egenskaper (detta kallas kallbearbetning).
+Rekristallisation sker när en deformerad metall värms upp till en specifik temperatur, kallad rekristallisationstemperaturen. Vid denna temperatur börjar nya, icke-deformerade korn att bildas inuti materialet. Dessa nya korn ersätter de gamla, deformerade kornen och bidrar till att:
+
+* Sänka metallens hårdhet och öka dess duktilitet – metallen blir mjukare och mer formbar.
+* Minska inre spänningar – som byggts upp under deformationen.
+* Förbättra materialets struktur – den får en jämnare och mer homogen kornstruktur.
+
+## Vad innebär varmdeformation?
+key: vad-innebar-varmdeformation
+typ: begrepp
+
+Varmdeformation är en process där metaller deformeras vid temperaturer som är högre än deras rekristallisationstemperatur (ofta över cirka 0,5 gånger smälttemperaturen i kelvin). Vid dessa temperaturer kan metallens kristallstruktur rekonstrueras samtidigt som deformationen sker, vilket gör att nya korn kan bildas kontinuerligt under bearbetningen. Detta innebär att materialet inte härdas, och det behåller sin duktilitet och formbarhet. Varmdeformation används ofta för stora formändringar, exempelvis vid smidning och valsning i höga temperaturer.
+
+Kortfattat:
+
+* Ger deformation utan att höja sträckgränsen
+* Stora deformationer är möjliga
+
+## Beskriv kortfattat vad skillnaden mellan kall- och varmdeformation är.
+key: beskriv-kortfattat-vad-skillnaden
+
+Skillnader kortfattat:
+
+* Varmdeformation: Hög temperatur, inga spänningar byggs upp, materialet behåller sin formbarhet och stora dimensionsändringar kan ske under en och samma behandling.
+* Kalldeformation: Låg temperatur, spänningar och hårdhet ökar, materialet blir starkare men samtidigt sprödare.
+
+## Ge exempel på minst två plastiska formningsmetoder.
+key: ge-exempel-pa-minst-tva-plastiska
+
+Exempel:
+
+* Smide
+* Valsning
+* Pressning
+* Tråddragning
+
+## Redogör för vad gjutning innebär för materialet och ge exempel på minst två gjutningsmetoder.
+key: redogor-for-vad-gjutning-innebar-for
+
+* Gjutstruktur – Olika struktur i
+olika delar av gjutgodset
+* Defekter – porer, sprickor
+* Ofta något sämre mekaniska
+egenskaper än valsade eller
+smidda material
+
+Exempel:
+
+* Formgjutning
+(högt och lågt tryck)
+* Sandgjutning
+* Lost wax- casting
+
+## Redogör för vad svetsning innebär för materialet och ge exempel på minst två svetsmetoder.
+key: redogor-for-vad-svetsning-innebar-for
+
+* Svets där materialet har smält och
+stelnat – gjutstruktur
+* Värmepåverkad zon (HAZ) –
+förändrad mikrostruktur,
+korntillväxt, förändrad härdning
+* Ofta sprickor
+
+Ex: TIG/MIG/MAG
+
+## Beskriv stålets tillverkningsprocess i grova mått.
+key: beskriv-stalets-tillverkningsprocess-i
+
+* Utgångsmaterial: järnoxid
+* Reduceras i masugn:
+järnoxid + kol + energi → tackjärn + koloxid
+* Kolhalten i tackjärnet justeras till rätt kolhalt, stålet legeras, skrot kan tillsättas
+* Processen kräver energi
+  - processenergi
+  - energi till reducering (är konstant)
+* Återvinning sparar energi och råvaror, ger mindre utsläpp av koldioxid
+
+Därefter behandlas stålet:
+
+* Färskning = kolhalten justeras
+* Legering
+* Kontinuerlig gjutning
+* Varmvalsning
+* Kallbearbetning
+* Kallvalsning, tråddragning, m.m. → plåt, räls, balkar, stång, tråd
+
+## Ge minst två exempel på värmebehandlingar för stål.
+key: ge-minst-tva-exempel-pa
+
+* Normalisering: austenitisering + långsam kylning → primär ferrit eller cementit + perlit. Andel perlit ges av kolhalten. Ger ”normal” mikrostruktur, lämpligt för konstruktioner där styvheten är viktig.
+* Mjukglödgning: värmning till temperatur under austenittemperatur (723 C) → diffusion och korntillväxt, sfäroidiserad perlit, lägre sträckgräns. Används för
+stål som skall maskinbearbetas och därefter härdas.
+* Martensithärdning:
+1. Värmning till austenitområdet
+2. Snabbkylning → martensit
+3. Anlöpning → anlöpt martensit = ferrit med mycket små cementitpartiklar
+Kolhalten avgör andelen cementit. Temperatur och tid för anlöpningen avgör storleken på cementitpartiklarna. Används när hårdhet och sträckgräns är viktigt.
+
+## Nämn minst två produktionsmässiga anledningar till att man legerar stål.
+key: namn-minst-tva-produktionsmassiga
+aktiv: nej
+
+Stål legeras bland annat för att:
+
+* Öka hållfastheten – Genom att tillsätta legeringsämnen som nickel eller krom kan stålets styrka och hållfasthet förbättras.
+
+* Förbättra korrosionsbeständigheten – Krom och nickel ökar stålets motståndskraft mot rost och korrosion, vilket är särskilt viktigt för rostfria stål.
+
+* Förbättra hårdheten och slitstyrkan – Tillsatser som kol, mangan och vanadin gör stålet hårdare och mer motståndskraftigt mot slitage, vilket är fördelaktigt i verktygsstål.
+
+* Höja duktiliteten och segheten – Vissa legeringsämnen, som nickel, kan öka segheten och duktiliteten, vilket gör stålet mindre sprött vid låga temperaturer.
+
+* Förbättra värmebeständigheten – Legeringar med ämnen som molybden och volfram hjälper stålet att behålla sina egenskaper vid höga temperaturer, vilket är viktigt för verktygsstål och höglegerat stål.
+
+* Förbättra härdbarheten – Legeringar med ämnen som krom och molybden ökar stålets förmåga att härdas djupt, vilket gör att materialet får en jämn hårdhet vid härdning.
+
+## TTT-diagram
+key: ttt-diagram
+typ: begrepp
+status: utkast
+källa: Canvas, Fö 12 Stål, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21
+
+TTT-diagram (time, temperature, transformation) visar hur lång tid det tar för instabil austenit att omvandlas, t.ex. till perlit, vid olika temperaturer. Ur diagrammet kan man därför avläsa hur snabbt man måste kyla från austenitområdet för att undvika perlit och i stället bilda martensit. Diagrammet är olika för olika stål och används för att bestämma tid och temperatur för värmebehandlingar.
+
+## Mjukglödgning
+key: mjukglodgning
+typ: begrepp
+
+En värmebehandling av stål där man får sfäroidiserad perlit, vilket ger ett material med lägre sträckgräns men som är lättare att maskinarbeta. Stålet värms upp till en temperatur under austenitiseringstemperaturen, och
+diffusion ger sfäroidiserad cementit.
+
+## Verktygsstål
+key: verktygsstal
+typ: begrepp
+
+Höglegerat stål med hög kolhalt. Används i härdat tillstånd. Hårt och värmetåligt.
+
+## När ett material varmvalsas ökar sträckgränsen.
+key: ja-nej-nar-ett-material-varmvalsas-sa
+typ: sant-falskt
+svar: falskt
+status: utkast
+källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 4; Canvas, Fö 12 Stål, s. 5; Canvas, Fö 12 Stål, s. 6
+
+Falskt. Varmbearbetning sker över rekristallisationstemperaturen, så plastisk deformation och rekristallisation sker samtidigt. Deformationen höjer därför inte sträckgränsen, och stora deformationer är möjliga. Det är vid kallbearbetning som dislokationsdensiteten och därmed sträckgränsen ökar (deformationshärdning).
+
+## I grått gjutjärn och segjärn förekommer allt kol som ren grafit.
+key: ja-nej-i-stal-bildar-kol-cementit-men-i
+typ: sant-falskt
+svar: falskt
+status: utkast
+källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 29; Canvas, Lab_PM_M2_v2026, s. 12; Canvas, Övning 7 m lösningar, s. 5
+
+Falskt. Gjutjärn har 2 till 4 % C, och i de vanliga typerna gråjärn och segjärn består mikrostrukturen av perlit och grafit. Perlit är ferrit och cementit ($\text{Fe}_3\text{C}$), så en del av kolet är bundet som cementit. Grafiten är fjällformad i gråjärn och sfärisk i segjärn. I stål bildar kolet cementit.
+
+Tentan 2020 hade påståendet "I stål bildar kol cementit, men i gjutjärn förekommer kolet som ren grafit" med facit ja. Det är en förenkling, därför är påståendet omformulerat.
+
+## TTT-diagram: vilka påståenden är sanna?
+key: quiz-ttt-diagram-tva-ratt
+typ: alternativ
+status: utkast
+källa: Canvas, Quiz vecka 2, fråga 9; Canvas, Fö 12 Stål, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21; Canvas, Lab_PM_M2_v2026, s. 13
+
+- [x] Ur TTT-diagrammet kan man läsa hur lång tid det tar för instabil austenit att omvandlas till perlit.
+- [ ] TTT står för tryck, temperatur, transition.
+- [x] Med ett TTT-diagram kan man bestämma hur snabbt man måste kyla för att bilda martensit.
+- [ ] Ur TTT-diagrammet kan man läsa hur lång tid det tar för perlit att omvandlas till martensit.
+
+TTT står för time, temperature, transformation. Diagrammet visar tiden för omvandling av instabil austenit till perlit vid olika temperaturer, och därmed vilken avsvalningshastighet som krävs för att i stället bilda martensit. Martensit bildas bara från austenit, genom snabbkylning; perlit omvandlas inte till martensit.
+
+## TTT-diagram för stål: vilka påståenden är sanna?
+key: quiz-ttt-diagram-for-stal-2-ratt
+typ: alternativ
+status: utkast
+källa: Canvas, Quiz vecka 4, fråga 8; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21; Canvas, Fö 12 Stål, s. 2; Canvas, GLU 02 Fasdiagram, s. 8; Canvas, Lab_PM_M2_v2026, s. 13
+
+- [x] Ett TTT-diagram för stål visar tiden för instabil austenit att omvandlas till perlit.
+- [ ] Med hävstångsregeln kan andelen av strukturbeståndsdelarna beräknas ur TTT-diagrammet.
+- [x] Ett TTT-diagram visar hur snabbt man måste kyla från austenitområdet för att bilda martensit.
+- [ ] Genom att först bilda perlit och sedan snabbkyla och bilda martensit undviks sprickbildning.
+
+TTT-diagrammet visar omvandlingstiden för instabil austenit och därmed den kylhastighet som krävs för martensit, dvs. fasomvandlingarnas kinetik. Hävstångsregeln används i fasdiagram, som visar de stabila faserna vid jämvikt. Martensit kan bara bildas ur austenit, så perlit som redan har bildats blir inte martensit vid snabbkylning.
+
+## Kall- och varmbearbetning: vilka påståenden är sanna?
+key: quiz-kall-och-varmbearbetning-2-ratt
+typ: alternativ
+status: utkast
+källa: Canvas, Quiz vecka 4, fråga 10; Canvas, Fö 12 Stål, s. 4; Canvas, Fö 12 Stål, s. 5; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 36; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 43
+
+- [x] Rekristallisation innebär att nya korn med få dislokationer bildas när ett kallbearbetat material värms upp.
+- [x] Vid kallvalsning ökar sträckgränsen och brottförlängningen minskar.
+- [ ] Vid kallvalsning trycks atomerna samman och materialet blir tätare.
+- [ ] För att en metall ska bli hårdare vid kallbearbetning måste den vara legerad.
+
+Kallbearbetning ger mycket högre dislokationsdensitet, vilket höjer sträckgränsen (deformationshärdning) och minskar brottförlängningen; det beror inte på att atomerna trycks samman. Även rena metaller deformationshärdas, t.ex. ren aluminium och ren koppar. När ett kallbearbetat material värms upp rekristalliserar det: nya små korn med få dislokationer bildas, sträckgränsen sjunker och brottförlängningen ökar.
+
+I quizen stod "brottgränsen" och "dislokationsfria korn"; föreläsningen talar om sträckgräns och om korn med få dislokationer.
+
+## Normalisering
+key: stal-normalisering
+typ: begrepp
+status: utkast
+källa: Canvas, Short_dictionary_ v2026, s. 10; Canvas, Fö 12 Stål, s. 15; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1h
+
+Värmebehandling av stål: austenitisering följd av långsam kylning i luft. Man får jämviktsstrukturen, primär ferrit eller cementit plus perlit, där andelen perlit ges av kolhalten. Normalisering ger en "normal" mikrostruktur, lämplig för konstruktioner där styvheten är viktig.
+
+## Varför ökar legeringsämnen stålets härdbarhet?
+key: stal-hardbarhet-legering
+typ: alternativ
+status: utkast
+källa: Canvas, Fö 12 Stål, s. 24; Canvas, Fö 12 Stål, s. 26; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
+
+- [x] Stora legeringsatomer fördröjer bildningen av perlit, så det finns mer tid att bilda martensit vid kylningen
+- [ ] Legeringsatomerna bildar martensit redan vid stelningen
+- [ ] Legeringsatomerna höjer E-modulen så att stålet blir hårdare
+- [ ] Legeringsatomerna gör att kolet diffunderar snabbare
+
+Martensit bildas när stål kyls så snabbt från austenitområdet att kolet inte hinner diffundera och bilda perlit. Stora legeringsatomer fördröjer perlitbildningen, så det finns mer tid att bilda martensit; därför är t.ex. maskinstål legerade för att öka härdbarheten. TTT-diagrammet, som visar tiden för omvandling till perlit, är olika för olika stål. Härdning ändrar inte E-modulen, och snabbare koldiffusion skulle tvärtom underlätta perlitbildningen.
+
+## Vad stämmer för gråjärn och segjärn?
+key: stal-gjutjarn-gra-och-seg
+typ: alternativ
+status: utkast
+källa: Canvas, Fö 12 Stål, s. 29; Canvas, Övning 7 m lösningar, s. 5
+
+- [x] Mikrostrukturen består av perlit och grafit
+- [x] Gråjärn har fjällformad grafit, vilket ger lägre E-modul (ungefär hälften av ståls) och ett relativt sprött men vibrationsdämpande material
+- [ ] Segjärn har fjällformad grafit och är därför sprödare än gråjärn
+- [ ] Gjutjärn har lägre kolhalt än stål
+
+Gjutjärn har 2 till 4 % C. I de vanliga typerna gråjärn och segjärn består mikrostrukturen av perlit och grafit. I gråjärn är grafiten fjällformad, vilket ger lägre E-modul (ungefär hälften av ståls), ett relativt sprött material och god vibrationsdämpning. I segjärn är grafiten sfärisk, vilket ger högre seghet. Gjutjärn används t.ex. till maskindelar och maskinstativ.

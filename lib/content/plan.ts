@@ -24,6 +24,7 @@ import {
   type ContentCourse,
 } from "./model";
 import { firstLine } from "@/lib/text/first-line";
+import { DEFAULT_CARD_KIND, isCardKind, isReviewStatus, parseOptions, type CardKind, type CardOption, type ReviewStatus } from "@/lib/cards/kinds";
 
 // ---------------------------------------------------------------------------
 // Databasens läge (svaret från deck_snapshot)
@@ -54,6 +55,11 @@ export type SnapshotCard = {
   sort_order: number;
   is_active: boolean;
   source_hash: string | null;
+  /** Saknas i ögonblicksbilder från före migrationen 20260928000000. */
+  kind?: string | null;
+  options?: unknown;
+  review_status?: string | null;
+  source?: string | null;
 };
 
 export type DeckSnapshot = {
@@ -116,6 +122,10 @@ export type SyncPayload = {
       sort_order: number;
       is_active: boolean;
       source_hash: string;
+      kind: CardKind;
+      options: CardOption[] | null;
+      review_status: ReviewStatus | null;
+      source: string | null;
     }[];
     update: {
       id: string;
@@ -127,6 +137,10 @@ export type SyncPayload = {
       sort_order: number;
       is_active: boolean;
       source_hash: string;
+      kind: CardKind;
+      options: CardOption[] | null;
+      review_status: ReviewStatus | null;
+      source: string | null;
     }[];
     deactivate: string[];
     delete: string[];
@@ -167,6 +181,17 @@ function compareDim(file: string, db: string, stored: string | null): Dim {
 
 function label(text: string): string {
   return firstLine(text, { maxLength: 70 });
+}
+
+/** De senare kortfälten ur en databasrad, med standardvärden för äldre ögonblicksbilder. */
+function laterFields(db: SnapshotCard): Pick<ContentCard, "kind" | "options" | "review" | "source"> {
+  const kind = isCardKind(db.kind) ? db.kind : DEFAULT_CARD_KIND;
+  return {
+    kind,
+    options: parseOptions(db.options),
+    review: isReviewStatus(db.review_status) ? db.review_status : null,
+    source: db.source ?? null,
+  };
 }
 
 export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options: PlanOptions = {}): ContentPlan {
@@ -326,6 +351,10 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
       sort_order: sortOrder,
       is_active: card.active,
       source_hash: fileContent,
+      kind: card.kind,
+      options: card.options,
+      review_status: card.review,
+      source: card.source,
     };
 
     if (!db) {
@@ -336,7 +365,7 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
     usedDbCardIds.add(db.id);
 
     const dbContent = cardContentHash(
-      { front: db.front, back: db.back, hint: db.hint, active: db.is_active },
+      { front: db.front, back: db.back, hint: db.hint, active: db.is_active, ...laterFields(db) },
       categoryKeyById.get(db.category_id ?? "") ?? null,
     );
     const cContent = compareDim(fileContent, dbContent, storedContentHash(db.source_hash));
@@ -464,6 +493,7 @@ export function courseFromSnapshot(
           back: card.back,
           hint: card.hint,
           active: card.is_active,
+          ...laterFields(card),
         }));
       return {
         key,
@@ -488,6 +518,7 @@ export function courseFromSnapshot(
         back: card.back,
         hint: card.hint,
         active: card.is_active,
+        ...laterFields(card),
       })),
     });
   }

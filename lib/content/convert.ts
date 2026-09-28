@@ -4,6 +4,7 @@
  * teckenidentiskt och kan knytas ihop med raderna i databasen.
  */
 import { parseImport } from "@/lib/import/parse-import";
+import { DEFAULT_CARD_KIND } from "@/lib/cards/kinds";
 import { applyTypography, duplicateKey, normalizeBrainscapeMarkdown } from "@/lib/import/normalize";
 import type { ContentCard } from "./model";
 import { slugifyKey, uniqueKey } from "./model";
@@ -54,6 +55,10 @@ export function convertCards(text: string, options: ConvertOptions): ConvertResu
       back,
       hint: raw.hint ? applyTypography(raw.hint) : null,
       active: true,
+      kind: DEFAULT_CARD_KIND,
+      options: null,
+      review: null,
+      source: null,
     });
   }
 

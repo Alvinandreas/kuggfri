@@ -191,6 +191,21 @@ describe("cards", () => {
     const deleted = await user(db, admin).query(`delete from public.cards where id = $1 returning id`, [created!.id]);
     expect(deleted).toHaveLength(1);
   });
+
+  it("utkast i ett publicerat deck syns bara för redaktörer, och kan aldrig vara aktiva", async () => {
+    const [utkast] = await db.query<{ id: string }>(
+      `insert into public.cards (deck_id, front, back, is_active, review_status, kind, options)
+       values ($1, 'Förslag', 'Svar', false, 'utkast', 'sant-falskt', '[{"text":"Sant","correct":true},{"text":"Falskt","correct":false}]')
+       returning id`,
+      [publishedDeck],
+    );
+    expect(await anon(db).query(`select id from public.cards where id = $1`, [utkast!.id])).toHaveLength(0);
+    expect(await user(db, alice).query(`select id from public.cards where id = $1`, [utkast!.id])).toHaveLength(0);
+    expect(await user(db, admin).query(`select id from public.cards where id = $1`, [utkast!.id])).toHaveLength(1);
+    await expect(db.query(`update public.cards set is_active = true where id = $1`, [utkast!.id])).rejects.toThrow();
+    await expect(db.query(`update public.cards set options = null where id = $1`, [utkast!.id])).rejects.toThrow();
+    await db.query(`delete from public.cards where id = $1`, [utkast!.id]);
+  });
 });
 
 describe("profiles", () => {

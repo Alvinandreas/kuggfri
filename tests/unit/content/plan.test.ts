@@ -8,7 +8,7 @@ import { deriveKey } from "@/lib/content/store";
 // ---------------------------------------------------------------------------
 
 function card(key: string, front: string, back: string, extra: Partial<ContentCard> = {}): ContentCard {
-  return { key, front, back, hint: null, active: true, ...extra };
+  return { key, front, back, hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, ...extra };
 }
 
 function course(categories: { key: string; title: string; cards: ContentCard[] }[]): ContentCourse {

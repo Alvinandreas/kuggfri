@@ -4,8 +4,10 @@
  */
 import { createHash } from "node:crypto";
 import { matchKey } from "@/lib/text/first-line";
+import { DEFAULT_CARD_KIND, type CardKind, type CardOption, type ReviewStatus } from "@/lib/cards/kinds";
 
 export { matchKey };
+export type { CardKind, CardOption, ReviewStatus };
 
 export type ContentCard = {
   /** Stabil nyckel inom kursen. Texterna får ändras utan att kortet byter identitet. */
@@ -15,6 +17,14 @@ export type ContentCard = {
   hint: string | null;
   /** false = kortet finns kvar men visas inte för studenterna. */
   active: boolean;
+  /** Uppgiftstyp (lib/cards/kinds.ts). */
+  kind: CardKind;
+  /** Svarsalternativ för sant-falskt och alternativ, annars null. */
+  options: CardOption[] | null;
+  /** utkast/avvisad = förslag som inte granskats eller som avvisats. Då är active alltid false. */
+  review: ReviewStatus | null;
+  /** Var innehållet kommer ifrån (t.ex. en Canvasfil och sida). */
+  source: string | null;
 };
 
 export type ContentCategory = {
@@ -132,12 +142,18 @@ function short(value: string): string {
  * och aldrig skrivit det till databasen. Det är det enda stället i kodbasen där en glömd
  * rad ger tyst dataförlust.
  */
+/** Standardvärden för kortfält som tillkommit efter att hashen infördes (28 sep: uppgiftstyper). */
+const LATER_FIELD_DEFAULTS: Record<string, unknown> = { kind: DEFAULT_CARD_KIND, options: null, review: null, source: null };
+
 export function cardContentHash(card: Omit<ContentCard, "key">, categoryKey: string | null): string {
   const fields = Object.entries(card)
     // Nyckeln är identitet, inte innehåll: att byta nyckel ska inte se ut som en ändring.
     // Filtreras bort här så att anropare kan skicka ett helt ContentCard utan att hashen
     // skiljer sig från den som byggs ur en databasrad.
     .filter(([name]) => name !== "key")
+    // Fält som tillkommit senare räknas bara när de avviker från standardvärdet. Då behåller
+    // alla kort som fanns innan fälten infördes sin hash, och inget ser ändrat ut vid nästa synk.
+    .filter(([name, value]) => !(name in LATER_FIELD_DEFAULTS && LATER_FIELD_DEFAULTS[name] === value))
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([name, value]) => [name, value ?? ""] as const);
   return `c${short(JSON.stringify([fields, categoryKey ?? ""]))}`;

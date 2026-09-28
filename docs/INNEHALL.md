@@ -111,6 +111,58 @@ Regler:
 - Kortens ordning i filen är ordningen i kursen. Kategoriernas ordning är ordningen i `kurs.json`.
 - Ett kort som ska finnas kvar men inte visas: `aktiv: nej`.
 
+### 3.1 Områden och uppgiftstyper (28 sep 2026)
+
+Terminologi: en kategori heter från och med nu **område** (kursens ämnesindelning, en fil per
+område; i databasen fortfarande tabellen `categories`). Varje kort har dessutom en
+**uppgiftstyp** (`lib/cards/kinds.ts`):
+
+| `typ:` | Visas som | Rättning |
+|---|---|---|
+| `självskattning` (standard, skrivs inte ut) | vändkort | studenten skattar 1–5 |
+| `begrepp` | vändkort med "Förklara begreppet" | studenten skattar 1–5 |
+| `sant-falskt` + `svar: sant\|falskt` | påstående med knapparna Sant/Falskt | automatiskt |
+| `alternativ` + `- [x]`/`- [ ]`-lista först i brödtexten | flerval, ett eller flera rätta | automatiskt |
+
+Automaträttade svar ger skattningen 3 första gången rätt, 4 andra gången i rad och 5 från den
+tredje; fel ger 1 och trappan börjar om (Alvins modell). Kortets senaste skattning är räknaren.
+En automaträttad fråga läggs aldrig tillbaka i kön i samma pass. I en dugga är rätt 5 och fel 1.
+
+Övriga egenskaper:
+
+- `status: utkast` — ett förslag som väntar på granskning (examinator eller admin, fliken
+  Granskning i admin). Ett utkast är aldrig aktivt och kan inte läsas av studenter, inte ens via
+  API:t. `status: avvisad` = avvisat förslag som ligger kvar så att det inte föreslås igen.
+- `källa: …` — var innehållet kommer ifrån, t.ex. `Canvas, Tentamen MTT085 24-10, uppgift 3`.
+
+```markdown
+## Vilka gitter är tätpackade?
+key: tatpackade-gitter
+typ: alternativ
+status: utkast
+källa: Canvas, Quiz vecka 1, fråga 3
+
+- [x] FCC
+- [ ] BCC
+- [x] HCP
+
+Både FCC och HCP har packningstätheten 0,74.
+```
+
+Saknas förklaring skriver verktyget in rätt svar som baksida (databasen kräver en). Nya fält
+räknas in i innehållshashen bara när de avviker från standardvärdet, så kort från före 28 sep
+ser inte ändrade ut.
+
+Verktyg för områden (`scripts/omraden.ts`), alla rör bara filerna: `omraden` (översikt område ×
+uppgiftstyp), `nytt-omrade`, `byt-namn-omrade`, `flytta <kort,…> --till <område>`, `byt-typ`,
+`mappa <fil.tsv>` (kortnyckel, område, typ per rad; hela omstruktureringar i ett svep) och
+`ordna-omraden`. Kortnycklarna ändras aldrig, så studenternas progress följer med.
+
+Material från Canvas: `kuggfri canvas inventera|hamta|text|quizkort <kurs>` (`scripts/canvas.ts`)
+hämtar kursmaterialet till `material/<kurs>/` (gitignorerad; lämnar aldrig datorn) och gör
+quizfrågorna till utkastkort. Token: `CANVAS_TOKEN` i `.env.local`. Verktyget gör bara GET mot
+kurser på tillåtelselistan och vägrar alla sökvägar med studentdata.
+
 CSV och JSON försvinner inte: de blir *inmatningsformat* som konverteras till kortfiler
 (`kuggfri konvertera`), aldrig källa.
 

@@ -75,7 +75,7 @@ Två brädgårdar följt av mellanslag.
     expect(issues.map((i) => i.message)).toEqual([
       expect.stringContaining("saknar baksida"),
       expect.stringContaining("Ogiltig nyckel"),
-      expect.stringContaining("saknar kategorirubrik"),
+      expect.stringContaining("saknar områdesrubrik"),
     ]);
   });
 
@@ -105,7 +105,7 @@ describe("nycklar", () => {
 });
 
 describe("innehållshashen", () => {
-  const base = { front: "F", back: "B", hint: null, active: true };
+  const base = { front: "F", back: "B", hint: null, active: true, kind: "sjalvskattning" as const, options: null, review: null, source: null };
 
   it("ändras när något fält i kortet ändras", () => {
     const h = cardContentHash(base, "kat");
@@ -127,7 +127,22 @@ describe("innehållshashen", () => {
   it("påverkas inte av nyckeln eller av fältens ordning", () => {
     const medNyckel = { ...base, key: "k1" } as unknown as typeof base;
     expect(cardContentHash(medNyckel, "kat")).toBe(cardContentHash(base, "kat"));
-    const omkastad = { active: true, hint: null, back: "B", front: "F" };
+    const omkastad = { source: null, review: null, options: null, kind: "sjalvskattning" as const, active: true, hint: null, back: "B", front: "F" };
     expect(cardContentHash(omkastad, "kat")).toBe(cardContentHash(base, "kat"));
+  });
+
+  it("ger samma hash som före uppgiftstyperna när de nya fälten har standardvärden", () => {
+    // Alla kort som fanns 28 sep ska se oförändrade ut vid nästa synk.
+    const gammalt = { front: "F", back: "B", hint: null, active: true } as unknown as typeof base;
+    expect(cardContentHash(base, "kat")).toBe(cardContentHash(gammalt, "kat"));
+  });
+
+  it("ändras när typ, alternativ, status eller källa avviker från standard", () => {
+    const h = cardContentHash(base, "kat");
+    expect(cardContentHash({ ...base, kind: "begrepp" }, "kat")).not.toBe(h);
+    const alternativ = { ...base, kind: "alternativ" as const, options: [{ text: "a", correct: true }, { text: "b", correct: false }] };
+    expect(cardContentHash(alternativ, "kat")).not.toBe(cardContentHash({ ...alternativ, options: [{ text: "a", correct: false }, { text: "b", correct: true }] }, "kat"));
+    expect(cardContentHash({ ...base, review: "utkast", active: false }, "kat")).not.toBe(cardContentHash({ ...base, active: false }, "kat"));
+    expect(cardContentHash({ ...base, source: "Canvas" }, "kat")).not.toBe(h);
   });
 });

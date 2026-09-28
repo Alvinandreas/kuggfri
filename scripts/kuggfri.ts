@@ -10,6 +10,8 @@
  *   npm run kuggfri -- ny-kategori <kurs> <key> --titel "..."
  *   npm run kuggfri -- ta-bort-kurs <kurs> [--radera]
  *   npm run kuggfri -- seed
+ *   npm run kuggfri -- canvas <inventera|hamta|text> <kurs>   (se scripts/canvas.ts)
+ *   npm run kuggfri -- omraden|nytt-omrade|byt-namn-omrade|flytta|byt-typ|mappa|ordna-omraden ...   (se scripts/omraden.ts)
  *
  * Mål: `--mal lokal` (standard) eller `--mal prod` (det länkade Supabase-projektet).
  * Inga nycklar i repot: produktionen nås via Supabase CLI:ns egen inloggning.
@@ -25,6 +27,8 @@ import { LIMITS } from "@/lib/admin/limits";
 import { deckId as deckIdFor, flattenCards, type ContentCourse } from "@/lib/content/model";
 import { courseFromSnapshot, planSync, EMPTY_SNAPSHOT, type ContentPlan, type DeckSnapshot } from "@/lib/content/plan";
 import { courseDir, deriveKey, listCourseKeys, loadCourse, saveCourse } from "@/lib/content/store";
+import { runCanvas } from "./canvas";
+import { OMRADE_COMMANDS, runOmraden } from "./omraden";
 
 const ROOT = process.cwd();
 
@@ -541,7 +545,7 @@ function cmdSeed(): void {
     }
     for (const c of plan.sync.cards.create) {
       out.push(
-        `insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash) values (` +
+        `insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash, kind, options, review_status, source) values (` +
           [
             `'${c.id}'`,
             `'${plan.deckId}'`,
@@ -553,6 +557,10 @@ function cmdSeed(): void {
             String(c.sort_order),
             String(c.is_active),
             sqlLiteral(c.source_hash),
+            sqlLiteral(c.kind),
+            c.options === null ? "null" : `${sqlLiteral(JSON.stringify(c.options))}::jsonb`,
+            c.review_status === null ? "null" : sqlLiteral(c.review_status),
+            c.source === null ? "null" : sqlLiteral(c.source),
           ].join(", ") +
           `);`,
       );
@@ -602,12 +610,15 @@ async function main(): Promise<void> {
       return cmdTaBortKurs(args);
     case "seed":
       return cmdSeed();
+    case "canvas":
+      return runCanvas(args.positional);
     case "hjalp":
     case "hjälp":
     case "--help":
     case "-h":
       return usage();
     default:
+      if (command && OMRADE_COMMANDS.includes(command)) return runOmraden(command, args);
       usage();
       if (command) fail(`Okänt kommando: ${command}`);
   }

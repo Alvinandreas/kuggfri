@@ -61,3 +61,6 @@ supabase/.env
 
 # startarens temporära kopia av backup.cjs
 /.drift/
+
+# Kursmaterial från Canvas (kuggfri canvas), lämnar aldrig datorn
+/material/

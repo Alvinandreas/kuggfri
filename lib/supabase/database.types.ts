@@ -86,6 +86,17 @@ export type CardRow = {
   key: string | null;
   /** Innehållshash vid senaste synk från fil. */
   source_hash: string | null;
+  /** Uppgiftstyp (lib/cards/kinds.ts). */
+  kind: "sjalvskattning" | "begrepp" | "sant-falskt" | "alternativ";
+  /** Svarsalternativ för sant-falskt och alternativ: [{ text, correct }]. */
+  options: { text: string; correct: boolean }[] | null;
+  /** null = vanligt kort, utkast = väntar på granskning, avvisad = avvisat förslag. */
+  review_status: "utkast" | "avvisad" | null;
+  review_note: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  /** Var innehållet kommer ifrån. */
+  source: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -227,7 +238,7 @@ export type Database = {
         Row: CardRow;
         Insert: Optional<
           CardRow,
-          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at"
+          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source"
         >;
         Update: Partial<CardRow>;
         Relationships: [];

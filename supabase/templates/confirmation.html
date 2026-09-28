@@ -1,7 +1,111 @@
-<h2>Bekräfta ditt konto på Kuggfri</h2>
+<!doctype html>
+<html lang="sv" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Välkommen till Kuggfri</title>
+<style>
+  body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+  img { border: 0; line-height: 100%; outline: none; text-decoration: none; }
+  a.kf-plain { color: #1f7a4d; }
+  @media (max-width: 600px) {
+    .kf-card { padding: 28px 22px !important; }
+    .kf-h1 { font-size: 24px !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .kf-page { background-color: #141311 !important; }
+    .kf-card { background-color: #1f1e1b !important; border-color: #33312c !important; }
+    .kf-text { color: #efede8 !important; }
+    .kf-muted { color: #b3aea3 !important; }
+    .kf-rule { border-color: #33312c !important; }
+    .kf-tip { background-color: #262521 !important; }
+    a.kf-plain { color: #6cc596 !important; }
+  }
+</style>
+</head>
+<body class="kf-page" style="margin:0;padding:0;background-color:#f6f5f1;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Bekräfta din e-postadress, sedan är kontot klart och du kan börja plugga.&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<table role="presentation" class="kf-page" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f6f5f1" style="background-color:#f6f5f1;">
+  <tr>
+    <td align="center" style="padding:32px 16px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+        <tr>
+          <td style="padding:0 4px 20px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:middle;padding-right:10px;"><img src="https://kuggfri.com/apple-touch-icon.png" width="36" height="36" alt="" style="display:block;width:36px;height:36px;border-radius:9px;"></td>
+                <td class="kf-text" style="vertical-align:middle;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.3px;color:#1d1c19;">Kuggfri</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="kf-card" bgcolor="#ffffff" style="background-color:#ffffff;border:1px solid #e4e1da;border-radius:16px;padding:36px 36px 32px;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+            <h1 class="kf-text kf-h1" style="margin:0 0 12px;font-size:26px;line-height:1.25;font-weight:800;letter-spacing:-0.4px;color:#1d1c19;">Välkommen till Kuggfri</h1>
+            <p class="kf-text" style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#1d1c19;">Tryck på knappen för att bekräfta din e-postadress. Sedan är kontot klart och du kan börja plugga.</p>
 
-<p>Klicka på länken för att bekräfta din e-postadress. Den fungerar på vilken enhet som helst.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+              <tr>
+                <td align="center" bgcolor="#1f7a4d" style="background-color:#1f7a4d;border-radius:12px;">
+                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=%2F" target="_blank" style="display:inline-block;padding:14px 28px;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.2;color:#ffffff;text-decoration:none;border-radius:12px;background-color:#1f7a4d;">Bekräfta e-postadressen</a>
+                </td>
+              </tr>
+            </table>
 
-<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=%2F">Bekräfta kontot</a></p>
+            <p class="kf-muted" style="margin:0 0 6px;font-size:14px;line-height:1.55;color:#676259;">Länken gäller i en timme. Har den gått ut loggar du in som vanligt, så kan du få en ny.</p>
+            <p class="kf-muted" style="margin:0 0 4px;font-size:14px;line-height:1.55;color:#676259;">Fungerar inte knappen? Kopiera länken till webbläsaren:</p>
+            <p style="margin:0;font-size:13px;line-height:1.5;word-break:break-all;"><a class="kf-plain" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=%2F" target="_blank" style="color:#1f7a4d;text-decoration:underline;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=signup&amp;next=%2F</a></p>
 
-<p>Om du inte skapade ett konto kan du ignorera det här mejlet.</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0;">
+              <tr><td class="kf-rule" style="border-top:1px solid #e4e1da;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr>
+            </table>
+
+            <h2 class="kf-text" style="margin:28px 0 16px;font-size:18px;line-height:1.3;font-weight:700;color:#1d1c19;">Bra att veta</h2>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td class="kf-tip" bgcolor="#f6f5f1" style="background-color:#f6f5f1;border-radius:12px;padding:16px 18px;">
+                  <p class="kf-text" style="margin:0 0 4px;font-size:15px;line-height:1.4;font-weight:700;color:#1d1c19;">Lite varje dag</p>
+                  <p class="kf-muted" style="margin:0;font-size:15px;line-height:1.55;color:#676259;">Varje dag får du ett lagom pass: korten som ska repeteras plus 20 nya. Vill du hellre ha 10 eller 40 nya om dagen väljer du det under Konto, Pluggrytm.</p>
+                </td>
+              </tr>
+              <tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr>
+              <tr>
+                <td class="kf-tip" bgcolor="#f6f5f1" style="background-color:#f6f5f1;border-radius:12px;padding:16px 18px;">
+                  <p class="kf-text" style="margin:0 0 4px;font-size:15px;line-height:1.4;font-weight:700;color:#1d1c19;">Schemat räknar med tentan</p>
+                  <p class="kf-muted" style="margin:0;font-size:15px;line-height:1.55;color:#676259;">Har kursen ett tentadatum planerar schemat mot det. Alla kort hinner repeteras i god tid, och de sista dagarna blir en slutrepetition. Nedräkningen ser du på hemsidan.</p>
+                </td>
+              </tr>
+              <tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr>
+              <tr>
+                <td class="kf-tip" bgcolor="#f6f5f1" style="background-color:#f6f5f1;border-radius:12px;padding:16px 18px;">
+                  <p class="kf-text" style="margin:0 0 4px;font-size:15px;line-height:1.4;font-weight:700;color:#1d1c19;">Som en app i mobilen</p>
+                  <p class="kf-muted" style="margin:0;font-size:15px;line-height:1.55;color:#676259;">Lägg Kuggfri på hemskärmen så öppnas den som en app. I Safari trycker du på Dela och sedan Lägg till på hemskärmen. I Chrome öppnar du menyn och väljer Installera app eller Lägg till på startskärmen.</p>
+                </td>
+              </tr>
+              <tr><td style="height:10px;font-size:0;line-height:0;">&nbsp;</td></tr>
+              <tr>
+                <td class="kf-tip" bgcolor="#f6f5f1" style="background-color:#f6f5f1;border-radius:12px;padding:16px 18px;">
+                  <p class="kf-text" style="margin:0 0 4px;font-size:15px;line-height:1.4;font-weight:700;color:#1d1c19;">Hjälp när du behöver den</p>
+                  <p class="kf-muted" style="margin:0;font-size:15px;line-height:1.55;color:#676259;">På <a class="kf-plain" href="{{ .SiteURL }}/hjalp" target="_blank" style="color:#1f7a4d;text-decoration:underline;">Hjälp-sidan</a> står hur passen och skattningen fungerar, och svar på vanliga frågor.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="kf-muted" style="padding:20px 8px 0;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#676259;text-align:center;">
+            Du får det här mejlet för att någon registrerade ett konto på kuggfri.com med din adress. Om det inte var du kan du ignorera mejlet.<br>
+            Kuggfri · <a class="kf-plain" href="https://kuggfri.com" target="_blank" style="color:#676259;text-decoration:underline;">kuggfri.com</a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

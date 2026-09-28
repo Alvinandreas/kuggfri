@@ -1,58 +1,18 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { canEditDeck, getAdminContext } from "@/lib/admin/access";
-import { LIMITS, MAX_IMPORT_CARDS } from "@/lib/admin/limits";
+import { MAX_IMPORT_CARDS, LIMITS } from "@/lib/admin/limits";
+import { cleanIds, fail, isUuid, requireAdmin, requireEditor, revalidateDeck, tooLong, type ActionResult } from "@/lib/admin/action-helpers";
+import { normalizeKindInput } from "@/lib/admin/card-form";
 import { CONTENT_TAG } from "@/lib/content/queries";
 import { sv } from "@/lib/i18n/sv";
 import { diffImport } from "@/lib/import/diff";
 import type { ImportCard } from "@/lib/import/parse-import";
+import type { CardKind, CardOption } from "@/lib/cards/kinds";
 
-export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
+export type { ActionResult } from "@/lib/admin/action-helpers";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-
-function tooLong(field: string, value: string, max: number): ActionResult<never> | null {
-  return value.length > max ? { ok: false, error: sv.admin.tooLong(field, max) } : null;
-}
-
-/**
- * Hämtar en klient och verifierar server-side att användaren är global admin
- * (skapa/ta bort deck, hantera examinatorer). Kastar om inte. RLS nekar dessutom oavsett.
- */
-async function requireAdmin() {
-  const ctx = await getAdminContext();
-  if (!ctx?.isAdmin) throw new Error("forbidden");
-  const supabase = await createSupabaseServerClient();
-  return { supabase, ctx };
-}
-
-/** Admin eller examinator för just det här decket. */
-async function requireEditor(deckId: string) {
-  const ctx = await getAdminContext();
-  if (!ctx || !canEditDeck(ctx, deckId)) throw new Error("forbidden");
-  const supabase = await createSupabaseServerClient();
-  return { supabase, ctx };
-}
-
-function fail(error: unknown): ActionResult<never> {
-  const message = error instanceof Error ? error.message : String(error);
-  if (message === "forbidden") return { ok: false, error: sv.common.forbiddenBody };
-  return { ok: false, error: sv.errors.generic };
-}
-
-function revalidateDeck(deckId: string, slug?: string) {
-  revalidateTag(CONTENT_TAG);
-  revalidatePath("/admin");
-  revalidatePath("/admin/deck");
-  revalidatePath(`/admin/deck/${deckId}`, "layout");
-  revalidatePath("/");
-  if (slug) {
-    revalidatePath(`/d/${slug}`);
-    revalidatePath(`/d/${slug}/plugga`);
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Deck
@@ -203,6 +163,52 @@ export async function reorderCategoriesAction(deckId: string, orderedIds: string
   }
 }
 
+/**
+ * Flyttar kort till ett område (categoryId null = utan område). Området måste höra till
+ * samma deck; korten binds också till decket i själva uppdateringen.
+ */
+export async function moveCardsToCategoryAction(deckId: string, ids: string[], categoryId: string | null): Promise<ActionResult<{ moved: number }>> {
+  try {
+    const { supabase } = await requireEditor(deckId);
+    const clean = cleanIds(ids, LIMITS.bulkCards);
+    if (!clean) return { ok: false, error: sv.errors.generic };
+    if (clean.length === 0) return { ok: true, data: { moved: 0 } };
+    if (categoryId !== null) {
+      if (!isUuid(categoryId)) return { ok: false, error: sv.errors.generic };
+      const { data: category } = await supabase.from("categories").select("id").eq("id", categoryId).eq("deck_id", deckId).maybeSingle();
+      if (!category) return { ok: false, error: sv.errors.generic };
+    }
+    const { data, error } = await supabase.from("cards").update({ category_id: categoryId }).eq("deck_id", deckId).in("id", clean).select("id");
+    if (error) return fail(error);
+    revalidateDeck(deckId);
+    return { ok: true, data: { moved: data?.length ?? 0 } };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/**
+ * Slår ihop två områden: alla kort i fromId flyttas till intoId och det tomma området tas
+ * bort. Två steg utan transaktion; misslyckas borttagningen ligger korten redan rätt och
+ * området står tomt kvar, så inget går förlorat.
+ */
+export async function mergeCategoryAction(deckId: string, fromId: string, intoId: string): Promise<ActionResult<{ moved: number }>> {
+  try {
+    const { supabase } = await requireEditor(deckId);
+    if (!isUuid(fromId) || !isUuid(intoId) || fromId === intoId) return { ok: false, error: sv.errors.generic };
+    const { data: found } = await supabase.from("categories").select("id").eq("deck_id", deckId).in("id", [fromId, intoId]);
+    if ((found ?? []).length !== 2) return { ok: false, error: sv.errors.generic };
+    const { data: moved, error: moveError } = await supabase.from("cards").update({ category_id: intoId }).eq("deck_id", deckId).eq("category_id", fromId).select("id");
+    if (moveError) return fail(moveError);
+    const { error } = await supabase.from("categories").delete().eq("id", fromId).eq("deck_id", deckId);
+    if (error) return fail(error);
+    revalidateDeck(deckId);
+    return { ok: true, data: { moved: moved?.length ?? 0 } };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Kort
 // ---------------------------------------------------------------------------
@@ -212,25 +218,58 @@ export type CardInput = {
   deck_id: string;
   category_id: string | null;
   front: string;
+  /** Baksidan, eller förklaringen för automaträttade typer. */
   back: string;
   hint: string;
   is_active: boolean;
+  /** Utelämnat = oförändrat (nytt kort: självskattning). */
+  kind?: CardKind;
+  options?: CardOption[] | null;
+  source?: string;
 };
 
+/**
+ * Sparar ett kort. Typ och alternativ kontrolleras med samma regler som redigeraren visar
+ * (validateKind); servern är sanningen. Ett utkast eller avvisat förslag förblir inaktivt
+ * tills det godkänns under Granskning, oavsett vad formuläret skickar.
+ */
 export async function saveCardAction(input: CardInput): Promise<ActionResult<{ id: string }>> {
   try {
     const { supabase } = await requireEditor(input.deck_id);
     const front = input.front.trim();
     const back = input.back.trim();
-    if (!front || !back) return { ok: false, error: sv.common.required };
-    const long = tooLong(sv.admin.front, front, LIMITS.front) ?? tooLong(sv.admin.back, back, LIMITS.back) ?? tooLong(sv.admin.hint, input.hint.trim(), LIMITS.hint);
+    const source = (input.source ?? "").trim();
+    const long =
+      tooLong(sv.admin.front, front, LIMITS.front) ??
+      tooLong(sv.admin.back, back, LIMITS.back) ??
+      tooLong(sv.admin.hint, input.hint.trim(), LIMITS.hint) ??
+      tooLong(sv.admin.sourceShort, source, LIMITS.source);
     if (long) return long;
+
+    let existing: { kind: CardKind; options: CardOption[] | null; review_status: string | null } | null = null;
+    if (input.id) {
+      const { data, error } = await supabase.from("cards").select("kind, options, review_status").eq("id", input.id).eq("deck_id", input.deck_id).maybeSingle();
+      if (error) return fail(error);
+      if (!data) return { ok: false, error: sv.errors.generic };
+      existing = data;
+    }
+
+    const kindInput = input.kind ?? existing?.kind ?? "sjalvskattning";
+    const optionsInput = input.kind === undefined ? (existing?.options ?? null) : (input.options ?? null);
+    const normalized = normalizeKindInput(kindInput, optionsInput);
+    if (!normalized.ok) return { ok: false, error: normalized.error };
+    if (!front || !back) return { ok: false, error: sv.common.required };
+
+    const inReview = existing?.review_status != null;
     const values = {
       category_id: input.category_id || null,
       front,
       back,
       hint: input.hint.trim() || null,
-      is_active: input.is_active,
+      is_active: inReview ? false : input.is_active,
+      kind: normalized.kind,
+      options: normalized.options,
+      ...(input.source !== undefined ? { source: source || null } : {}),
     };
     if (input.id) {
       const { error } = await supabase.from("cards").update(values).eq("id", input.id).eq("deck_id", input.deck_id);
@@ -238,8 +277,8 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult<{ i
       revalidateDeck(input.deck_id);
       return { ok: true, data: { id: input.id } };
     }
-    const { data: existing } = await supabase.from("cards").select("sort_order").eq("deck_id", input.deck_id).order("sort_order", { ascending: false }).limit(1);
-    const sort_order = (existing?.[0]?.sort_order ?? -1) + 1;
+    const { data: last } = await supabase.from("cards").select("sort_order").eq("deck_id", input.deck_id).order("sort_order", { ascending: false }).limit(1);
+    const sort_order = (last?.[0]?.sort_order ?? -1) + 1;
     const { data, error } = await supabase
       .from("cards")
       .insert({ ...values, deck_id: input.deck_id, sort_order })

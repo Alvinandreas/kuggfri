@@ -31,6 +31,13 @@ describe("session", () => {
     expect(remaining(s)).toBe(0);
   });
 
+  it("automaträttade kort (requeue: false) läggs inte tillbaka i kön även vid fel svar", () => {
+    let s = createSession(["a", "b"], "fsrs");
+    s = rateCurrent(s, 1, { requeue: false });
+    expect(s.order).toEqual(["a", "b"]);
+    expect(currentCardId(s)).toBe("b");
+  });
+
   it("i schemalagt läge läggs kort med skattning 1–2 tillbaka sist i kön", () => {
     let s = createSession(["a", "b"], "fsrs");
     s = rateCurrent(s, 1);

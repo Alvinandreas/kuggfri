@@ -222,7 +222,8 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+# Påslaget sedan 28 sep 2026, som i produktionen. Lokalt bekräftas konton via Mailpit (port 54324).
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -250,17 +251,21 @@ otp_expiry = 3600
 # Kuggfris mallar använder token_hash i stället för Supabase standardlänk, så att länken
 # fungerar i vilken webbläsare/enhet som helst (PKCE-koden kräver annars samma webbläsare).
 # Samma innehåll ska klistras in i Supabase-dashboarden (Authentication → Emails) för molnprojektet.
-[auth.email.template.magic_link]
-subject = "Din inloggningslänk till Kuggfri"
-content_path = "./supabase/templates/magic-link.html"
+[auth.email.template.confirmation]
+subject = "Välkommen till Kuggfri, bekräfta din e-postadress"
+content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
 subject = "Välj ett nytt lösenord till Kuggfri"
 content_path = "./supabase/templates/recovery.html"
 
-[auth.email.template.confirmation]
-subject = "Bekräfta ditt konto på Kuggfri"
-content_path = "./supabase/templates/confirmation.html"
+[auth.email.template.magic_link]
+subject = "Din inloggningslänk till Kuggfri"
+content_path = "./supabase/templates/magic-link.html"
+
+[auth.email.template.email_change]
+subject = "Bekräfta din nya e-postadress på Kuggfri"
+content_path = "./supabase/templates/email_change.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

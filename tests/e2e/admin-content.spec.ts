@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { ADMIN_USER, DECK_SLUG, expectNoSeriousA11yViolations, login, registerStudent, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, uniqueEmail } from "./helpers";
 
 /**
- * Adminflöden som Johan använder: kategorier (skapa, byt namn, ordna, ta bort), kort (ta bort),
+ * Adminflöden som Johan använder: områden (skapa, byt namn, ordna, ta bort), kort (ta bort),
  * export, och examinatorrollen (ser bara sin kurs, kan redigera, kan inte skapa deck).
  */
 
@@ -27,23 +27,23 @@ test.describe("admin: innehåll", () => {
     await cleanup();
   });
 
-  test("kategori: skapa, byt namn, ordna om och ta bort; korten hamnar under Utan kategori för studenten", async ({ page, browser }) => {
+  test("område: skapa, byt namn, ordna om och ta bort; korten hamnar under Utan kategori för studenten", async ({ page, browser }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin");
     const deckUrl = await openDeckAdmin(page);
     await page.goto(`${deckUrl}/innehall`);
 
     // Skapa
     const title = `E2E-kat ${Date.now()}`;
-    await page.getByPlaceholder("Kategorititel").fill(title);
-    await page.getByRole("button", { name: "Ny kategori" }).click();
+    await page.getByPlaceholder("Områdets namn").fill(title);
+    await page.getByRole("button", { name: "Nytt område" }).click();
     const row = page.getByTestId("admin-category-list").locator("li").filter({ hasText: title });
     await expect(row).toBeVisible();
     await expect(row).toContainText("0 kort");
 
-    // Nytt kort i kategorin
+    // Nytt kort i området
     await row.getByRole("link", { name: title, exact: true }).click({ position: { x: 24, y: 16 } });
     await page.waitForURL(/\/kategori\/[0-9a-f-]{36}$/);
-    await page.getByRole("link", { name: "Nytt kort i kategorin" }).click();
+    await page.getByRole("link", { name: "Nytt kort i området" }).click();
     const front = `E2E-innehåll ${Date.now()}`;
     await page.getByTestId("card-front").fill(front);
     await page.getByTestId("card-back").fill("Ett svar.");
@@ -57,7 +57,7 @@ test.describe("admin: innehåll", () => {
     await row.getByRole("button", { name: "Byt namn" }).click();
     // I redigeringsläge innehåller raden inte längre titeln som text; fältet ligger i listan, skapa-fältet under den.
     const list = page.getByTestId("admin-category-list");
-    await list.getByRole("textbox", { name: "Kategorititel" }).first().fill(renamed);
+    await list.getByRole("textbox", { name: "Områdets namn" }).first().fill(renamed);
     await list.getByRole("button", { name: "Spara", exact: true }).click();
     const renamedRow = page.getByTestId("admin-category-list").locator("li").filter({ hasText: renamed });
     await expect(renamedRow).toBeVisible();
@@ -73,11 +73,11 @@ test.describe("admin: innehåll", () => {
     }).toBe(listBefore.length - 2);
     await expectNoSeriousA11yViolations(page);
 
-    // Ta bort kategorin: kortet finns kvar utan kategori och syns som "Utan kategori" för studenten.
-    await renamedRow.getByRole("button", { name: `Ta bort kategori: ${renamed}` }).click();
+    // Ta bort området: kortet finns kvar utan område ("Utan område" i admin) och syns som "Utan kategori" för studenten.
+    await renamedRow.getByRole("button", { name: `Ta bort område: ${renamed}` }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByTestId("admin-category-list").locator("li").filter({ hasText: renamed })).toHaveCount(0);
-    await expect(page.getByTestId("admin-category-list")).toContainText("Utan kategori");
+    await expect(page.getByTestId("admin-category-list")).toContainText("Utan område");
 
     const student = await browser.newContext();
     const s = await student.newPage();

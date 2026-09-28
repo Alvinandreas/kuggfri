@@ -6,8 +6,14 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
 import { sv } from "@/lib/i18n/sv";
 import { safeNext } from "./safe-next";
+import { SIGNUP_NEXT_KEY } from "./signup-next";
 
-export type AuthResult = { ok: true; message?: string } | { ok: false; error: string };
+/**
+ * checkEmail: kontot är skapat men väntar på bekräftelse; adressen visas i "Kolla din inkorg".
+ * unconfirmedEmail: inloggningen stoppades för att adressen inte är bekräftad; formuläret
+ * erbjuder då att skicka bekräftelsen igen.
+ */
+export type AuthResult = { ok: true; message?: string; checkEmail?: string } | { ok: false; error: string; unconfirmedEmail?: string };
 
 /** Översätter Supabase Auth-fel till begripliga meddelanden och loggar orsaken (syns i Vercel-loggen). */
 function authErrorMessage(error: { message: string; code?: string }, fallback: string): string {
@@ -42,7 +48,7 @@ export async function signInWithPasswordAction(formData: FormData): Promise<Auth
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     const code = (error.code ?? "").toLowerCase();
-    if (code === "email_not_confirmed") return { ok: false, error: sv.auth.notConfirmed };
+    if (code === "email_not_confirmed") return { ok: false, error: sv.auth.notConfirmed, unconfirmedEmail: email };
     return { ok: false, error: authErrorMessage(error, sv.auth.invalidCredentials) };
   }
   revalidatePath("/", "layout");
@@ -63,7 +69,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
     email,
     password,
     options: {
-      data: { display_name: displayName },
+      data: { display_name: displayName, [SIGNUP_NEXT_KEY]: next },
       emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
@@ -77,7 +83,33 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
   if (data.user && data.user.identities && data.user.identities.length === 0) {
     return { ok: false, error: sv.auth.emailInUse };
   }
-  return { ok: true, message: sv.auth.checkEmail };
+  return { ok: true, message: sv.auth.checkEmail, checkEmail: email };
+}
+
+/**
+ * Skickar bekräftelsemejlet igen (från "Kolla din inkorg" och från inloggningen när adressen
+ * inte är bekräftad). Svaret är detsamma oavsett om adressen har ett konto.
+ */
+export async function resendConfirmationAction(formData: FormData): Promise<AuthResult> {
+  const email = String(formData.get("email") ?? "").trim();
+  const next = safeNext(formData.get("next"), "/hem");
+  if (!email) return { ok: false, error: sv.auth.invalidEmail };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}` },
+  });
+  if (error) {
+    const code = (error.code ?? "").toLowerCase();
+    if (code === "over_email_send_rate_limit" || error.status === 429) {
+      console.error("[auth]", error.code ?? "", error.message);
+      return { ok: false, error: sv.auth.resendWait };
+    }
+    const message = authErrorMessage(error, sv.auth.error);
+    if (message === sv.auth.rateLimited || message === sv.auth.invalidEmail) return { ok: false, error: message };
+  }
+  return { ok: true, message: sv.auth.resendSent };
 }
 
 export async function sendMagicLinkAction(formData: FormData): Promise<AuthResult> {
@@ -90,8 +122,14 @@ export async function sendMagicLinkAction(formData: FormData): Promise<AuthResul
     email,
     options: {
       emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
+      // Konton skapas bara via registreringen (namn + bekräftat välkomstmejl), aldrig via en inloggningslänk.
+      shouldCreateUser: false,
     },
   });
+  // Okänd adress: samma svar som när länken skickats, så att formuläret inte avslöjar vilka adresser som har konto.
+  if (error && (error.code === "otp_disabled" || /signups not allowed/i.test(error.message))) {
+    return { ok: true, message: sv.auth.magicLinkSent };
+  }
   if (error) return { ok: false, error: authErrorMessage(error, sv.auth.error) };
   return { ok: true, message: sv.auth.magicLinkSent };
 }

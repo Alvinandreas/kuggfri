@@ -399,6 +399,46 @@ allt – men **utan att ändra registreringsvillkoren**, tjänsten ska vara stä
       och lägg in `FORHANDSVISNING_NYCKEL` så att vi kan titta på den skarpa sajten med `?nyckel=`
 - [ ] Full E2E-svit mot den nya koden innan öppning
 
+## Kvällen 28 sep: e-post
+
+Alvins beslut: all e-post från `noreply@kuggfri.com` hos Hostinger, e-postbekräftelse **på**,
+välkomstmejl med nyttig info, lösenordsåterställning via mejl. Exakta steg i docs/DEPLOY.md 3c.
+Ersätter Resend-förslaget och de två äldre [?]-punkterna om SMTP och mallar nedan.
+
+- [x] DNS kontrollerad (bara läsning): MX, SPF (`include:_spf.mail.hostinger.com`) och DKIM
+      (`hostingermail-a/b/c._domainkey`, CNAME till Hostinger) finns. DMARC finns som `p=none`
+      men utan rapportadress
+- [x] Fyra mejlmallar i Kuggfri-stil (tabellayout, inline-stilar, mörkt läge, knapp plus länk i
+      klartext, sidfot): välkomst/bekräftelse, glömt lösenord, inloggningslänk och ny mall för byte
+      av e-post. Samma token_hash-länkar via `/auth/confirm` som tidigare. Neutral hälsning utan namn
+      (skydd mot skräppost via registreringsformuläret)
+- [x] `supabase/config.toml`: `enable_confirmations = true`, alla fyra mallarna med ämnesrad.
+      Lokala Supabase omstartad (`stop` + `start`, data kvar)
+- [x] `/auth/confirm` godtar bara mallarnas typer (signup, email, recovery, magiclink,
+      email_change). Efter bekräftelsen hamnar man där registreringen pekade (kurslänken sparas
+      som `signup_next` i användarens metadata). Använd eller utgången bekräftelselänk ger en
+      lugn förklaring på inloggningssidan i stället för ett fel
+- [x] Registrering utan session visar "Kolla din inkorg" med adressen, knapp för att skicka igen
+      (`auth.resend`), skräpposttips och "Fel adress? Börja om". Inloggning med obekräftad adress
+      förklarar läget och har samma knapp. Befintliga konton påverkas inte
+- [x] Lokalt mejltest mot Mailpit: registrering (ingen session, rätt ämne, länk till
+      `/auth/confirm?type=signup`), inloggning före bekräftelse ger `email_not_confirmed`, skicka
+      igen, bekräftelse loggar in och återger kurslänken, länken går inte att använda två gånger,
+      glömt lösenord, inloggningslänk och byte av e-post (mejl till båda adresserna). Testkontot raderat
+- [x] E2E-hjälparna bekräftar nya konton via Mailpit (`confirmSignupFromMail`), nytt test för
+      obekräftad inloggning och skicka igen. **Inte körda** (Alvin kör E2E när han vill)
+- [x] Enhetstester för mallarna (länkform, inga namn, bilder finns i public/) och `signup_next`
+- [?] **Alvin, Supabase:** Custom SMTP (smtp.hostinger.com, 465, noreply@kuggfri.com, lösenordet
+      själv, avsändarnamn Kuggfri), rate limit för mejl 200/timme, Confirm email på, Secure email
+      change på, de fyra mallarna med ämnesrader, Site URL `https://kuggfri.com`. DEPLOY.md 3c steg 1–4
+- [?] **Alvin, Vercel:** `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`,
+      `EMAIL_FROM` (Production) och redeploy. DEPLOY.md 3c steg 5
+- [?] **Alvin, Hostinger (valfritt):** DMARC med rapportadress, `v=DMARC1; p=none; rua=mailto:…`
+- [?] **Alvin:** testprotokollet i DEPLOY.md 3c steg 6 (registrera, skicka igen, glömt lösenord,
+      inloggningslänk, skräppost, mail-tester.com, mörkt läge)
+- [ ] Om Outlook/Safe Links förbrukar återställningslänkar i testet: mellansida med "Fortsätt"-knapp
+      på `/auth/confirm`
+
 ## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
 - [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte

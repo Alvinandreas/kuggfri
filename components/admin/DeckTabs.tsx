@@ -8,19 +8,22 @@ import { cx } from "@/components/ui/cx";
 type Props = {
   deckId: string;
   openReports: number;
+  /** Utkast som väntar på granskning. */
+  pendingDrafts: number;
 };
 
 /**
  * Flikarna under deckets rubrik, som piller i samma form som SegmentedControl (vald flik
  * = den fyllda pillern). Egen komponent eftersom flikarna behöver test-id och en räknare.
- * Aktiv flik = längsta matchande prefix, så att kategori- och kortsidorna räknas till "Innehåll".
+ * Aktiv flik = längsta matchande prefix, så att områdes- och kortsidorna räknas till "Innehåll".
  */
-export function DeckTabs({ deckId, openReports }: Props) {
+export function DeckTabs({ deckId, openReports, pendingDrafts }: Props) {
   const pathname = usePathname();
   const base = `/admin/deck/${deckId}`;
   const tabs = [
     { href: base, label: sv.admin.tabOverview, exact: true, prefixes: [`${base}/statistik`] },
     { href: `${base}/innehall`, label: sv.admin.tabContent, prefixes: [`${base}/kategori`, `${base}/kort`] },
+    { href: `${base}/granskning`, label: sv.admin.tabReview, badge: pendingDrafts },
     { href: `${base}/rapporter`, label: sv.admin.tabReports, badge: openReports },
     { href: `${base}/import`, label: sv.admin.tabImport },
     { href: `${base}/installningar`, label: sv.admin.tabSettings },

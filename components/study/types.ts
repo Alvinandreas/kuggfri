@@ -7,6 +7,8 @@
  * komponenter behöva byta plats i beroendekedjan.
  */
 
+import type { CardKind, CardOption } from "@/lib/cards/kinds";
+
 export type StudyCard = {
   id: string;
   category_id: string | null;
@@ -14,6 +16,10 @@ export type StudyCard = {
   back: string;
   hint: string | null;
   sort_order: number;
+  /** Uppgiftstyp: styr om kortet vänds och självskattas eller rättas automatiskt. */
+  kind: CardKind;
+  /** Svarsalternativ för sant-falskt och alternativ, annars null. */
+  options: CardOption[] | null;
 };
 
 /** Dagsläget efter en schemalagd session: underlag för "Klar för i dag". */

@@ -51,13 +51,16 @@ function advance(state: SessionState): SessionState {
 /**
  * Skattar aktuellt kort och går vidare. I schemalagt läge läggs kort med
  * skattning 1–2 tillbaka sist i kön så att de ses igen innan sessionen är slut.
+ *
+ * Automaträttade kort (sant-falskt, alternativ) skickar requeue: false: studenten har
+ * redan sett facit, så samma fråga igen i samma pass mäter bara korttidsminnet.
  */
-export function rateCurrent(state: SessionState, rating: SelfRating): SessionState {
+export function rateCurrent(state: SessionState, rating: SelfRating, options: { requeue?: boolean } = {}): SessionState {
   const id = currentCardId(state);
   if (!id) return state;
   const ratings = { ...state.ratings, [id]: [...(state.ratings[id] ?? []), rating] };
   let order = state.order;
-  if (state.mode === "fsrs" && rating <= 2 && !isQueuedLater(state, id)) {
+  if ((options.requeue ?? true) && state.mode === "fsrs" && rating <= 2 && !isQueuedLater(state, id)) {
     order = [...order, id];
   }
   return advance({ ...state, ratings, order });

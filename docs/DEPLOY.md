@@ -85,35 +85,162 @@ och landar alltid på Site URL (kuggfri.com). Lokalt läses mallarna från `supa
 `config.toml`; i molnet måste de klistras in en gång:
 
 1. Supabase → **Authentication → Emails** (fliken *Templates*).
-2. Välj **Magic Link**. Subject: `Din inloggningslänk till Kuggfri`. Ersätt hela brödtexten med
-   innehållet i `supabase/templates/magic-link.html`. Spara.
-3. Välj **Confirm signup**. Subject: `Bekräfta ditt konto på Kuggfri`. Ersätt brödtexten med
-   `supabase/templates/confirmation.html`. Spara. (Används bara om "Confirm email" slås på igen.)
-4. **Authentication → URL Configuration → Redirect URLs**: lägg till `https://kuggfri.com/**` och
+2. Klistra in alla fyra mallarna med ämnesrad enligt tabellen i **3c, steg 4** nedan (sedan 28 sep
+   finns också en mall för byte av e-postadress, och bekräftelsemejlet är ett välkomstmejl).
+3. **Authentication → URL Configuration → Redirect URLs**: lägg till `https://kuggfri.com/**` och
    `https://kuggfri.vercel.app/**`. Vercel-integrationen lade bara in sina egna
    `kuggfri-…-gate-ai-sverige.vercel.app`-adresser, vilket är varför länkar hamnade där 14 sep.
-5. Testa: kuggfri.com → Logga in → "Skicka inloggningslänk i stället" → öppna mejlet på en annan
+4. Testa: kuggfri.com → Logga in → "Skicka inloggningslänk i stället" → öppna mejlet på en annan
    enhet än den du beställde från. Du ska landa inloggad på startsidan.
 
 `supabase config push` ska **inte** användas för detta: config.toml deklarerar lokala värden
 (site_url, redirect-listan, rate limits) som då skulle skriva över molnets riktiga inställningar.
 `supabase config diff` är däremot ofarligt och visar skillnaderna.
 
-## 3c. Egen mejlserver (krävs före lansering till studenter)
+## 3c. E-post via Hostinger (SMTP, e-postbekräftelse och mallar)
 
-Supabase inbyggda utskick är begränsat till ett par mejl per timme per projekt och är avsett för
-test. Med många studenter behövs egen SMTP. Rekommendation: **Resend** (gratis upp till 3 000 mejl
-per månad).
+Beslut 28 sep 2026: alla mejl går från brevlådan `noreply@kuggfri.com` hos Hostinger, både
+Supabase egna utskick (bekräftelse, glömt lösenord, inloggningslänk, byte av e-post) och appens
+egna påminnelser och veckobrev. E-postbekräftelse vid registrering slås **på**. Supabase inbyggda
+mejlserver klarar bara ett par mejl i timmen och är inte tänkt för riktiga användare, så steg 1
+måste vara gjort innan steg 3.
 
-1. Skapa konto på resend.com, lägg till domänen `kuggfri.com` under *Domains* och lägg in de
-   DNS-poster Resend visar hos Hostinger (TXT för verifiering, MX + TXT för DKIM/SPF på en subdomän).
-2. Skapa en API-nyckel i Resend (Sending access räcker).
-3. Supabase → **Project Settings → Authentication → SMTP Settings** → Enable Custom SMTP:
-   Sender email `noreply@kuggfri.com`, Sender name `Kuggfri`, Host `smtp.resend.com`, Port `465`,
-   Username `resend`, Password = API-nyckeln. Spara.
-4. Supabase → Authentication → Rate Limits: höj "Rate limit for sending emails" till t.ex. 100/timme.
+Lösenordet till brevlådan är en hemlighet: skriv in det direkt i Supabase och Vercel, aldrig i repot
+eller i chatten.
 
-API-nyckeln är en hemlighet: klistra in den i Supabase-dashboarden, aldrig i repot eller i chatten.
+### DNS hos Hostinger (kontrollerat 28 sep, bara läsning)
+
+| Post | Värde i dag | Status |
+|---|---|---|
+| MX `kuggfri.com` | `mx1.hostinger.com` (5), `mx2.hostinger.com` (10) | OK |
+| SPF, TXT `kuggfri.com` | `v=spf1 include:_spf.mail.hostinger.com ~all` | OK |
+| DKIM, CNAME `hostingermail-a._domainkey` | `hostingermail-a.dkim.mail.hostinger.com` (nyckel publicerad) | OK |
+| DKIM, CNAME `hostingermail-b._domainkey`, `hostingermail-c._domainkey` | pekar på Hostinger, tomma nycklar (reserv för nyckelbyte) | OK, normalt |
+| DMARC, TXT `_dmarc.kuggfri.com` | `v=DMARC1; p=none` | Finns, men utan rapportadress |
+
+Ingenting måste ändras för att mejlen ska gå fram. En förbättring som rekommenderas (Hostinger →
+Domäner → kuggfri.com → DNS / Nameservers → redigera TXT-posten `_dmarc`):
+
+```
+v=DMARC1; p=none; rua=mailto:DIN-ADRESS; adkim=r; aspf=r
+```
+
+Byt `DIN-ADRESS` mot en adress du läser (t.ex. din egen Gmail). Då får du dagliga rapporter om vem
+som skickar mejl i kuggfri.com:s namn. När rapporterna visat att allt från Hostinger klarar SPF och
+DKIM i ett par veckor kan `p=none` höjas till `p=quarantine`, vilket gör det svårare att förfalska
+avsändaren. Rör inte SPF- eller DKIM-posterna.
+
+### Steg 1. SMTP i Supabase (du gör)
+
+Supabase → **Project Settings → Authentication → SMTP Settings** (i nyare dashboard:
+**Authentication → Emails → SMTP Settings**) → slå på **Enable Custom SMTP**:
+
+| Fält | Värde |
+|---|---|
+| Sender email | `noreply@kuggfri.com` |
+| Sender name | `Kuggfri` |
+| Host | `smtp.hostinger.com` |
+| Port number | `465` |
+| Minimum interval between emails (om fältet finns) | `60` sekunder (standard) |
+| Username | `noreply@kuggfri.com` |
+| Password | brevlådans lösenord från Hostinger (du skriver in det själv) |
+
+Spara. Supabase skickar inget testmejl vid sparandet; testet görs i steg 6.
+
+### Steg 2. Rate limit för mejl (du gör)
+
+Supabase → **Authentication → Rate Limits** → **Rate limit for sending emails**. Standard efter att
+egen SMTP slagits på är 30 per timme, vilket en föreläsningssal som registrerar sig samtidigt slår i
+direkt. Sätt **200 per timme**. Det räcker för en hel årskurs som registrerar sig under samma
+kvart, och ligger väl under Hostingers tak (kolla i hPanel → E-post → brevlådan vilken
+dygnsgräns ditt paket har; på de vanliga paketen är den runt 1 000 mejl per dygn och brevlåda).
+Påminnelserna från appen räknas mot samma brevlåda hos Hostinger men inte mot Supabase gräns.
+
+### Steg 3. Slå på e-postbekräftelse (du gör, efter steg 1)
+
+Supabase → **Authentication → Sign In / Providers → Email** (äldre dashboard: Providers → Email):
+
+- **Confirm email**: på.
+- **Secure email change**: på (båda adresserna bekräftar ett byte).
+- **Email OTP Expiration**: `3600` sekunder. Mallarna säger att länken gäller i en timme.
+
+Befintliga konton påverkas inte: konton som skapades medan bekräftelsen var avstängd är redan
+markerade som bekräftade. Vill du vara säker kör du i SQL Editor
+`select email from auth.users where email_confirmed_at is null;` före omslaget; ett konto som
+dyker upp där och som du vet är äkta bekräftas med
+`update auth.users set email_confirmed_at = now() where email = 'adressen';`. Nya konton får ett
+välkomstmejl med bekräftelseknapp och kommer in först när de tryckt på den. Appen visar då
+"Kolla din inkorg" med adressen, en knapp för att skicka mejlet igen och ett tips om skräpposten.
+Försöker någon logga in innan bekräftelsen får hen en förklaring och samma knapp.
+
+### Steg 4. Mallar och ämnesrader (du gör)
+
+Supabase → **Authentication → Emails** → fliken *Templates*. För varje mall: ersätt hela
+brödtexten (växla till källkodsläget, markera allt, klistra in) med filens innehåll och sätt ämnesraden.
+Öppna filerna i VS Code eller Anteckningar och kopiera allt, från `<!doctype html>` till `</html>`.
+
+| Mall i Supabase | Fil | Subject |
+|---|---|---|
+| Confirm signup | `supabase/templates/confirmation.html` | `Välkommen till Kuggfri, bekräfta din e-postadress` |
+| Reset Password | `supabase/templates/recovery.html` | `Välj ett nytt lösenord till Kuggfri` |
+| Magic Link | `supabase/templates/magic-link.html` | `Din inloggningslänk till Kuggfri` |
+| Change Email Address | `supabase/templates/email_change.html` | `Bekräfta din nya e-postadress på Kuggfri` |
+
+Mallarna Invite user och Reauthentication används inte och kan lämnas som de är.
+
+Alla länkar går till `{{ .SiteURL }}/auth/confirm?token_hash=…&type=…` och fungerar därför bara om
+**Authentication → URL Configuration → Site URL** är exakt `https://kuggfri.com` (utan snedstreck
+sist). Samma lista av Redirect URLs som i 3b gäller: `https://kuggfri.com/**` och
+`https://kuggfri.vercel.app/**`. Loggan i mejlen hämtas från `https://kuggfri.com/apple-touch-icon.png`.
+
+Mallarna hälsar neutralt, utan namn. Namnet skrivs av den som registrerar, som inte behöver vara
+adressens ägare, och skräppostare använder annars registreringsformulär för att få in egen text i
+mejl som skickas från någon annans domän.
+
+### Steg 5. Vercel: appens egna mejl (du gör)
+
+Vercel → Project → **Settings → Environment Variables**, miljön **Production** (se också 3d):
+
+| Variabel | Värde |
+|---|---|
+| `SMTP_HOST` | `smtp.hostinger.com` |
+| `SMTP_PORT` | `465` |
+| `SMTP_SECURE` | `true` |
+| `SMTP_USER` | `noreply@kuggfri.com` |
+| `SMTP_PASS` | brevlådans lösenord (du skriver in det själv) |
+| `EMAIL_FROM` | `Kuggfri <noreply@kuggfri.com>` |
+
+Gör en ny deploy (Deployments → ⋯ → Redeploy) så att variablerna läses in.
+
+### Steg 6. Testprotokoll efter aktiveringen (du gör, cirka 10 minuter)
+
+Använd en adress som inte har något konto, gärna en Gmail och helst också en studentadress
+(Outlook), eftersom de sorterar skräppost olika.
+
+1. **Registrera** på kuggfri.com med den nya adressen. Förväntat: "Kolla din inkorg" med adressen.
+   Mejlet "Välkommen till Kuggfri, bekräfta din e-postadress" kommer inom en minut, från
+   `Kuggfri <noreply@kuggfri.com>`. Tryck på knappen: du landar inloggad på hemsidan (eller i
+   kursen, om du registrerade dig via en kurslänk).
+2. **Skicka igen**: registrera ytterligare en adress, vänta en minut och tryck "Skicka bekräftelsen
+   igen". Ett nytt mejl ska komma. Försök logga in innan du bekräftat: du ska se förklaringen och
+   samma knapp.
+3. **Glömt lösenord**: logga ut, Logga in → Glömt lösenordet? → ange adressen. Mejlet "Välj ett nytt
+   lösenord till Kuggfri" leder till Konto med rutan för nytt lösenord. Byt, logga ut, logga in med
+   det nya.
+4. **Inloggningslänk**: Logga in → Skicka inloggningslänk i stället. Öppna mejlet i mobilen: du ska
+   landa inloggad.
+5. **Skräppost**: kontrollera att inget av mejlen hamnade i skräpposten eller under Kampanjer. Gjorde
+   de det: markera "Inte skräppost" och säg till.
+6. **mail-tester.com**: öppna sidan, kopiera den tillfälliga adressen den visar, registrera ett konto
+   med den på kuggfri.com och tryck "Then check your score". Målet är 9/10 eller mer. SPF, DKIM och
+   DMARC ska vara gröna. Radera kontot efteråt (SQL eller Authentication → Users i Supabase).
+7. **Mörkt läge**: titta på välkomstmejlet i mobilen med mörkt läge på. Text och knapp ska synas.
+
+Känd risk: mejlprogram med länkskanning (Microsoft 365 Safe Links, vanligt på studentadresser) kan
+öppna länken i förväg. För bekräftelsemejlet gör det inget: kontot blir bekräftat ändå och studenten
+får en lugn förklaring och loggar in som vanligt. En återställningslänk kan däremot bli förbrukad;
+då ber man om en ny. Visar testet i steg 3 med en Outlook-adress att det händer, är nästa steg en
+mellansida med en "Fortsätt"-knapp på `/auth/confirm`.
 
 ## 3d. Påminnelser och veckobrev (mejl från appen)
 
@@ -126,11 +253,12 @@ I Vercel → Project → Settings → Environment Variables (Production):
 
 | Variabel | Värde |
 |---|---|
-| `SMTP_HOST` | `smtp.hostinger.com` (samma konto som i 3c) |
+| `SMTP_HOST` | `smtp.hostinger.com` (samma brevlåda som i 3c) |
 | `SMTP_PORT` | `465` |
-| `SMTP_USER` | mejladressen, t.ex. `hej@kuggfri.com` |
-| `SMTP_PASS` | lösenordet |
-| `EMAIL_FROM` | `Kuggfri <hej@kuggfri.com>` |
+| `SMTP_SECURE` | `true` |
+| `SMTP_USER` | `noreply@kuggfri.com` |
+| `SMTP_PASS` | brevlådans lösenord |
+| `EMAIL_FROM` | `Kuggfri <noreply@kuggfri.com>` |
 | `CRON_SECRET` | en lång slumpsträng. Vercel skickar den som Bearer-token till cron-jobbet, och innehållspipelinen använder den för att rensa innehållscachen efter `apply` |
 | `SUPABASE_SERVICE_ROLE_KEY` | från Supabase → Project Settings → API (bara här, aldrig `NEXT_PUBLIC_`) |
 

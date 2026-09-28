@@ -13,5 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const user = await getCurrentUser();
   if (user) redirect(next);
   const initialError = query.fel === "lank" ? sv.auth.callbackError : null;
-  return <LoginForm next={next} initialError={initialError} />;
+  // En använd eller utgången bekräftelselänk är inget fel i sig: kontot kan redan vara bekräftat.
+  const initialNotice = query.fel === "bekraftelse" ? sv.auth.confirmLinkError : null;
+  return <LoginForm next={next} initialError={initialError} initialNotice={initialNotice} />;
 }

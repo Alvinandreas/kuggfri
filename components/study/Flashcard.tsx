@@ -15,6 +15,8 @@ type Props = {
   cardId: string;
   front: string;
   back: string;
+  /** Liten rubrik ovanför framsidan, t.ex. "Förklara begreppet" för uppgiftstypen Begrepp. */
+  eyebrow?: string | null;
   hint: string | null;
   categoryTitle: string | null;
   categoryColorIndex: number;
@@ -42,6 +44,7 @@ export function Flashcard({
   cardId,
   front,
   back,
+  eyebrow = null,
   hint,
   categoryTitle,
   categoryColorIndex,
@@ -109,6 +112,7 @@ export function Flashcard({
         >
           <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line dark:border-transparent`}>
             <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} starred={starred} onToggleStar={onToggleStar} />
+            {eyebrow ? <p className="text-center text-xs font-semibold uppercase tracking-wide text-muted">{eyebrow}</p> : null}
             {/* m-auto på innehållet (inte items-center på behållaren): centrerat när det får plats,
                 scrollbart från toppen när det inte gör det, så inget hamnar under rubrikraden. */}
             <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2 text-center">
@@ -151,7 +155,7 @@ export function Flashcard({
 }
 
 /** Kategori till vänster; stjärna och ljud till höger, som på Knowts kort. Knapparna vänder inte kortet. */
-function FaceHeader({
+export function FaceHeader({
   categoryTitle,
   colorIndex,
   starred,

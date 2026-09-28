@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { parseOptions } from "@/lib/cards/kinds";
 import { notFound } from "next/navigation";
 import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
@@ -46,6 +47,8 @@ export default async function StudyPage({ params, searchParams }: { params: Para
         back: c.back,
         hint: c.hint,
         sort_order: c.sort_order,
+        kind: c.kind ?? "sjalvskattning",
+        options: parseOptions(c.options),
       }))}
       mode={mode}
       selection={selection}

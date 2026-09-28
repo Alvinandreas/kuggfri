@@ -11,6 +11,7 @@ import {
   register,
   seenCountText,
   studyCards,
+  submitRegistration,
   uniqueEmail,
 } from "./helpers";
 
@@ -27,10 +28,12 @@ async function someCardIds(n: number): Promise<string[]> {
 test.describe("landningssidan", () => {
   test("registrering från landningssidan leder rakt in i kursen som länken pekade på", async ({ page }) => {
     await page.goto(`/?next=${encodeURIComponent(`/d/${DECK_SLUG}`)}`);
+    const email = uniqueEmail("landning");
     await page.getByLabel("Namn").fill("Landa Landsson");
-    await page.getByLabel("E-postadress").fill(uniqueEmail("landning"));
+    await page.getByLabel("E-postadress").fill(email);
     await page.locator('input[name="password"]').fill(PASSWORD);
-    await page.getByTestId("register-submit").click();
+    // Bekräftelselänken i mejlet leder tillbaka till kursen (målet sparas vid registreringen).
+    await submitRegistration(page, email);
     await page.waitForURL(new RegExp(`/d/${DECK_SLUG}$`), { timeout: 20_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
     // Namnet syns i profilmenyn.
@@ -181,7 +184,7 @@ test.describe("konto", () => {
     await page.getByTestId("forgot-submit").click();
     await expect(page.getByRole("status").filter({ hasText: /skickat en länk/ })).toBeVisible();
 
-    const mail = await latestMailText(email);
+    const mail = await latestMailText(email, 20_000, "type=recovery");
     const match = /href="([^"]*token_hash=[^"]*type=recovery[^"]*)"/.exec(mail) ?? /(https?:\/\/\S*token_hash=\S*type=recovery\S*)/.exec(mail);
     expect(match, "återställningslänk i mejlet").not.toBeNull();
     const link = match![1]!.replace(/&amp;/g, "&");
@@ -195,6 +198,25 @@ test.describe("konto", () => {
     await logout(page);
     await login(page, email, newPassword, "/konto");
     await expect(page.getByRole("heading", { name: "Ditt konto" })).toBeVisible();
+  });
+
+  test("obekräftad adress: Kolla din inkorg, och inloggningen erbjuder att skicka bekräftelsen igen", async ({ page }) => {
+    const email = uniqueEmail("obekraftad");
+    await page.goto("/registrera");
+    await page.getByLabel("Namn").fill("Olle Obekräftad");
+    await page.getByLabel("E-postadress").fill(email);
+    await page.locator('input[name="password"]').fill(PASSWORD);
+    await page.getByTestId("register-submit").click();
+    await expect(page.getByTestId("check-inbox")).toContainText(email, { timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: "Kolla din inkorg" })).toBeVisible();
+
+    await page.goto("/logga-in");
+    await page.getByLabel("E-postadress").fill(email);
+    await page.locator('input[name="password"]').fill(PASSWORD);
+    await page.getByTestId("login-submit").click();
+    await expect(page.getByTestId("login-unconfirmed")).toContainText("inte bekräftad");
+    await page.getByTestId("resend-confirmation").click();
+    await expect(page.getByRole("status").filter({ hasText: "nytt bekräftelsemejl" })).toBeVisible();
   });
 
   test("inloggning med lösenord fungerar för befintligt konto", async ({ page }) => {

@@ -11,14 +11,14 @@ import { LinkButton } from "@/components/ui/Button";
 
 type Params = Promise<{ id: string; categoryId: string }>;
 
-/** "ingen" = korten som saknar kategori. */
+/** "ingen" = korten som saknar område. */
 const NONE = "ingen";
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id, categoryId } = await params;
   const data = await getDeckForAdmin(id);
   const title = categoryId === NONE ? sv.admin.uncategorized : data?.categories.find((c) => c.id === categoryId)?.title;
-  return { title: title ? `${title} – ${sv.admin.cards}` : sv.admin.cards };
+  return { title: title ? `${title}: ${sv.admin.cards}` : sv.admin.cards };
 }
 
 export default async function AdminCategoryPage({ params }: { params: Params }) {
@@ -30,7 +30,8 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
   if (categoryId !== NONE && !category) notFound();
 
   const cards = data.cards.filter((c) => (category ? c.category_id === category.id : c.category_id === null));
-  const inactive = cards.filter((c) => !c.is_active).length;
+  const inactive = cards.filter((c) => !c.is_active && c.review_status === null).length;
+  const drafts = cards.filter((c) => c.review_status === "utkast").length;
   const colorIndex = categoryColorIndex(categories);
   const newHref = `/admin/deck/${deck.id}/kort/ny${category ? `?kategori=${category.id}` : ""}`;
 
@@ -55,6 +56,7 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
           <p className="mt-2 text-sm text-muted">
             {sv.admin.cardCount(cards.length)}
             {inactive > 0 ? ` · ${sv.admin.inactiveCount(inactive)}` : ""}
+            {drafts > 0 ? ` · ${sv.admin.draftCount(drafts)}` : ""}
             {category ? ` · ${sv.admin.categoryPosition(categories.findIndex((c) => c.id === category.id) + 1, categories.length)}` : ""}
           </p>
         </div>
@@ -65,7 +67,7 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
       </div>
 
       <p className="text-sm text-muted">{sv.admin.categoryCardsHelp}</p>
-      <CardList deckId={deck.id} cards={cards} />
+      <CardList deckId={deck.id} cards={cards} categories={categories.map((c) => ({ id: c.id, title: c.title }))} currentCategoryId={category?.id ?? null} />
     </div>
   );
 }

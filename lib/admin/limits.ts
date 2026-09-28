@@ -16,4 +16,12 @@ export const LIMITS = {
   front: 5000,
   back: 20000,
   hint: 500,
+  /** Källa, t.ex. "Canvas, Quiz vecka 1, fråga 3". */
+  source: 500,
+  /** Granskarens kommentar vid avvisning. */
+  reviewNote: 2000,
+  optionText: 1000,
+  maxOptions: 10,
+  /** Tak på hur många kort en massåtgärd (godkänn, flytta) får röra i ett anrop. */
+  bulkCards: 1000,
 } as const;

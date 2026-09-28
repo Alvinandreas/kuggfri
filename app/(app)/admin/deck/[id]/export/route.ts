@@ -3,7 +3,8 @@ import { getDeckForAdmin } from "@/lib/admin/queries";
 
 /**
  * Bulkexport till JSON. Formatet kan importeras rakt av igen
- * (fältet cards med category som titel).
+ * (fältet cards med category som områdets titel). Uppgiftstyp, alternativ, källa och
+ * granskningsstatus följer med för fullständighetens skull; importen läser dem inte än.
  */
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -29,6 +30,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       category: c.category_id ? (categoryTitle.get(c.category_id) ?? null) : null,
       sort_order: c.sort_order,
       is_active: c.is_active,
+      kind: c.kind,
+      options: c.options,
+      source: c.source,
+      review_status: c.review_status,
     })),
   };
 

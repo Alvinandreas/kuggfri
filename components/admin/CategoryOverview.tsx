@@ -3,19 +3,26 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronRight, Combine, Pencil, Plus, Trash2 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import { createCategoryAction, deleteCategoryAction, reorderCategoriesAction, updateCategoryAction } from "@/lib/admin/actions";
+import { createCategoryAction, deleteCategoryAction, mergeCategoryAction, reorderCategoriesAction, updateCategoryAction } from "@/lib/admin/actions";
 import type { CategoryRow } from "@/lib/supabase/database.types";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Modal } from "@/components/ui/Modal";
+import { Select } from "@/components/ui/Select";
+import { Toast } from "@/components/ui/Toast";
 import { inputClass } from "@/components/ui/TextField";
 import { cx } from "@/components/ui/cx";
 import { SortableList, rowActionClass } from "./SortableList";
 
-export type CategoryCounts = { total: number; inactive: number };
+/**
+ * total och inactive räknar granskade kort, drafts utkast som väntar på granskning och
+ * all alla kort i området (även avvisade förslag), det som flyttas vid en sammanslagning.
+ */
+export type CategoryCounts = { total: number; inactive: number; drafts: number; all: number };
 
 type Props = {
   deckId: string;
@@ -25,8 +32,8 @@ type Props = {
 };
 
 /**
- * Adminens ingång till innehållet: kategorierna i deckets ordning, med antal kort.
- * Klick på namnet öppnar kategorins kortlista. Byt namn, ta bort och ordna om görs här.
+ * Adminens ingång till innehållet: områdena i deckets ordning, med antal kort.
+ * Klick på namnet öppnar områdets kortlista. Byt namn, slå ihop, ta bort och ordna om görs här.
  */
 export function CategoryOverview({ deckId, categories, counts, uncategorized }: Props) {
   const router = useRouter();
@@ -34,14 +41,17 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
   const [error, setError] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [deleting, setDeleting] = useState<CategoryRow | null>(null);
+  const [merging, setMerging] = useState<CategoryRow | null>(null);
+  const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
   const colorIndex = categoryColorIndex(categories);
 
-  function handle(promise: Promise<{ ok: boolean; error?: string }>) {
+  function handle(promise: Promise<{ ok: boolean; error?: string }>, onOk?: () => void) {
     startTransition(async () => {
       const result = await promise;
       if (!result.ok) setError(result.error ?? sv.errors.generic);
       else {
         setError(null);
+        onOk?.();
         router.refresh();
       }
     });
@@ -62,14 +72,15 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
           <CategoryRowView
             category={c}
             colorIndex={colorIndex.get(c.id) ?? 0}
-            counts={counts[c.id] ?? { total: 0, inactive: 0 }}
+            counts={counts[c.id] ?? { total: 0, inactive: 0, drafts: 0, all: 0 }}
             pending={pending}
             onRename={(title) => handle(updateCategoryAction(c.id, deckId, title))}
+            onMerge={categories.length > 1 ? () => setMerging(c) : undefined}
             onDelete={() => setDeleting(c)}
           />
         )}
       />
-      {uncategorized.total > 0 ? (
+      {uncategorized.all > 0 ? (
         <Link
           href={`/admin/deck/${deckId}/kategori/ingen`}
           className="group flex min-h-14 items-center gap-3 rounded-lg border border-dashed border-line-strong px-4 py-2 transition-colors duration-150 hover:bg-surface-2"
@@ -117,13 +128,84 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
         }}
         onCancel={() => setDeleting(null)}
       />
+      <MergeDialog
+        from={merging}
+        categories={categories}
+        counts={counts}
+        busy={pending}
+        onCancel={() => setMerging(null)}
+        onConfirm={(into) => {
+          const from = merging;
+          if (!from) return;
+          handle(mergeCategoryAction(deckId, from.id, into.id), () => setToast({ id: Date.now(), text: sv.admin.mergeAreaDone(into.title) }));
+          setMerging(null);
+        }}
+      />
+      <Toast message={toast?.text ?? null} id={toast?.id} onClose={() => setToast(null)} duration={5000} />
     </div>
   );
 }
 
+/** Bekräftelsen för "Slå ihop med…": välj området korten flyttas till och se vad som händer. */
+function MergeDialog({
+  from,
+  categories,
+  counts,
+  busy,
+  onCancel,
+  onConfirm,
+}: {
+  from: CategoryRow | null;
+  categories: CategoryRow[];
+  counts: Record<string, CategoryCounts>;
+  busy: boolean;
+  onCancel: () => void;
+  onConfirm: (into: CategoryRow) => void;
+}) {
+  const targets = categories.filter((c) => c.id !== from?.id);
+  const [intoId, setIntoId] = useState("");
+  const into = targets.find((c) => c.id === intoId) ?? targets[0] ?? null;
+  const n = from ? (counts[from.id]?.all ?? 0) : 0;
+  return (
+    <Modal
+      open={from !== null}
+      onClose={onCancel}
+      title={from ? sv.admin.mergeAreaTitle(from.title) : sv.admin.mergeArea}
+      size="sm"
+      locked={busy}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onCancel} disabled={busy}>
+            {sv.common.cancel}
+          </Button>
+          <Button onClick={() => into && onConfirm(into)} disabled={busy || !into} data-testid="merge-area-confirm">
+            {sv.admin.mergeAreaConfirm}
+          </Button>
+        </>
+      }
+    >
+      {from && into ? (
+        <div className="grid gap-4">
+          <div>
+            <label htmlFor="sla-ihop-med" className="mb-1.5 block text-sm font-semibold">
+              {sv.admin.mergeAreaInto}
+            </label>
+            <Select id="sla-ihop-med" value={into.id} onChange={setIntoId} options={targets.map((c) => ({ value: c.id, label: c.title }))} />
+          </div>
+          <p className="text-muted">{sv.admin.mergeAreaBody(n, from.title, into.title)}</p>
+        </div>
+      ) : (
+        <p className="text-muted">{sv.admin.mergeAreaNoTarget}</p>
+      )}
+    </Modal>
+  );
+}
+
 function countLabel(c: CategoryCounts): string {
-  const base = sv.admin.cardCount(c.total);
-  return c.inactive > 0 ? `${base} · ${sv.admin.inactiveCount(c.inactive)}` : base;
+  const parts = [sv.admin.cardCount(c.total)];
+  if (c.inactive > 0) parts.push(sv.admin.inactiveCount(c.inactive));
+  if (c.drafts > 0) parts.push(sv.admin.draftCount(c.drafts));
+  return parts.join(" · ");
 }
 
 function CategoryRowView({
@@ -132,6 +214,7 @@ function CategoryRowView({
   counts,
   pending,
   onRename,
+  onMerge,
   onDelete,
 }: {
   category: CategoryRow;
@@ -139,6 +222,8 @@ function CategoryRowView({
   counts: CategoryCounts;
   pending: boolean;
   onRename: (title: string) => void;
+  /** Saknas när det inte finns något annat område att slå ihop med. */
+  onMerge?: () => void;
   onDelete: () => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -190,6 +275,12 @@ function CategoryRowView({
           <Pencil size={15} aria-hidden className="sm:hidden" />
           <span className="hidden sm:inline">{sv.admin.rename}</span>
         </button>
+        {onMerge ? (
+          <button type="button" onClick={onMerge} disabled={pending} aria-label={sv.admin.mergeAreaLabel(category.title)} title={sv.admin.mergeArea} className={rowActionClass}>
+            <Combine size={15} aria-hidden className="sm:hidden" />
+            <span className="hidden sm:inline">{sv.admin.mergeArea}</span>
+          </button>
+        ) : null}
         <button type="button" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`} title={sv.common.delete} className={rowActionClass}>
           <Trash2 size={15} aria-hidden className="sm:hidden" />
           <span className="hidden sm:inline">{sv.common.delete}</span>

@@ -6,7 +6,7 @@
 <meta name="x-apple-disable-message-reformatting">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark">
-<title>Välj ett nytt lösenord</title>
+<title>Bekräfta ny e-postadress</title>
 <style>
   body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
   table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
@@ -26,7 +26,7 @@
 </style>
 </head>
 <body class="kf-page" style="margin:0;padding:0;background-color:#f6f5f1;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Länken gäller i en timme. Har du inte bett om det här kan du ignorera mejlet.&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Bekräfta bytet av e-postadress på ditt Kuggfri-konto.&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
 <table role="presentation" class="kf-page" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f6f5f1" style="background-color:#f6f5f1;">
   <tr>
     <td align="center" style="padding:32px 16px 40px;">
@@ -43,25 +43,26 @@
         </tr>
         <tr>
           <td class="kf-card" bgcolor="#ffffff" style="background-color:#ffffff;border:1px solid #e4e1da;border-radius:16px;padding:36px 36px 32px;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-            <h1 class="kf-text kf-h1" style="margin:0 0 12px;font-size:26px;line-height:1.25;font-weight:800;letter-spacing:-0.4px;color:#1d1c19;">Välj ett nytt lösenord</h1>
-            <p class="kf-text" style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#1d1c19;">Vi fick en begäran om att byta lösenord till ditt konto på Kuggfri. Tryck på knappen så loggas du in och kommer direkt till rutan där du väljer ett nytt lösenord.</p>
+            <h1 class="kf-text kf-h1" style="margin:0 0 12px;font-size:26px;line-height:1.25;font-weight:800;letter-spacing:-0.4px;color:#1d1c19;">Bekräfta ny e-postadress</h1>
+            <p class="kf-text" style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1d1c19;">Kontot på Kuggfri ska byta e-postadress från <strong>{{ .Email }}</strong> till <strong>{{ .NewEmail }}</strong>. Tryck på knappen för att bekräfta bytet.</p>
+            <p class="kf-text" style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#1d1c19;">Vi skickar ett likadant mejl till båda adresserna, och bytet genomförs när båda har bekräftats.</p>
 
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
               <tr>
                 <td align="center" bgcolor="#1f7a4d" style="background-color:#1f7a4d;border-radius:12px;">
-                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=%2Fkonto%3Fbyt-losenord%3D1" target="_blank" style="display:inline-block;padding:14px 28px;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.2;color:#ffffff;text-decoration:none;border-radius:12px;background-color:#1f7a4d;">Välj nytt lösenord</a>
+                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change&next=%2Fkonto" target="_blank" style="display:inline-block;padding:14px 28px;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.2;color:#ffffff;text-decoration:none;border-radius:12px;background-color:#1f7a4d;">Bekräfta bytet</a>
                 </td>
               </tr>
             </table>
 
-            <p class="kf-muted" style="margin:0 0 6px;font-size:14px;line-height:1.55;color:#676259;">Länken gäller i en timme och kan bara användas en gång. Har den gått ut ber du om en ny under Glömt lösenordet på inloggningssidan.</p>
+            <p class="kf-muted" style="margin:0 0 6px;font-size:14px;line-height:1.55;color:#676259;">Länken gäller i en timme och kan bara användas en gång.</p>
             <p class="kf-muted" style="margin:0 0 4px;font-size:14px;line-height:1.55;color:#676259;">Fungerar inte knappen? Kopiera länken till webbläsaren:</p>
-            <p style="margin:0;font-size:13px;line-height:1.5;word-break:break-all;"><a class="kf-plain" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=%2Fkonto%3Fbyt-losenord%3D1" target="_blank" style="color:#1f7a4d;text-decoration:underline;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery&amp;next=%2Fkonto%3Fbyt-losenord%3D1</a></p>
+            <p style="margin:0;font-size:13px;line-height:1.5;word-break:break-all;"><a class="kf-plain" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change&next=%2Fkonto" target="_blank" style="color:#1f7a4d;text-decoration:underline;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email_change&amp;next=%2Fkonto</a></p>
           </td>
         </tr>
         <tr>
           <td class="kf-muted" style="padding:20px 8px 0;font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#676259;text-align:center;">
-            Du får det här mejlet för att någon bad om ett nytt lösenord till kontot med din adress på kuggfri.com. Om det inte var du kan du ignorera mejlet. Ditt lösenord är oförändrat.<br>
+            Du får det här mejlet för att någon bad om att byta e-postadress på ett konto på kuggfri.com. Om det inte var du kan du ignorera mejlet, då ändras ingenting.<br>
             Kuggfri · <a class="kf-plain" href="https://kuggfri.com" target="_blank" style="color:#676259;text-decoration:underline;">kuggfri.com</a>
           </td>
         </tr>

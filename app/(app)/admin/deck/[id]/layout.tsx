@@ -21,6 +21,9 @@ export default async function DeckLayout({ children, params }: { children: React
   const [data, openReports] = await Promise.all([getDeckForAdmin(id), countOpenReports(id)]);
   if (!data) notFound();
   const { deck, categories, cards } = data;
+  // Förslag (utkast och avvisade) räknas inte som kursens kort förrän de godkänts.
+  const cardCount = cards.filter((c) => c.review_status === null).length;
+  const pendingDrafts = cards.filter((c) => c.review_status === "utkast").length;
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
@@ -29,7 +32,7 @@ export default async function DeckLayout({ children, params }: { children: React
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{deck.title}</h1>
           <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
             {deck.course_code ? <Badge tone="outline">{deck.course_code}</Badge> : null}
-            <span>{sv.admin.cardCount(cards.length)}</span>
+            <span>{sv.admin.cardCount(cardCount)}</span>
             <span aria-hidden="true">·</span>
             <span>
               {categories.length} {sv.admin.categories.toLowerCase()}
@@ -45,7 +48,7 @@ export default async function DeckLayout({ children, params }: { children: React
           <ArrowUpRight size={15} aria-hidden />
         </LinkButton>
       </div>
-      <DeckTabs deckId={deck.id} openReports={openReports} />
+      <DeckTabs deckId={deck.id} openReports={openReports} pendingDrafts={pendingDrafts} />
       <div className="min-w-0">{children}</div>
     </div>
   );

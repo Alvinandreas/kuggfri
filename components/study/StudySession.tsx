@@ -30,10 +30,12 @@ import { playRatingSound } from "@/lib/ui/sound";
 import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
+import { autoRating, isAutoGraded, isCorrectAnswer } from "@/lib/cards/kinds";
 import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Flashcard } from "./Flashcard";
+import { QuizCard, type QuizResult } from "./QuizCard";
 import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
 import { SessionHelpDialog } from "./SessionHelpDialog";
@@ -207,21 +209,21 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
   }, []);
 
-  const rate = useCallback(
-    (rating: SelfRating) => {
-      if (!session || session.finished || !card || !flipped || !store || !progress) return;
-      if (feedback !== null) return; // Ett kort i taget: vänta tills kvittensen är klar.
+  /** Sparar en skattning (progress enligt läget + historik). Delas av vändkort och automaträttade kort. */
+  const persistRating = useCallback(
+    (cardId: string, rating: SelfRating) => {
+      if (!store || !progress) return;
       const now = new Date();
-      const next = applyRating({ mode, cardId: card.id, rating, progress, now, schedule });
+      const next = applyRating({ mode, cardId, rating, progress, now, schedule });
       if (next) {
-        setProgress((p) => ({ ...(p ?? {}), [card.id]: next }));
+        setProgress((p) => ({ ...(p ?? {}), [cardId]: next }));
         store
           .save(next)
           .then(() => setQueued(store.pending()))
           .catch(() => setSaveError(true));
       }
       // Historiken loggas i alla lägen (underlag för statistiken); progressen rörs bara enligt applyRating.
-      const entry: ReviewEntry = { card_id: card.id, rating, mode, reviewed_at: now.toISOString() };
+      const entry: ReviewEntry = { card_id: cardId, rating, mode, reviewed_at: now.toISOString() };
       setReviews((r) => [...r, entry]);
       store
         .logReview(entry)
@@ -229,6 +231,15 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         .catch(() => {
           // Historik är inte kritisk.
         });
+    },
+    [store, progress, mode, schedule],
+  );
+
+  const rate = useCallback(
+    (rating: SelfRating) => {
+      if (!session || session.finished || !card || !flipped || !store || !progress) return;
+      if (feedback !== null) return; // Ett kort i taget: vänta tills kvittensen är klar.
+      persistRating(card.id, rating);
       setAnnounce(sv.study.ratedAnnounce(rating));
       // Stämpla kortet, låt det glida ut, och visa först därefter nästa kort (på framsidan).
       setFeedback(rating);
@@ -238,8 +249,61 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         setSession((s) => (s ? rateCurrent(s, rating) : s));
       }, 960);
     },
-    [session, card, flipped, store, progress, mode, feedback, schedule],
+    [session, card, flipped, store, progress, feedback, persistRating],
   );
+
+  // Automaträttade kort (Sant/Falskt, Alternativ). Resultatet hör till kortets plats i kön,
+  // så att ett nytt kort alltid börjar obesvarat.
+  const quiz = card !== null && isAutoGraded(card.kind) && card.options !== null && card.options.length >= 2;
+  const [quizState, setQuizState] = useState<{ key: string; selected: number[]; result: QuizResult | null } | null>(null);
+  const quizSelected = useMemo(() => (quizState && quizState.key === cardKey ? quizState.selected : []), [quizState, cardKey]);
+  const quizResult = quizState && quizState.key === cardKey ? quizState.result : null;
+  const quizMulti = quiz && card.kind === "alternativ" && (card.options?.filter((o) => o.correct).length ?? 0) > 1;
+
+  const submitQuiz = useCallback(
+    (chosen: number[]) => {
+      if (!card || !cardKey || !card.options || !store || !progress || quizResult) return;
+      if (chosen.length === 0) return;
+      const correct = isCorrectAnswer(card.options, chosen);
+      // En dugga är ett prov: rätt eller fel. Annars Alvins trappa 3 → 4 → 5 (lib/cards/kinds.ts).
+      const rating: SelfRating = mode === "exam" ? (correct ? 5 : 1) : autoRating(correct, progress[card.id]?.self_rating);
+      persistRating(card.id, rating);
+      setQuizState({ key: cardKey, selected: chosen, result: { chosen, correct, rating } });
+      setAnnounce(sv.quiz.answeredAnnounce(correct));
+      playRatingSound(rating);
+    },
+    [card, cardKey, store, progress, quizResult, mode, persistRating],
+  );
+
+  const toggleQuizOption = useCallback(
+    (index: number) => {
+      if (!card || !cardKey || !card.options || quizResult) return;
+      if (index < 0 || index >= card.options.length) return;
+      if (!quizMulti) {
+        submitQuiz([index]);
+        return;
+      }
+      setQuizState((prev) => {
+        const selected = prev && prev.key === cardKey ? prev.selected : [];
+        const next = selected.includes(index) ? selected.filter((i) => i !== index) : [...selected, index].sort((a, b) => a - b);
+        return { key: cardKey, selected: next, result: null };
+      });
+    },
+    [card, cardKey, quizResult, quizMulti, submitQuiz],
+  );
+
+  const continueQuiz = useCallback(() => {
+    if (!quizResult) return;
+    const rating = quizResult.rating;
+    setQuizState(null);
+    setSession((s) => (s ? rateCurrent(s, rating, { requeue: false }) : s));
+  }, [quizResult]);
+
+  /** Mittenknappen och Enter på ett automaträttat kort: svara, eller gå vidare efter svaret. */
+  const quizPrimary = useCallback(() => {
+    if (quizResult) continueQuiz();
+    else if (quizMulti) submitQuiz(quizSelected);
+  }, [quizResult, quizMulti, quizSelected, continueQuiz, submitQuiz]);
 
   const next = useCallback(() => setSession((s) => (s ? skipCurrent(s) : s)), []);
   const previous = useCallback(() => setSession((s) => (s ? goPrevious(s) : s)), []);
@@ -261,6 +325,24 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
       if (isTypingTarget(e.target)) return;
       if (document.querySelector("dialog[open]")) return;
       const onButton = e.target instanceof HTMLElement && (e.target.tagName === "BUTTON" || e.target.tagName === "A");
+      if (quiz) {
+        // Automaträttat kort: siffror väljer alternativ, Enter/mellanslag svarar eller går vidare.
+        if (/^[1-9]$/.test(e.key)) {
+          e.preventDefault();
+          toggleQuizOption(Number(e.key) - 1);
+          return;
+        }
+        if ((e.key === "Enter" || e.key === " ") && !onButton) {
+          e.preventDefault();
+          quizPrimary();
+          return;
+        }
+        if (e.key === "ArrowRight" && quizResult) {
+          e.preventDefault();
+          continueQuiz();
+          return;
+        }
+      }
       switch (e.key) {
         case " ":
           if (onButton) return;
@@ -295,7 +377,7 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [flip, rate, next, previous, card, mode, hintAllowed]);
+  }, [flip, rate, next, previous, card, mode, hintAllowed, quiz, quizResult, toggleQuizOption, quizPrimary, continueQuiz]);
 
   const canRate = flipped && !!card && feedback === null;
 
@@ -419,12 +501,29 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         </p>
       ) : null}
 
-      {card ? (
+      {card && quiz && card.options && (card.kind === "sant-falskt" || card.kind === "alternativ") ? (
+        <QuizCard
+          key={`${card.id}-${position}`}
+          cardId={card.id}
+          kind={card.kind}
+          front={card.front}
+          back={card.back}
+          options={card.options}
+          categoryTitle={categoryTitle(card.category_id)}
+          categoryColorIndex={card.category_id ? (colorIndex.get(card.category_id) ?? 0) : 0}
+          starred={stars.has(card.id)}
+          onToggleStar={() => toggleStar(card.id)}
+          result={quizResult}
+          selected={quizSelected}
+          onToggle={toggleQuizOption}
+        />
+      ) : card ? (
         <Flashcard
           key={`${card.id}-${position}`}
           cardId={card.id}
           front={card.front}
           back={card.back}
+          eyebrow={card.kind === "begrepp" ? sv.quiz.conceptPrompt : null}
           hint={hintAllowed ? card.hint : null}
           categoryTitle={categoryTitle(card.category_id)}
           categoryColorIndex={card.category_id ? (colorIndex.get(card.category_id) ?? 0) : 0}
@@ -444,17 +543,29 @@ export function StudySession({ deck, categories, cards, mode, selection, userId,
         <Button variant="secondary" onClick={previous} disabled={mode === "exam" || !canGoPrevious(session)} aria-label={sv.study.previous} data-testid="prev">
           <ArrowLeft size={18} aria-hidden />
         </Button>
-        <Button onClick={flip} aria-pressed={flipped} data-testid="flip">
-          {sv.study.flip}
-        </Button>
+        {quiz ? (
+          <Button onClick={quizPrimary} disabled={!quizResult && (!quizMulti || quizSelected.length === 0)} data-testid="quiz-primary">
+            {quizResult ? sv.quiz.continue : quizMulti ? sv.quiz.submit : sv.quiz.pickOne}
+          </Button>
+        ) : (
+          <Button onClick={flip} aria-pressed={flipped} data-testid="flip">
+            {sv.study.flip}
+          </Button>
+        )}
         <Button variant="secondary" onClick={next} aria-label={mode === "fsrs" ? sv.study.skip : sv.study.next} data-testid="next">
           <ArrowRight size={18} aria-hidden />
         </Button>
       </div>
 
-      <div className="lg:mx-auto lg:w-full lg:max-w-xl">
-        <RatingButtons disabled={!canRate} onRate={rate} intervals={intervals} />
-      </div>
+      {quiz ? (
+        <p className="text-center text-xs text-muted" aria-hidden="true">
+          {sv.quiz.keyboardHelp}
+        </p>
+      ) : (
+        <div className="lg:mx-auto lg:w-full lg:max-w-xl">
+          <RatingButtons disabled={!canRate} onRate={rate} intervals={intervals} />
+        </div>
+      )}
 
       <SessionToolbar onInfo={() => setHelpOpen(true)} onReport={() => setReportOpen(true)} canReport={!!card} />
       <SessionHelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />

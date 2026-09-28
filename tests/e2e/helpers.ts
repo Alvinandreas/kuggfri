@@ -64,12 +64,43 @@ export async function readLocalProgress(page: Page): Promise<Record<string, unkn
 
 export const STUDENT_PASSWORD = "testlosenord-123";
 
+/**
+ * Efter registreringen: e-postbekräftelsen är påslagen (supabase/config.toml), så formuläret
+ * byts mot "Kolla din inkorg". Hämtar bekräftelsemejlet ur Mailpit och öppnar länken, som
+ * loggar in och leder dit registreringen pekade (next sparas i användarens metadata).
+ * Länken i mejlet har site_url som värd; bara sökväg och query används, så att testerna
+ * fungerar mot vilken baseURL som helst.
+ */
+export async function confirmSignupFromMail(page: Page, email: string) {
+  await expect(page.getByTestId("check-inbox")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByTestId("check-inbox")).toContainText(email);
+  const mail = await latestMailText(email, 20_000, "type=signup");
+  const match = /href="([^"]*token_hash=[^"]*type=signup[^"]*)"/.exec(mail);
+  if (!match?.[1]) throw new Error(`Ingen bekräftelselänk i mejlet till ${email}`);
+  const link = new URL(match[1].replace(/&amp;/g, "&"));
+  await page.goto(`${link.pathname}${link.search}`);
+}
+
+/**
+ * Skickar registreringsformuläret på den aktuella sidan och bekräftar adressen via mejlet om
+ * bekräftelse krävs. Med bekräftelsen avstängd loggas man in direkt, och då hoppas mejlet över.
+ */
+export async function submitRegistration(page: Page, email: string) {
+  const startPath = new URL(page.url()).pathname;
+  await page.getByTestId("register-submit").click();
+  const inbox = page.getByTestId("check-inbox");
+  await expect
+    .poll(async () => (await inbox.isVisible()) || new URL(page.url()).pathname !== startPath, { timeout: 20_000 })
+    .toBe(true);
+  if (await inbox.isVisible()) await confirmSignupFromMail(page, email);
+}
+
 export async function register(page: Page, email: string, password: string, next = "/hem", name = "E2E Testare") {
   await page.goto(`/registrera?next=${encodeURIComponent(next)}`);
   await page.getByLabel("Namn").fill(name);
   await page.getByLabel("E-postadress").fill(email);
   await page.locator('input[name="password"]').fill(password);
-  await page.getByTestId("register-submit").click();
+  await submitRegistration(page, email);
   await page.waitForURL((url) => !url.pathname.startsWith("/registrera"), { timeout: 20_000 });
 }
 
@@ -119,8 +150,12 @@ export async function seenCountText(page: Page): Promise<string | null> {
   return seen.textContent();
 }
 
-/** Senaste mejlet till adressen i Mailpit (lokala Supabase-stacken), som klartext. */
-export async function latestMailText(email: string, timeoutMs = 20_000): Promise<string> {
+/**
+ * Senaste mejlet till adressen i Mailpit (lokala Supabase-stacken), som HTML eller klartext.
+ * Med mustContain väntar den tills det senaste mejlet innehåller texten (t.ex. "type=recovery"),
+ * eftersom ett nytt konto först får bekräftelsemejlet.
+ */
+export async function latestMailText(email: string, timeoutMs = 20_000, mustContain?: string): Promise<string> {
   const base = process.env.MAILPIT_URL ?? "http://127.0.0.1:54324";
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -128,7 +163,8 @@ export async function latestMailText(email: string, timeoutMs = 20_000): Promise
     const id = list.messages?.[0]?.ID;
     if (id) {
       const msg = (await (await fetch(`${base}/api/v1/message/${id}`)).json()) as { Text?: string; HTML?: string };
-      return msg.HTML || msg.Text || "";
+      const body = msg.HTML || msg.Text || "";
+      if (!mustContain || body.includes(mustContain)) return body;
     }
     await new Promise((r) => setTimeout(r, 500));
   }

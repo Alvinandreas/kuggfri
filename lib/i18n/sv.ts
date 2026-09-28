@@ -623,6 +623,9 @@ export const sv = {
     overdue: "förfallet",
   },
   auth: {
+    googleError: "Inloggningen med Google gick inte igenom. Försök igen, eller logga in med e-post.",
+    googleUnavailable: "Inloggning med Google kunde inte laddas just nu. Du kan logga in med e-post.",
+    orWithEmail: "eller med e-post",
     loginTitle: "Logga in",
     registerTitle: "Skapa konto",
     email: "E-postadress",

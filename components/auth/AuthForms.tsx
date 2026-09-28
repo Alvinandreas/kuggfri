@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { TextField } from "@/components/ui/TextField";
+import { GoogleButton } from "./GoogleButton";
 
 const linkClass = "font-semibold text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent";
 
@@ -149,6 +150,8 @@ export function LoginFields({
         </div>
       ) : null}
 
+      {useLink ? null : <GoogleButton next={next} mode="login" />}
+
       {useLink ? (
         <form action={linkAction} className="grid gap-4">
           <input type="hidden" name="next" value={next} />
@@ -202,6 +205,7 @@ export function RegisterFields({ next, heading, level = 1 }: { next: string; hea
   return (
     <div className="grid gap-5">
       {heading ?? <FormHeading title={sv.auth.registerTitle} />}
+      <GoogleButton next={next} mode="register" />
       <form action={action} onSubmit={() => setRestarted(false)} className="grid gap-4">
         <input type="hidden" name="next" value={next} />
         <TextField

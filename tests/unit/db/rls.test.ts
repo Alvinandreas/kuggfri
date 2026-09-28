@@ -227,6 +227,20 @@ describe("cards", () => {
 });
 
 describe("profiles", () => {
+  it("konto via Google får namnet från Google-profilen; formulärets namn går före", async () => {
+    const [g] = await db.query<{ id: string }>(
+      `insert into auth.users (email, raw_user_meta_data, email_confirmed_at) values ('gunnar@example.com', '{"full_name":"Gunnar Google","name":"G"}'::jsonb, now()) returning id`,
+    );
+    const [p] = await db.query<{ display_name: string | null }>(`select display_name from public.profiles where id = $1`, [g!.id]);
+    expect(p?.display_name).toBe("Gunnar Google");
+    const [f] = await db.query<{ id: string }>(
+      `insert into auth.users (email, raw_user_meta_data) values ('form@example.com', '{"display_name":"Från formuläret","full_name":"Annat"}'::jsonb) returning id`,
+    );
+    const [q] = await db.query<{ display_name: string | null }>(`select display_name from public.profiles where id = $1`, [f!.id]);
+    expect(q?.display_name).toBe("Från formuläret");
+    await db.query(`delete from auth.users where id = any($1::uuid[])`, [[g!.id, f!.id]]);
+  });
+
   it("anon kan inte läsa profiler", async () => {
     await expectDenied(anon(db).query("select * from public.profiles"));
   });

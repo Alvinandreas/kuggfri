@@ -271,6 +271,13 @@ export default function PrivacyPage() {
             </li>
           </ul>
           <p>
+            <strong>Inloggning med Google.</strong> Väljer du &quot;Fortsätt med Google&quot; bekräftar Google vem du
+            är, och vi får ditt namn och din e-postadress. Google skickar också en länk till din profilbild; den
+            lagras i inloggningssystemet men visas och används inte. Google får veta att du loggar in på Kuggfri, men
+            inget om vad du pluggar. För själva inloggningen hos Google gäller Googles integritetspolicy. Du kan
+            alltid välja e-post och lösenord i stället.
+          </p>
+          <p>
             Leverantörerna är amerikanska företag med verksamhet i EU. Skulle en överföring till tredjeland ske
             inom ramen för deras drift, stödjer den sig på EU-kommissionens standardavtalsklausuler. Kursernas
             innehåll (frågor och svar) versionshanteras hos GitHub, men innehåller inga uppgifter om studenter.

@@ -16,7 +16,11 @@ export async function GET(request: NextRequest) {
   const origin = await getRequestOrigin();
   const state = randomToken();
   const nonce = randomToken();
-  const url = buildGoogleAuthUrl({ clientId, redirectUri: `${origin}${GOOGLE_CALLBACK_PATH}`, state, nonceHash: await sha256Hex(nonce) });
+  const redirectUri = `${origin}${GOOGLE_CALLBACK_PATH}`;
+  // Står adressen inte exakt under Authorized redirect URIs i Google Cloud svarar Google
+  // redirect_uri_mismatch; loggen visar vilken adress som skickades.
+  console.info("[auth] google: redirect_uri", redirectUri);
+  const url = buildGoogleAuthUrl({ clientId, redirectUri, state, nonceHash: await sha256Hex(nonce) });
 
   const response = NextResponse.redirect(url);
   response.cookies.set(GOOGLE_COOKIE, encodeFlow({ state, nonce, next }), {

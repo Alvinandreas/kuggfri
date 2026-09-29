@@ -12,33 +12,58 @@ produktionen bakom underhållsgrinden. Listan städades 29 sep: allt som var öp
 
 ## Inför lanseringen
 
-**Innehåll**
-- [?] **Johan/Alvin:** granska utkasten i admin → Granskning. Först "Bara ändringar" (42 publicerade kort
-      som är dolda för studenterna tills de godkänns), sedan resten av de 264 utkasten efter hand
-- [?] **Alvin:** tentadatum från Studieportalen (finns inte i kursmaterialet eller anslagen). Sätts i admin →
-      Inställningar eller i `content/materialteknik/kurs.json` (`exam_date`)
+**Tidsplan:** möte med Johan (examinator) och Roland Kádár (polymerdelen) **onsdag 30 sep kl 10:00**.
+De granskar innehållet och kommer med synpunkter. Hinner ändringarna och deras godkännanden bli klara
+onsdag kväll lanserar vi då, annars torsdag 1 okt. Alvin granskar inte allt innehåll själv; Johan och
+Roland gör den granskningen. Frågorna till Johan tas på mötet i stället för i mejl.
 
-**Test i produktionen** (inkognito, med förhandsvisningsnyckeln)
-- [?] Google-inloggning med ett Google-konto som inte är testanvändare (Claude läser Vercels loggar efteråt)
-- [?] E-postprotokollet, docs/DEPLOY.md 3c steg 6: registrera med ny adress, skicka igen, glömt lösenord,
-      skräpposten, mail-tester.com (mål 9/10)
-- [ ] Full E2E-svit mot den nya koden, när Alvin säger till (ca 20 min)
+### Tisdag 29 sep: allt användare och admin möter ska vara polerat
 
-**Inställningar**
-- [?] **Alvin, Vercel:** `CRON_SECRET` (Production), så att gallringen enligt integritetspolicyn körs.
-      Påminnelser till studenter är avstängda i koden och skickas inte
-- [?] **Alvin, Supabase → URL Configuration:** ta bort jokertecknet `https://*.vercel.app/**` om det står kvar
+**Claude**
+- [ ] Poleringsrunda med skärmbilder över allt en student och en granskare möter: landning, registrering
+      och inloggning (e-post och Google), hem, kurssidan, alla studielägen inklusive Sant/Falskt, Alternativ,
+      Begrepp och bildkort, sammanfattningen, statistik, konto, hjälp/om/integritet, och hela admin
+      (översikt, innehåll, granskning, kortsidan med historik, statistik, felrapporter, inställningar,
+      import/export). Desktop, mobil, ljust och mörkt. Rätta allt som ser fel ut
+- [ ] Examinatorflödet: att bjuda in Johan och Roland som examinatorer, vad de ser och kan göra, och att
+      granskningen fungerar för en examinator (inte bara global admin)
+- [ ] Granskningsguide till mötet: en sida för Johan och Roland (hur de loggar in bakom grinden, hur
+      granskningen fungerar, kortkommandon, vad "Rättelse" betyder, vilka områden som är deras)
+- [ ] Mötesunderlag: frågorna till Johan och Roland (se Mötet nedan), sammanfattning av källkritiken och
+      siffrorna per område
+- [?] Full E2E-svit mot den nya koden, när Alvin säger till (ca 20 min)
 
-**Öppningen**
-- [?] **Alvin:** `UNDER_UTVECKLING=0` i Vercel (eget beslut)
-- [ ] Direkt efter öppningen: Googles varumärkesverifiering. Search Console (domän kuggfri.com, TXT-post hos
-      Hostinger), Branding: hemsida `https://kuggfri.com`, integritetspolicy `https://kuggfri.com/integritet`,
-      sedan "I have fixed the issues"
+**Alvin**
+- [?] Testa i produktionen (inkognito, förhandsvisningsnyckeln): Google-inloggning med ett konto som inte
+      är testanvändare, registrering med e-post, "skicka igen", glömt lösenord, mail-tester.com (mål 9/10)
+- [?] Vercel: `CRON_SECRET` (Production), så att gallringen enligt integritetspolicyn körs
+- [?] Supabase → URL Configuration: ta bort jokertecknet `https://*.vercel.app/**` om det står kvar
+- [?] Bjud in Johan och Roland som examinatorer (admin → Inställningar), eller låt Claude förbereda det
 
-**Inte blockerande**
-- [?] **Till Johan:** 2025-bilder på Canvas med samma fel som rättats (Fö 9 s. 7 K1c-villkoret, Fö 12 s. 22
-      anlöpt martensit, Fö 13 s. 13 titan), GLU 5-8 s. 15 "ca 30 % primär ferrit" (hävstångsregeln ger ca
-      60 %), olika värden 910/912/913 °C och 723/727 °C, 0,8/0,77 % C
+### Onsdag 30 sep 10:00: mötet med Johan och Roland
+
+- [ ] Visa granskningen; fördela områdena (Roland: polymerområdena 12–14; Johan: metallområdena 1–11) och
+      bestäm när de hinner godkänna. Först de 42 ändrade publicerade korten ("Bara ändringar")
+- [ ] **Tentadatum** för MTT085 (om det inte hittats i Studieportalen innan)
+- [ ] **2025-bilderna på Canvas** med samma fel som rättats: Fö 9 s. 7 (K1c-villkoret), Fö 12 s. 22 (anlöpt
+      martensit), Fö 13 s. 13 (titan som enda biokompatibla metall); GLU 5-8 s. 15 "ca 30 % primär ferrit"
+      (hävstångsregeln ger ca 60 %); varierande värden 910/912/913 °C, 723/727 °C, 0,8/0,77 % C
+- [ ] **Till Roland:** fel i gamla svarsförslag (tryckuppbyggnadens zon i extrudern, IMS085 2023-10-25 s. 6;
+      "ejection unit" 2021), halsbildningens ordning (Fö21 s. 14 mot L6 s. 10), svenska termval
+      (doseringszon, extrudatsvällning, eftertryck)
+- [ ] Får bokfigurer (Ashby, Osswald) användas i korten, eller bara egna ritade diagram?
+- [ ] Vill Johan ha veckobrevet (måndagar, anonym sammanställning)?
+- [ ] Deras egna synpunkter på innehåll, lägen och admin
+
+### Onsdag eftermiddag och kväll (eller torsdag): ändringar, godkännanden, lansering
+
+- [ ] Claude genomför ändringarna från mötet (innehåll via kortfilerna med källkritik, UI och admin)
+- [?] Johan och Roland godkänner sina områden i Granskning
+- [ ] Sista kontroll: `plan --mal prod` i fas, `kontrollera` och alla enhetstester gröna, E2E (om Alvin vill)
+- [?] **Lansering:** `UNDER_UTVECKLING=0` i Vercel och Redeploy (Alvin)
+- [ ] Direkt efter lanseringen: Googles varumärkesverifiering (Search Console med TXT-post hos Hostinger,
+      Branding: hemsida `https://kuggfri.com`, integritetspolicy `https://kuggfri.com/integritet`, sedan
+      "I have fixed the issues")
 
 ## Efter lanseringen
 

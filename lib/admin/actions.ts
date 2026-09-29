@@ -33,7 +33,10 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ id: string }>> {
   try {
-    const { supabase } = input.id ? await requireEditor(input.id) : await requireAdmin();
+    const { supabase, ctx } = input.id ? await requireEditor(input.id) : await requireAdmin();
+    // Kursens adress ändras bara av global admin (Alvins beslut 29 sep); databasen spärrar
+    // dessutom (migration 20260929000000). En examinators formulär skickar ingen adress.
+    const slugLocked = !ctx.isAdmin;
     const slug = input.slug.trim().toLowerCase();
     const long =
       tooLong(sv.admin.deckTitle, input.title.trim(), LIMITS.title) ??
@@ -42,13 +45,13 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
       tooLong(sv.admin.sourceCredit, input.source_credit, LIMITS.sourceCredit);
     if (long) return long;
     const title = input.title.trim();
-    if (!SLUG_RE.test(slug)) return { ok: false, error: sv.admin.invalidSlug };
+    if (!slugLocked && !SLUG_RE.test(slug)) return { ok: false, error: sv.admin.invalidSlug };
     if (!title) return { ok: false, error: sv.common.required };
     const examDate = (input.exam_date ?? "").trim();
     if (examDate && !DATE_RE.test(examDate)) return { ok: false, error: sv.admin.invalidDate };
 
     const values = {
-      slug,
+      ...(slugLocked ? {} : { slug }),
       title,
       description: input.description.trim() || null,
       course_code: input.course_code.trim() || null,
@@ -57,13 +60,13 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
     };
 
     if (input.id) {
-      const { error } = await supabase.from("decks").update(values).eq("id", input.id);
+      const { data: saved, error } = await supabase.from("decks").update(values).eq("id", input.id).select("slug").single();
       if (error) return error.code === "23505" ? { ok: false, error: sv.admin.slugTaken } : fail(error);
-      revalidateDeck(input.id, slug);
+      revalidateDeck(input.id, saved.slug);
       return { ok: true, data: { id: input.id } };
     }
 
-    const { data, error } = await supabase.from("decks").insert(values).select("id").single();
+    const { data, error } = await supabase.from("decks").insert({ ...values, slug }).select("id").single();
     if (error) return error.code === "23505" ? { ok: false, error: sv.admin.slugTaken } : fail(error);
     revalidateDeck(data.id, slug);
     return { ok: true, data: { id: data.id } };
@@ -74,7 +77,8 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
 
 export async function setDeckPublishedAction(id: string, published: boolean): Promise<ActionResult> {
   try {
-    const { supabase } = await requireEditor(id);
+    // Publicering är global admins beslut, inte examinatorns (Alvins beslut 29 sep).
+    const { supabase } = await requireAdmin();
     const { data, error } = await supabase.from("decks").update({ is_published: published }).eq("id", id).select("slug").single();
     if (error) return fail(error);
     revalidateDeck(id, data.slug);

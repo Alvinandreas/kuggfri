@@ -156,6 +156,9 @@ test.describe("examinator", () => {
     await expect(page.getByRole("heading", { name: "Kursens inställningar" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Ta bort kurs" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Examinatorer" })).toHaveCount(0);
+    // Adressen och publiceringen är administratörens (29 sep): fältet är skrivskyddat, knappen saknas.
+    await expect(page.getByTestId("deck-slug")).toHaveAttribute("readonly", "");
+    await expect(page.getByTestId("deck-publish")).toHaveCount(0);
 
     // Kan inte skapa deck.
     const res = await page.goto("/admin/deck/ny");

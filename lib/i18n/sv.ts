@@ -750,6 +750,7 @@ export const sv = {
     deckTitle: "Titel",
     slug: "Adress (URL)",
     slugHelp: "Små bokstäver, siffror och bindestreck. Kursen nås på /d/ följt av adressen.",
+    slugAdminOnly: "Kursen nås på /d/ följt av adressen. Adressen och publiceringen ändras av administratören.",
     description: "Beskrivning",
     courseCode: "Kurskod",
     examDate: "Tentadatum",

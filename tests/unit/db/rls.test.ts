@@ -656,6 +656,18 @@ describe("examinatorer (deck_examiners)", () => {
     await expectDenied(user(db, examiner).query(`insert into public.deck_examiners (deck_id, user_id) values ($1, $2)`, [otherDeck, examiner]), /permission denied/i);
   });
 
+  it("examinatorn ändrar kursens uppgifter men inte adressen eller publiceringen; admin och verktyget kan", async () => {
+    const titled = await user(db, examiner).query(`update public.decks set title = 'Utkast (granskad)' where id = $1 returning id`, [draftDeck]);
+    expect(titled).toHaveLength(1);
+    await expectDenied(user(db, examiner).query(`update public.decks set slug = 'kapad' where id = $1`, [draftDeck]), /administratören/);
+    await expectDenied(user(db, examiner).query(`update public.decks set is_published = true where id = $1`, [draftDeck]), /administratören/);
+    const [still] = await db.query<{ slug: string; is_published: boolean }>(`select slug, is_published from public.decks where id = $1`, [draftDeck]);
+    expect(still).toEqual({ slug: "utkast", is_published: false });
+    // Admin och en direktanslutning utan JWT (innehållsverktyget) får.
+    expect(await user(db, admin).query(`update public.decks set slug = 'utkast-2' where id = $1 returning id`, [draftDeck])).toHaveLength(1);
+    await db.query(`update public.decks set slug = 'utkast', title = 'Utkast' where id = $1`, [draftDeck]);
+  });
+
   it("can_edit_deck: sant för admin och för examinatorn på sitt deck, annars falskt", async () => {
     const q = async (who: ReturnType<typeof user>, deck: string) => (await who.query<{ ok: boolean }>(`select public.can_edit_deck($1) as ok`, [deck]))[0]?.ok;
     expect(await q(user(db, examiner), draftDeck)).toBe(true);

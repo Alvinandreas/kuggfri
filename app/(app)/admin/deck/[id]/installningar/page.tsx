@@ -30,7 +30,7 @@ export default async function AdminSettingsPage({ params }: { params: Params }) 
           </h2>
           <p className="mt-1 text-sm text-muted">{sv.admin.deckSettingsHelp}</p>
         </div>
-        <DeckForm deck={data.deck} canDelete={isAdmin} />
+        <DeckForm deck={data.deck} canDelete={isAdmin} canManage={isAdmin} />
       </section>
       {isAdmin ? (
         <section aria-labelledby="examinatorer" className="grid grid-cols-[minmax(0,1fr)] gap-4">

@@ -82,10 +82,11 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
               className={cx(
                 "flex min-h-14 select-none items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-150",
                 checked ? "bg-accent-soft/60" : "bg-surface-2/60 hover:bg-surface-2",
-                !selectable && "opacity-45",
               )}
             >
-              <label className={cx("-m-2 flex p-2", selectable ? "cursor-pointer" : "cursor-not-allowed")}>
+              {/* Nedtoningen sitter på de inaktiverade kontrollerna, inte på raden: antalet bredvid är
+                  vanlig text och ska ha full kontrast (WCAG AA). */}
+              <label className={cx("-m-2 flex p-2", selectable ? "cursor-pointer" : "cursor-not-allowed opacity-45")}>
                 <Checkbox
                   checked={checked}
                   disabled={!selectable}
@@ -98,7 +99,7 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
                 type="button"
                 onClick={() => onOnly(c.id)}
                 disabled={!selectable}
-                className="min-w-0 flex-1 rounded-full text-left transition-transform duration-150 active:scale-[0.98] disabled:cursor-not-allowed"
+                className="min-w-0 flex-1 rounded-full text-left transition-transform duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45"
                 title={selectable ? sv.deck.categoriesHelp : why}
               >
                 <CategoryTag title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} size="md" />

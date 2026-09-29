@@ -12,7 +12,11 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { TextArea } from "@/components/ui/TextArea";
 import { TextField } from "@/components/ui/TextField";
 
-export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete?: boolean }) {
+/**
+ * canManage: global admin. Examinatorer ser adressen men kan inte ändra den, och kan inte
+ * publicera eller avpublicera kursen (servern och databasen spärrar också).
+ */
+export function DeckForm({ deck, canDelete = true, canManage = true }: { deck?: DeckRow; canDelete?: boolean; canManage?: boolean }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
@@ -79,9 +83,10 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
           <TextField label={sv.admin.deckTitle} name="title" required maxLength={200} defaultValue={deck?.title ?? ""} data-testid="deck-title" />
           <TextField
             label={sv.admin.slug}
-            hint={sv.admin.slugHelp}
+            hint={canManage ? sv.admin.slugHelp : sv.admin.slugAdminOnly}
             name="slug"
             required
+            readOnly={!canManage}
             pattern="[a-z0-9]+(-[a-z0-9]+)*"
             defaultValue={deck?.slug ?? ""}
             data-testid="deck-slug"
@@ -111,9 +116,11 @@ export function DeckForm({ deck, canDelete = true }: { deck?: DeckRow; canDelete
           </Button>
           {deck ? (
             <>
-              <Button type="button" variant="secondary" onClick={togglePublish} disabled={pending} data-testid="deck-publish">
-                {published ? sv.admin.unpublish : sv.admin.publish}
-              </Button>
+              {canManage ? (
+                <Button type="button" variant="secondary" onClick={togglePublish} disabled={pending} data-testid="deck-publish">
+                  {published ? sv.admin.unpublish : sv.admin.publish}
+                </Button>
+              ) : null}
               <Badge tone={published ? "accent" : "neutral"} className="ml-1">
                 <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${published ? "bg-accent-ink" : "bg-muted"}`} />
                 {published ? sv.admin.published : sv.admin.unpublished}

@@ -28,6 +28,7 @@ key: vad-kannetecknar-titan
 original: ja
 status: utkast
 källa: Rättelse: "Titan är den enda metallen som är biokompatibel" är en överdrift; tentasvaren anger bara att titan är biokompatibelt; Canvas, Fö 13 Aluminium och andra metaller, s. 13; Canvas, Fö 13 Aluminium och andra metaller, s. 14; Canvas, Svar Materialteknik 2019-10-26, s. 2; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 (korrigerad), uppgift 5
+flagga: Rättelse av originalkortet: "Titan är den enda metallen som är biokompatibel" (ordagrant Fö 13 Aluminium och andra metaller s. 13) är ändrat till "biokompatibelt", som i tentasvaren 2019 uppg. 5b och 2021 uppg. 5. Kortet anger också titanets densitet till 4,1 kg/dm³ som på samma bild, men värdet brukar anges till ca 4,5 kg/dm³. Godkänns rättelsen, och stämmer densiteten på bilden?
 
 * Medel densitet 4,1 kg/dm3
 * Utmärkt hållfasthet
@@ -112,6 +113,7 @@ key: quiz-aluminium-2-ratt
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 4, fråga 6; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Kapitel_03 Materialval, s. 45; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 4; Canvas, Svarsförslag Tentamen MTT085 25-01, s. 6
+flagga: Quizens alternativ "korroderar inte" är preciserat till "skyddas mot korrosion av ett oxidskikt (Al2O3)", och skämtalternativet med ett påhittat legeringsnamn är ersatt med den felaktiga "HCP-struktur" (Fö 13 Aluminium s. 3). Godkänns ändringarna, och ska Quiz vecka 4 fråga 6 ändras?
 
 - [x] Det skyddas mot korrosion av ett oxidskikt (Al₂O₃) som bildas på ytan.
 - [ ] Det kräver mindre energi per kilo att tillverka än stål.
@@ -127,6 +129,7 @@ key: quiz-indelning-och-legering-av-aluminium-2
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 4, fråga 7; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 5; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 12; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 31; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 43; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 45; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Fö 13 Aluminium och andra metaller, s. 9
+flagga: Quizens rätta alternativ "Enda sättet att höja sträckgränsen på ren aluminium är att deformationshärda" är för starkt, eftersom även finare korn ger högre sträckgräns (GLU_5-8 s. 5); kortet säger nu "härdas i praktiken genom deformationshärdning" (Kapitel_06 s. 43, tabell 6.1). Godkänns uppmjukningen, och ska Quiz vecka 4 fråga 7 ändras?
 
 - [ ] När man snabbkyler aluminium kan metastabil martensit bildas.
 - [x] Ren aluminium härdas i praktiken genom deformationshärdning, t.ex. valsning.
@@ -202,6 +205,7 @@ Magnesium har låg densitet (1,8 kg/dm³), god gjutbarhet och god maskinbarhet. 
 key: al-cu-utskiljningshardning-steg
 status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26, 27; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 18, 19; Canvas, Exempel fasdiagram, s. 7; Canvas, Fo 13 Aluminium och andra metaller, s. 5; Canvas, Ovning 7 m losningar, s. 5
+flagga: Kortet anger solvus för Al med 4 % Cu till ca 500 °C, ett värde som är avläst i diagrammet i Exempel fasdiagram s. 7 och inte står i text någonstans; upplösningsbehandlingen anges som i kursens exempel, 540 till 548 °C. Stämmer avläsningen?
 
 ![Al-hörnet av fasdiagrammet Al–Cu med aluminiumfasen (Al), eutektisk linje vid 548 °C och fasen θ = CuAl₂](/kort/materialteknik/al-cu-alhornet.svg)
 

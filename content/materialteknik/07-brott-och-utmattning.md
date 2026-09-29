@@ -11,6 +11,7 @@ key: vad-har-temperatur-for-inverkan-pa-ett
 original: ja
 status: utkast
 källa: Rättelse: kortet sa att alla material blir sprödare när temperaturen sjunker, men metaller med FCC-struktur förblir duktila; Canvas, Kapitel_08 Seghet och Brott, s. 31; Canvas, Kapitel_08 Seghet och Brott, s. 37; Canvas, Fö 9 Brott och brottseghet, s. 3
+flagga: Rättelse av originalkortet: det sa att materialen generellt blir sprödare när temperaturen sjunker, men metaller med FCC-struktur förblir duktila. Texten följer nu Kapitel_08 s. 31 (vissa metaller och alla polymerer blir spröda, sträckgränsen ökar, den plastiska zonen krymper). Godkänns rättelsen?
 
 Vid låga temperaturer blir vissa metaller och alla polymerer spröda. När temperaturen sjunker ökar sträckgränsen för de flesta material, vilket minskar den plastiska zonen vid sprickspetsen och därmed segheten. Endast metaller med FCC-struktur förblir duktila vid de lägsta temperaturerna.
 
@@ -21,6 +22,7 @@ key: vad-ar-skillnaden-mellan-ett-segt
 original: ja
 status: utkast
 källa: Rättelse: "deformeras plastiskt under en längre tid" var missvisande, det är mängden plastisk deformation och inte tiden som skiljer brotten åt; Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 1; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28
+flagga: Rättelse av originalkortet: det sa att ett segt material deformeras plastiskt "under en längre tid", men det är mängden plastisk deformation och inte tiden som skiljer brotten åt (Kapitel_08 s. 27, 28). Den nya baksidan följer nästan ordagrant svarsförslaget till tentan 2025-10-30 uppg. 4 (t.ex. "relativt jämn och glänsande med kornig struktur"). Godkänns rättelsen, eller ska baksidan skrivas om med egna ord?
 
 * **Segt brott** föregås av tydlig plastisk deformation och stora formändringar. Hålrum bildas vid inneslutningar, växer och går samman till brott. Brottytan är matt och ojämn (skål- och konformad). Typiskt för de flesta metaller vid rumstemperatur.
 * **Sprött brott** sker utan nämnvärd plastisk deformation, ofta plötsligt. Brottytan är relativt jämn och glänsande med kornig struktur. Uppträder främst vid låga temperaturer, höga belastningshastigheter och i spröda material som keramer och härdat stål.
@@ -30,6 +32,7 @@ key: vad-anvander-man-for-typ-av-test-for
 original: ja
 status: utkast
 källa: Rättelse: kortet sa att brottseghet bestäms med slagprovning, men slagprovning mäter slagseghet; Canvas, Kapitel_08 Seghet och Brott, s. 8; Canvas, Kapitel_08 Seghet och Brott, s. 16; Canvas, Kapitel_08 Seghet och Brott, s. 21
+flagga: Rättelse av originalkortet: det sa att brottseghet bestäms med slagprovning, men slagprovning ger slagseghet och inte seghet som materialegenskap (Kapitel_08 s. 8). Nu står CT- och SENB-prov med skarp spricka och plant töjningstillstånd (Kapitel_08 s. 16, 21), sidor som är märkta "Känna till, inga detaljfrågor på tentan". Godkänns rättelsen, och är detaljnivån rimlig?
 
 Brottsegheten $K_{1c}$ bestäms med prov som har en skarp spricka, t.ex. CT-prov (compact tension) eller SENB-prov (single edge notched beam). Båda provstavstyperna har en utmattningsspricka. Provet måste vara så brett att plant töjningstillstånd råder längs sprickfronten; först då blir $K_{1c}$ en ren materialegenskap.
 
@@ -66,6 +69,7 @@ svar: sant
 original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Kapitel_08 Seghet och Brott, s. 31; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 18; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Short_dictionary_ v2026, s. 2
+flagga: Originalkortet (tentan 2020-10-24 uppg. 1e, facit ja) sa "rostfritt stål"; påståendet är nu preciserat till "vanligt (ferritiskt) stål" och "austenitiskt rostfritt stål", eftersom bara FCC-metaller förblir duktila (Kapitel_08 s. 31) och ferritiska och martensitiska rostfria stål har omslagstemperatur. Källraden saknar "Rättelse:". Godkänns preciseringen?
 
 Sant. Vid låga temperaturer blir vissa metaller spröda, men metaller med FCC-struktur förblir duktila även vid de lägsta temperaturerna. Aluminium och austenit (FCC-järn) har FCC-struktur, så aluminium och austenitiska rostfria stål har ingen omslagstemperatur. Vanligt stål består av ferrit (BCC-järn) och perlit och går från segt till sprött beteende under omslagstemperaturen.
 
@@ -112,6 +116,7 @@ Falskt. En spröd brottyta kan vara både interkristallin (längs korngränserna
 key: utmattningsgrans
 typ: begrepp
 original: ja
+flagga: Kortet säger att utmattning inte sker alls under utmattningsgränsen, men Kapitel_09 Utmattning s. 5 säger att brott inte inträffar alls eller först efter ett mycket stort antal cykler (t.ex. fler än 10^7), vilket kortet ja-nej-utmattningsgransen-ar-antalet i samma fil också säger. Ska definitionen skrivas som på bilden?
 
 Den spänning under vilken inte utmattning sker.
 
@@ -127,6 +132,7 @@ key: quiz-brott-hos-metaller-2-rattta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 3, fråga 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Kapitel_08 Seghet och Brott, s. 18; Canvas, Kapitel_08 Seghet och Brott, s. 37; Canvas, Fö 9 Brott och brottseghet, s. 7; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1f
+flagga: Quizens rätta alternativ "Segt brott fås när spänningsintensitetsfaktorn är större än brottsegheten" är omskrivet till "En spricka växer när spänningsintensitetsfaktorn överskrider brottsegheten", eftersom villkoret gäller sprickväxt i allmänhet och inte specifikt segt brott (Kapitel_08 s. 14). Godkänns omskrivningen, och ska Quiz vecka 3 fråga 7 ändras?
 
 - [x] Brottegenskaper är tätt kopplade till energi.
 - [ ] Material med hög E-modul har alltid hög brottseghet.
@@ -142,6 +148,7 @@ key: quiz-brott-2-ratta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 3, fråga 10; Canvas, Kapitel_08 Seghet och Brott, s. 15; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28; Canvas, Kapitel_08 Seghet och Brott, s. 32; Canvas, Fö 9 Brott och brottseghet, s. 15
+flagga: Det rätta alternativet är omskrivet till "I metaller går brottet bara undantagsvis längs korngränserna", men "bara undantagsvis" står inte i kursen: Kapitel_08 s. 32 säger att föroreningar normalt samlas i korngränserna, och Fö 9 Brott och brottseghet s. 16 visar interkristallint brott som en av två vanliga spröda brottytor. Håller examinatorn med, eller ska det stå t.ex. "främst när korngränserna har försvagats"?
 
 - [ ] Brott delas in i elastiska brott och plastiska brott.
 - [ ] När en metall går sönder går brottet oftast längs korngränserna.
@@ -247,6 +254,7 @@ key: utm-goodman-medelspanning
 typ: alternativ
 status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 4; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 9; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 10
+flagga: Kortet anger ca 11 550 cykler för exempel 9.2, men utan avrundning blir det ca 11 260 (200 000 gånger 0,75^10); 11 550 fås bara om det korrigerade spänningsintervallet avrundas till 266 MPa. Står 11 550 på bilden i Kapitel_09 Utmattning s. 10, eller ska siffran ändras till ca 11 300?
 
 - [x] Livslängden minskar
 - [ ] Livslängden ökar, eftersom materialet deformationshärdas
@@ -291,6 +299,7 @@ key: brott-sprott-brottyta-kannetecken
 typ: alternativ
 status: utkast
 källa: Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 1; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28
+flagga: Kortet är i stort sett tentan 2025-10-30 uppg. 4 omgjord till flerval: de rätta alternativen är svarsförslagets meningar om sprött brott och de felaktiga dess meningar om segt brott (Svarsförslag uppgift 4-6 IMS085 251030 s. 1), och brottytornas utseende står inte på Kapitel_08 s. 27, 28. Ska kortet skrivas om utifrån föreläsningen, eller tas bort?
 
 - [x] Det sker utan nämnvärd plastisk deformation, ofta plötsligt
 - [ ] Brottytan är matt och ojämn, skål- och konformad
@@ -331,6 +340,7 @@ typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: brottvillkoret var omvänt (kortet sa att brott sker när K1c > K1, så stod det också på en bild 2025); Canvas, Kapitel_08 Seghet och Brott, s. 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Fö 9 Brott och brottseghet, s. 7; Canvas, Fö 9 Brott och brottseghet, s. 10; Canvas, Kapitel_08 Seghet och Brott, s. 13; Canvas, Kapitel_08 Seghet och Brott, s. 18; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15
+flagga: Rättelse av originalkortet: brottvillkoret var omvänt, "Brott när K1c > K1", som det står på Fö 9 Brott och brottseghet 2025 s. 7. Kortet säger nu att sprickan växer när K1 överskrider K1c (Fö 9 s. 10, Kapitel_08 s. 14), med tillägget "vid statisk last" eftersom en utmattningsspricka kan växa under K1c. Godkänns rättelsen, och ska bilden Fö 9 s. 7 rättas i Canvas?
 
 Ett materials motstånd mot spricktillväxt. Brottsegheten $K_{1c}$ ($\text{MPa}\sqrt{\text{m}}$; 1 för lastmod 1, c för kritisk) är det kritiska värdet på spänningsintensitetsfaktorn.
 

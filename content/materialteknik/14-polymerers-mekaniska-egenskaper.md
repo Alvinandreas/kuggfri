@@ -83,6 +83,7 @@ key: polymer-kryp-aterhamtning
 typ: alternativ
 status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 5; Canvas, 2025 MTT085 Fo20, s. 17
+flagga: Kortet säger att ett viskoelastiskt material får en kvarstående töjning och att full återgång "bara" gäller rent elastiska material, men en viskoelastisk fast kropp (Kelvinmodellen) återhämtar sig helt (Osswald kap. 9 s. 12), och kortet polymer-elastomer-reversibel säger att elastomerens deformation går tillbaka. Ska frågan begränsas till t.ex. en termoplast eller smälta, och ordet "bara" strykas?
 
 - [x] En del av töjningen återgår snabbt, men en kvarstående töjning blir kvar
 - [ ] All töjning återgår direkt
@@ -146,6 +147,7 @@ typ: sant-falskt
 svar: sant
 status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 7; Canvas, 05142_10 (Osswald kap. 10), s. 8
+flagga: Förklaringen säger utan förbehåll att sprött brott i kortvarigt dragprov "gäller termoplaster under Tg och högt tvärbundna polymerer", men Fö21 2025 s. 7 säger "usually" och PC är ett undantag (Lab-PM Polymer s. 2); just denna fråga är omtvistad i tentan 2024-10-31 uppg. 9. Ska "i regel" läggas till, som på kortet polymer-dragkurvor-fyra-typer?
 
 Sprött brott i ett kortvarigt dragprov gäller termoplaster under Tg och högt tvärbundna polymerer. I krypbrotts- och utmattningsprov kan sprött brott uppträda även vid temperaturer över Tg.
 
@@ -204,6 +206,7 @@ key: polymer-begrepp-boltzmann-superposition
 typ: begrepp
 status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 8, 9
+flagga: Boltzmanns superpositionsprincip stod i läsanvisningen för PM 6 år 2020 och på tentan 2020, men finns inte i PM 6 för 2024 och 2025 (Fö20 2025 s. 22 hänvisar bara till bokens sidor om krypprov och isokrona diagram); kortets enda källa är Osswald kap. 9 s. 8, 9. Ingår principen i årets kurs, eller ska kortet tas bort?
 
 I linjär viskoelasticitet är deformationen summan av de töjningar som varje lastförändring ger upphov till, oberoende av de laster som redan verkar. Vid stegvisa spänningsändringar $\Delta\sigma_i$ vid tiderna $t_i$ blir töjningen
 
@@ -216,6 +219,7 @@ key: polymer-boltzmann-tvastegs
 typ: alternativ
 status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 8, 9
+flagga: Räkneuppgiften bygger på Boltzmanns superpositionsprincip, som inte står i läsanvisningen för PM 6 2024 och 2025 (Fö20 2025 s. 22); uträkningen stämmer med Osswald kap. 9 s. 8, 9. Ska kortet vara kvar om principen inte ingår i år (samma beslut som för polymer-begrepp-boltzmann-superposition)?
 
 - [x] $\sigma_0 J(t) + \sigma_0 J(t - t_1)$
 - [ ] $2\sigma_0 J(t)$
@@ -229,6 +233,7 @@ key: polymer-smalta-kryp-aterhamtning
 typ: alternativ
 status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 1, 4, 5; Canvas, 2025 MTT085 Fo20, s. 16, 17
+flagga: Kortet säger, enligt L6 s. 1, 4, 5 och Fö20 2025 s. 16, 17, att en polymersmälta ger vätskelik respons där töjningen växer linjärt, medan svarsförslaget till tentan 2023-10-23 uppg. 9b pekar ut den fastlika kurvan för smältan. Förklaringen kallar dessutom den fasta polymerens svar Kelvin-Voigt med elastisk start och kvarstående töjning, men Kelvinmodellen har ingen ögonblicklig töjning och återhämtar sig helt (Osswald kap. 9 s. 11, 12). Vilket svar gäller, och ska modellnamnet tas bort?
 
 - [x] Smältans töjning fortsätter att växa linjärt med tiden, medan den fasta polymerens töjning närmar sig ett gränsvärde.
 - [ ] Smältan har ingen elastisk del, så ingenting av töjningen går tillbaka när lasten tas bort.

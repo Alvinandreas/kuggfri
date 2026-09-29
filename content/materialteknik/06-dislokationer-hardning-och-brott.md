@@ -152,6 +152,7 @@ key: quiz-dislokationer-vad-ar-ratt-tva-ratta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 3, fråga 4; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 16, 20, 30; Canvas, Kapitel_04 Elastisk deformation, s. 12; Canvas, Fo 8 Plasticitet, s. 9
+flagga: Quizens rätta alternativ "måste den röra sig på ett atomplan som är nära 45 grader" är för starkt: Fö 8 Plasticitet s. 9 säger att dislokationerna rör sig "lättast" nära 45 grader, och Kapitel_06 s. 20 att glidning sker när skjuvspänningen på glidsystemet blir tillräckligt hög. Kortet har skrivit om alternativet till "rör sig lättast" och behållit det som rätt. Godkänns omskrivningen, och ska Quiz vecka 3 fråga 4 ändras?
 
 - [ ] Dislokationer har stor betydelse för elastisk deformation.
 - [x] Ett bra sätt att öka sträckgränsen är att försvåra dislokationsrörelse.
@@ -165,6 +166,7 @@ key: quiz-hardningsmekanismer-vad-ar-ratt-2-ratta
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 3, fråga 5; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 14, 15, 33, 35, 36; Canvas, Fo 8 Plasticitet, s. 13, 15, 17; Canvas, Fo 12 Stal, s. 5; Canvas, Svarsforslag Tentamen MTT085 25-01, s. 7
+flagga: Quizens två felaktiga alternativ kunde läsas som sanna ("värmebehandling låser dislokationerna och sträckgränsen ökar" stämmer för utskiljningshärdning, Kapitel_06 s. 35; "färre kristalldefekter ger högre hållfasthet" stämmer i gränsen mot ideal hållfasthet, Kapitel_06 s. 14, 15) och är utbytta mot entydigt felaktiga om rekristallisation och grova korn. Godkänns bytet, och ska Quiz vecka 3 fråga 5 ändras?
 
 - [x] Rena metaller kan deformationshärdas.
 - [ ] När en kallbearbetad metall värms så att den rekristalliserar ökar sträckgränsen.
@@ -257,6 +259,7 @@ key: glidsystem-fcc
 typ: alternativ
 status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 20, 28; Canvas, GLU 01 Kristallstrukturer, s. 11, 15, 19; Canvas, Guided Learning Unit 1, s. 4 (GL1-4); Canvas, Fo 12 Stal, s. 2
+flagga: Att glidsystemen i FCC är {111}<110> står inte ordagrant i kursmaterialets text; kortet härleder det ur Kapitel_06 s. 28 (glidsystemen följer de tätast packade planen och riktningarna) och GLU 01 s. 19, och beteckningen finns uttryckligen bara i tentan 2015-10-26 uppg. 4a. Räcker härledningen som belägg?
 
 - [x] De tätpackade planen $\{111\}$ och de tätpackade riktningarna $\langle 110\rangle$ i dem (ytdiagonalerna)
 - [ ] Kubens sidoytor $\{100\}$ och kanterna $\langle 100\rangle$

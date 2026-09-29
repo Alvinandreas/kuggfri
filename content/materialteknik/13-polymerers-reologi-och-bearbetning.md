@@ -50,9 +50,9 @@ källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 8; Canvas, MTT085 PM 3
 - [x] Höga skjuvhastigheter ger starkare molekylorientering i flödesriktningen.
 - [x] De typiska skjuvhastigheterna skiljer sig mellan processer som extrudering, formsprutning och fiberspinning.
 - [ ] Skjuvhastigheten påverkar inte viskositeten.
-- [ ] Skjuvhastigheten mäts i pascalsekunder (Pa·s).
+- [ ] Skjuvhastigheten mäts i pascalsekunder (Pa s).
 
-Små eller långsamma deformationer ändrar inte kedjornas orientering, medan stora eller snabba deformationer orienterar molekylerna i flödesriktningen. Varje bearbetningsmetod har sitt typiska skjuvhastighetsområde; fiberspinning ger mest orientering av kedjorna, medan formpressning, som sker vid låga skjuvhastigheter, ger lite orientering. Eftersom polymersmältor är skjuvförtunnande beror viskositeten av skjuvhastigheten. Skjuvhastigheten har enheten 1/s; Pa·s är enheten för viskositet.
+Små eller långsamma deformationer ändrar inte kedjornas orientering, medan stora eller snabba deformationer orienterar molekylerna i flödesriktningen. Varje bearbetningsmetod har sitt typiska skjuvhastighetsområde; fiberspinning ger mest orientering av kedjorna, medan formpressning, som sker vid låga skjuvhastigheter, ger lite orientering. Eftersom polymersmältor är skjuvförtunnande beror viskositeten av skjuvhastigheten. Skjuvhastigheten har enheten 1/s; Pa s är enheten för viskositet.
 
 ## Vilka påståenden om extrudatsvällning (die swell) stämmer?
 key: quiz-die-swelling-formsprutningssvallning
@@ -100,6 +100,7 @@ key: quiz-a-single-screw-extruder-en
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 2; Canvas, MTT085 Polymeric materials L4-5, s. 2-5; Canvas, Svarsförslag Tentamen MTT085 24-01, s. 3
+flagga: Quizens distraktor "kopplad till en formsprutningsform via fördelningskanaler och ingöt" byttes ut eftersom plasticeringsenheten i en formsprutningsmaskin är en sorts enskruvsextruder (L4-5 s. 6). Den nya distraktorn "Trycket byggs upp i inmatningszonen vid tratten" följer L4-5 s. 3, men kursboken säger att friktionen ger en tryckökning redan i inmatningszonen och att den står för tryckuppbyggnaden i extrudrar med spårad inmatning (Osswald 05142_06a-3 s. 8, 9). Är distraktorn entydigt fel, eller ska den bytas?
 
 - [x] Skruven har en doseringszon (metering zone) som bygger upp trycket under flödet.
 - [x] Den kan användas för att tillverka rör och tunna filmer.
@@ -209,7 +210,7 @@ typ: begrepp
 status: utkast
 källa: Canvas, MTT085 PM 3, s. 1-3; Canvas, 2025 MTT085 Fö17, s. 8-10; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 7
 
-En vätskas motstånd mot flöde. Newtons viskositetslag: $\sigma = \eta\dot{\gamma}$, dvs. skjuvspänningen $\sigma$ är proportionell mot skjuvhastigheten $\dot{\gamma}$, och proportionalitetskonstanten $\eta$ är (skjuv)viskositeten. Enheten är Pa·s. För en newtonsk vätska beror $\eta$ bara av temperatur och tryck; för en polymersmälta beror den också av skjuvhastigheten.
+En vätskas motstånd mot flöde. Newtons viskositetslag: $\sigma = \eta\dot{\gamma}$, dvs. skjuvspänningen $\sigma$ är proportionell mot skjuvhastigheten $\dot{\gamma}$, och proportionalitetskonstanten $\eta$ är (skjuv)viskositeten. Enheten är Pa s. För en newtonsk vätska beror $\eta$ bara av temperatur och tryck; för en polymersmälta beror den också av skjuvhastigheten.
 
 ## Skjuvhastighet (shear rate)
 key: reo-skjuvhastighet
@@ -313,6 +314,7 @@ Kyltiden dominerar cykeln (ungefär 80 %), och den ökar ungefär med kvadraten 
 key: reo-filmblasning
 status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 5-6; Canvas, MTT085 Tutorials-Part 3-5, s. 2; Canvas, Tentamen Materialteknik med svar 2013-08-20, s. 8
+flagga: Baksidan följer svarsförslaget till tentan 2013-08-20 uppg. 10c nära (uppblåsning, filmen stelnar före klämvalsarna, klämvalsarna håller övertrycket och drar filmen), även om samma innehåll finns i L4-5 s. 5, 6 och Tutorials Part 3-5 s. 2. Ligger baksidan för nära facit, eller får den stå kvar?
 
 Filmblåsning är en sekundär formning efter extrudering. Smältan pressas genom ett ringformat munstycke (blåshuvud) och bildar en slang. Luft blåses in genom munstyckets centrum och blåser upp slangen, som samtidigt dras ut, så att väggtjockleken minskar kraftigt. Filmen kyls av luft utifrån och stelnar innan den når klämvalsarna (nip rollers). Klämvalsarna pressar ihop filmen så att övertrycket i blåsan hålls kvar och drar filmen i axiell riktning. Till sist rullas filmen upp.
 
@@ -331,6 +333,7 @@ typ: sant-falskt
 svar: falskt
 status: utkast
 källa: Canvas, MTT085 PM 3, s. 6; Canvas, 2024 MTT085 Fö17, s. 27; Canvas, 2025 MTT085 Fö17, s. 22
+flagga: Kortet skriver η ∝ 1/T från 2024 Fö17 s. 27, men temperaturberoendet är exponentiellt (Arrhenius, eller WLF för amorfa; Osswald kap. 5 s. 4, 11), och bilden visar bara riktningen. Att viskositeten sjunker när temperaturen höjs är belagt (PM 3 s. 6). Ska proportionalitetstecknet strykas?
 
 Falskt. Viskositeten minskar när temperaturen höjs ($\eta \propto 1/T$ på föreläsningsbilden); viskositetskurvorna för t.ex. ABS, PC och PA6 ligger lägre ju högre temperaturen är.
 
@@ -340,6 +343,7 @@ typ: sant-falskt
 svar: sant
 status: utkast
 källa: Canvas, 2024 MTT085 Fö17, s. 27; Canvas, MTT085 Tutorials-Part 3-5, s. 3
+flagga: Kortet skriver η ∝ Mw som på föreläsningsbilden 2024 Fö17 s. 27 (bilden finns inte i 2025 års material), men kursboken (Osswald kap. 3 s. 5, fig. 3.7) visar att nollskjuvviskositeten över en kritisk molekylvikt växer ungefär som Mw upphöjt till 3,4. Räcker det att kortet säger att viskositeten ökar kraftigt med molekylvikten, utan proportionalitetstecknet?
 
 Sant. Viskositeten ökar med molekylvikten ($\eta \propto M_w$ på föreläsningsbilden). Omvänt ger lägre molekylvikt lägre viskositet, så att materialet blir lättare att bearbeta. Fyllmedel höjer också viskositeten.
 

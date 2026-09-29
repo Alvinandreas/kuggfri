@@ -24,6 +24,7 @@ key: vad-kannetecknar-enhetscellen-fcc
 original: ja
 status: utkast
 källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostfritt stål, eftersom det även finns ferritiska och martensitiska rostfria stål; packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 11, 13, 15; Canvas, Fo 12 Stal, s. 28; Canvas, Short_dictionary_ v2026, s. 2
+flagga: Rättelse av originalkortet: exemplet "Rostfritt stål" är ändrat till "austenitiskt rostfritt stål", eftersom ferritiska och martensitiska rostfria stål inte är FCC (Fö 12 Stål s. 28); packningsgrad 0,74 och ABCABC är tillagda (GLU 01 s. 11). GLU 01 2026 s. 15 skriver själv bara "Rostfritt stål". Godkänns preciseringen?
 
 ![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
 
@@ -39,6 +40,7 @@ key: vad-kannetecknar-enhetscellen-bcc
 original: ja
 status: utkast
 källa: Rättelse: "Ex: Fe" angavs utan temperatur, men järn är BCC (ferrit) bara upp till ca 913 °C och därefter FCC (austenit); packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 2, 12, 13, 16; Canvas, Short_dictionary_ v2026, s. 6; Canvas, Lab_PM_M2_v2026, s. 4
+flagga: Rättelse av originalkortet: "Ex: Fe" har fått temperaturgränser (BCC upp till ca 913 °C, FCC däröver och BCC igen som δ-ferrit mellan 1394 och 1538 °C) och packningsgrad 0,68. Kursmaterialet anger omvandlingen till 913 °C (GLU 01 s. 2), 912 °C (Lab_PM_M2_v2026 s. 4) och 910 °C (Fö 4 2025 s. 14). Godkänns rättelsen, och vilken temperatur ska korten använda?
 
 ![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
 
@@ -65,6 +67,7 @@ key: millerindex-beskriv-kortfattat-vad-det
 original: ja
 status: utkast
 källa: Rättelse: kortet påstod att riktningsindex inte kallas Millerindex, men GLU 1 2026 kallar dem "Millerindex för riktningar"; kortet beskrev också planets position i stället för orientering; Canvas, GLU 01 Kristallstrukturer, s. 19, 20
+flagga: Rättelse av originalkortet: påståendet att riktningar "inte längre kallas Millerindex" är struket eftersom GLU 01 s. 20 har rubriken "Millerindex för riktningar", "planets position" är ändrat till orientering (GLU 01 s. 19) och meningen om origo i ett hörn är borttagen. Lärandemålen (GLU 01 s. 1, Fö 3 2025) och flera tentor skiljer dock på "riktningsindex" och "Miller-index". Vilken benämning ska kortet använda?
 
 ![Planen (100), (110) och (111) markerade i var sin kub med axlarna x, y och z](/kort/materialteknik/millerindex-plan.svg)
 
@@ -106,6 +109,7 @@ key: quiz-kristallina-eller-amorfa-material-tva
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 2, fråga 2; Canvas, GLU 01 Kristallstrukturer, s. 11; Canvas, Fo 3 Kristallstruktur, s. 13; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 17; Canvas, Kapitel_04 Elastisk deformation, s. 40
+flagga: Quizens rätta alternativ "Metaller är alltid kristallina" är ändrat till "Metaller är i regel kristallina", eftersom GLU 01 s. 11 skriver "de flesta metaller är kristallina". Godkänns ändringen, och ska Quiz vecka 2 fråga 2 ändras likadant?
 
 - [x] Metaller är i regel kristallina.
 - [ ] Kristallglas är den enda typen av glas som är kristallin.
@@ -119,6 +123,7 @@ key: quiz-kristaller-och-enhetsceller-tva-ratt
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 2, fråga 3; Canvas, GLU 01 Kristallstrukturer, s. 10, 11, 12; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 28; Canvas, Short_dictionary_ v2026, s. 1
+flagga: Quizens rätta alternativ "Enhetsceller är ett sätt att beskriva kristaller, men finns inte i verkligheten" är omskrivet till GLU 01 s. 10:s definition, den minsta volym som kan beskriva hela kristallen, eftersom kursmaterialet inte säger att enhetsceller inte finns i verkligheten. Godkänns omskrivningen, och ska Quiz vecka 2 fråga 3 ändras?
 
 - [ ] Tätpackade atomplan är viktiga eftersom det är där materialet spricker.
 - [x] Enhetscellen är ett sätt att beskriva en kristall: den minsta volym som kan beskriva hela kristallen.
@@ -261,6 +266,7 @@ key: enhetscell-kanna-igen-bcc
 typ: alternativ
 status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 12, 13, 15, 16, 17; Canvas, Guided Learning Unit 1, s. 4, 5 (GL1-4, GL1-5)
+flagga: Kortet visar tre omärkta enhetsceller i en egen figur och frågar vilken som är BCC, vilket är samma uppgiftstyp som tentan 2024-01 uppg. 11 (namnge tre enhetsceller i en figur) och liknar 2025-10-30 uppg. 2a. Ligger kortet för nära tentan?
 
 - [ ] A
 - [ ] B

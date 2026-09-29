@@ -5,6 +5,7 @@ key: vilka-ar-de-olika-stegen-i
 original: ja
 status: utkast
 källa: Rättelse: iteration stod som ett femte steg, men strategin har fyra steg och iterationen är ett tillägg; Canvas, Kapitel_03 Materialval, s. 26, 42; Canvas, Ashby et al Materials 3 utgavan PRELIMINAR Lasanvisning och detaljerade larmal Kap 1-12, s. 2
+flagga: Rättelse av originalkortet: "5. Iterera" stod som ett femte steg, men Kapitel_03 s. 26 och 42 numrerar fyra steg och tar upp iteration separat, och svarsförslaget till tentan 2025-10-30 talar om fyra steg. Fö 2 Materialval 2025 s. 9 har dock "Iterera" som en egen bild efter steg 4. Godkänns att kortet anger fyra steg plus iteration?
 
 1. Översätta
 2. Sålla
@@ -58,6 +59,7 @@ key: beskriv-vad-man-gor-i-5
 original: ja
 status: utkast
 källa: Rättelse: kortet sa att man utökar mängden material efter första iterationen, men kursen säger att man börjar brett med materialgrupperna och sedan begränsar sig; Canvas, Kapitel_03 Materialval, s. 26, 42; Canvas, Fo 2 Materialval, s. 9
+flagga: Rättelse av originalkortet: det sa att man brukar utöka mängden material efter första iterationen, men Kapitel_03 s. 26 och Fö 2 Materialval s. 9 säger att man börjar brett med materialgrupperna och sedan begränsar sig (CES nivå 1, sedan nivå 2 och 3). Framsidan kallar inte längre iterationen ett steg. Godkänns den nya texten?
 
 Materialvalet måste ofta förfinas och förbättras i flera steg innan man hittar en bra lösning. Det är bra att först börja med materialgrupperna och sedan begränsa sig. I CES (Granta EduPack) börjar man med nivå 1 för att hitta materialgrupper och går sedan vidare till nivå 2 och 3.
 
@@ -73,6 +75,7 @@ key: vad-ar-ett-lastfall-och-varfor-ar-det
 original: ja
 status: utkast
 källa: Rättelse: påståendet att man ska använda det lastfall som förekommer oftast saknar stöd i kursmaterialet och är struket; dubbletten vad-har-lastfall-for-inverkan-pa är inaktiverad; Canvas, Fo 7 Styvhet, s. 15, 17; Canvas, Kapitel_03 Materialval, s. 33, 35
+flagga: Rättelse av originalkortet: påståendet att man ska använda "lastfallet som förekommer oftast" saknar stöd i kursmaterialet och är struket; i stället står att bara typen av lastfall behövs (Fö 7 Styvhet s. 15) med indexexempel från Kapitel_03 s. 35. Dubbletten vad-har-lastfall-for-inverkan-pa är samtidigt inaktiverad. Godkänns rättelsen och inaktiveringen?
 
 * Ett lastfall är en isolerad belastningssituation som materialet kan utsättas för.
 * Ex: En stång i tryck/drag/vridspänning, en balk i böjning/knäckning eller utsatt för utbredd last, ett tryckkärl utsatt för tryckskillnader.
@@ -121,6 +124,7 @@ key: quiz-materialval-vad-ar-sant-tva-ratta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 1, fråga 5; Canvas, Fo 2 Materialval, s. 5, 6, 7
+flagga: Quizens rätta alternativ "Alla material som är kvar efter sållningen kan användas för att göra produkten" är tvetydigt, eftersom det är rangordningen som avgör vilket material som är bäst. Kortet säger nu att materialen "uppfyller kraven och kan därför användas i komponenten" (Fö 2 Materialval s. 5 till 7). Godkänns omformuleringen, och ska Quiz vecka 1 fråga 5 ändras likadant?
 
 - [x] Material som inte klarar kraven kan inte användas i komponenten.
 - [x] Material som finns kvar efter sållningen uppfyller kraven och kan därför användas i komponenten.
@@ -147,6 +151,7 @@ key: quiz-materialindex-vad-ar-ratt-2-ratta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 3, fråga 9; Canvas, Fo 2 Materialval, s. 6, 7; Canvas, Kapitel_03 Materialval, s. 35; Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25; Canvas, performance-indices-booklet-bokpeien22, s. 2
+flagga: Quizens felaktiga alternativ "materialindex rangordnar material efter hur bra de uppfyller kraven" var fel bara på ordet krav (index rangordnar efter målet) och kunde läsas som rätt. Det är utbytt mot "Materialindex används i sållningen för att ta bort de material som inte uppfyller kraven" (Fö 2 Materialval s. 6, 7; Kapitel_03 s. 26), så kortet avviker från Quiz vecka 3 fråga 9. Godkänns bytet?
 
 - [ ] Materialindex används i sållningen för att ta bort de material som inte uppfyller kraven.
 - [x] Ett materialindex kan innehålla en eller flera materialegenskaper.
@@ -263,6 +268,7 @@ key: materialindex-billig-stark-balk
 typ: alternativ
 status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 34, 35
+flagga: Kortet underkänner distraktorn σy^(2/3)/Cm för att densiteten saknas, i linje med Kapitel_03 s. 34 (Cm gånger ρ). Kursens egna lösningar skriver kostnadsindex utan ρ (Övning 3 m lösningar s. 5 svar 10d och Materialval Flera mål s. 4), så en student som följer lösningarna kan välja distraktorn. Är lösningarna en förkortning eller ett fel, och ska kortet nämna det?
 
 - [x] $\sigma_y^{2/3}/(C_m\rho)$
 - [ ] $\sigma_y^{2/3}/\rho$

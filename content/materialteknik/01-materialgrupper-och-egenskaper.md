@@ -153,6 +153,7 @@ key: ge-minst-tva-exempel-pa-mekaniska
 original: ja
 status: utkast
 källa: Rättelse: brottseghet beskrevs som den last vid vilken materialet går sönder, men brottseghet är materialets motstånd mot spricktillväxt; Canvas, Kapitel_02 Material och tillverkning databaser, s. 26; Canvas, Fo 8 Plasticitet, s. 26; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 28
+flagga: Rättelse av originalkortet: brottseghet beskrevs som "vid vilken last ett material går sönder" (ordagrant Fö 1 HT25 s. 28), vilket snarare beskriver brottgränsen. Nu står "materialets motstånd mot spricktillväxt (K1c)" enligt Kapitel_02 s. 26 och Kapitel_08 s. 7. Godkänns rättelsen?
 
 * Styvhet
   - Hur mycket ett material
@@ -224,6 +225,7 @@ Ett material som är uppbyggt av en metall och en icke-metall (minst).
 key: adhesiv-forslitning
 typ: begrepp
 original: ja
+flagga: Kortet saknar källa i 2025 och 2026 års föreläsningar: nötning (Ashby kap. 11) finns inte i läsanvisningen 2026, och baksidan är i stort sett facit till tentan 2019-10-26 uppg. 1f. Ingår adhesiv förslitning i årets kurs, eller ska kortet inaktiveras?
 
 Vid nötningen binds materialen samman med atomära bindningar, och material rycks bort när ytorna glider mot varandra. De två materialen svetsas punktvis samman, och slits isär.
 
@@ -231,6 +233,7 @@ Vid nötningen binds materialen samman med atomära bindningar, och material ryc
 key: abrasiv-forslitning
 typ: begrepp
 original: ja
+flagga: Kortet saknar källa i 2025 och 2026 års föreläsningar: nötning (Ashby kap. 11) finns inte i läsanvisningen 2026, och baksidan är ordagrant facit till tentan 2016-10-29 uppg. 1c. Ingår abrasiv förslitning i årets kurs, eller ska kortet inaktiveras?
 
 Förslitning som fås när ett hårt material/medium avverkar ytan.
 
@@ -252,6 +255,7 @@ key: quiz-vad-ar-sant-for-keramiska-material-tva
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 1, fråga 2; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 16, 17; Canvas, Fo 7 Styvhet, s. 4
+flagga: Quizens rätta alternativ "Alla keramer är kristallina förutom glas" är för starkt och har skrivits om till "Keramer är oftast kristallina; glas är ett undantag", som Fö 1 HT25 s. 17 säger. Godkänns omskrivningen, och ska Quiz vecka 1 fråga 2 i Canvas ändras likadant?
 
 - [x] Keramer är oftast kristallina; glas är ett undantag och är amorft.
 - [x] Den starka atombindningen hos keramer ger hög smälttemperatur.
@@ -278,6 +282,7 @@ key: quiz-vad-ar-sant-for-metaller-tva-ratta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 1, fråga 9; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 17, 19, 20; Canvas, Kapitel_02 Material och tillverkning databaser, s. 26; Canvas, Fo 13 Aluminium och andra metaller, s. 11
+flagga: Quizens rätta alternativ är förenklade: "Alla metaller kan gjutas" har blivit "Metaller kan gjutas" (Fö 1 HT25 s. 20), och "högre brottseghet än plaster och keramer" har begränsats till keramer, eftersom jämförelsen med plaster inte står i föreläsningstexten. Godkänns omskrivningen, och ska Quiz vecka 1 fråga 9 ändras likadant?
 
 - [x] Metaller har generellt sett högre brottseghet än keramer.
 - [x] Metaller kan gjutas.

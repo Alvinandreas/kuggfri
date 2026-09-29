@@ -12,6 +12,7 @@ key: beskriv-vad-en-anlopning-ar
 original: ja
 status: utkast
 källa: Rättelse: kortet angav fel temperatur (precis under ca 910 °C) och fel produkt (perlit + cementit); anlöpning sker vid måttlig temperatur och ger ferrit med fina cementitpartiklar; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, Lab_PM_M2_v2026, s. 11; Canvas, Lab_PM_M2_v2026, s. 13; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, Fö 12 Stål, s. 16; Canvas, Fö 12 Stål, s. 22; Canvas, Fö 12 Stål, s. 23; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 22; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 23
+flagga: Rättelse av originalkortet: anlöpning angavs ske precis under ca 910 °C och ge "perlit + cementit". Nu står måttlig temperatur under den eutektoida, ca 723 °C (727 °C i labb-PM:et), med exemplen ca 200 till 650 °C, och ferrit med mycket små cementitpartiklar (Fö 12 Stål s. 16, GLU_5-8 s. 25), men Fö 12 Stål s. 22, som står bland källorna, skriver fortfarande "perlit + cementit". Godkänns rättelsen, och ska bilden Fö 12 s. 22 rättas?
 
 Anlöpning görs efter martensithärdning, eftersom martensiten är mycket hård men ofta för spröd. Det härdade stålet värms till en måttlig temperatur, under den eutektoida temperaturen, ca 723 °C (727 °C i labb-PM:et). I föreläsningens exempel är anlöpningstemperaturen ca 200 till 650 °C, i labb-PM ca 500 °C.
 
@@ -96,6 +97,7 @@ typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: kortet likställde kallbearbetning (processen) med deformationshärdning (härdningsmekanismen som processen ger); Canvas, Fo 12 Stal, s. 4, 13; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 36
+flagga: Rättelse av originalkortet: det sa att kallbearbetning "även är känt som deformationshärdning" och likställde alltså processen med härdningsmekanismen. Nu står "även kallat kalldeformation", och deformationshärdningen beskrivs som följden av den högre dislokationstätheten (Fö 12 Stål s. 4, Kapitel_06 s. 36). Godkänns rättelsen?
 
 Kallbearbetning, även kallat kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
 
@@ -107,6 +109,7 @@ kallbearbetning → högre sträckgräns
 key: vad-innebar-rekristallation
 typ: begrepp
 original: ja
+flagga: Kortet saknar källa och kallar egenskapen efter deformation för kallbearbetning ("hårdare och sprödare egenskaper (detta kallas kallbearbetning)"), medan Fö 12 Stål s. 5 säger att kallbearbetning ger högre sträckgräns och minskad brottförlängning, inte ett sprött material i kursens mening. "Återställa dess ursprungliga egenskaper" finns inte heller i materialet. Ska kortet kortas till föreläsningens formulering (nya små korn med få dislokationer, lägre sträckgräns, ökad brottförlängning)?
 
 Rekristallisation är en process inom metallbearbetning där en deformerad metall omstrukturerar sin inre kristallstruktur för att minska spänningar och återställa dess ursprungliga egenskaper. När metallen deformeras plastiskt, till exempel genom valsning eller smidning, blir dess kristallstruktur och dislokationer störda, vilket leder till hårdare och sprödare egenskaper (detta kallas kallbearbetning).
 Rekristallisation sker när en deformerad metall värms upp till en specifik temperatur, kallad rekristallisationstemperaturen. Vid denna temperatur börjar nya, icke-deformerade korn att bildas inuti materialet. Dessa nya korn ersätter de gamla, deformerade kornen och bidrar till att:
@@ -119,6 +122,7 @@ Rekristallisation sker när en deformerad metall värms upp till en specifik tem
 key: vad-innebar-varmdeformation
 typ: begrepp
 original: ja
+flagga: Kortet säger att varmdeformation ofta sker över cirka 0,5 gånger smälttemperaturen i kelvin, men Fö 12 Stål s. 6 säger bara "över rekristallisationstemperaturen", och figuren på Fö 10 2025 s. 17 visar varmbearbetning vid ungefär 0,55 till 0,75 Tm. Ska siffran strykas eller ändras?
 
 Varmdeformation är en process där metaller deformeras vid temperaturer som är högre än deras rekristallisationstemperatur (ofta över cirka 0,5 gånger smälttemperaturen i kelvin). Vid dessa temperaturer kan metallens kristallstruktur rekonstrueras samtidigt som deformationen sker, vilket gör att nya korn kan bildas kontinuerligt under bearbetningen. Detta innebär att materialet inte härdas, och det behåller sin duktilitet och formbarhet. Varmdeformation används ofta för stora formändringar, exempelvis vid smidning och valsning i höga temperaturer.
 
@@ -130,6 +134,7 @@ Kortfattat:
 ## Beskriv kortfattat vad skillnaden mellan kall- och varmdeformation är.
 key: beskriv-kortfattat-vad-skillnaden
 original: ja
+flagga: Kortet säger att kalldeformerat material blir "starkare men samtidigt sprödare" och att inga spänningar byggs upp vid varmdeformation, medan Fö 12 Stål s. 5 och 6 säger högre sträckgräns och minskad brottförlängning respektive deformation utan att sträckgränsen höjs. Ska formuleringarna ändras till föreläsningens?
 
 Skillnader kortfattat:
 
@@ -203,6 +208,7 @@ Därefter behandlas stålet:
 ## Ge minst två exempel på värmebehandlingar för stål.
 key: ge-minst-tva-exempel-pa
 original: ja
+flagga: Kortet säger om normalisering att den är "lämpligt för konstruktioner där styvheten är viktig" (Fö 12 Stål s. 15), men enligt Kapitel_04 s. 12 ändrar värmebehandling inte E-modulen i metaller. Ska bisatsen strykas eller förtydligas, på samma sätt som på kortet stal-normalisering?
 
 * Normalisering: austenitisering + långsam kylning → primär ferrit eller cementit + perlit. Andel perlit ges av kolhalten. Ger ”normal” mikrostruktur, lämpligt för konstruktioner där styvheten är viktig.
 * Mjukglödgning: värmning till temperatur under austenittemperatur (723 C) → diffusion och korntillväxt, sfäroidiserad perlit, lägre sträckgräns. Används för
@@ -253,6 +259,7 @@ diffusion ger sfäroidiserad cementit.
 key: verktygsstal
 typ: begrepp
 original: ja
+flagga: Kortet kallar verktygsstål "höglegerat stål med hög kolhalt", ordagrant facit till tentan 2016-10-29 uppg. 1d, men facit till tentan 2022-11-29 säger att verktygsstål "legeras ofta", Fö 12 Stål s. 14 placerar det under hög kolhalt utan krav på hög legering, och det finns olegerade kolverktygsstål. Ska "höglegerat" ändras till t.ex. "ofta legerat"?
 
 Höglegerat stål med hög kolhalt. Används i härdat tillstånd. Hårt och värmetåligt.
 
@@ -273,6 +280,7 @@ svar: falskt
 original: ja
 status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 29; Canvas, Lab_PM_M2_v2026, s. 12; Canvas, Övning 7 m lösningar, s. 5
+flagga: Tentan 2020-10-24 uppg. 1j ("I stål bildar kol cementit, men i gjutjärn förekommer kolet som ren grafit", facit ja) är omskriven till "I grått gjutjärn och segjärn förekommer allt kol som ren grafit" med facit falskt, eftersom Fö 12 Stål s. 29 anger perlit och grafit. Men svaret beror på grundmassan: i ferritiskt gråjärn och segjärn finns i praktiken allt kol som grafit, så frågan prövar mest ordet "allt". Håller examinatorn med om facit falskt, eller ska påståendet formuleras om så att det blir entydigt?
 
 Falskt. Gjutjärn har 2 till 4 % C, och i de vanliga typerna gråjärn och segjärn består mikrostrukturen av perlit och grafit. Perlit är ferrit och cementit ($\text{Fe}_3\text{C}$), så en del av kolet är bundet som cementit. Grafiten är fjällformad i gråjärn och sfärisk i segjärn. I stål bildar kolet cementit.
 
@@ -324,6 +332,7 @@ key: stal-normalisering
 typ: begrepp
 status: utkast
 källa: Canvas, Short_dictionary_ v2026, s. 10; Canvas, Fö 12 Stål, s. 15; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1h
+flagga: Kortet säger att normalisering ger en mikrostruktur "lämplig för konstruktioner där styvheten är viktig", som på Fö 12 Stål s. 15, men enligt Kapitel_04 s. 12 påverkar värmebehandling inte E-modulen i metaller (och tentan 2020 uppg. 1a har facit nej på att värmebehandling ökar E-modulen). Menar bilden styrka eller seghet, och ska bisatsen strykas eller förtydligas?
 
 Värmebehandling av stål: austenitisering följd av långsam kylning i luft. Man får jämviktsstrukturen, primär ferrit eller cementit plus perlit, där andelen perlit ges av kolhalten. Normalisering ger en "normal" mikrostruktur, lämplig för konstruktioner där styvheten är viktig.
 
@@ -382,6 +391,7 @@ key: stal-11-cementit-och-martensit
 typ: alternativ
 status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 12, 13; Canvas, Fo 12 Stal, s. 17, 18; Canvas, GLU 02 Fasdiagram, s. 17
+flagga: Kolhalten byttes efter granskningen från 1,2 till 1,1 % C för att inte ge samma svar som tentan 2023 uppg. 3b, men 1,1 % C är legeringen i tentan 2016-10-29 uppg. 4b, där svarsförslaget får samma fördelning 95/5 med samma hävstångsregel. Ändringen har inte granskats oberoende. Duger kortet, eller ska kolhalten bytas igen?
 
 - [x] Ca 95 % martensit med ca 0,8 % C och 5 % cementit
 - [ ] 100 % martensit med 1,1 % C
@@ -395,6 +405,7 @@ key: anlopning-andel-cementit
 typ: alternativ
 status: utkast
 källa: Canvas, Fo 12 Stal, s. 16, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24, 25; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, GLU 02 Fasdiagram, s. 17
+flagga: Kortet räknar andelen cementit i anlöpt martensit med hävstångsregeln mellan ferrit och cementit (0,45/6,67, ca 7 %), som facit till tentan 2020-10-24 uppg. 4b. Facit till 2023-10-23 uppg. 3c anger inga andelar, och Fö 12 Stål s. 16 säger bara att kolhalten avgör andelen cementit. Är det en beräkning kursen förväntar sig?
 
 - [x] Ca 7 %
 - [ ] Ca 56 %
@@ -421,6 +432,7 @@ key: mjukglodgat-normaliserat-jamforelse
 typ: alternativ
 status: utkast
 källa: Canvas, Fo 12 Stal, s. 15; Canvas, Lab_PM_M2_v2026, s. 11, 12; Canvas, GLU 02 Fasdiagram, s. 17, 19
+flagga: Kortet gäller samma situation som tentan 2024-10-31 uppg. 4c och 4d (eutektoid stål, mjukglödgat mot normaliserat, samma andel ferrit), och två av alternativen motsvarar tentans alternativ i 4d. Ligger kortet för nära tentan?
 
 - [x] I det mjukglödgade provet är cementiten sfäroidiserad, som runda partiklar i ferrit.
 - [x] Det normaliserade provet har lamellär perlit, omväxlande lameller av ferrit och cementit.

@@ -3,6 +3,7 @@
 ## Nämn minst två olika typer av polymerer och vad som kännetecknar dem.
 key: namn-minst-tva-olika-typer-av-polymerer
 original: ja
+flagga: Kortet anger "Kovalenta bindningar" som kännetecken för härdplaster, men även termoplasternas kedjor hålls ihop av kovalenta bindningar; det som skiljer är kovalenta tvärbindningar mellan kedjorna (MTT085 PM 1 s. 10). Ska det stå "kovalenta tvärbindningar mellan kedjorna"?
 
 * Termoplaster
   - Långa polymerkedjor
@@ -65,6 +66,7 @@ key: quiz-thermosets-hardplaster-tva-ratta-svar
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz Polymeric materials Fo15-18, fråga 4; Canvas, MTT085 PM 1, s. 10; Canvas, 2025 MTT085 Fo15, s. 44; Canvas, MTT085 PM 2, s. 4
+flagga: Quizens felaktiga alternativ "är gjorda för högtemperaturapplikationer" kan uppfattas som delvis rätt (härdplaster används både över och under Tg, Lab-PM Polymer s. 2) och är omskrivet till "De definieras som den grupp polymerer som tagits fram för högtemperaturtillämpningar". Godkänns omskrivningen, eller ska quizens ordalydelse stå kvar?
 
 - [x] De tillverkas av monomerer med fler än två bindningsställen (funktionalitet > 2)
 - [x] De är amorfa
@@ -149,6 +151,7 @@ key: polymer-anvandningsintervall-delkristallin
 typ: alternativ
 status: utkast
 källa: Canvas, MTT085 PM 2, s. 4; Canvas, 2025 MTT085 Fo16, s. 18
+flagga: Alternativet "Under Tg" är markerat som fel enligt MTT085 PM 2 s. 4, men det finns delkristallina termoplaster som används under sitt Tg, t.ex. PET (Tg ca 75 °C) i flaskor, så distraktorn är inte entydigt fel. Ska frågan precisera "typiskt" eller distraktorn bytas ut?
 
 - [x] Mellan Tg och Tm
 - [ ] Under Tg
@@ -225,6 +228,7 @@ typ: sant-falskt
 svar: sant
 status: utkast
 källa: Canvas, MTT085 PM 1, s. 3; Canvas, 05142_03-3 (Osswald kap. 3), s. 2; Canvas, 2025 MTT085 Fo15, s. 14
+flagga: Påståendet slår ihop två av de rätta påståendena i tentan 2025-10-30 uppg. 7a (kovalenta bindningar i kedjan, van der Waals mellan kedjorna), och förklaringen följer facit till tentan 2016-10-29 uppg. 7.2; samma fakta står i PM 1 s. 3. Ligger kortet för nära tentan?
 
 C–C-bindningarna i huvudkedjan är kovalenta och starka, medan krafterna mellan kedjorna är van der Waals-krafter och svaga. Därför bestäms polymerens hållfasthet i praktiken av krafterna mellan kedjorna, och längre kedjor ger ett starkare material.
 
@@ -305,6 +309,7 @@ Temperaturen där en amorf polymer, eller de amorfa delarna av en delkristallin 
 key: polymer-varfor-termiska-isolatorer
 status: utkast
 källa: Canvas, MTT085 PM 2, s. 1–2; Canvas, 2025 MTT085 Fo16, s. 7–8, 21; Canvas, 2025 MTT085 Fo15, s. 21
+flagga: Kortet säger att värme i metaller leds som gittervibrationer (fononer), som i MTT085 PM 2 s. 1, men i metaller leds värme främst av de fria elektronerna, vilket korten i område 01 också säger (elektronmoln ger termisk ledning). Ska meningen strykas eller skrivas om så att korten inte motsäger varandra?
 
 I metaller leds värme som vågor av gittervibrationer (fononer). En lång polymermolekyl kan ses som atomer med bindningar som inte är lika i alla riktningar, så en temperaturökning kan fördelas på väldigt många vibrationsmoder i molekylen. Därför isolerar polymerer. Skum isolerar bäst, t.ex. frigolit (PS-skum), eftersom de innehåller mycket luft.
 
@@ -356,6 +361,7 @@ key: polymer-struktur-bild-hardplast
 typ: alternativ
 status: utkast
 källa: Canvas, MTT085 PM 1, s. 7, 8, 10; Canvas, 2025 MTT085 Fo15, s. 44
+flagga: Kortet visar tre schematiska polymerstrukturer A, B och C i en egen figur och frågar vilken som är en härdplast, vilket i stort sett är tentan 2024-08 uppg. 7 (matcha strukturerna A, B och C mot delkristallin termoplast, amorf termoplast och härdplast). Ligger kortet för nära tentan?
 
 - [x] A
 - [ ] B
@@ -394,6 +400,7 @@ key: polymer-hardplaster-forkortningar
 typ: alternativ
 status: utkast
 källa: Canvas, 05142_01-3 (Osswald kap. 1), s. 9; Canvas, 2025 MTT085 Fo16, s. 20; Canvas, MTT085 PM 1, s. 10
+flagga: Kortet säger att 80 % av härdplasterna används som matris i kompositer, som MTT085 PM 1 s. 10, men Polymeric materials L4-5 s. 1 använder samma 80 % om att härdplaster utgör ca 80 % av kompositernas produktionsvolym, vilket är ett annat påstående. Vilken uppgift stämmer, eller ska siffran strykas?
 
 - [x] PF, fenolformaldehyd
 - [x] EP, epoxi

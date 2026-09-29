@@ -3,6 +3,7 @@
 ## Vad i materialtillverkningsprocessen kräver energi och vad innebär detta för miljön?
 key: vad-i-materialtillverkningsprocessen
 original: ja
+flagga: Raden "Kan minskas genom att återanvända värme" går inte att belägga i kursmaterialet; resten av kortet stöds av Fö 12 Stål s. 12 och Fö 13 Hållbarhet s. 6. Ska raden stå kvar?
 
 Energiintensiva processer:
 
@@ -21,6 +22,7 @@ key: hur-ateranvandningsbara-ar-egentligen
 original: ja
 status: utkast
 källa: Rättelse: kortet sa att metall från skrot alltid har samma egenskaper som metall från mineral, men kursen säger att återvunnen metall kan ge lika bra material (och kortet räknar själv upp legeringsproblemen); energisiffrorna 1/10 för Al och 1/3 för stål går inte att belägga i kursmaterialet och är strukna; Canvas, Fo 13 Hallbarhet, s. 21; Canvas, Fo 12 Stal, s. 12; Canvas, Kapitel_03 Materialval, s. 45
+flagga: Rättelse av originalkortet: "har samma egenskaper" som metall från malm är ändrat till "kan ge lika bra material" (Fö 13 Hållbarhet s. 21), och energisiffrorna 1/10 för Al och 1/3 för stål är strukna eftersom de inte finns i kursmaterialets text. Raderna "Koppar och tenn förstör stål", "Fe försprödar Al" och "Bly, kadmium och kvicksilver är ofta oönskat i legeringar" står kvar utan källa (Fö 13 Hållbarhet s. 2 nämner bly och kadmium bara som hälsovådliga). Godkänns rättelsen, och ska de tre raderna beläggas eller strykas?
 
 * Metallskrot är en utmärkt råvara för metalltillverkning
 * Kräver mindre energi än tillverkning från malm
@@ -41,6 +43,7 @@ key: hur-bra-ar-aluminium-sett-ur-ett
 original: ja
 status: utkast
 källa: Rättelse: kortet sa att aluminium är det vanligaste grundämnet i jordskorpan, vilket inte stämmer och inte står i kursmaterialet; Canvas, Fö 13 Hållbarhet, s. 13; Canvas, Fö 13 Hållbarhet, s. 17; Canvas, Kapitel_03 Materialval, s. 45; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 5
+flagga: Rättelse av originalkortet: "Det vanligaste grundämnet i jordskorpan" (det är syre) är ersatt med att Al finns i god tillgång (Fö 13 Hållbarhet s. 13), och raderna om 8 till 14 % Si och Fe-förorening är strukna eftersom de saknas i materialet. Kortet förklarar också den låga energin vid omsmältning med att Al har lägre smälttemperatur än stål (Kapitel_03 s. 45), men Kapitel_12 s. 8 säger att det krävs ungefär lika mycket energi att smälta om 1 kg stål som 1 kg aluminium. Godkänns rättelsen, och vilken förklaring ska kortet ge?
 
 Aluminium:
 
@@ -55,6 +58,7 @@ Problem vid återvinning av aluminium:
 ## Hur bra är stål respektive rostfritt stål sett ur ett hållbarhetsperspektiv?
 key: hur-bra-ar-stal-respektive-rostfritt
 original: ja
+flagga: Sammansättningen Cr ca 18 %, Ni ca 8 % och eventuellt Mo 2 % står inte i kursmaterialet; Fö 12 Stål s. 28 säger bara att rostfritt stål legeras med Cr och Ni, och siffrorna gäller vanliga austenitiska rostfria stål, inte ferritiska och martensitiska. Ska siffrorna stå kvar, t.ex. som exempel på austenitiskt rostfritt stål?
 
 Stål:
 
@@ -103,6 +107,7 @@ För metaller:
 ## Hur ser tillgången på metaller i jordskorpan ut?
 key: hur-ser-tillgangen-pa-metaller-i
 original: ja
+flagga: Uppgiften att 69 element räknas som strategiska eller kritiska, och listan med bland annat U, Th, Pu, W, Ta och Nb, finns inte i kursmaterialet; Fö 13 Hållbarhet s. 8 nämner kritiska metaller utan antal och s. 13 listar Ti, Fe och Al (inte Mg) som tillgängliga. Plutonium förekommer knappt naturligt. Finns det en källa, eller ska kortet förenklas till det som står på bilderna?
 
 * De vanligaste metallerna finns i stor omfattning i jordskorpan: Fe, Al, Mg, Ti
 * Vissa legeringsämnen finns i begränsad mängd i jordskorpan
@@ -114,6 +119,7 @@ key: sammanfatta-lite-kort-hur-metaller
 original: ja
 status: utkast
 källa: Rättelse: "Ger lika bra material" var ett absolut påstående; föreläsningen säger "Kan ge lika bra material", eftersom föroreningar och legeringsämnen kan ställa till problem; Canvas, Fo 13 Hallbarhet, s. 21
+flagga: Rättelse av originalkortet: "Ger lika bra material" är ändrat till "Kan ge lika bra material", ordagrant Fö 13 Hållbarhet s. 21. Svarsförslaget till tentan 2025-10-30 uppg. 6c säger dock att återvinning alltid ger förluster och kvalitetsnedgång, medan tentan 2022 uppg. 5b säger att i princip inga egenskaper försämras. Godkänns rättelsen, och vilken linje ska korten följa?
 
 * Metaller lämpar sig väl för återvinning
   - Sparar resurser och energi
@@ -210,6 +216,7 @@ key: hallb-atervinning-ensam-racker-inte
 typ: alternativ
 status: utkast
 källa: Canvas, Fo 13 Hallbarhet, s. 7, 8, 21
+flagga: Det felaktiga alternativet "Metaller förlorar alltid sina egenskaper när de återvinns" följer Fö 13 Hållbarhet s. 21 ("kan ge lika bra material"), men svarsförslaget till tentan 2025-10-30 uppg. 6c säger att det alltid uppstår förluster och kvalitetsnedgång vid återvinning, så en student som läst svarsförslaget kan välja alternativet. Är alternativet entydigt fel?
 
 - [x] Efterfrågan på metaller är i dag större än mängden skrot som finns att återvinna.
 - [x] Alla material kan återvinnas, men återvinningen kostar energi och resurser.

@@ -11,7 +11,8 @@ key: vad-ar-ferrit-och-nar-uppstar-det
 typ: begrepp
 original: ja
 status: utkast
-källa: Rättelse: temperaturen följer nu 2026 års material och δ-ferriten nämns, så att "upp till 910 °C" inte läses som enda BCC-området; Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_Optisk_Mikroskopi_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
+källa: Rättelse: temperaturen följer nu 2026 års material och δ-ferriten nämns, så att "upp till 910 °C" inte läses som enda BCC-området; Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_M2_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
+flagga: Rättelse av originalkortet: "rent järn upp till 910 °C" (Fö 4 2025 s. 14) är ändrat till ca 913 °C (GLU 02 s. 4), och δ-ferriten över ca 1394 °C är tillagd efter Lab-PM:ets fasdiagram, som visar 912 °C (Lab_PM_M2_v2026 s. 4); kortet förklarar själv skillnaden. Godkänns rättelsen, och ska korten ange 910, 912 eller 913 °C?
 
 ![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
 
@@ -26,7 +27,8 @@ key: vad-ar-austenit-och-nar-uppstar-det
 typ: begrepp
 original: ja
 status: utkast
-källa: Rättelse: "upp över 910 °C" gällde inte över ca 1394 °C, där rent järn blir delta-ferrit (BCC); Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_Optisk_Mikroskopi_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
+källa: Rättelse: "upp över 910 °C" gällde inte över ca 1394 °C, där rent järn blir delta-ferrit (BCC); Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_M2_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
+flagga: Rättelse av originalkortet: "rent järn upp över 910 °C" gällde inte över ca 1394 °C där järnet blir δ-ferrit, så kortet anger nu austenit mellan ca 913 °C (GLU 02 s. 4) och ca 1394 °C (Lab_PM_M2_v2026 s. 4); lösligheten ca 2,1 % C står kvar från Fö 4 s. 14. Figuren visar 912 °C. Godkänns rättelsen och temperaturen?
 
 ![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
 
@@ -38,6 +40,7 @@ Figuren följer Lab-PM:ets fasdiagram (912 °C); GLU 02 anger 913 °C.
 key: vad-ar-cementit-och-nar-uppstar-det
 typ: begrepp
 original: ja
+flagga: Kortet kallar cementit en "intermediär fas" som Fö 12 Stål s. 17, men GLU 02 s. 18 och kortet intermetall använder intermediär för faser med brett sammansättningsintervall, och Fe3C har exakt sammansättning (6,67 % C). Baksidan säger dessutom inte när cementit uppstår, trots att frågan gäller det. Vilken term ska kortet använda, och ska baksidan kompletteras?
 
 Cementit, Fe₃C, intermediär fas, 6,67 % C, mycket hård
 
@@ -54,6 +57,7 @@ typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: definitionen var otydlig och saknade att fasen har (nära) stökiometrisk sammansättning; Canvas, GLU 02 Fasdiagram, s. 18, 21; Canvas, Fo 4 Fasdiagram, s. 13
+flagga: Rättelse av originalkortet: definitionen har fått tillägget att fasen har exakt eller nära stökiometrisk sammansättning och att faser med bredare intervall kallas intermediära (GLU 02 s. 18). Fö 4 Fasdiagram 2025 s. 13 använder i stället intermediär fas som samlingsnamn och säger att en intermetallisk fas kan ha ett intervall, och cementitkortet kallar den stökiometriska Fe3C för intermediär fas. Vilken definition ska gälla?
 
 En mellanliggande fas i fasdiagrammet som bara består av metaller (minst två). Den har exakt eller nära stökiometrisk sammansättning, t.ex. CuAl₂ i Al-Cu, och syns som ett smalt enfasområde. Mellanliggande faser med ett bredare sammansättningsintervall kallas intermediära faser.
 
@@ -72,6 +76,7 @@ svar: falskt
 original: ja
 status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 17; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Lab_PM_M2_v2026, s. 10
+flagga: Originalkortet angav den eutektoida temperaturen till ca 727 °C, men omskrivningen till sant/falskt säger ca 0,8 % C och ca 723 °C som GLU 02 s. 19, medan Lab_PM_M2_v2026 s. 11 använder 0,77 % C och 727 °C. Påståendet och facit (falskt) är i övrigt entydiga. Vilka värden ska Fe-C-korten använda?
 
 ![Förenklat Fe–C-diagram för stål med den eutektoida punkten S vid ca 0,8 % C och ca 723 °C](/kort/materialteknik/fe-c-stalhornet.svg)
 
@@ -130,6 +135,7 @@ key: quiz-fasdiagram-tva-ratt
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 2, fråga 6; Canvas, GLU 02 Fasdiagram, s. 8, 14, 22; Canvas, Lab_PM_M2_v2026, s. 4, 6
+flagga: Quizens rätta alternativ "Två enfasområden har alltid ett tvåfasområde mellan sig" och "Ett fasdiagram visar bara stabila faser" är omskrivna utan "alltid" och "bara"; det första gäller nu bara binära diagram, eftersom järnets unära diagram (Lab_PM_M2_v2026 s. 4) saknar tvåfasområden. Godkänns omskrivningen, och ska Quiz vecka 2 fråga 6 ändras?
 
 - [x] I ett binärt fasdiagram ligger det tvåfasområden mellan enfasområdena.
 - [ ] Ett fasdiagram visar hur stabila faser ändras med tiden.
@@ -143,6 +149,7 @@ key: quiz-stals-fasdiagram-vad-ar-sant-tva-ratt
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 2, fråga 7; Canvas, GLU 02 Fasdiagram, s. 4, 16, 19, 20; Canvas, Fo 4 Fasdiagram, s. 14; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15; Canvas, Short_dictionary_ v2026, s. 2, 6
+flagga: Quizens felaktiga alternativ "Om man löser in kol i ferrit så bildas austenit" kan läsas som sant (vid ca 850 °C är rent järn ferrit men ett stål med 0,3 % C austenit, GLU_5-8 s. 15) och är utbytt mot "Austenit är ferrit med inlöst kol". Godkänns bytet, och ska Quiz vecka 2 fråga 7 ändras?
 
 - [ ] Cementit, ferrit och martensit är alla faser i fasdiagrammet.
 - [x] Cementit är den fas i stål som innehåller mest kol.
@@ -158,6 +165,7 @@ key: quiz-eutektiska-och-eutektoida-reaktioner
 typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 2, fråga 8; Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 2, 17; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20
+flagga: Quizens rätta alternativ "Eutektoida reaktioner kräver diffusion, annars händer inget" stämmer inte bokstavligt, eftersom det bildas martensit vid snabbkylning; kortet säger nu "utan diffusion sker ingen eutektoid reaktion". Godkänns omskrivningen, och ska Quiz vecka 2 fråga 8 ändras?
 
 - [x] Vid både eutektiska och eutektoida reaktioner är temperaturen konstant.
 - [ ] Perlit bildas vid en eutektisk reaktion ur smälta.
@@ -251,6 +259,7 @@ typ: sant-falskt
 svar: sant
 status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 10, 11, 12; Canvas, GLU 02 Fasdiagram, s. 19, 20
+flagga: Kortet och figuren anger den eutektoida punkten till ca 0,8 % C och 723 °C och hänvisar till Lab_PM_M2_v2026 s. 10 till 12, men labb-PM:et använder 0,77 % C och 727 °C (GLU 02 s. 19 har 0,8 % och 723 °C). Samma värden finns på alla Fe-C-kort, och studenterna möter båda på labben. Ska korten nämna labb-PM:ets värden, som ferrit- och austenitkorten gör för 912/913 °C?
 
 ![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
 
@@ -361,6 +370,7 @@ typ: sant-falskt
 svar: sant
 status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 15; Canvas, Lab_PM_M2_v2026, s. 7, 8, 9
+flagga: Kortet anger den eutektiska temperaturen i Al-Si till ca 577 °C som Lab_PM_M2_v2026 s. 9, men bilden i Exempel fasdiagram s. 8 visar enligt granskningen 557 °C. Stämmer 577 °C, och ska bilden i Exempel fasdiagram rättas?
 
 ![Fasdiagrammet för Pb–Sn med eutektisk punkt vid 61,9 % Sn och 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 
@@ -397,6 +407,7 @@ key: havstang-stal-035-andel-perlit
 typ: alternativ
 status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 16, 17, 19; Canvas, Fo 12 Stal, s. 17, 18; Canvas, Lab_PM_M2_v2026, s. 12
+flagga: Kortet räknar rätt med hävstångsregeln (0,35 % C ger ca 56 % primär ferrit), men GLU_5-8 s. 15 säger att ett stål med 0,3 % C får "ca 30 %" primär ferrit, medan hävstångsregeln ger ca 63 %. Studenter som jämför kortet med bilden får olika svar. Är siffran på bilden fel, och ska den rättas i Canvas?
 
 - [x] Ca 44 % perlit och 56 % primär ferrit
 - [ ] Ca 56 % perlit och 44 % primär ferrit
@@ -476,6 +487,7 @@ typ: sant-falskt
 svar: sant
 status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9, 10; Canvas, Lab_PM_M2_v2026, s. 7, 8; Canvas, GLU 02 Fasdiagram, s. 13, 14
+flagga: Kortet säger att andelen eutektikum inte ändras när en Pb-Sn-legering svalnar från 183 °C till rumstemperatur. GLU_5-8 s. 10 beskriver bara att Sn-rik fas skiljs ut i den Pb-rika fasen, och att andelen eutektikum är oförändrad står uttryckligen bara i svarsförslaget till tentan 24-10 uppg. 3c. Räcker det som belägg?
 
 Sant. Strukturbeståndsdelarna, primär $\alpha$ och eutektikum, bildas vid stelningen och finns kvar vid fortsatt svalning. Under 183 °C minskar lösligheten av Sn i Pb, så Sn-rik fas $\beta$ bildas som utskiljningar i den Pb-rika fasen. Andelarna av faserna $\alpha$ och $\beta$ ändras alltså något, medan andelarna av strukturbeståndsdelarna är desamma.
 
@@ -497,6 +509,7 @@ key: al-cu-max-halt-utskiljningshardning
 typ: alternativ
 status: utkast
 källa: Canvas, Exempel fasdiagram, s. 7; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU 02 Fasdiagram, s. 13; Canvas, Lab_PM_M2_v2026, s. 7
+flagga: Svaret "knappt 6 % Cu" och figuren al-cu-alhornet.svg bygger på en avläsning av Exempel fasdiagram s. 7, där maxlösligheten inte står utskriven, medan svarsförslaget till tentan 2025-01 uppg. 8c säger "under 5,5 % Cu". Kortet prövar samma kunskap som 25-01 uppg. 8c och 24-08 uppg. 3a men med egen formulering. Stämmer avläsningen, och ligger kortet tillräckligt långt från tentorna?
 
 - [x] Knappt 6 % Cu
 - [ ] Ca 33 % Cu
@@ -510,6 +523,7 @@ key: al-cu-havstang-andel-theta
 typ: alternativ
 status: utkast
 källa: Canvas, Exempel fasdiagram, s. 7; Canvas, GLU 02 Fasdiagram, s. 16, 17, 21
+flagga: Kortet räknar med att θ (CuAl2) har ca 54 % Cu, ett värde som är avläst i Exempel fasdiagram s. 7 där det inte står utskrivet; svaret blir ca 6 % θ och räkningen stämmer. Stämmer avläsningen?
 
 - [x] Ca 6 %
 - [ ] 3 %

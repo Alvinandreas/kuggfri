@@ -12,6 +12,7 @@ original: ja
 ## Atombindningar kan jämföras med linjära fjädrar. Hur kommer detta sig och varför gör man det?
 key: atombindningar-kan-jamforas-med-linjara
 original: ja
+flagga: Kortet anger "E-modulen = S x n" med S som bindningens styvhet och n som antalet bindningar per area, ordagrant från Fö 7 Styvhet 2025. Sambandet går inte ihop i enheter (N/m gånger 1/m² ger N/m³, inte Pa); fjädermodellen ger E ≈ S/r0 där r0 är atomavståndet (Ashby). Ska formeln rättas, eller skrivas som ett proportionalitetssamband?
 
 Man brukar likna atombindningar med linjära fjädrar för att de har liknande egenskaper.
 Om:
@@ -50,6 +51,7 @@ key: hur-ser-ett-typiskt-dragprov-ut-for-ett-2
 original: ja
 status: utkast
 källa: Rättelse: "polymerer" som exempel på sega material stämmer inte generellt, eftersom amorfa termoplaster (med undantag som PC) och härdplaster är spröda vid rumstemperatur; det är de delkristallina termoplasterna, mellan Tg och Tm, som är sega; Canvas, MTT085 Polymeric materials L6, s. 7, 8; Canvas, Lab-PM Polymer_MTT085-1, s. 2; Canvas, MTT085-Turorials-Part12, s. 3; Canvas, Fo 7 Styvhet, s. 7
+flagga: Rättelse av originalkortet: exemplen på sega material var "Metaller, polymerer" (ordagrant Fö 7 Styvhet s. 7), men amorfa termoplaster (utom t.ex. PC) och härdplaster är spröda vid rumstemperatur (L6 s. 7, 8; Lab-PM Polymer s. 2). Nu står "Metaller, delkristallina termoplaster (mellan Tg och Tm)", vilket avviker från metalldelens bild. Godkänns rättelsen?
 
 * Elastiskt beteende upp till
 sträckgränsen
@@ -65,6 +67,7 @@ key: vilka-egenskaper-kan-observeras
 original: ja
 status: utkast
 källa: Rättelse: "seghet = arean under dragprovkurvan" (2025) krockar med 2026 års definition av seghet som motstånd mot spricktillväxt, som inte kan fås ur dragprov; arean beskrivs nu som brottarbete; Canvas, Kapitel_08 Seghet och Brott, s. 2, 7; Canvas, Fo 9 Brott och brottseghet, s. 11; Canvas, Kapitel_04 Elastisk deformation, s. 20; Canvas, Fo 7 Styvhet, s. 9; Canvas, Kapitel_03 Materialval, s. 15; Canvas, Fo 8 Plasticitet, s. 2
+flagga: Rättelse av originalkortet: "Seghet = arean under dragprovkurvan" (Fö 7 Styvhet 2025 s. 9) krockar med 2026 års definition av seghet som motstånd mot spricktillväxt, som enligt Kapitel_08 s. 2 inte kan fås från dragprov. Arean kallas nu brottarbete (Fö 9 s. 11). Godkänns rättelsen?
 
 ![Spännings–töjningskurva från dragprov med E, Rp0,2, Rm och brottförlängning](/kort/materialteknik/dragprovkurva.svg)
 
@@ -120,6 +123,7 @@ typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: töjning beskrevs som den procentuella förlängningen, men är den relativa längdändringen, dimensionslös och negativ vid tryck; Canvas, Kapitel_04 Elastisk deformation, s. 6, 7, 22; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 2; Canvas, Fo 7 Styvhet, s. 12
+flagga: Rättelse av originalkortet: töjning beskrevs som "den procentuella förlängningen", men enligt Kapitel_04 s. 6 och 7 är den den relativa längdändringen ΔL/L0, dimensionslös och negativ vid tryck, och anges ofta i procent. Godkänns rättelsen?
 
 Töjning är en geometrisk storhet: den relativa längdändringen, $\varepsilon = (L - L_0)/L_0$. Den är dimensionslös och anges ofta i procent (0,05 = 5 %). Dragspänning ger positiv töjning och tryckspänning negativ.
 
@@ -139,6 +143,7 @@ typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: isotropi definierades som att materialet kan beskrivas med minst två elastiska konstanter, men definitionen är att egenskaperna är lika i alla riktningar; Canvas, Kapitel_04 Elastisk deformation, s. 15, 21, 23; Canvas, Short_dictionary_ v2026, s. 8; Canvas, Fo 7 Styvhet, s. 13
+flagga: Rättelse av originalkortet: isotropi definierades som att materialet "kan beskrivas med minst två elastiska konstanter" (en läsning av Fö 7 Styvhet 2025 s. 13), men definitionen är att egenskaperna är desamma i alla riktningar (Kapitel_04 s. 23); E och ν står kvar och G = E/(2(1+ν)) är tillagt (Kapitel_04 s. 21). Godkänns rättelsen?
 
 Ett isotropt material har samma egenskaper oavsett i vilken riktning de mäts. Dess elastiska beteende beskrivs av två elastiska konstanter:
 

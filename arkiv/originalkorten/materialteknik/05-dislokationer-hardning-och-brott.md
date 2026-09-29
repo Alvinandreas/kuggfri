@@ -1,0 +1,145 @@
+# Dislokationer, härdning och brott
+
+## Hur mäts ett materials hårdhet?
+key: hur-mats-ett-materials-hardhet
+
+* Mäts med intryck
+* Olika metoder med
+olika form på
+indenter och olika
+last
+* Kopplar till
+sträckgräns
+
+## Vad kan det finnas för defekter i kristaller?
+key: vad-kan-det-finnas-for-defekter-i
+
+* Vakanser = atomer saknas
+* Inlösta atomer = atom av
+annan sort
+* Dislokationer = extra
+atomplan
+* Korngränser
+
+## Beskriv ingående vad dislokationer och dislokationsrörelser är och vad det innebär för materialet.
+key: beskriv-ingaende-vad-dislokationer-och
+
+Dislokationer är en typ av strukturmässig avvikelse i kristallen i form av "extra atomplan". De bryter alltså det annars uniforma mönstret hos kristallen.
+
+* När kristallen belastas över sträckgränsen kan dislokationer röra sig
+* Dislokationerna rör sig på glidsystem = glidplan + glidriktning
+* Glidningen ger upphov till en förskjutning som har storlek och riktning som glidvektorn, Burges vektor
+
+Dislokationen kan sättas i rörelse av skjuvspänningar och rör sig sedan i små steg. Detta ger upphov till små förskjutningar eller annars kallat; plastiska deformationer i kristallstrukturen.
+
+* Dislokationerna rör sig lättast i
+riktningar nära 45 grader mot
+belastningsriktningen
+* Plasticering sker under
+konstant volym
+* Ger upphov till skjuvband =
+band av plasticerat material
+
+## Vad är en härdningsmekanism? Nämn minst två olika typer av härdningsmekanismer.
+key: vad-ar-en-hardningsmekanism-namn-minst
+
+En förändring av mikrostrukturen för att göra dislokationsrörelser svårare. Det resulterar i högre sträckgräns, hårdhet och ofta lägre brottförlängning. De olika typerna av härdningsmekanismer är:
+
+1. Lösningshärdning
+2. Utskiljningshärdning
+3. Deformationshärdning
+4. Korngränshärdning
+
+## Vad är lösningshärdning och hur går det till?
+key: vad-ar-losningshardning-och-hur-gar-det
+
+* Atomer av annan sort löses in i
+kristallen
+* Spänningsfältet kring atomerna
+hindrar dislokationsrörelse
+* Större effekt med större
+koncentration och större skillnad i
+atomstorlek
+* Sker med legering i smälta
+
+## Vad är utskiljningshärdning och hur går det till?
+key: vad-ar-utskiljningshardning-och-hur-gar
+
+* Partiklar av annan fas
+bildas i materialet
+* Partiklarna hindrar
+dislokationsrörelse
+* Sker med legering i smälta
+och värmebehandling i
+fast form
+
+## Vad är deformationshärdning och hur går det till?
+key: vad-ar-deformationshardning-och-hur-gar
+
+* Dislokationer hindrar andra
+dislokationer att röra sig (låser
+varandra)
+* Mängden dislokationer ökar
+kraftigt vid plastisk
+deformation → plastiskt
+hårdnande
+* Sker vid kallbearbetning
+(pressning, valsning, smide ...)
+
+## Vad är korngärnshärdning och hur går det till?
+key: vad-ar-korngarnshardning-och-hur-gar
+
+* Minska storleken på kornen som utgör materialet så att antalet korngränser ökar
+* Korngränser hindrar
+dislokationer
+* Små korn ger hårdare material
+* Viktigt hos BCC-metaller (vissa
+stål)
+
+## När ska man använda materialindex för styvhet, kontra sträckgräns?
+key: nar-ska-man-anvanda-materialindex-for
+
+* Använd materialindex för styvhet
+om deformationen är
+dimensionerande. (Krav på max
+deformation)
+* Använd materialindex för
+sträckgräns om last utan plasticering
+är dimensionerande. (Krav på max
+spänning)
+
+## Vad är brottseghet?
+key: vad-ar-brottseghet
+
+Ett mått på ett materials naturliga motstånd mot propagering av sprickor.
+
+* Brottseghet $K_{1c}$ ($\text{MPa}\sqrt{\text{m}}$), 1 för modus, c för kritisk
+* Brott när $K_{1c}$> $K_1$
+* Tar hänsyn till last och spricklängd
+* Beror på energin som krävs för att driva sprickan
+* ($K_{1c} = \sqrt{E\,G_c}$)
+
+## Varför är spröda material extra känsliga för defekter?
+key: varfor-ar-sproda-material-extra
+
+Största förekommande defekten i en komponent ger störst spänning vilket innebär att brottet börjar där. Brottstyrkan blir då beroende av sannolikheten för att det finns en defekt i det belastade området och ju större komponenten är desto högre blir sannolikheten att det förekommer defekter. Eftersom sprickor uppträder lättare i spröda material blir de mer defektkänsliga.
+
+## Vad har temperatur för inverkan på ett materials brottseghet?
+key: vad-har-temperatur-for-inverkan-pa-ett
+
+När temperaturen sjunker blir materialen sprödare, och sannolikheten för sprickbildning ökar.
+
+## Vad är skillnaden mellan ett segt- respektive sprött brott?
+key: vad-ar-skillnaden-mellan-ett-segt
+
+Ett segt material deformeras plastiskt under en längre tid innan brott uppstår, till skillnad från ett sprött material som deformeras betydligt mindre innan brott sker.
+
+## Vad använder man för typ av test för att undersöka ett materials brottseghet?
+key: vad-anvander-man-for-typ-av-test-for
+
+För att bestämma brottseghet hos ett material används slagprovning.
+
+* Det är ett enkelt test för att mäta energin som krävs för sprickpropagering
+* Provstav med anvisning används för att standardisera testet
+* Används för kvalitetstest och omslagstemperatur
+(omslag mellan sprött och segt beteende)

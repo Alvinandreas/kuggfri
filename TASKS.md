@@ -5,17 +5,78 @@ Syfte: alltid veta vad som är klart, vad som pågår, vad som väntar och vad s
 
 Legend: `[x]` klart · `[ ]` att göra · `[~]` pågår · `[?]` väntar på Alvin · `[-]` skippat (med skäl)
 
+**Läget 29 sep 2026:** allt fram till v2.1 (Canvasmaterialet, uppgiftstyper, 14 områden, källgranskade
+utkast, utgåvor och historik, ny granskning, e-post via Hostinger, Google-inloggning) ligger i
+produktionen bakom underhållsgrinden. Listan städades 29 sep: allt som var öppet i den gamla listan
+är antingen flyttat hit, klart eller inaktuellt, och den gamla listan ligger orörd i arkivet längst ner.
+
+## Inför lanseringen
+
+**Innehåll**
+- [?] **Johan/Alvin:** granska utkasten i admin → Granskning. Först "Bara ändringar" (42 publicerade kort
+      som är dolda för studenterna tills de godkänns), sedan resten av de 264 utkasten efter hand
+- [?] **Alvin:** tentadatum från Studieportalen (finns inte i kursmaterialet eller anslagen). Sätts i admin →
+      Inställningar eller i `content/materialteknik/kurs.json` (`exam_date`)
+
+**Test i produktionen** (inkognito, med förhandsvisningsnyckeln)
+- [?] Google-inloggning med ett Google-konto som inte är testanvändare (Claude läser Vercels loggar efteråt)
+- [?] E-postprotokollet, docs/DEPLOY.md 3c steg 6: registrera med ny adress, skicka igen, glömt lösenord,
+      skräpposten, mail-tester.com (mål 9/10)
+- [ ] Full E2E-svit mot den nya koden, när Alvin säger till (ca 20 min)
+
+**Inställningar**
+- [?] **Alvin, Vercel:** `CRON_SECRET` (Production), så att gallringen enligt integritetspolicyn körs.
+      Påminnelser till studenter är avstängda i koden och skickas inte
+- [?] **Alvin, Supabase → URL Configuration:** ta bort jokertecknet `https://*.vercel.app/**` om det står kvar
+
+**Öppningen**
+- [?] **Alvin:** `UNDER_UTVECKLING=0` i Vercel (eget beslut)
+- [ ] Direkt efter öppningen: Googles varumärkesverifiering. Search Console (domän kuggfri.com, TXT-post hos
+      Hostinger), Branding: hemsida `https://kuggfri.com`, integritetspolicy `https://kuggfri.com/integritet`,
+      sedan "I have fixed the issues"
+
+**Inte blockerande**
+- [?] **Till Johan:** 2025-bilder på Canvas med samma fel som rättats (Fö 9 s. 7 K1c-villkoret, Fö 12 s. 22
+      anlöpt martensit, Fö 13 s. 13 titan), GLU 5-8 s. 15 "ca 30 % primär ferrit" (hävstångsregeln ger ca
+      60 %), olika värden 910/912/913 °C och 723/727 °C, 0,8/0,77 % C
+
+## Efter lanseringen
+
+- [ ] Molnlagring av källmaterialet (text och analys ca 5 MB i privat Supabase-bucket; originalen kan hämtas
+      om från Canvas eller lagras i R2/Supabase Pro)
+- [ ] Bokfigurer (Ashby, Osswald) bara med Johans uttryckliga ja
+- [ ] Byte av e-postadress på kontosidan (`supabase.auth.updateUser`; mallen email_change finns)
+- [ ] Sök eller paginering i admin-kortlistan (kursen har 366 kort)
+- [ ] Omdirigeringstabell för gamla slugs om ett deck byter slug
+- [ ] CSV-export av område- och kortstatistiken till kursutvärderingen
+- [ ] Systemöversikt i admin: senaste cron-körningen, skickade mejl, öppna felrapporter
+- [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort
+- [ ] Tillgänglighetsgenomgång: axe på varje sida och en tangentbordsrunda genom en hel session
+- [ ] Mellansida med "Fortsätt"-knapp på `/auth/confirm` om Outlooks länkskanner förbrukar återställningslänkar
+- [ ] DMARC med rapportadress hos Hostinger, efter ett par veckor `p=quarantine`
+- [ ] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler; beslut om komponenttester
+- [ ] Återställningsövning i Vercel tillsammans (fram och tillbaka) och `docs/DRIFT.md`
+- [ ] Fler kurser och deck: Johans material, Alvins övriga Brainscape-set, fler Canvaskurser (kräver den
+      examinatorns tillstånd och en rad i tillåtelselistan i `scripts/canvas.ts`)
+
+---
+
+# Arkiv (till och med 28 sep)
+
+Den tidigare listan, orörd i sak. Punkter som stod som öppna här (`[ ]`, `[?]`, `[~]`) markerades `[-]` vid
+städningen 29 sep: de är antingen klara, inaktuella eller flyttade till listorna ovan.
+
 Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: samarbete spikat. Ny deadline: **presentation för studenterna tisdag 22 sep 10:00 på Johans föreläsning**, lansering direkt därefter. Helgen 19–20 sep är arbetshelg.
 
-## Väntar på Alvin (blockerar)
+### Väntar på Alvin (blockerar)
 
 - [x] Installera Docker Desktop och säga "Docker är igång" (klart mån 09:45, krävde `wsl --install` + omstart)
-- [?] Bestämma: publik deploy (Supabase EU + Vercel + GitHub, ~30 min mån 13:00) eller demo från laptop
+- [-] Bestämma: publik deploy (Supabase EU + Vercel + GitHub, ~30 min mån 13:00) eller demo från laptop
 - [x] Registrera konto i appen och ange e-post så att Claude kan sätta is_admin (klart mån 20:30, efter att Confirm email stängts av)
-- [?] Testa fem kort i mobilen och lämna felaktighetslista (mån 18:30)
-- [?] Sista ändringslista efter tisdagens rapport (ons 09:45)
+- [-] Testa fem kort i mobilen och lämna felaktighetslista (mån 18:30)
+- [-] Sista ändringslista efter tisdagens rapport (ons 09:45)
 
-## Måndag 14 sep
+### Måndag 14 sep
 
 ### När Docker finns
 - [x] `npx supabase start`, skriv riktig anon-nyckel till `.env.local` (mån 10:05; migrationer + seed kördes automatiskt vid start)
@@ -50,7 +111,7 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 - [x] Stabil testkopia: produktionsbygge i `.next-prod` på **http://localhost:3001** så att Alvins test inte störs av dev-serverns omkompileringar. Byggs om med `NEXT_DIST_DIR=.next-prod npx next build` när nya ändringar ska testas
 - **Regel från och med nu:** ingen `supabase db reset` medan Alvin har konto och progress lokalt. Seedändringar appliceras med riktade SQL-uppdateringar
 
-## Alvins feedback (mån 12:15), i prioritetsordning
+### Alvins feedback (mån 12:15), i prioritetsordning
 
 - [x] F6. Nollställningsfältet: knapparna staplas i en kolumn med hjälptext under (mån 13:10)
 - [x] F3. Frågan centrerad på framsidan, baksidan lodrätt centrerad när den är kort
@@ -58,9 +119,9 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 - [x] F4. Kortet glider in, pulserar i skattningens färg och glider ut (åt vänster vid 3–5, åt höger vid 1–2); knappar trycks ihop vid klick; allt av vid prefers-reduced-motion
 - [x] F5. Kategoritabell med kryssrutor (flera kategorier i urvalet, URL `urval=kategori:id1,id2`), klick på namnet väljer bara den, kolumner Studerade/Inlärda, stapel (studerat tonat + inlärt grönt), sortering "Minst inlärt först". Rullgardinen kvar och synkad
 - [x] F1. Desktop: innehållsbredd 64 rem, deck-sidan i två kolumner med Starta/Nollställ sticky till höger, bredare kort i studieläget. Mobil: Starta-panelen före kategorilistan
-- [ ] F2b (senare): färgtema utöver taggarna, om Alvin vill ha mer färg i helheten
+- [-] F2b (senare): färgtema utöver taggarna, om Alvin vill ha mer färg i helheten
 
-## Alvins feedback, runda 2 (mån 14:00)
+### Alvins feedback, runda 2 (mån 14:00)
 
 - [x] G1. "Deckets ordning" → "Kronologisk ordning"
 - [x] G2. Urvalsrullgardinen borttagen; i stället en sammanställning "Ditt urval" med valda kategorier som taggar, antal kort och antal inlärda. Låg-skattning-filtret finns kvar som en kryssruta i fri repetition (specen kräver det)
@@ -70,7 +131,7 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 - [x] G6. Nollställning flyttad till kontosidan (per deck, bara schemat, allt). Deck-sidan har bara en diskret textlänk längst ner för att nollställa det decket, eftersom gäster inte har någon kontosida (specen kräver att gäster kan nollställa)
 - [x] E2E 30/30 gröna efter runda 2 (mån 14:50), kopian på port 3001 ombyggd
 
-## Alvins feedback, runda 3 (mån 16:00)
+### Alvins feedback, runda 3 (mån 16:00)
 
 - [x] H1. Ordningen är inte hårdkodad: fsrs blandar kort med samma förfallodag och alla nya kort; fri repetition och kluriga kort går svagast först (1, 2, aldrig sedda, 3, 4, 5) med blandning inom varje grupp
 - [x] H2. Stämpeln syns cirka 0,7 s innan kortet glider ut, och ligger centrerad i kortet
@@ -81,18 +142,18 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 - [x] Namnbyte Plugget → **Kuggfri** (kuggfri.com) i app, dokument, lagringsnycklar (`kuggfri:progress:v1`, `kuggfri:theme`), testkonton och exportfilnamn (mån 13:30). Obs: gästprogress sparad under gamla nyckeln följer inte med; ingen har sådan ännu utom Alvins egna tester
 - [x] Domän: kuggfri.com kopplad i Vercel via Hostinger-DNS (mån 21:00)
 
-## Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
+### Tisdag 15 sep (Alvin fullbokad, Claude jobbar ensam)
 
 - [x] Rätta allt från Alvins måndagslista (båda rundorna gjorda redan måndag)
 - [x] Formatera om kort enligt den godkända granskningslistan (gjort mån 11:40 via `applyTypography` i seed-bygget, med tester)
 - [x] Konvertera unicode-matte till KaTeX (gjort mån 11:40)
 - [x] `docs/PRESENTATION.md` utkast skrivet redan mån 11:10, uppdaterat efter runda 2. Alvin redigerar ons kväll
 - [x] Sessionssammanfattningen visar kategoritagg på korten som behöver mest arbete
-- [~] Mobilpolish: långa baksidor scrollar inom kortet (max 55 dvh), KaTeX-block scrollar vågrätt, ljust/mörkt kontrollerat med taggar. iOS Safari kan bara Alvin testa i riktig telefon (svep från vänsterkant krockar med bakåtgesten, det är känt och accepterat)
-- [ ] Rapport i chatten 12:00 och 17:00
+- [-] Mobilpolish: långa baksidor scrollar inom kortet (max 55 dvh), KaTeX-block scrollar vågrätt, ljust/mörkt kontrollerat med taggar. iOS Safari kan bara Alvin testa i riktig telefon (svep från vänsterkant krockar med bakåtgesten, det är känt och accepterat)
+- [-] Rapport i chatten 12:00 och 17:00
 - [x] Ta bort `/d/dev-preview`-rutten (ons kväll)
 
-## Onsdag 16 sep (kväll: förberedelser inför Johan, se kartläggningen i chatten)
+### Onsdag 16 sep (kväll: förberedelser inför Johan, se kartläggningen i chatten)
 
 - [x] Alvin registrerade om kontot med manuellt lösenord, admin satt i molnet (ons 20:30)
 - [x] Felrapporter (se Tillkommit)
@@ -112,16 +173,16 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 - [x] Tor 03:00: infoblad `docs/infoblad-kuggfri.pdf` (källa `docs/infoblad-kuggfri.html`, två A4-sidor i sajtens ljusa stil: vad/bakgrund/algoritmen, jämförelse med kommersiella appar, nytta för examinator och studenter, "som en del av kursen"). Renderas med Playwright från HTML; Alvins produktionskonto omseedat med varierad progress i alla kategorier
 - [x] **Pushat tor 02:15 efter Alvins "pusha"**: hela E2E-sviten 34/34 på slutkoden, 165 enhetstester. Kodfrysning: inget mer ändras före presentationen 08:30 utan uttrycklig begäran
 
-- [ ] Sista ändringar från Alvins onsdagslista
-- [ ] Full `npm run verify`, kontroll i mobilen ljust/mörkt, axe utan allvarliga fel
-- [ ] 16:00 gemensam genomgång av demoflödet
-- [ ] **19:00 kodfrysning** – inget ändras utan uttrycklig begäran
+- [-] Sista ändringar från Alvins onsdagslista
+- [-] Full `npm run verify`, kontroll i mobilen ljust/mörkt, axe utan allvarliga fel
+- [-] 16:00 gemensam genomgång av demoflödet
+- [-] **19:00 kodfrysning** – inget ändras utan uttrycklig begäran
 
-## Torsdag 17 sep
+### Torsdag 17 sep
 
 - [x] 08:30 presentation, hela timmen gick åt (Johan fick avbryta för att han måste gå)
 
-## Mötet med Johan (tor 17 sep), resultat
+### Mötet med Johan (tor 17 sep), resultat
 
 - Samarbete i kursen spikat. Alvin får använda Johans material i tjänsten.
 - Ingen begränsning till Chalmersadresser: vilken e-postadress som helst får registreras.
@@ -135,7 +196,7 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 3. Full adminkontroll: redigera kort, kategorier, ordning, förhandsvisning.
 4. Obegränsat och gratis för studenterna, enkel delning.
 
-## Torsdag 17 sep kväll: adminvyn inför att Johan får tillgång
+### Torsdag 17 sep kväll: adminvyn inför att Johan får tillgång
 
 - [x] Genomgång av adminflödet (kod + klick): rapport i chatten 19:45
 - [x] Examinatorroll per deck (migration `20260917000000_examiners.sql`): examinatorn ser bara sina deck, kan inte skapa/ta bort deck eller utse andra. Middleware, layout, actions och queries kontrollerar; RLS avgör i botten
@@ -148,11 +209,11 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 - [x] Tor 21:00–22:00, Alvins synpunkter: (1) inga skärmdumpar utan begäran, (2) ingen push förrän Alvin verifierat på 3001, (3) felrapporttexten säger "kursens examinator", (4) kursöversikten omgjord för examinatorn: fyra nyckeltal (studenter, aktiva 7 dagar med repetitioner, snittskattning, öppna rapporter), sedan Svåraste områdena (kategorier efter snittskattning, färg efter skattningsskalan), Kluriga frågor, Hur långt har studenterna kommit (fördelning av studenter per andel inlärda kort), Aktiva studenter per vecka (8 veckor), Så skattar studenterna sig (1–5), Senaste felrapporterna. `deck_stats_overview` v2 ger allt i ett anrop; (5) prestanda och städning: `getDeckForAdmin`/`countOpenReports` memoiserade per request (layout + sida delar anrop), tre parallella frågor i stället för seriella, felrapporter via `deck_reports`/`deck_open_report_count` i stället för id-listor, admin slipper examinatorslagningen, `loading.tsx` under decket så flikbyten känns omedelbara, delade `firstLine`/`StatTile`, LineChart borttagen, 40 döda i18n-nycklar borta
 - [x] Omgång tre (lör 19 sep): påminnelser via mejl (opt-in under Konto, ett per dag, stopp efter 14 utan repetition), examinatorns veckobrev måndagar, cron-jobb `/api/cron/daily` i `vercel.json`, migration `20260919000200` (profiles.reminder_email/digest_email, email_log, tre funktioner för service role). Enhetstester för mejlinnehåll och beslut, RLS-tester
 - [x] Omgång fyra (lör 19 sep): kalibrering (snabbt vänt + 1–2 på ett känt kort ger längre tid med svaret och en omläsningsrad), "Dela din beredskap" (PNG i webbläsaren, Web Share på mobil)
-- [ ] **Alvin (Vercel, efter push):** miljövariablerna i docs/DEPLOY.md 3d (`SMTP_*`, `EMAIL_FROM`, `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`), sedan testa med `curl ... /api/cron/daily?digest=1`
-- [ ] **Alvin verifierar på http://localhost:3001** (adminvyn, alla flikar, studentsidan) och säger "pusha"
-- [ ] **Före lansering:** höj `MIN_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
+- [-] **Alvin (Vercel, efter push):** miljövariablerna i docs/DEPLOY.md 3d (`SMTP_*`, `EMAIL_FROM`, `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`), sedan testa med `curl ... /api/cron/daily?digest=1`
+- [-] **Alvin verifierar på http://localhost:3001** (adminvyn, alla flikar, studentsidan) och säger "pusha"
+- [-] **Före lansering:** höj `MIN_RATINGS` (CourseOverview.tsx) till 5 så att enskilda svar inte kan läsas ut
 
-## Fredag 18 sep (natt): robusthet inför lansering
+### Fredag 18 sep (natt): robusthet inför lansering
 
 - [x] Backup: `scripts/backup.cjs` nattligen 03:30 (Windows-uppgift "Kuggfri backup"), verifierad återställning med `scripts/restore-test.cjs`, recept i docs/BACKUP.md. Inget lösenord behövs: CLI:ts lagrade projektuppgifter används
 - [x] Examinatorer kan förberedas innan kontot finns (`deck_examiner_invites`, kopplas i `handle_new_user`). Johan och Alvins testkonto kopplade automatiskt
@@ -164,31 +225,31 @@ Vad Johan reagerade särskilt positivt på (styr vad vi polerar och överleverer
 - [x] E2E: admin-content (kategori-CRUD, omordning, kort-radering, export, examinatorrollen), glömt lösenord. Sviten är nu 40 tester
 - [x] Integritetspolicy och /om uppdaterade (öppen registrering, examinatorsvy, anonym statistik)
 - [x] Belastningstest: 60 samtidiga klienter i 20 s mot kuggfri.com gav 0 fel, p50 1,1 s / p95 2,8 s på decksidan. Därefter cache på publikt innehåll (5 min, ogiltigförklaras vid adminändring). Full E2E 42/42 efteråt
-- [ ] **Alvin:** Hostinger-mejl + SMTP i Supabase (A–B), klistra in tre mallar (C), fråga Johan om kurskoden
-- [ ] **Alvin verifierar på 3001**, sedan push (migrationer 20260917000200 och 20260918000000 följer med)
+- [-] **Alvin:** Hostinger-mejl + SMTP i Supabase (A–B), klistra in tre mallar (C), fråga Johan om kurskoden
+- [-] **Alvin verifierar på 3001**, sedan push (migrationer 20260917000200 och 20260918000000 följer med)
 
-## Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)
+### Inför tisdag 22 sep 10:00 (kandidater, prioriteras med Alvin fre 18 sep)
 
 Måste (lansering till riktiga studenter):
-- [~] Egen SMTP via Hostingers fria e-post (100 mejl/dygn) + tre mallar med token_hash. Alvin gör dashboardstegen
+- [-] Egen SMTP via Hostingers fria e-post (100 mejl/dygn) + tre mallar med token_hash. Alvin gör dashboardstegen
 - [x] Glömt lösenord-flöde (fre 18 sep)
 - [x] Belastning testad och cache införd (fre 18 sep)
-- [ ] Kurskod i decket: MTM081 i appen, MTT085 i infobladet. Bekräfta med Johan/kurshemsidan och rätta
+- [-] Kurskod i decket: MTM081 i appen, MTT085 i infobladet. Bekräfta med Johan/kurshemsidan och rätta
 - [x] Johan får ett konto: examinatorroll per deck byggd tor 17 sep kväll (se nedan). Kvar: Johan registrerar sig, Alvin lägger till adressen under Inställningar → Examinatorer
-- [ ] Integritetspolicy och /om uppdaterade för öppen registrering
-- [ ] Full verify + mobiltest ljust/mörkt före lansering; kodfrysning måndag 21 sep kväll
+- [-] Integritetspolicy och /om uppdaterade för öppen registrering
+- [-] Full verify + mobiltest ljust/mörkt före lansering; kodfrysning måndag 21 sep kväll
 
 Bör (det Johan gillade mest):
-- [ ] Uppföljningsrapport för examinatorn i admin: per kategori och kort, andel låga skattningar, antal studenter, felrapporter; export (PDF/CSV). Aggregerat och anonymiserat, minsta gruppstorlek innan siffror visas
-- [ ] Presentation för studenterna: bildspel (bygg på docs/PRESENTATION.md och infobladet), demoscript, QR-kod till kuggfri.com/d/materialteknik på sista bilden, "lägg till på hemskärmen"-instruktion
-- [ ] Onboarding för nya studenter: första besöket förklarar lägena kort, gäst → konto utan att tappa progress (finns, verifiera)
+- [-] Uppföljningsrapport för examinatorn i admin: per kategori och kort, andel låga skattningar, antal studenter, felrapporter; export (PDF/CSV). Aggregerat och anonymiserat, minsta gruppstorlek innan siffror visas
+- [-] Presentation för studenterna: bildspel (bygg på docs/PRESENTATION.md och infobladet), demoscript, QR-kod till kuggfri.com/d/materialteknik på sista bilden, "lägg till på hemskärmen"-instruktion
+- [-] Onboarding för nya studenter: första besöket förklarar lägena kort, gäst → konto utan att tappa progress (finns, verifiera)
 
 Kan:
-- [ ] Fler deck från Johans material (han har gett tillåtelse)
+- [-] Fler deck från Johans material (han har gett tillåtelse)
 - [x] Examinatorroll (ersätter reviewer-rollen): full redigering av eget deck, inget annat
 
 
-## Lördag 19 sep (natt): omvärldsanalysens Fas 0–1, kodfrysningen ersatt av återställningsrutin
+### Lördag 19 sep (natt): omvärldsanalysens Fas 0–1, kodfrysningen ersatt av återställningsrutin
 
 Alvin gav fri hand ("kör på, bygg så mycket du orkar"). Allt lokalt, ej pushat.
 
@@ -204,11 +265,11 @@ Alvin gav fri hand ("kör på, bygg så mycket du orkar"). Allt lokalt, ej pusha
 - [x] Tester: 25 nya enhetstester (dosering, tentaplan, streak, förhandsvisning, kunskap, inställningar), nytt E2E-test för dosering och "Klar för i dag". Unit 191 gröna, E2E 42 gröna före det nya testet
 - [x] Testkopian på 3001 ombyggd
 - [x] Omgång två (lör 19 sep): utkorg så att ingen repetition tappas vid dålig anslutning; provtenta-läget (30 slumpade kort, resultat i procent); "Kan nu"-kolumn per kategori; aktiveringsmått i kursöversikten (migration `20260919000100`, ÅNGRA-sektion finns). Enhetstester och nya E2E-tester (provtenta)
-- [ ] **Alvin verifierar på http://localhost:3001**: decksidan (förstabesöksrutan, Starta-raden, "Nya kort per dag", QR), en session (intervall på knapparna, "Klar för i dag"), admin → Inställningar → Tentadatum. Sedan "pusha" (migrationerna `20260919000000`, `20260919000100` och `20260919000200` följer med: `supabase db push` före `git push`, se ATERSTALLNING.md)
-- [ ] Sätt tentadatum för Materialteknik i admin när Johan bekräftat datumet. Lokalt ligger platshållaren 2026-10-27 (bara i den lokala databasen, så att tentaraden och ikappläget syns på 3001)
-- [ ] Övning av återställningen i Vercel tillsammans (fram och tillbaka), datum antecknas i ATERSTALLNING.md
+- [-] **Alvin verifierar på http://localhost:3001**: decksidan (förstabesöksrutan, Starta-raden, "Nya kort per dag", QR), en session (intervall på knapparna, "Klar för i dag"), admin → Inställningar → Tentadatum. Sedan "pusha" (migrationerna `20260919000000`, `20260919000100` och `20260919000200` följer med: `supabase db push` före `git push`, se ATERSTALLNING.md)
+- [-] Sätt tentadatum för Materialteknik i admin när Johan bekräftat datumet. Lokalt ligger platshållaren 2026-10-27 (bara i den lokala databasen, så att tentaraden och ikappläget syns på 3001)
+- [-] Övning av återställningen i Vercel tillsammans (fram och tillbaka), datum antecknas i ATERSTALLNING.md
 
-## Lördag 19 sep (kväll): innehållspipelinen
+### Lördag 19 sep (kväll): innehållspipelinen
 
 Alvin: "bygg ut det systemet". Design i `docs/INNEHALL.md`, byggd samma kväll. Allt lokalt, ej pushat.
 
@@ -219,10 +280,10 @@ Alvin: "bygg ut det systemet". Design i `docs/INNEHALL.md`, byggd samma kväll. 
 - [x] Hela slingan verifierad lokalt: ändring i admin → plan varnar och rör inget → pull → filen uppdaterad → apply bekräftar → plan tom
 - [x] `seed/`, `scripts/build-seed.ts` och `scripts/content-review.ts` borttagna; seeden byggs nu ur `content/`, granskningsunderlagets PDF likaså. `kuggfri kontrollera` ingår i `npm run verify`
 - [x] Tester: 21 enhetstester för pipelinen (parser, nycklar, planerare, pull) och 6 databastester för `sync_deck` (behörigheter, idempotens, inaktivering behåller progress, radering kaskaderar, unika nycklar). Totalt 236 enhetstester
-- [ ] **Efter push:** kör `npm run kuggfri -- plan materialteknik --mal prod`. Den ska visa 144 "knyts ihop" och noll innehållsändringar, precis som lokalt. Först därefter `apply --mal prod`
-- [ ] Överväg att flytta `exam_date` för Materialteknik in i `content/materialteknik/kurs.json` när Johan bekräftat datumet (nu satt direkt i den lokala databasen)
+- [-] **Efter push:** kör `npm run kuggfri -- plan materialteknik --mal prod`. Den ska visa 144 "knyts ihop" och noll innehållsändringar, precis som lokalt. Först därefter `apply --mal prod`
+- [-] Överväg att flytta `exam_date` för Materialteknik in i `content/materialteknik/kurs.json` när Johan bekräftat datumet (nu satt direkt i den lokala databasen)
 
-## Söndag 20 sep (natt): lista inför lanseringen på tisdag
+### Söndag 20 sep (natt): lista inför lanseringen på tisdag
 
 Alvin: "skriv en ny lista med grejer vi hinner förbättra innan vi går live nu i veckan".
 Sorterad efter vad som faktiskt hindrar en lansering, inte efter hur roligt det är att bygga.
@@ -250,19 +311,19 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 
 ### Måste vara på plats innan studenterna släpps in
 
-- [?] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen
+- [-] **Alvin verifierar på http://localhost:3001** och säger "pusha". Allt som rör produktionen
       nedan väntar på det. Kopian är ombyggd natten mot 21 sep från commit 3b5b8ea (sista committen)
       och startad, så den visar hela helgens arbete. Sidorna svarar på 37–300 ms. Dev-servern på
       3000 är avstängd med flit: två Next-processer i samma `.next` korrumperar bygget
-- [?] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
+- [-] **Alvin i Supabase och Vercel** (20 min, exakta steg i docs/DEPLOY.md): egen SMTP (Resend), slå på Confirm email, miljövariabler (`CRON_SECRET`, `REVALIDATE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_HOSTS`), ta bort wildcard-adressen `https://*.vercel.app/**` ur Redirect URLs
 - [x] Hela E2E-sviten grön lokalt: **50/50 på 12,9 minuter, noll omkörningar** (21 sep 00:53,
       commit cb5058b). De två tidigare körningarna i natt räknas inte — den första förstördes av två
       parallella dev-servrar i samma `.next`, den andra föll på det trasiga produktionsbygget
-- [ ] **Bygg om testkopian på 3001 innan Alvin verifierar.** `.next-prod/BUILD_ID` är daterad
+- [-] **Bygg om testkopian på 3001 innan Alvin verifierar.** `.next-prod/BUILD_ID` är daterad
       19 sep 03:05, alltså före hela helgens arbete: innehållspipelinen, säkerhetshärdningen,
       dataskyddet och komponentuppdelningen finns inte i den kopian. Det Alvin tittade på i går
       kväll är inte det han ska godkänna. `NEXT_DIST_DIR=.next-prod npx next build`
-- [ ] **`npm run build` med dev-servern stoppad**, som ett eget steg före push. `verify` kör
+- [-] **`npm run build` med dev-servern stoppad**, som ett eget steg före push. `verify` kör
       typecheck, lint, `kontrollera`, enhetstester och E2E — men inte bygget, och natten mot måndag
       visade att allt det kan vara grönt medan produktionsbygget är trasigt (`export const` i en
       `"use server"`-fil, rättat i cb5058b med ett test som vaktar regeln). Kvar att bestämma: ska
@@ -277,11 +338,11 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
       32 ms, kurssidan 71 kB och 39 ms, en session 99 kB och 57 ms, delningsbilden 50 kB PNG.
       `/admin` och `/konto` ger 307 till inloggning för utloggad. Mobil 375 px utan horisontell
       scroll, mörkt läge rätt, noll konsolfel. Inget av det behöver åtgärdas före lansering
-- [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort, kort utan kategori
+- [-] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort, kort utan kategori
 
 ### Bör hinnas med (studenterna märker skillnaden)
 
-- [ ] Delningsbild (OG-image) så att en länk i gruppchatten visar ett Kuggfri-kort i stället för en tom ruta
+- [-] Delningsbild (OG-image) så att en länk i gruppchatten visar ett Kuggfri-kort i stället för en tom ruta
 - [x] Mobilpass: 375 px, 768 px, mörkt läge och en runda genom alla admin- och studentvyer —
       ingen horisontell scroll någonstans, statistiksidan tyngst med 210 kB HTML men innanför
       kanten. Fyndet var inte layouten utan **klickytorna**: kryssrutorna i kategoritabellen låg på
@@ -289,25 +350,25 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
       Åtgärdat på fem ställen utan att något ritas större eller flyttas (se DECISIONS.md).
       E2E 50/50 grön igen efter markup-ändringen (12,8 min) — etiketten runt kryssrutan fångar
       inga klick
-- [ ] Tillgänglighetsgenomgång: axe på varje sida i E2E och en tangentbordsrunda genom en hel session
-- [ ] "Lägg till på hemskärmen" med i presentationen och infobladet (manifest och ikoner finns redan)
+- [-] Tillgänglighetsgenomgång: axe på varje sida i E2E och en tangentbordsrunda genom en hel session
+- [-] "Lägg till på hemskärmen" med i presentationen och infobladet (manifest och ikoner finns redan)
 
 ### Examinatorn (det Johan gillade mest)
 
-- [ ] CSV-export av kategori- och kortstatistiken, så att Johan kan ta med siffrorna till kursutvärderingen
-- [ ] Torrkörning av veckobrevet mot Mailpit: rätt siffror, rätt anonymitetsgräns, avprenumerera fungerar
+- [-] CSV-export av kategori- och kortstatistiken, så att Johan kan ta med siffrorna till kursutvärderingen
+- [-] Torrkörning av veckobrevet mot Mailpit: rätt siffror, rätt anonymitetsgräns, avprenumerera fungerar
 
 ### Drift
 
-- [ ] Systemöversikt i admin: senaste cron-körningen, skickade mejl, öppna felrapporter. En sida som svarar på "fungerar allt?"
-- [ ] Återställningsövning i Vercel tillsammans med Alvin (5 min, fram och tillbaka), datum antecknas i docs/ATERSTALLNING.md
+- [-] Systemöversikt i admin: senaste cron-körningen, skickade mejl, öppna felrapporter. En sida som svarar på "fungerar allt?"
+- [-] Återställningsövning i Vercel tillsammans med Alvin (5 min, fram och tillbaka), datum antecknas i docs/ATERSTALLNING.md
 
 ### Inre kvalitet (bara om tiden räcker)
 
-- [ ] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler
-- [ ] Beslut om komponenttester: egen jsdom-körning eller ta bort de fyra testing-library-beroendena
+- [-] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler
+- [-] Beslut om komponenttester: egen jsdom-körning eller ta bort de fyra testing-library-beroendena
 
-## Tisdag 22 sep: presentationen genomförd, tjänsten stängd under sista rundan
+### Tisdag 22 sep: presentationen genomförd, tjänsten stängd under sista rundan
 
 Alvin presenterade för studenterna kl. 10:00. **Studenterna väntar på länken.** kuggfri.com svarar
 med avstängningssidan (503, `x-kuggfri-lage: under-utveckling`) tills vi öppnar, enligt Alvins
@@ -319,21 +380,21 @@ beslut: helgens arbete ska verifieras i lugn och ro först, med fler iterationer
 - [x] Migration `20260921000000_rapportgrans.sql` applicerad i den lokala databasen (låg oapplicerad
       sedan grenbytet). Lokalt är nu 17 av 17 migrationer på plats, 144 kort, progressen orörd
 - [x] `npm run verify:unit` grön: typecheck, lint, `kuggfri kontrollera`, **335 enhetstester**
-- [ ] **Alvin verifierar helgens arbete på http://localhost:3001** – det är första gången kopian
+- [-] **Alvin verifierar helgens arbete på http://localhost:3001** – det är första gången kopian
       innehåller dosering, "Klar för i dag", provtenta, streak, utkorg, tentaplan, innehållspipelinen,
       säkerhetshärdningen och dataskyddet
 
 ### Fynd i dag
 
-- [ ] **Den nattliga backupen har inte gått sedan 21 sep 01:30.** Uppgiften "Kuggfri backup" kör
+- [-] **Den nattliga backupen har inte gått sedan 21 sep 01:30.** Uppgiften "Kuggfri backup" kör
       `scripts/backup.cjs`, som inte finns på grenen `under-utveckling` – den var utcheckad, så
       körningarna 22 sep föll med MODULE_NOT_FOUND (se `backups/backup.log`). Fungerar nu när `main`
       är utcheckad, men uppgiften ska inte vara beroende av vilken gren som råkar ligga i trädet
-- [ ] **Produktionsdatabasen ligger nio migrationer efter** (senast applicerad `20260917000200`).
+- [-] **Produktionsdatabasen ligger nio migrationer efter** (senast applicerad `20260917000200`).
       Backup före push, enligt docs/ATERSTALLNING.md
 - Produktionens innehåll och `content/` är identiska sedan cd978f4: första synken knyter bara nycklar
 
-## Vägen till lansering: **måndag 28 september**
+### Vägen till lansering: **måndag 28 september**
 
 Alvins beslut tisdag 22 sep: tjänsten öppnar måndag nästa vecka om allt fungerar som avsett, och
 **före dess ska vi gå igenom hur tjänsten drivs under läsperioden** – både rutinerna och vad som
@@ -360,19 +421,19 @@ uppföljningsrapporten för Johan, robusta backuper och deployrutin, samt delnin
 
 ### Måste vara klart före öppning
 
-- [ ] Alvin har verifierat på 3001 och sagt "pusha"
-- [ ] Driftgenomgången gjord (docs/DRIFT.md), Alvin vet vad som händer när något går sönder
-- [ ] Eget SMTP + SPF/DKIM, provmejl till en `@student.chalmers.se`-adress som landar i inkorgen
-- [ ] Höjda rate limits i Supabase (registreringen stryps annars efter ~30 studenter)
-- [ ] Confirm email på, **efter** SMTP
-- [ ] Vercel-variabler: `NEXT_PUBLIC_SITE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`,
+- [-] Alvin har verifierat på 3001 och sagt "pusha"
+- [-] Driftgenomgången gjord (docs/DRIFT.md), Alvin vet vad som händer när något går sönder
+- [-] Eget SMTP + SPF/DKIM, provmejl till en `@student.chalmers.se`-adress som landar i inkorgen
+- [-] Höjda rate limits i Supabase (registreringen stryps annars efter ~30 studenter)
+- [-] Confirm email på, **efter** SMTP
+- [-] Vercel-variabler: `NEXT_PUBLIC_SITE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`,
       `REVALIDATE_SECRET`, `ALLOWED_HOSTS`, SMTP-variablerna
-- [ ] `https://*.vercel.app/**` bort ur Redirect URLs
-- [ ] Nio migrationer i molnet + `kuggfri apply --mal prod` (144 kort ska knytas ihop, noll ändringar)
-- [ ] Kurskoden bekräftad med Johan (MTM081 i appen, MTT085 i infobladet)
-- [ ] Beslut om de tre korrosionskorten och om tentadatum
+- [-] `https://*.vercel.app/**` bort ur Redirect URLs
+- [-] Nio migrationer i molnet + `kuggfri apply --mal prod` (144 kort ska knytas ihop, noll ändringar)
+- [-] Kurskoden bekräftad med Johan (MTM081 i appen, MTT085 i infobladet)
+- [-] Beslut om de tre korrosionskorten och om tentadatum
 
-## Fredag 25 sep: pipelinen kopplad mot produktionen, tjänsten fortsatt stängd
+### Fredag 25 sep: pipelinen kopplad mot produktionen, tjänsten fortsatt stängd
 
 Alvins beslut: ta bort korrosionsfilen, koppla innehållspipelinen mot produktionen nu och pusha
 allt – men **utan att ändra registreringsvillkoren**, tjänsten ska vara stängd medan vi bygger ut.
@@ -395,11 +456,11 @@ allt – men **utan att ändra registreringsvillkoren**, tjänsten ska vara stä
 - [x] 347 enhetstester gröna, produktionsbygget grönt som eget steg, testkopian på 3001 ombyggd
 - [x] **`main` pushad till GitHub** (58 commits, `3935773..debd858`). kuggfri.com svarar fortfarande
       503 på startsidan, kurssidan, `/registrera` och cron-vägen
-- [ ] **Alvin i Vercel:** peka produktionsgrenen på `main` (så att molnet kör v1.0 bakom grinden)
+- [-] **Alvin i Vercel:** peka produktionsgrenen på `main` (så att molnet kör v1.0 bakom grinden)
       och lägg in `FORHANDSVISNING_NYCKEL` så att vi kan titta på den skarpa sajten med `?nyckel=`
-- [ ] Full E2E-svit mot den nya koden innan öppning
+- [-] Full E2E-svit mot den nya koden innan öppning
 
-## Kvällen 28 sep: e-post
+### Kvällen 28 sep: e-post
 
 Alvins beslut: all e-post från `noreply@kuggfri.com` hos Hostinger, e-postbekräftelse **på**,
 välkomstmejl med nyttig info, lösenordsåterställning via mejl. Exakta steg i docs/DEPLOY.md 3c.
@@ -428,18 +489,18 @@ Ersätter Resend-förslaget och de två äldre [?]-punkterna om SMTP och mallar 
 - [x] E2E-hjälparna bekräftar nya konton via Mailpit (`confirmSignupFromMail`), nytt test för
       obekräftad inloggning och skicka igen. **Inte körda** (Alvin kör E2E när han vill)
 - [x] Enhetstester för mallarna (länkform, inga namn, bilder finns i public/) och `signup_next`
-- [?] **Alvin, Supabase:** Custom SMTP (smtp.hostinger.com, 465, noreply@kuggfri.com, lösenordet
+- [-] **Alvin, Supabase:** Custom SMTP (smtp.hostinger.com, 465, noreply@kuggfri.com, lösenordet
       själv, avsändarnamn Kuggfri), rate limit för mejl 200/timme, Confirm email på, Secure email
       change på, de fyra mallarna med ämnesrader, Site URL `https://kuggfri.com`. DEPLOY.md 3c steg 1–4
-- [?] **Alvin, Vercel:** `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`,
+- [-] **Alvin, Vercel:** `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`,
       `EMAIL_FROM` (Production) och redeploy. DEPLOY.md 3c steg 5
-- [?] **Alvin, Hostinger (valfritt):** DMARC med rapportadress, `v=DMARC1; p=none; rua=mailto:…`
-- [?] **Alvin:** testprotokollet i DEPLOY.md 3c steg 6 (registrera, skicka igen, glömt lösenord,
+- [-] **Alvin, Hostinger (valfritt):** DMARC med rapportadress, `v=DMARC1; p=none; rua=mailto:…`
+- [-] **Alvin:** testprotokollet i DEPLOY.md 3c steg 6 (registrera, skicka igen, glömt lösenord,
       inloggningslänk, skräppost, mail-tester.com, mörkt läge)
-- [ ] Om Outlook/Safe Links förbrukar återställningslänkar i testet: mellansida med "Fortsätt"-knapp
+- [-] Om Outlook/Safe Links förbrukar återställningslänkar i testet: mellansida med "Fortsätt"-knapp
       på `/auth/confirm`
 
-## Kvällen 28 sep: Canvas, uppgiftstyper, källgranskat innehåll och skyddsnät
+### Kvällen 28 sep: Canvas, uppgiftstyper, källgranskat innehåll och skyddsnät
 
 Alvin fick TA-åtkomst till MTT085 på Canvas med examinatorns tillstånd att använda materialet.
 
@@ -465,12 +526,12 @@ Alvin fick TA-åtkomst till MTT085 på Canvas med examinatorns tillstånd att an
 - [x] 16 källgranskade svg-diagram och 15 bildfrågor (bara på utkast)
 - [x] Källtyp ur `källa:` (lib/cards/sources.ts): föreläsning, tenta, quiz, övning, labb, bok,
       ordlista, kursdokument
-- [?] **Johan/Alvin:** granska utkasten i admin → Granskning. Först "Ändringar av publicerade
+- [-] **Johan/Alvin:** granska utkasten i admin → Granskning. Först "Ändringar av publicerade
       kort" (42 kort som är dolda för studenterna tills de godkänns), sedan resten
-- [?] **Till Johan:** 2025-bilder på Canvas med samma fel som rättats (Fö 9 s. 7 K1c-villkoret,
+- [-] **Till Johan:** 2025-bilder på Canvas med samma fel som rättats (Fö 9 s. 7 K1c-villkoret,
       Fö 12 s. 22 anlöpt martensit, Fö 13 s. 13 titan), GLU 5-8 s. 15 "ca 30 % primär ferrit"
       (hävstångsregeln ger ca 60 %), olika värden 910/912/913 °C och 723/727 °C, 0,8/0,77 % C
-- [?] **Alvin:** tentadatum (inte i materialet eller anslagen; Studieportalen)
+- [-] **Alvin:** tentadatum (inte i materialet eller anslagen; Studieportalen)
 
 **Skyddsnät**
 - [x] Utgåvor (`utgava`, `utgavor`, `aterga`), sparas i git; automatiskt före varje apply mot prod.
@@ -480,32 +541,32 @@ Alvin fick TA-åtkomst till MTT085 på Canvas med examinatorns tillstånd att an
 - [x] 144 originalkort märkta; studenter kan välja "Bara originalkorten"
 
 **Kvar**
-- [ ] Molnlagring av källmaterialet (text och analys ca 5 MB i privat Supabase-bucket; originalen
+- [-] Molnlagring av källmaterialet (text och analys ca 5 MB i privat Supabase-bucket; originalen
       kan hämtas om från Canvas eller lagras i R2/Supabase Pro)
-- [ ] Push: backup + återställningstest, `supabase db push` (två migrationer), `git push`,
+- [-] Push: backup + återställningstest, `supabase db push` (två migrationer), `git push`,
       `kuggfri plan --mal prod` genomgången med Alvin, sedan `apply --mal prod`
-- [ ] Bokfigurer (Ashby, Osswald) bara med Johans uttryckliga ja
+- [-] Bokfigurer (Ashby, Osswald) bara med Johans uttryckliga ja
 
-## Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
+### Tillkommit under arbetet (nya uppgifter, ej prioriterade än)
 
-- [?] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte
+- [-] **Omvärldsanalys och arbetsplan klar (fre 18 sep):** `docs/OMVARLDSANALYS.md` (fem teser, jämförelsematris, forskningsprinciper, anti-mönster, arbetsplan i fyra faser) med fullständigt underlag i `docs/research/`. Väntar på Alvin: (1) får taket på nya kort per session (Fas 0, standard 20) byggas före lanseringen trots kodfrysningen? (2) tentadatum för LP1, (3) skattningsskalans semantik (3 → Again?), (4) fråga Johan om föreläsningsläge, (5) AI-generering i år eller inte
 
-- [?] **Alvin (5 min): klistra in mejlmallarna i Supabase** (Authentication → Emails → Magic Link och Confirm signup, innehåll från `supabase/templates/`) och lägg till `https://kuggfri.com/**` + `https://kuggfri.vercel.app/**` under Redirect URLs. Exakta steg i docs/DEPLOY.md 3b. Utan detta fungerar inloggningslänken bara i samma webbläsare som beställde den
+- [-] **Alvin (5 min): klistra in mejlmallarna i Supabase** (Authentication → Emails → Magic Link och Confirm signup, innehåll från `supabase/templates/`) och lägg till `https://kuggfri.com/**` + `https://kuggfri.vercel.app/**` under Redirect URLs. Exakta steg i docs/DEPLOY.md 3b. Utan detta fungerar inloggningslänken bara i samma webbläsare som beställde den
 - [x] Inloggningslänk fungerar på alla enheter: egna mallar med `token_hash` (tis 00:10). Testat lokalt utan cookies mot Mailpit: länken loggar in, förbrukad länk ger felsidan
 - [x] Byt lösenord under Konto (för den som loggat in med länk eller glömt lösenordet), E2E-test tillagt (tis 00:20)
 - [x] Felsökning tis 00:00: lösenordsinloggning på kuggfri.com fungerar tekniskt (fel lösenord ger rätt fel, Supabase svarar). Molnets Redirect URLs innehöll bara Vercel-integrationens `kuggfri-gate-ai-sverige.vercel.app`, inte kuggfri.com, därför hamnade länken där
-- [?] **Före lansering till studenter: egen SMTP i Supabase.** Den inbyggda mejlservern skickar bara ett par mejl per timme (det var det som gav "Det gick inte" för Alvin mån kväll). Med e-postbekräftelse avstängd fungerar registrering med lösenord utan mejl, men inloggningslänkar behöver riktig SMTP (t.ex. Resend, gratis upp till 3 000 mejl/månad: Supabase → Project Settings → Authentication → SMTP Settings). Alvin skapar kontot och klistrar in nyckeln själv
+- [-] **Före lansering till studenter: egen SMTP i Supabase.** Den inbyggda mejlservern skickar bara ett par mejl per timme (det var det som gav "Det gick inte" för Alvin mån kväll). Med e-postbekräftelse avstängd fungerar registrering med lösenord utan mejl, men inloggningslänkar behöver riktig SMTP (t.ex. Resend, gratis upp till 3 000 mejl/månad: Supabase → Project Settings → Authentication → SMTP Settings). Alvin skapar kontot och klistrar in nyckeln själv
 - [x] Auth-fel visar nu specifik orsak (mejlbegränsning, obekräftad e-post, ogiltig adress) och loggas i Vercel
 - [x] Återvändsadress i mejllänkar följer besökt domän; inloggningskod fångas på valfri sida
 
-- [ ] Byte av e-postadress på kontosidan (`supabase.auth.updateUser`)
-- [ ] Paginering eller sök i admin-kortlistan när deck blir större än ~300 kort
-- [ ] Redirect-tabell för gamla slugs om ett deck byter slug
+- [-] Byte av e-postadress på kontosidan (`supabase.auth.updateUser`)
+- [-] Paginering eller sök i admin-kortlistan när deck blir större än ~300 kort
+- [-] Redirect-tabell för gamla slugs om ett deck byter slug
 - [x] Examinatorroll per deck (tor 17 sep): tabell `deck_examiners`, `can_edit_deck()` i alla innehållspolicyer, admin-UI under Inställningar, 7 nya RLS-tester
 - [x] "Rapportera fel på kortet"-knapp för studenter: tabell `card_reports` med RLS (6 nya RLS-tester), dialog i studieläget (även gäster), adminsida /admin/deck/[id]/rapporter med åtgärda/öppna igen/ta bort, länk med antal öppna på deckets adminsida, E2E-test, integritetspolicyn uppdaterad. Migration pushad till molnet (ons 21:30)
-- [ ] Fler deck från Alvins övriga Brainscape-set (samma seed-manifest-format)
+- [-] Fler deck från Alvins övriga Brainscape-set (samma seed-manifest-format)
 
-## Klart
+### Klart
 
 - [x] Skiva 0–7 enligt PLAN.md: skelett, datamodell + RLS-tester, FSRS, studieläge, konton, admin, statistik, dokumentation
 - [x] Härdning: kontrast, inert, RPC-ombeställning, memoiserad auth

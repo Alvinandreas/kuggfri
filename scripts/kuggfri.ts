@@ -147,7 +147,9 @@ function query<T>(target: Target, sql: string): T[] {
     // shell: true på Windows kräver att sökvägar med mellanslag citeras.
     const useShell = process.platform === "win32";
     const quote = (v: string) => (useShell && /\s/.test(v) ? `"${v}"` : v);
-    const out = execFileSync("npx", ["--no-install", "supabase", "db", "query", ...flag.map(quote), "-f", quote(file)], {
+    // --agent yes: CLI:t väljer annars format efter miljön och skriver en tabell i en vanlig
+    // terminal, men JSON ({ boundary, rows }) när det tror att en AI-agent kör. Samma format överallt.
+    const out = execFileSync("npx", ["--no-install", "supabase", "db", "query", "--agent", "yes", ...flag.map(quote), "-f", quote(file)], {
       encoding: "utf8",
       maxBuffer: 256 * 1024 * 1024,
       shell: useShell,

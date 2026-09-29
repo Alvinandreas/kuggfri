@@ -11,6 +11,7 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { BarChart } from "@/components/stats/BarChart";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
+import { formatCount, formatDecimal } from "@/lib/admin/format";
 import { AreaLink } from "./AreaLink";
 import { StatBlock } from "./StatBlock";
 
@@ -39,7 +40,7 @@ function OutOfFive({ value }: { value: number | null }) {
   if (value === null) return <>–</>;
   return (
     <>
-      {value.toFixed(1).replace(".", ",")}
+      {formatDecimal(value, 1)}
       <span className="text-[0.55em] font-bold text-muted"> / 5</span>
     </>
   );
@@ -78,7 +79,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
           <StatBlock
             label={sv.admin.tileStudents}
             help={sv.admin.tileStudentsHelp}
-            value={`${students}`}
+            value={formatCount(students)}
             sub={sv.admin.tileStudentsSub}
             testId="overview-students"
             className="anim-fade-up"
@@ -86,7 +87,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
           />
           <StatBlock
             label={sv.admin.tileActive}
-            value={`${stats.active_7d}`}
+            value={formatCount(stats.active_7d)}
             sub={sv.admin.tileActiveSub(stats.reviews_7d)}
             className="anim-fade-up"
             style={{ ["--i" as string]: 2 }}
@@ -100,7 +101,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
           />
           <StatBlock
             label={sv.admin.tileReports}
-            value={`${stats.open_reports}`}
+            value={formatCount(stats.open_reports)}
             sub={sv.admin.tileReportsSub}
             href={`/admin/deck/${deckId}/rapporter`}
             className="anim-fade-up"
@@ -151,10 +152,10 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                               <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
                                 <div className={`h-full rounded-full ${ratingFill[ratingStep(avg)] ?? "bg-rate-3"}`} style={{ width: `${(avg / 5) * 100}%` }} />
                               </div>
-                              <span className="w-14 shrink-0 text-right font-bold tabular-nums">{avg.toFixed(1).replace(".", ",")} / 5</span>
+                              <span className="w-14 shrink-0 text-right font-bold tabular-nums">{formatDecimal(avg, 1)} / 5</span>
                             </div>
                           </td>
-                          <td className="py-3 pr-4 text-right tabular-nums text-muted">{c.ratings}</td>
+                          <td className="py-3 pr-4 text-right tabular-nums text-muted">{formatCount(c.ratings)}</td>
                           <td className="py-3 pr-6 text-right tabular-nums sm:pr-7">{percent(c.low, c.ratings)} %</td>
                         </tr>
                       );
@@ -207,7 +208,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                             {percent(c.low, c.ratings)} %
                           </span>
                         </td>
-                        <td className="py-3 pr-6 text-right tabular-nums text-muted sm:pr-7">{c.ratings}</td>
+                        <td className="py-3 pr-6 text-right tabular-nums text-muted sm:pr-7">{formatCount(c.ratings)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -269,7 +270,7 @@ export function CourseDistributions({ stats }: { stats: DeckOverviewStats }) {
         <div className="lg:col-span-2">
           <Panel id="aktivering" title={sv.admin.activation} help={sv.admin.activationHelp}>
             <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3" data-testid="activation-tiles">
-              <StatBlock inset label={sv.admin.activationStarted} value={`${stats.activation.started}`} sub={sv.admin.tileStudentsSub} />
+              <StatBlock inset label={sv.admin.activationStarted} value={formatCount(stats.activation.started)} sub={sv.admin.activationStartedSub} />
               <StatBlock
                 inset
                 label={sv.admin.activationFirst}

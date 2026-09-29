@@ -80,7 +80,7 @@ export function TrickyDialog({ open, onClose, deck, cards, categories, categoryS
         )
       }
     >
-      <div className="grid gap-6" data-testid="tricky-dialog">
+      <div className="grid grid-cols-1 gap-6" data-testid="tricky-dialog">
         <p className="text-muted">{sv.quick.trickyLead}</p>
 
         <dl className="grid grid-cols-3 gap-3">
@@ -89,7 +89,7 @@ export function TrickyDialog({ open, onClose, deck, cards, categories, categoryS
           <StatTile label={sv.quick.time} value={sv.quick.minutes(minutes)} sub={sv.quick.about} tone="green" />
         </dl>
 
-        <section aria-labelledby="kluriga-omraden" className="grid gap-3">
+        <section aria-labelledby="kluriga-omraden" className="grid grid-cols-1 gap-3">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <div>
               <h3 id="kluriga-omraden" className="font-bold">
@@ -103,7 +103,7 @@ export function TrickyDialog({ open, onClose, deck, cards, categories, categoryS
               </button>
             ) : null}
           </div>
-          <ul className="grid gap-1.5" data-testid="tricky-areas">
+          <ul className="grid grid-cols-1 gap-1.5" data-testid="tricky-areas">
             {categories.map((c) => {
               const s = statsById.get(c.id);
               const tricky = s?.tricky ?? 0;

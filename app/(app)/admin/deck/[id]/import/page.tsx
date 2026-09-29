@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { ImportPanel } from "@/components/admin/ImportPanel";
+import { Download } from "lucide-react";
+import { buttonClass } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: sv.admin.importTitle };
 
@@ -12,7 +14,18 @@ export default async function ImportPage({ params }: { params: Promise<{ id: str
   if (!data) notFound();
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
-      <h2 className="text-xl font-bold tracking-tight">{sv.admin.importTitle}</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-xl font-bold tracking-tight">{sv.admin.importTitle}</h2>
+        <a
+          href={`/admin/deck/${data.deck.id}/export`}
+          download={`${data.deck.slug}.json`}
+          title={sv.admin.exportHelp}
+          className={buttonClass("outline", "sm")}
+        >
+          <Download size={15} aria-hidden />
+          {sv.admin.export}
+        </a>
+      </div>
       <ImportPanel
         deckId={data.deck.id}
         existingCards={data.cards.map((c) => ({

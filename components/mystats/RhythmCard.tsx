@@ -28,7 +28,7 @@ export function RhythmCard({ stats, index }: { stats: MyStats; index: number }) 
         title={sv.myStats.rhythm}
         description={favDay === null ? undefined : sv.myStats.favouriteDay(sv.myStats.weekdaysPlural[favDay] ?? "")}
       />
-      <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
+      <div className="grid items-center gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
         <BarChart title={sv.myStats.weekdayChart} points={points} formatValue={sv.myStats.reviewsCount} />
         <div>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -52,7 +52,7 @@ export function RhythmCard({ stats, index }: { stats: MyStats; index: number }) 
                       <Icon size={16} aria-hidden />
                       {text.label}
                     </span>
-                    <span className={cx("text-xs tabular-nums", fav ? "text-accent-ink" : "text-muted")}>{text.range}</span>
+                    <span className={cx("shrink-0 whitespace-nowrap text-xs tabular-nums", fav ? "text-accent-ink" : "text-muted")}>{text.range}</span>
                   </div>
                   <p className="mt-2 text-2xl font-extrabold leading-none tracking-tight tabular-nums">
                     {percent(stats.timeOfDay[t], stats.totalReviews)} %

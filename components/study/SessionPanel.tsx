@@ -69,7 +69,8 @@ export function SessionPanel({
   original,
 }: Props) {
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
-  const firstCount = Math.min(dailyNew, totalCards);
+  // Det första passet i det valda urvalet (inte hela dagsmålet när bara ett område är valt).
+  const firstCount = sessionCards > 0 ? sessionCards : Math.min(dailyNew, totalCards);
   const isDugga = mode === "exam";
   // Duggans regler och stjärnfiltret följer med i adressen till passet.
   const isStarred = pick === "starred";
@@ -79,7 +80,7 @@ export function SessionPanel({
     <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
       <CardHeader id="pass-rubrik" title={sv.deck.yourSession} action={<Badge tone="accent">{MODE_TITLES[pick]}</Badge>} spacing="none" />
 
-      {firstVisit ? (
+      {firstVisit && mode === "fsrs" ? (
         <div className="flex gap-3 rounded-lg bg-surface-2 p-4 text-sm" data-testid="first-visit">
           <Info size={18} aria-hidden className="mt-0.5 shrink-0 text-accent" />
           <div>
@@ -149,7 +150,11 @@ export function SessionPanel({
                 ? sv.summary.doneTitle
                 : sv.deck.nothingDue
               : sv.deck.sessionPlan(sessionDue, finalReview ? selectionCount : sessionNew, estimateMinutes(sessionCards))
-            : `${sv.home.cards(selectionCount)} · cirka ${estimateMinutes(selectionCount)} min`}
+            : selectionCount === 0
+              ? isStarred
+                ? sv.deck.noStarred
+                : sv.deck.noCardsSelected
+              : `${sv.home.cards(selectionCount)} · cirka ${estimateMinutes(selectionCount)} min`}
         </span>
         {mode === "fsrs" && nothingDue && moreNew > 0 ? (
           <Link href={`${plan.moreHref}${suffix}`} className={buttonClass("outline", "md", "w-full")} data-testid="start-more">

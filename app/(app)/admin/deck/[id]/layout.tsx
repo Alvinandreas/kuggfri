@@ -22,7 +22,9 @@ export default async function DeckLayout({ children, params }: { children: React
   if (!data) notFound();
   const { deck, categories, cards } = data;
   // Förslag (utkast och avvisade) räknas inte som kursens kort förrän de godkänts.
-  const cardCount = cards.filter((c) => c.review_status === null).length;
+  const courseCards = cards.filter((c) => c.review_status === null);
+  const cardCount = courseCards.length;
+  const inactiveCount = courseCards.filter((c) => !c.is_active).length;
   const pendingDrafts = cards.filter((c) => c.review_status === "utkast").length;
 
   return (
@@ -34,6 +36,12 @@ export default async function DeckLayout({ children, params }: { children: React
             {deck.course_code ? <Badge tone="outline">{deck.course_code}</Badge> : null}
             <span>{sv.admin.cardCount(cardCount)}</span>
             <span aria-hidden="true">·</span>
+            {inactiveCount > 0 ? (
+              <>
+                <span>{sv.admin.inactiveCount(inactiveCount)}</span>
+                <span aria-hidden="true">·</span>
+              </>
+            ) : null}
             <span>
               {categories.length} {sv.admin.categories.toLowerCase()}
             </span>

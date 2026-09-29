@@ -66,7 +66,7 @@ function Skeleton({ className }: { className: string }) {
 
 /**
  * Hemsidan: dagens pass, hur det går i kursen (inlärd kunskap, nyckeltal), kunskap per
- * kategori i radardiagrammet och aktiviteten de senaste två veckorna. Progressen laddas i
+ * område i radardiagrammet och aktiviteten de senaste två veckorna. Progressen laddas i
  * klienten med samma moduler som decksidan, så siffrorna är alltid desamma på båda ställena.
  */
 export function HomeDashboard({ userId, firstName, decks }: Props) {
@@ -321,8 +321,18 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
             sub={stats.freezeUsedRecently ? sv.summary.freezeUsed : sv.summary.freezesLeft(stats.freezesLeft)}
             tone="navy"
           />
-          <StatTile label={sv.stats.today} value={`${stats.reviewsToday}`} sub={sv.stats.cards(stats.reviewsToday)} tone="teal" />
-          <StatTile label={sv.dashboard.avg7} value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1).replace(".", ",")} sub="av 5" tone="violet" />
+          <StatTile
+            label={sv.stats.today}
+            value={`${stats.reviewsToday}`}
+            sub={view.plan.sessionCards > 0 ? sv.dashboard.cardsLeft(view.plan.sessionCards) : sv.deck.metaDone}
+            tone="teal"
+          />
+          <StatTile
+            label={sv.dashboard.avg7}
+            value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1).replace(".", ",")}
+            sub={stats.avg7 === null ? sv.dashboard.avg7None : sv.dashboard.avg7Sub}
+            tone="violet"
+          />
         </dl>
       )}
     </Card>
@@ -417,7 +427,7 @@ function TodayCard({
               onClick={() => onQuick("tricky")}
               icon={Target}
               title={sv.deck.modeTricky}
-              meta={`${sv.deck.summaryTricky(trickyPlan.selectionCount)} · cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
+              meta={`${sv.stats.cards(trickyPlan.selectionCount)} · cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
               data-testid="home-tricky"
             />
           ) : null}

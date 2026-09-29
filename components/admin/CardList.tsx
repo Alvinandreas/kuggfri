@@ -164,7 +164,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
               className="shrink-0"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold">{firstLine(card.front)}</p>
+              <p className="line-clamp-2 break-words font-semibold sm:line-clamp-1">{firstLine(card.front)}</p>
               <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-muted">
                 <KindBadge kind={card.kind} compact />
                 <ReviewStatusBadge status={card.review_status} />

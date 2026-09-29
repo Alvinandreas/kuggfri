@@ -178,7 +178,7 @@ export default function PrivacyPage() {
             </table>
           </Card>
           <p>
-            Vi samlar inte in namn, personnummer, telefonnummer, studentnummer eller IP-adresser för profilering. Vi
+            Utöver det som står i tabellen samlar vi inte in något: inga personnummer, telefonnummer, studentnummer eller IP-adresser för profilering. Vi
             använder inte automatiserat beslutsfattande som har rättsliga följder för dig. Schemaläggningen av kort
             är en beräkning som bara påverkar vilka kort du får se.
           </p>
@@ -192,28 +192,28 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              <code>kuggfri:progress:v1</code> och <code>kuggfri:reviews:v1</code> – progress och repetitioner från
+              <code>kuggfri:progress:v1</code> och <code>kuggfri:reviews:v1</code>: progress och repetitioner från
               tiden då Kuggfri gick att använda utan konto. Finns de kvar flyttas de till ditt konto nästa gång du
               loggar in och tas sedan bort ur webbläsaren.
             </li>
             <li>
-              <code>kuggfri:prefs:v1</code> – hur många nya kort per dag du valt och om du pluggar helst på vardagar.
+              <code>kuggfri:prefs:v1</code>: hur många nya kort per dag du valt och om du pluggar helst på vardagar.
             </li>
             <li>
-              <code>kuggfri:outbox:v1</code> – skattningar som inte kunnat sparas på grund av dålig anslutning, tills
+              <code>kuggfri:outbox:v1</code>: skattningar som inte kunnat sparas på grund av dålig anslutning, tills
               de skickats.
             </li>
             <li>
-              <code>kuggfri:theme</code> – ditt val av ljust eller mörkt läge.
+              <code>kuggfri:theme</code>: ditt val av ljust eller mörkt läge.
             </li>
             <li>
-              <code>kuggfri:sidebar</code> – om du fällt ihop sidomenyn.
+              <code>kuggfri:sidebar</code>: om du fällt ihop sidomenyn.
           </li>
           <li>
-            <code>kuggfri:sound</code> – om du stängt av ljudet när du skattar kort.
+            <code>kuggfri:sound</code>: om du stängt av ljudet när du skattar kort.
           </li>
           <li>
-            <code>kuggfri:stars:v1</code> – vilka kort du har stjärnmärkt.
+            <code>kuggfri:stars:v1</code>: vilka kort du har stjärnmärkt.
             </li>
           </ul>
           <p>Allt detta försvinner om du rensar webbplatsdata.</p>
@@ -243,7 +243,7 @@ export default function PrivacyPage() {
             Kursansvarig ser en kursöversikt med sammanställd statistik: hur många som börjat, hur många som är
             aktiva, vilka områden som har lägst genomsnittlig skattning, vilka kort flest tycker är svåra, och hur
             långt studenterna kommit. Statistiken innehåller aldrig namn, e-postadresser eller enskilda studenters
-            svar. Siffror per kategori eller kort visas först när <strong>minst fem studenter</strong> har skattat,
+            svar. Siffror per område eller kort visas först när <strong>minst fem studenter</strong> har skattat,
             så att ingen enskild students svar ska gå att räkna ut. Examinatorn ser bara sin egen kurs.
           </p>
           <p>
@@ -260,13 +260,13 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              <strong>Supabase</strong> – databas och inloggning. Projektet ligger i en EU-region (Irland).
+              <strong>Supabase</strong>: databas och inloggning. Projektet ligger i en EU-region (Irland).
             </li>
             <li>
-              <strong>Vercel</strong> – drift av webbplatsen. Serverkoden körs i Stockholm.
+              <strong>Vercel</strong>: drift av webbplatsen. Serverkoden körs i Stockholm.
             </li>
             <li>
-              <strong>Hostinger</strong> – e-postutskick: inloggnings- och bekräftelsemejl, och veckobrevet
+              <strong>Hostinger</strong>: e-postutskick: inloggnings- och bekräftelsemejl, och veckobrevet
               till examinatorer som beskrivs ovan.
             </li>
           </ul>

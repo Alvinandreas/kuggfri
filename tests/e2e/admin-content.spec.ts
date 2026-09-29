@@ -27,7 +27,7 @@ test.describe("admin: innehåll", () => {
     await cleanup();
   });
 
-  test("område: skapa, byt namn, ordna om och ta bort; korten hamnar under Utan kategori för studenten", async ({ page, browser }) => {
+  test("område: skapa, byt namn, ordna om och ta bort; korten hamnar under Utan område för studenten", async ({ page, browser }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin");
     const deckUrl = await openDeckAdmin(page);
     await page.goto(`${deckUrl}/innehall`);
@@ -73,7 +73,7 @@ test.describe("admin: innehåll", () => {
     }).toBe(listBefore.length - 2);
     await expectNoSeriousA11yViolations(page);
 
-    // Ta bort området: kortet finns kvar utan område ("Utan område" i admin) och syns som "Utan kategori" för studenten.
+    // Ta bort området: kortet finns kvar utan område och syns under "Utan område" både i admin och för studenten.
     await renamedRow.getByRole("button", { name: `Ta bort område: ${renamed}` }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();
     await expect(page.getByTestId("admin-category-list").locator("li").filter({ hasText: renamed })).toHaveCount(0);
@@ -83,17 +83,17 @@ test.describe("admin: innehåll", () => {
     const s = await student.newPage();
     await registerStudent(s, "utankategori", `/d/${DECK_SLUG}`);
     await s.goto(`/d/${DECK_SLUG}`);
-    const uncategorized = s.getByTestId("category-row").filter({ hasText: "Utan kategori" });
+    const uncategorized = s.getByTestId("category-row").filter({ hasText: "Utan område" });
     await expect(uncategorized).toBeVisible();
     await expect(uncategorized).toContainText("1 kort");
-    // Går att plugga urvalet "Utan kategori".
+    // Går att plugga urvalet "Utan område".
     await uncategorized.getByRole("checkbox").check();
     await s.getByRole("radio", { name: /Fri repetition/ }).check();
     await s.getByTestId("start-session").click();
     await expect(s.getByTestId("flashcard")).toContainText(front);
     await student.close();
 
-    // Ta bort kortet (med bekräftelse) från "Utan kategori".
+    // Ta bort kortet (med bekräftelse) från "Utan område".
     await page.goto(`${deckUrl}/kategori/ingen`);
     await page.getByRole("button", { name: `Ta bort kort: ${front}` }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Bekräfta" }).click();

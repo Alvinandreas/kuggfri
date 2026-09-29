@@ -266,9 +266,10 @@ function CategoryRowView({
 
   return (
     <div className="flex min-h-9 items-center justify-between gap-2">
-      <div className="flex min-w-0 flex-1 items-center gap-x-3">
-        <CategoryTag title={category.title} colorIndex={colorIndex} size="md" className="min-w-0 truncate" />
-        <span className="shrink-0 whitespace-nowrap text-sm text-muted">{countLabel(counts)}</span>
+      {/* Smalt: namnet och antalen under varandra, så att inget trycks ihop bredvid knapparna. */}
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-x-3">
+        <CategoryTag title={category.title} colorIndex={colorIndex} size="md" className="min-w-0 max-w-full truncate" />
+        <span className="text-sm text-muted sm:shrink-0 sm:whitespace-nowrap">{countLabel(counts)}</span>
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
         <button type="button" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`} title={sv.admin.rename} className={rowActionClass}>

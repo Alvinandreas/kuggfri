@@ -562,18 +562,19 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
   const clearFilters = () => setFilter((f) => ({ ...f, area: "alla", kind: "alla", source: "alla", changesOnly: false }));
 
   const statusLine = status ? <StatusLine status={status} onClose={() => setStatus(null)} /> : null;
-  // Föregående och Nästa: i arbetsytans huvud på breda ytor, i åtgärdsraden på smala.
+  // Föregående och Nästa ligger i åtgärdsraden, som alltid syns (även när ett långt kort rullats).
   const nav = (size: "sm" | "md") => (
     <>
       <Button variant="outline" size={size} onClick={() => go(-1)} disabled={position <= 0} aria-keyshortcuts="K ArrowLeft" data-testid="review-prev">
         <ArrowLeft size={16} aria-hidden />
-        {sv.admin.reviewPrev}
-        <KeyHint>K</KeyHint>
+        {/* Mellanbred yta: bara pilen, så att beslut och bläddring får plats på en rad. */}
+        <span className="@xl:@max-4xl:sr-only">{sv.admin.reviewPrev}</span>
+        <KeyHint wide>K</KeyHint>
       </Button>
       <Button variant="outline" size={size} onClick={() => go(1)} disabled={position >= visible.length - 1} aria-keyshortcuts="J ArrowRight" data-testid="review-next">
         {sv.admin.reviewNext}
         <ArrowRight size={16} aria-hidden />
-        <KeyHint>J</KeyHint>
+        <KeyHint wide>J</KeyHint>
       </Button>
     </>
   );
@@ -681,7 +682,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
         </Card>
       )}
 
-      <div className={cx("grid grid-cols-[minmax(0,1fr)] items-start gap-5", listColumn && !editing && "xl:grid-cols-[19rem_minmax(0,1fr)]")}>
+      <div className={cx("grid grid-cols-[minmax(0,1fr)] items-start gap-5", listColumn && !editing && visible.length > 0 && "xl:grid-cols-[19rem_minmax(0,1fr)]")}>
         {/* Listan över förslagen: egen kolumn på breda skärmar, en panel på smalare */}
         {visible.length > 0 && !editing ? (
           <Card
@@ -784,7 +785,6 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                 areaTitle={areaTitle}
                 areaColor={areaColor}
                 editing={editing !== null}
-                nav={editing ? null : nav("sm")}
                 listToggle={
                   editing ? null : (
                     <>
@@ -889,7 +889,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                       <CardHeader title={sv.admin.sourcesTitle} as="h3" spacing="sm" />
                       <SourceList source={current.source} original={current.original} showCorrection={false} />
                     </Card>
-                    <Card padding="md" className="grid gap-3" data-testid="review-meta">
+                    <Card padding="md" className="grid grid-cols-[minmax(0,1fr)] gap-3" data-testid="review-meta">
                       <div>
                         <label htmlFor="granska-omrade" className="mb-1.5 block text-sm font-semibold">
                           {sv.admin.category}
@@ -941,7 +941,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
 
                   {/* Åtgärdsraden, fast i nederkant av arbetsytan */}
                   <div className="sticky bottom-3 z-20 mt-1" data-testid="review-actions">
-                    <div className="grid gap-2 rounded-lg border border-line bg-surface/95 p-2.5 shadow-pop backdrop-blur supports-[backdrop-filter]:bg-surface/85 dark:border-line-strong">
+                    <div className="grid gap-2 rounded-lg border border-line bg-surface p-2.5 shadow-pop dark:border-line-strong">
                       {statusLine}
                       {rejecting ? (
                         <div className="anim-fade-up grid gap-3 p-1.5" data-testid="review-reject-panel">
@@ -1001,7 +1001,7 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                             {sv.admin.reviewEdit}
                             <KeyHint>R</KeyHint>
                           </Button>
-                          <div className="col-span-3 grid grid-cols-2 gap-2 @xl:hidden">{nav("md")}</div>
+                          <div className="col-span-3 grid grid-cols-2 gap-2 @xl:ml-auto @xl:flex">{nav("md")}</div>
                         </div>
                       )}
                     </div>
@@ -1024,7 +1024,15 @@ export function ReviewWorkspace({ deckId, areas, cards: serverCards, initialFilt
                   </>
                 ) : (
                   <>
-                    <p className="font-semibold">{sv.admin.reviewNoMatch}</p>
+                    <p className="font-semibold">
+                      {activeFilters > 0
+                        ? sv.admin.reviewNoMatch
+                        : filter.bucket === "avvisade"
+                          ? sv.admin.reviewNoneRejected
+                          : filter.bucket === "godkanda"
+                            ? sv.admin.reviewNoneApproved
+                            : sv.admin.reviewNoMatch}
+                    </p>
                     {activeFilters > 0 ? (
                       <Button variant="outline" size="sm" onClick={clearFilters}>
                         {sv.admin.reviewShowAll}
@@ -1071,7 +1079,6 @@ function ReviewHeader({
   areaTitle,
   areaColor,
   editing,
-  nav,
   listToggle,
 }: {
   card: ReviewCard;
@@ -1082,11 +1089,10 @@ function ReviewHeader({
   areaTitle: (id: string | null) => string;
   areaColor: (id: string | null) => number;
   editing: boolean;
-  nav: ReactNode;
   listToggle: ReactNode;
 }) {
   return (
-    <Card padding="md" className="grid gap-3" data-testid="review-header">
+    <Card padding="md" className="grid grid-cols-[minmax(0,1fr)] gap-3" data-testid="review-header">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
           <h2 className="text-lg font-bold tracking-tight">
@@ -1109,12 +1115,7 @@ function ReviewHeader({
             </Badge>
           ) : null}
         </div>
-        {listToggle || nav ? (
-          <div className="flex flex-wrap items-center gap-2">
-            {listToggle}
-            {nav ? <div className="flex gap-2 @max-xl:hidden">{nav}</div> : null}
-          </div>
-        ) : null}
+        {listToggle ? <div className="flex flex-wrap items-center gap-2">{listToggle}</div> : null}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         {card.category_id ? <CategoryTag title={areaTitle(card.category_id)} colorIndex={areaColor(card.category_id)} /> : <Badge tone="outline">{sv.admin.noCategory}</Badge>}
@@ -1127,10 +1128,19 @@ function ReviewHeader({
   );
 }
 
-/** Tangenten bredvid en knapps etikett, diskret och bara där det finns tangentbord (sm och uppåt). */
-function KeyHint({ children }: { children: ReactNode }) {
+/**
+ * Tangenten bredvid en knapps etikett, diskret och bara när ytan är bred nog (besluten från 3xl,
+ * bläddringen från 4xl), så att beslut och bläddring ryms på en rad.
+ */
+function KeyHint({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return (
-    <kbd aria-hidden className="ml-0.5 hidden h-5 min-w-5 items-center justify-center rounded border border-current/25 px-1 font-mono text-[10px] font-semibold opacity-70 @xl:inline-flex">
+    <kbd
+      aria-hidden
+      className={cx(
+        "ml-0.5 hidden h-5 min-w-5 items-center justify-center rounded border border-current/25 px-1 font-mono text-[10px] font-semibold opacity-70",
+        wide ? "@4xl:inline-flex" : "@3xl:inline-flex",
+      )}
+    >
       {children}
     </kbd>
   );
@@ -1228,6 +1238,7 @@ function BulkApproveDialog({
     >
       <div className="grid gap-4">
         <p className="text-muted">{sv.admin.reviewApproveAllBody(total)}</p>
+        {total > 1 ? <p className="text-sm text-muted">{sv.admin.reviewApproveAllCaution}</p> : null}
         {counts.length > 0 ? (
           <ul className="grid gap-1 text-sm" data-testid="review-approve-all-counts">
             {counts.map((c) => (

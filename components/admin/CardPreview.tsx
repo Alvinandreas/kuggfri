@@ -40,20 +40,22 @@ export function CardPreview({ front, back, hint, kind, options, area, compact = 
           key={side.key}
           className={cx(
             "flex flex-col rounded-lg border bg-surface shadow-card",
-            compact ? "min-h-36 p-5" : "min-h-48 p-5 sm:p-7",
+            // Kompakt (granskningen): mindre text och ingen vertikal centrering, så att två sidor
+            // bredvid varandra får plats utan att texten trycks ihop.
+            compact ? "min-h-36 p-5 [&_.prose-card]:text-[1.125rem]! [&_.prose-card]:leading-relaxed!" : "min-h-48 p-5 sm:p-7",
             side.key === "back" ? "border-accent/40" : "border-line",
           )}
           aria-label={`${sv.admin.preview}: ${side.label}`}
           data-testid={`preview-${side.key}`}
         >
           <div className="mb-4 flex items-center justify-between gap-3">
-            {area ? <CategoryTag title={area.title} colorIndex={area.colorIndex} size="lg" /> : <span className="text-xs text-muted">{sv.admin.noCategory}</span>}
+            {area ? <CategoryTag title={area.title} colorIndex={area.colorIndex} size={compact ? "md" : "lg"} className={compact ? "min-w-0 truncate" : undefined} /> : <span className="text-xs text-muted">{sv.admin.noCategory}</span>}
             <span className="shrink-0 text-xs uppercase tracking-wide text-muted">
               {side.key === "front" ? CARD_KIND_LABEL[kind] : side.label}
             </span>
           </div>
-          <div className={cx("flex flex-1 py-2", side.key === "front" && !auto && "text-center")}>
-            <Markdown text={side.text || "…"} variant="card" className="m-auto w-full" />
+          <div className={cx("flex py-2", !compact && "flex-1", side.key === "front" && !auto && "text-center")}>
+            <Markdown text={side.text || "…"} variant="card" className={compact ? "w-full" : "m-auto w-full"} />
           </div>
           {side.key === "front" && auto ? <OptionList options={options ?? []} /> : null}
           {side.key === "front" && hint?.trim() ? (

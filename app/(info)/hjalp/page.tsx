@@ -261,6 +261,18 @@ export default function HelpPage() {
                     t.keys.nav,
                   ],
                   [<Kbd key="k">H</Kbd>, t.keys.hint],
+                  [
+                    <span key="k" className="inline-flex items-center gap-1.5">
+                      <Kbd>1</Kbd>
+                      <span aria-hidden="true" className="text-muted">
+                        –
+                      </span>
+                      <span className="sr-only">till</span>
+                      <Kbd>9</Kbd>
+                    </span>,
+                    t.keys.pick,
+                  ],
+                  [<Kbd key="k">Enter</Kbd>, t.keys.answer],
                 ] as const
               ).map(([keys, action]) => (
                 <div key={action} className="flex flex-wrap items-center gap-x-4 gap-y-1.5">

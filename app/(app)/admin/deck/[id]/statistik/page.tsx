@@ -10,6 +10,7 @@ import { CourseDistributions } from "@/components/admin/CourseOverview";
 import { StatBlock } from "@/components/admin/StatBlock";
 import { Card } from "@/components/ui/Card";
 import { AreaLink } from "@/components/admin/AreaLink";
+import { formatCount, formatDecimal } from "@/lib/admin/format";
 
 export const metadata: Metadata = { title: sv.admin.allCardsDetail };
 
@@ -36,9 +37,9 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
         <p className="mt-1 text-sm text-muted">{sv.admin.statsDetailHelp}</p>
       </div>
       <dl className="grid grid-cols-3 gap-3">
-        <StatBlock label={sv.admin.tileStudents} value={`${stats.uniqueUsers}`} testId="stats-users" />
-        <StatBlock label={sv.admin.statsReviews} value={`${stats.totalReviews}`} />
-        <StatBlock label={sv.admin.statsAvg} value={stats.avgRating === null ? "–" : stats.avgRating.toFixed(2)} />
+        <StatBlock label={sv.admin.tileStudents} value={formatCount(stats.uniqueUsers)} testId="stats-users" />
+        <StatBlock label={sv.admin.statsReviews} value={formatCount(stats.totalReviews)} />
+        <StatBlock label={sv.admin.statsAvg} value={formatDecimal(stats.avgRating, 2)} />
       </dl>
       {stats.cards.every((c) => c.rating_count === 0) ? (
         <Card padding="lg" className="text-muted">
@@ -69,9 +70,9 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
                     <td className="hidden py-2.5 pr-3 sm:table-cell">
                       {cat && titleOf.has(cat) ? <AreaLink deckId={id} areaId={cat} title={titleOf.get(cat) ?? ""} colorIndex={colorIndex.get(cat) ?? 0} /> : <span className="text-muted">–</span>}
                     </td>
-                    <td className="py-2.5 pr-3 text-right tabular-nums">{c.avg_rating === null ? "–" : c.avg_rating.toFixed(2)}</td>
-                    <td className="py-2.5 pr-3 text-right tabular-nums">{c.rating_count}</td>
-                    <td className="py-2.5 pr-5 text-right tabular-nums">{c.total_reps}</td>
+                    <td className="py-2.5 pr-3 text-right tabular-nums">{formatDecimal(c.avg_rating, 2)}</td>
+                    <td className="py-2.5 pr-3 text-right tabular-nums">{formatCount(c.rating_count)}</td>
+                    <td className="py-2.5 pr-5 text-right tabular-nums">{formatCount(c.total_reps)}</td>
                   </tr>
                 );
               })}

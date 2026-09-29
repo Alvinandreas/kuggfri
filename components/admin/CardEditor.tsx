@@ -201,12 +201,18 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
             data-testid="card-back"
           />
           <TextField label={sv.admin.hint} value={hint} onChange={(e) => setHint(e.target.value)} maxLength={LIMITS.hint} />
-          <TextField
+          {/* Källor kan vara långa (flera hänvisningar med semikolon): rutan växer så att allt syns. */}
+          <TextArea
             label={sv.admin.source}
             hint={sv.admin.sourceHelp}
             value={source}
-            onChange={(e) => setSource(e.target.value)}
+            onChange={(e) => setSource(e.target.value.replace(/\r?\n/g, " "))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) e.preventDefault();
+            }}
+            rows={1}
             maxLength={LIMITS.source}
+            className="[&_textarea]:field-sizing-content [&_textarea]:min-h-12! [&_textarea]:resize-none"
             data-testid="card-source"
           />
           <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
@@ -278,27 +284,33 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
 function OptionsEditor({ items, onChange }: { items: OptionDraft[]; onChange: (next: OptionDraft[]) => void }) {
   const update = (key: string, patch: Partial<OptionDraft>) => onChange(items.map((o) => (o.key === key ? { ...o, ...patch } : o)));
   return (
-    <fieldset className="grid gap-2" data-testid="card-options">
+    <fieldset className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2" data-testid="card-options">
       <legend className="mb-1 text-sm font-semibold">{sv.admin.alternatives}</legend>
       <p className="-mt-1 mb-1 text-sm text-muted">{sv.admin.alternativesHelp}</p>
-      <ol className="grid gap-2">
+      <ol className="grid grid-cols-[minmax(0,1fr)] gap-2">
         {items.map((o, i) => (
-          <li key={o.key} className={cx("flex items-center gap-2 rounded-md border-2 p-1.5 pl-3 transition-colors duration-150", o.correct ? "border-accent/60 bg-accent-soft/40" : "border-transparent bg-surface-2")}>
-            <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm font-semibold">
+          <li key={o.key} className={cx("flex items-start gap-2 rounded-md border-2 p-1.5 pl-3 transition-colors duration-150", o.correct ? "border-accent/60 bg-accent-soft/40" : "border-transparent bg-surface-2")}>
+            <label className="flex h-10 shrink-0 cursor-pointer items-center gap-2 text-sm font-semibold">
               <Checkbox checked={o.correct} onChange={(e) => update(o.key, { correct: e.target.checked })} aria-label={`${sv.admin.correctOption}: ${sv.admin.alternativeLabel(i + 1)}`} />
               <span aria-hidden className="hidden w-8 sm:inline">
                 {sv.admin.correctOption}
               </span>
             </label>
-            <input
+            {/* Växer med texten, så att långa alternativ går att läsa i sin helhet. Ett alternativ är
+                en rad: Enter infogar ingen radbrytning (Ctrl+Enter sparar som i resten av formuläret). */}
+            <textarea
               value={o.text}
-              onChange={(e) => update(o.key, { text: e.target.value })}
+              onChange={(e) => update(o.key, { text: e.target.value.replace(/\r?\n/g, " ") })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) e.preventDefault();
+              }}
+              rows={1}
               aria-label={sv.admin.alternativeLabel(i + 1)}
               placeholder={sv.admin.alternativeLabel(i + 1)}
               maxLength={LIMITS.optionText}
-              className={cx(inputClass, "h-10 min-w-0 flex-1 bg-surface px-3 dark:bg-surface-3")}
+              className={cx(inputClass, "field-sizing-content min-h-10 min-w-0 flex-1 resize-none bg-surface! px-3 py-2 leading-snug dark:bg-surface-3!")}
             />
-            <div className="flex shrink-0 items-center">
+            <div className="flex h-10 shrink-0 items-center">
               <IconButton label={sv.admin.moveAlternativeUp(i + 1)} size="sm" onClick={() => onChange(moveItem(items, i, -1))} disabled={i === 0}>
                 <ArrowUp size={15} aria-hidden />
               </IconButton>

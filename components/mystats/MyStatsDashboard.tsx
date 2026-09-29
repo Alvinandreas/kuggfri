@@ -262,7 +262,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
           {/* Aktivitetskartan med rekorden bredvid. */}
           <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 5 }} data-testid="mystats-activity">
             <CardHeader title={sv.myStats.activity} description={sv.myStats.activityHelp(HEATMAP_WEEKS)} />
-            <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+            <div className="grid items-center gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
               <div className="w-full max-w-[44rem]">
                 <ActivityHeatmap counts={mine.perDay} weeks={HEATMAP_WEEKS} now={now ?? undefined} title={sv.myStats.activity} hideTitle />
               </div>

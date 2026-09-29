@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, type ReactNode } from "react";
 import { Download } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { deleteAccountAction, updateDisplayNameAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
@@ -42,6 +42,19 @@ function FormStatus({ state }: { state: AuthResult | null }) {
     <p role="status" className={cx("text-sm font-medium", state.ok ? "text-accent" : "text-danger")}>
       {state.ok ? state.message : state.error}
     </p>
+  );
+}
+
+/** En rad i Nollställ progress: rubrik och förklaring till vänster, knappen till höger. */
+function ResetRow({ title, help, children }: { title: string; help: string; children: ReactNode }) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3 first:pt-0 last:pb-0">
+      <div className="min-w-0 flex-1 basis-60">
+        <p className="font-semibold">{title}</p>
+        <p className="text-sm text-muted">{help}</p>
+      </div>
+      {children}
+    </li>
   );
 }
 
@@ -147,7 +160,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
             {sv.account.displayName}
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <input id="display_name" name="display_name" defaultValue={displayName} maxLength={80} className={cx(inputClass, "h-12 min-w-0 flex-1")} />
+            <input id="display_name" name="display_name" defaultValue={displayName} maxLength={80} placeholder={sv.auth.displayNamePlaceholder} autoComplete="name" className={cx(inputClass, "h-12 min-w-0 flex-1")} />
             <Button type="submit" variant="outline" disabled={namePending}>
               {sv.account.save}
             </Button>
@@ -249,32 +262,38 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
 
       <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 6 }} role="region" aria-labelledby="nollstall-rubrik">
         <CardHeader id="nollstall-rubrik" title={sv.account.resetTitle} description={sv.account.resetHelp} />
+        {/* En rad per handling: vad som nollställs, vad som händer, och knappen. */}
         <div className="grid gap-4">
-          {decks.length === 0 ? (
-            <p className="text-sm text-muted">{sv.account.noDecks}</p>
-          ) : (
-            <ul className="divide-y divide-line">
-              {decks.map((d) => (
-                <li key={d.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 first:pt-0">
-                  <span className="min-w-0 font-semibold">{d.title}</span>
-                  <Button variant="danger" size="sm" onClick={() => setPending({ kind: "resetDeck", deck: d })} disabled={!store} data-testid={`reset-deck-${d.slug}`}>
-                    <span className="whitespace-normal">{sv.account.resetDeckNamed(d.title)}</span>
+          <ul className="divide-y divide-line">
+            {decks.length === 0 ? (
+              <li className="pb-3 text-sm text-muted">{sv.account.noDecks}</li>
+            ) : (
+              decks.map((d) => (
+                <ResetRow key={d.id} title={d.title} help={sv.account.resetDeckHelp}>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => setPending({ kind: "resetDeck", deck: d })}
+                    disabled={!store}
+                    aria-label={sv.account.resetDeckNamed(d.title)}
+                    data-testid={`reset-deck-${d.slug}`}
+                  >
+                    {sv.account.resetDeckButton}
                   </Button>
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="grid gap-3 rounded-md bg-surface-2 p-4">
-            <p className="text-sm text-muted">{sv.deck.resetScheduleHelp}</p>
-            <div className="flex flex-wrap gap-2">
+                </ResetRow>
+              ))
+            )}
+            <ResetRow title={sv.account.resetScheduleTitle} help={sv.deck.resetScheduleHelp}>
               <Button variant="outline" size="sm" onClick={() => setPending({ kind: "resetSchedule" })} disabled={!store} data-testid="reset-schedule">
-                <span className="whitespace-normal">{sv.account.resetScheduleAll}</span>
+                {sv.account.resetScheduleButton}
               </Button>
+            </ResetRow>
+            <ResetRow title={sv.account.resetAllTitle} help={sv.account.resetAllHelp}>
               <Button variant="danger" size="sm" onClick={() => setPending({ kind: "resetAll" })} disabled={!store} data-testid="reset-all">
-                <span className="whitespace-normal">{sv.deck.resetAll}</span>
+                {sv.deck.resetAll}
               </Button>
-            </div>
-          </div>
+            </ResetRow>
+          </ul>
           {notice?.where === "reset" ? <NoticeText notice={notice} /> : null}
         </div>
       </Card>

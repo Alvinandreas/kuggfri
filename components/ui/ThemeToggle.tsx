@@ -18,7 +18,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length] ?? "system")}
       aria-label={`${sv.theme.label}: ${label}`}
       title={`${sv.theme.label}: ${label}`}
-      className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+      className="relative ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors after:absolute after:-inset-1 hover:bg-surface-2 hover:text-fg"
     >
       <Icon size={18} strokeWidth={1.8} aria-hidden />
     </button>

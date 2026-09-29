@@ -79,7 +79,9 @@ function NavItem({ link, pathname, drawer }: { link: NavLink; pathname: string; 
       title={label}
       aria-current={active ? "page" : undefined}
       className={cx(
-        "nav-item flex h-10 items-center gap-3 rounded-md px-3 text-[0.95rem] font-medium transition-colors duration-150",
+        "nav-item flex items-center gap-3 rounded-md px-3 text-[0.95rem] font-medium transition-colors duration-150",
+        // I mobilens meny trycks posterna med tummen: 44 px höga.
+        drawer ? "h-11" : "h-10",
         active ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg",
       )}
     >
@@ -182,7 +184,9 @@ function SidebarContent({ user, adminDecks, isAdmin, courses, pathname, top, dra
           </>
         ) : null}
       </nav>
-      <div className="space-y-0.5 px-3 pb-4">
+      {/* Avgränsad från listan ovanför: på låga skärmar rullar listan, och utan kant såg den
+          avklippta sista posten ut att ligga under Hjälp. */}
+      <div className="space-y-0.5 border-t border-line px-3 pb-4 pt-2">
         <NavItem link={{ href: "/hjalp", label: sv.shell.help, icon: CircleHelp }} pathname={pathname} drawer={drawer} />
         <NavItem link={{ href: "/om", label: sv.shell.about, icon: Info }} pathname={pathname} drawer={drawer} />
         <NavItem link={{ href: "/integritet", label: sv.shell.privacy, icon: ShieldCheck }} pathname={pathname} drawer={drawer} />
@@ -260,7 +264,7 @@ export function Sidebar(props: SidebarProps) {
       <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
         <Logo variant="menu" height={34} decorative />
       </Link>
-      <IconButton label={sv.shell.closeMenu} variant="outline" size="sm" onClick={() => setDrawerOpen(false)}>
+      <IconButton label={sv.shell.closeMenu} variant="outline" size="sm" className="relative after:absolute after:-inset-1.5" onClick={() => setDrawerOpen(false)}>
         <X size={16} strokeWidth={2} aria-hidden />
       </IconButton>
     </div>
@@ -273,7 +277,7 @@ export function Sidebar(props: SidebarProps) {
       </aside>
 
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b border-line bg-bg/85 px-2 backdrop-blur lg:hidden">
-        <IconButton label={sv.shell.openMenu} onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>
+        <IconButton label={sv.shell.openMenu} className="relative after:absolute after:-inset-0.5" onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>
           <MenuIcon size={20} strokeWidth={2} aria-hidden />
         </IconButton>
         <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">

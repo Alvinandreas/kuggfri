@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
 import { percent } from "@/lib/text/percent";
@@ -65,7 +66,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
               {examPct}
               <span className="text-2xl text-muted"> %</span>
             </p>
-            <p className="mt-1 font-semibold">{sv.summary.examScore(examOk, summary.reviewed, examPct)}</p>
+            <p className="mt-1 font-semibold">{sv.summary.examScore(examOk, summary.reviewed)}</p>
             {duration ? (
               <p className="font-semibold text-muted" data-testid="exam-duration">
                 {sv.dugga.duration(duration)}
@@ -79,7 +80,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
 
       {today ? (
         <dl className="grid grid-cols-3 gap-3" data-testid="today-tiles">
-          <StatTile label={sv.summary.tileToday} value={`${today.reviewsToday}`} sub={sv.stats.cards(today.reviewsToday)} tone="teal" />
+          <StatTile label={sv.summary.tileToday} value={`${today.reviewsToday}`} sub={sv.summary.tileTodaySub(summary.reviewed)} tone="teal" />
           <StatTile
             label={sv.summary.tileStreak}
             value={`${today.streak}`}
@@ -98,9 +99,10 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
           {SELF_RATINGS.map((r) => {
             const n = summary.distribution[r];
             return (
-              <li key={r} className="grid grid-cols-[6.5rem_1fr_2rem] items-center gap-3 text-sm">
-                <span>
-                  {r} – {sv.study.rate[r]}
+              <li key={r} className="grid grid-cols-[7.5rem_1fr_2rem] items-center gap-3 text-sm">
+                <span className="flex items-center gap-2">
+                  <span className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full border px-1.5 text-xs font-bold text-fg ${ratingClass[r]}`}>{r}</span>
+                  {sv.study.rate[r]}
                 </span>
                 <span className="h-2.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
                   <span className={`block h-full rounded-full ${barClass[r]}`} style={{ width: `${(n / max) * 100}%` }} />
@@ -158,18 +160,25 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
         )}
       </Card>
 
-      <Card padding="lg" role="region" aria-labelledby="nasta" className="anim-fade-up" style={{ ["--i" as string]: 3 }}>
-        <h2 id="nasta" className="text-lg font-bold tracking-tight">
-          {sv.summary.nextDue}
-        </h2>
-        <p className="mt-2 text-muted" data-testid="next-due">
-          {mode !== "fsrs"
-            ? sv.summary.freeModeNote
-            : nextDue
-              ? sv.summary.nextDueCount(nextDue.count, formatRelative(nextDue.date))
-              : sv.summary.nextDueNone}
-        </p>
-      </Card>
+      {/* Duggans resultatruta säger redan att schemat inte rörs. */}
+      {isExam ? null : (
+        <Card padding="lg" role="region" aria-labelledby="nasta" className="anim-fade-up" style={{ ["--i" as string]: 3 }}>
+          <h2 id="nasta" className="text-lg font-bold tracking-tight">
+            {sv.summary.nextDue}
+          </h2>
+          <p className="mt-2 text-muted" data-testid="next-due">
+            {mode === "fsrs"
+              ? nextDue
+                ? sv.summary.nextDueCount(nextDue.count, formatRelative(nextDue.date))
+                : sv.summary.nextDueNone
+              : mode === "tricky"
+                ? sv.summary.trickyModeNote
+                : mode === "random"
+                  ? sv.summary.randomModeNote
+                  : sv.summary.freeModeNote}
+          </p>
+        </Card>
+      )}
 
       <div className="flex flex-wrap items-center gap-3">
         <LinkButton href={`/d/${deckSlug}`} variant="primary" size="lg">
@@ -180,12 +189,13 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
             {sv.summary.continueNew(today.continueCount)}
           </LinkButton>
         ) : (
-          <LinkButton href="/" variant="secondary" size="lg">
+          <LinkButton href="/hem" variant="secondary" size="lg">
             {sv.summary.home}
           </LinkButton>
         )}
         {onPrevious ? (
           <Button variant="ghost" size="lg" onClick={onPrevious}>
+            <ArrowLeft size={18} aria-hidden />
             {sv.study.previous}
           </Button>
         ) : null}

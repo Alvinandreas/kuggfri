@@ -45,7 +45,7 @@ export default async function AdminDeckListPage() {
                 </Link>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
                   {d.course_code ? <Badge tone="outline">{d.course_code}</Badge> : null}
-                  <span>{sv.home.cards(d.cardCount)}</span>
+                  <span>{sv.admin.activeCardCount(d.cardCount)}</span>
                   <Badge tone={d.is_published ? "accent" : "neutral"}>{d.is_published ? sv.admin.published : sv.admin.unpublished}</Badge>
                 </p>
               </div>

@@ -64,7 +64,8 @@ export function CorrectionCompare({ before, after, areaTitle, colorIndex }: Prop
   };
 
   return (
-    <div className="grid gap-4" data-testid="review-correction-compare">
+    // Formler i display-läge (KaTeX) rullar inom sin kolumn i stället för att tränga ut den.
+    <div className="grid gap-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1" data-testid="review-correction-compare">
       {changedLabels.length > 0 ? <p className="text-sm text-muted">{sv.admin.correctionChangedFields(changedLabels.join(", "))}</p> : <p className="text-sm text-muted">{sv.admin.correctionNoDiff}</p>}
 
       <div className="hidden grid-cols-2 gap-3 @xl:grid" aria-hidden>

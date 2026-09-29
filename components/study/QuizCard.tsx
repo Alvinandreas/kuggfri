@@ -93,9 +93,9 @@ export function QuizCard({
                     data-testid="quiz-option"
                     data-state={state}
                     className={cx(
-                      "group flex w-full items-center gap-3 rounded-lg border-2 px-4 py-3 text-left transition-[border-color,background-color,opacity,transform] duration-150 ease-out",
-                      "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/15",
-                      kind === "sant-falskt" && "justify-center py-4 text-center text-lg font-semibold",
+                      "group flex w-full items-center gap-3 rounded-lg border-2 px-4 transition-[border-color,background-color,opacity,transform] duration-150 ease-out",
+                      "focus-visible:outline-offset-2",
+                      kind === "sant-falskt" ? "justify-center py-4 text-center text-lg font-semibold" : "py-3 text-left",
                       state === "idle" && "border-transparent bg-surface-2 hover:bg-surface-3 active:scale-[0.99]",
                       state === "selected" && "border-accent bg-accent-soft/60",
                       state === "right" && "anim-pop border-rate-5 bg-rate-5/20",
@@ -109,13 +109,19 @@ export function QuizCard({
                         aria-hidden="true"
                         className={cx(
                           "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                          state === "selected" ? "bg-accent text-accent-fg" : "bg-surface-3 text-muted",
+                          state === "selected"
+                            ? "bg-accent text-accent-fg"
+                            : state === "right" || state === "missed"
+                              ? "bg-rate-5 text-white"
+                              : state === "wrong"
+                                ? "bg-rate-1 text-white"
+                                : "bg-surface-3 text-muted",
                         )}
                       >
                         {state === "right" || state === "missed" ? <Check size={15} strokeWidth={3} /> : state === "wrong" ? <X size={15} strokeWidth={3} /> : sv.quiz.optionLabel(i)}
                       </span>
                     ) : null}
-                    <span className="min-w-0 flex-1">
+                    <span className={cx("min-w-0", kind === "alternativ" && "flex-1")}>
                       {kind === "alternativ" ? <Markdown text={option.text} variant="body" className="[&_p]:m-0" /> : option.text}
                     </span>
                     {answered && state !== "dim" && state !== "idle" ? (

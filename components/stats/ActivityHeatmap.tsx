@@ -131,11 +131,15 @@ export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatVa
         className="relative rounded-md outline-offset-4"
       >
         <svg viewBox={`0 0 ${W} ${H}`} aria-hidden className="h-auto w-full">
-          {[...months].map(([w, label]) => (
-            <text key={w} x={LEFT + w * STEP} y={10} className="fill-muted" fontSize={10}>
-              {label}
-            </text>
-          ))}
+          {[...months].map(([w, label]) => {
+            // Månaden i en av de sista kolumnerna högerställs, så att den inte klipps vid kanten.
+            const atEnd = w >= weeks - 2;
+            return (
+              <text key={w} x={LEFT + w * STEP + (atEnd ? CELL : 0)} y={10} textAnchor={atEnd ? "end" : "start"} className="fill-muted" fontSize={10}>
+                {label}
+              </text>
+            );
+          })}
           {[0, 2, 4].map((d) => (
             <text key={d} x={0} y={TOP + d * STEP + CELL - 3} className="fill-muted" fontSize={10}>
               {sv.myStats.weekdays[d]}

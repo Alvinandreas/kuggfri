@@ -155,7 +155,8 @@ function SortableRow({
           type="button"
           aria-label={sv.admin.dragHandle}
           title={sv.admin.dragHandle}
-          className={cx(iconAction, "cursor-grab touch-none active:cursor-grabbing")}
+          // På mobilen räcker pilarna (och ger plats åt titeln); handtaget finns från sm och uppåt.
+          className={cx(iconAction, "cursor-grab touch-none active:cursor-grabbing max-sm:hidden")}
           {...attributes}
           {...listeners}
         >

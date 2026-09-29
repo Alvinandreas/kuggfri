@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Flag, Star, Volume2 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { SELF_RATINGS } from "@/lib/progress/types";
+import { Kbd } from "@/components/ui/Kbd";
 import { Modal } from "@/components/ui/Modal";
 import { cx } from "@/components/ui/cx";
 import { ratingClass } from "./RatingButtons";
@@ -33,8 +34,8 @@ export function SessionHelpDialog({ open, onClose }: { open: boolean; onClose: (
               <li key={r} className="flex items-center gap-3">
                 <span className={cx("inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border-2 font-extrabold", ratingClass[r])}>{r}</span>
                 <span>
-                  <span className="font-semibold">{sv.study.rate[r]}</span>
-                  <span className="text-muted"> – {sv.session.rateMeaning[r]}</span>
+                  <span className="block font-semibold">{sv.study.rate[r]}</span>
+                  <span className="block text-muted">{sv.session.rateMeaning[r]}</span>
                 </span>
               </li>
             ))}
@@ -46,7 +47,7 @@ export function SessionHelpDialog({ open, onClose }: { open: boolean; onClose: (
             {sv.session.keys.map(([key, what]) => (
               <div key={key} className="contents">
                 <dt>
-                  <kbd className="inline-flex min-w-9 justify-center rounded-md border border-line-strong bg-surface-2 px-2 py-1 font-mono text-xs font-semibold">{key}</kbd>
+                  <Kbd className="h-7 min-w-9 px-2 text-xs">{key}</Kbd>
                 </dt>
                 <dd className="text-muted">{what}</dd>
               </div>

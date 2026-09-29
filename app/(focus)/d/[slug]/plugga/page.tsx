@@ -15,7 +15,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const data = await getDeckBySlug(slug);
-  return { title: data ? `${data.deck.title} – ${sv.deck.start}` : sv.deck.start };
+  return { title: data ? sv.study.pageTitle(data.deck.title) : sv.deck.start };
 }
 
 export default async function StudyPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {

@@ -23,7 +23,8 @@ export function Disclosure({
     <details open={defaultOpen} className={cx("ui-disclosure group", className)} data-testid={testId}>
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-md py-2 font-semibold text-fg [&::-webkit-details-marker]:hidden">
         <span>{summary}</span>
-        <ChevronDown size={17} aria-hidden className="shrink-0 text-muted transition-transform duration-200 group-open:rotate-180" />
+        {/* Pilen följer sin egen <details>, inte en yttre öppen Disclosure (group-open träffar alla förfäder). */}
+        <ChevronDown size={17} aria-hidden className="shrink-0 text-muted transition-transform duration-200 [details[open]>summary>&]:rotate-180" />
       </summary>
       <div className="anim-fade-in pb-1 pt-2">{children}</div>
     </details>

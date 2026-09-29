@@ -12,6 +12,6 @@ export const CONTACTS = {
   examiner: {
     name: "Johan Ahlström",
     role: "Examinator för Materialteknik: frågor om kursens innehåll",
-    email: "johan.ahlström@chalmers.se",
+    email: "johan.ahlstrom@chalmers.se",
   },
 } as const;

@@ -30,6 +30,8 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
   if (categoryId !== NONE && !category) notFound();
 
   const cards = data.cards.filter((c) => (category ? c.category_id === category.id : c.category_id === null));
+  // Samma räkning som på Innehåll: kursens kort (utan förslag), varav inaktiva, och utkasten för sig.
+  const courseCards = cards.filter((c) => c.review_status === null).length;
   const inactive = cards.filter((c) => !c.is_active && c.review_status === null).length;
   const drafts = cards.filter((c) => c.review_status === "utkast").length;
   const colorIndex = categoryColorIndex(categories);
@@ -54,7 +56,7 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
             )}
           </h2>
           <p className="mt-2 text-sm text-muted">
-            {sv.admin.cardCount(cards.length)}
+            {sv.admin.cardCount(courseCards)}
             {inactive > 0 ? ` · ${sv.admin.inactiveCount(inactive)}` : ""}
             {drafts > 0 ? ` · ${sv.admin.draftCount(drafts)}` : ""}
             {category ? ` · ${sv.admin.categoryPosition(categories.findIndex((c) => c.id === category.id) + 1, categories.length)}` : ""}
@@ -62,11 +64,11 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
         </div>
         <LinkButton href={newHref} size="sm">
           <Plus size={16} aria-hidden />
-          {sv.admin.newCardInCategory}
+          {category ? sv.admin.newCardInCategory : sv.admin.newCard}
         </LinkButton>
       </div>
 
-      <p className="text-sm text-muted">{sv.admin.categoryCardsHelp}</p>
+      {cards.length > 0 ? <p className="text-sm text-muted">{sv.admin.categoryCardsHelp}</p> : null}
       <CardList deckId={deck.id} cards={cards} categories={categories.map((c) => ({ id: c.id, title: c.title }))} currentCategoryId={category?.id ?? null} />
     </div>
   );

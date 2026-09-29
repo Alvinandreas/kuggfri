@@ -48,12 +48,14 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
   return (
     <Modal open={open && category !== null} onClose={onClose} title={category?.title ?? ""} size="md">
       {category && plans ? (
-        <div className="grid gap-6" data-testid="category-focus">
-          <div className="flex items-center gap-3 text-sm text-muted">
-            <span className={`h-3 w-3 shrink-0 rounded-full ${tagBgClass(category.colorIndex)}`} aria-hidden />
-            <span>{sv.home.cards(total)}</span>
-            {stats && stats.studied === 0 ? <span>· {sv.focus.notStarted}</span> : null}
-          </div>
+        <div className="grid grid-cols-1 gap-6" data-testid="category-focus">
+          <p className="flex items-start gap-3 text-sm text-muted">
+            <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ${tagBgClass(category.colorIndex)}`} aria-hidden />
+            <span>
+              {sv.home.cards(total)}
+              {stats && stats.studied === 0 ? ` · ${sv.focus.notStarted}` : null}
+            </span>
+          </p>
 
           <dl className="grid grid-cols-3 gap-3">
             <StatTile label={sv.focus.learned} value={`${stats?.learned ?? 0}`} sub={sv.focus.cardsOf(stats?.learned ?? 0, total)} tone="green" />

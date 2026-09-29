@@ -7,10 +7,12 @@ import { firstLine } from "@/lib/text/first-line";
 import { importCardsAction } from "@/lib/admin/actions";
 import { diffImport, type ExistingCard, type ExistingCategory } from "@/lib/import/diff";
 import { parseImport, type ImportParseResult } from "@/lib/import/parse-import";
-import { Button, LinkButton } from "@/components/ui/Button";
+import { Upload } from "lucide-react";
+import { Button, buttonClass } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { TextArea } from "@/components/ui/TextArea";
+import { cx } from "@/components/ui/cx";
 import { StatBlock } from "./StatBlock";
 
 type Props = { deckId: string; existingCards: ExistingCard[]; existingCategories: ExistingCategory[] };
@@ -22,6 +24,7 @@ function truncate(text: string, n = 120): string {
 export function ImportPanel({ deckId, existingCards, existingCategories }: Props) {
   const router = useRouter();
   const [text, setText] = useState("");
+  const [fileName, setFileName] = useState<string | null>(null);
   const [parsed, setParsed] = useState<ImportParseResult | null>(null);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
@@ -34,6 +37,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
     const file = e.target.files?.[0];
     if (!file) return;
     const content = await file.text();
+    setFileName(file.name);
     setText(content);
     setParsed(parseImport(content));
     setResult(null);
@@ -52,6 +56,7 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
         setResult({ ok: true, text: sv.admin.importDone(r.data.created + r.data.updated) });
         setParsed(null);
         setText("");
+        setFileName(null);
         router.refresh();
       } else {
         setResult({ ok: false, text: r.error });
@@ -65,17 +70,26 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
         <div className="grid grid-cols-[minmax(0,1fr)] gap-1 text-sm text-muted">
           <p>{sv.admin.importHelp}</p>
           <p>{sv.admin.importMatchHelp}</p>
+          <p>{sv.admin.importVisibleHelp}</p>
         </div>
-        <label className="grid grid-cols-[minmax(0,1fr)] gap-1.5 text-sm">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-1.5 text-sm">
           <span className="font-semibold">{sv.admin.importFile}</span>
-          <input
-            type="file"
-            accept=".csv,.json,text/csv,application/json,text/plain"
-            onChange={onFile}
-            data-testid="import-file"
-            className="text-sm text-muted file:mr-3 file:inline-flex file:min-h-9 file:cursor-pointer file:rounded-full file:border-0 file:bg-surface-2 file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-fg file:transition-colors hover:file:bg-surface-3"
-          />
-        </label>
+          {/* Webbläsarens egen filknapp har engelsk text; en egen knapp med filfältet dolt i sig. */}
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <label className={cx(buttonClass("secondary", "sm"), "cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent")}>
+              <Upload size={15} aria-hidden />
+              {sv.admin.importChooseFile}
+              <input
+                type="file"
+                accept=".csv,.json,text/csv,application/json,text/plain"
+                onChange={onFile}
+                data-testid="import-file"
+                className="sr-only"
+              />
+            </label>
+            <span className="min-w-0 truncate text-muted">{fileName ?? sv.admin.importNoFile}</span>
+          </div>
+        </div>
         <TextArea label={sv.admin.importPaste} mono value={text} onChange={(e) => setText(e.target.value)} rows={8} data-testid="import-text" />
         <div>
           <Button variant="secondary" onClick={preview} disabled={!text.trim()} data-testid="import-preview">
@@ -170,9 +184,9 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
             <Button onClick={confirm} disabled={pending || toImport === 0} data-testid="import-confirm">
               {toImport === 0 ? sv.admin.importNothing : sv.admin.importConfirm(toImport)}
             </Button>
-            <LinkButton href={`/admin/deck/${deckId}/innehall`} variant="secondary">
-              {sv.common.back}
-            </LinkButton>
+            <Button variant="ghost" onClick={() => setParsed(null)} disabled={pending}>
+              {sv.common.cancel}
+            </Button>
           </div>
         </section>
       ) : null}
@@ -181,14 +195,6 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
         <p role="status" className={`text-sm font-medium ${result.ok ? "text-accent" : "text-danger"}`} data-testid="import-result">
           {result.text}
         </p>
-      ) : null}
-
-      {!diff ? (
-        <div>
-          <LinkButton href={`/admin/deck/${deckId}/innehall`} variant="secondary" size="sm">
-            {sv.common.back}
-          </LinkButton>
-        </div>
       ) : null}
     </div>
   );

@@ -28,16 +28,18 @@ type Props = {
 };
 
 /**
- * Välj områden inför passet. Bara det som behövs för att välja: kryssruta, kategorins
+ * Välj områden inför passet. Bara det som behövs för att välja: kryssruta, områdets
  * namn och hur många kort den har. Hur det går per område visas på hemsidan.
  */
 export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSortMode, onToggle, onOnly, onSelectAll }: Props) {
-  const allSelected = selected.size === rows.length && rows.length > 0;
+  const filled = rows.filter((r) => r.stats.total > 0);
+  const allSelected = filled.length > 0 && filled.every((r) => selected.has(r.id));
 
   return (
     <Card padding="lg" role="region" aria-labelledby="kategorier-rubrik" className="anim-fade-up order-3 lg:order-none" style={{ ["--i" as string]: 2 }}>
       <CardHeader
         id="kategorier-rubrik"
+        className="max-sm:flex-col max-sm:gap-3"
         title={sv.deck.categories}
         description={sv.deck.categoriesHelp}
         action={
@@ -68,8 +70,11 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
       <ul className="grid gap-1.5 sm:grid-cols-2">
         {rows.map((c) => {
           const checked = selected.has(c.id);
-          // I läget kluriga kort går bara kategorier med kluriga kort att välja.
-          const selectable = mode !== "tricky" || c.stats.tricky > 0;
+          // Tomma områden (t.ex. kort som ännu är utkast) går inte att välja, och i läget kluriga
+          // kort bara områden med kluriga kort.
+          const empty = c.stats.total === 0;
+          const selectable = !empty && (mode !== "tricky" || c.stats.tricky > 0);
+          const why = empty ? sv.deck.emptyCategory : sv.deck.trickyEmptyCategory;
           return (
             <li
               key={c.id}
@@ -86,7 +91,7 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
                   disabled={!selectable}
                   onChange={() => onToggle(c.id)}
                   aria-label={c.title}
-                  title={selectable ? undefined : sv.deck.trickyEmptyCategory}
+                  title={selectable ? undefined : why}
                 />
               </label>
               <button
@@ -94,7 +99,7 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
                 onClick={() => onOnly(c.id)}
                 disabled={!selectable}
                 className="min-w-0 flex-1 rounded-full text-left transition-transform duration-150 active:scale-[0.98] disabled:cursor-not-allowed"
-                title={selectable ? sv.deck.categoriesHelp : sv.deck.trickyEmptyCategory}
+                title={selectable ? sv.deck.categoriesHelp : why}
               >
                 <CategoryTag title={c.title} colorIndex={colorIndex.get(c.id) ?? 0} size="md" />
               </button>

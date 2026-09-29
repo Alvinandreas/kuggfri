@@ -35,6 +35,9 @@ type Props = {
 
 const SWIPE_MIN_PX = 56;
 
+/** De små ikonknapparna på kortet är 32 px; en osynlig kant gör träffytan 44 px på mobilen. */
+const HIT_AREA = "relative after:absolute after:-inset-1.5";
+
 /**
  * Själva kortet. Klick/tapp vänder; horisontellt svep anropar onSwipe*.
  * Innehållet ligger i vanliga sektioner (inte i en knapp) så att skärmläsare
@@ -176,6 +179,7 @@ export function FaceHeader({
             label={starred ? sv.session.unstar : sv.session.star}
             variant="outline"
             size="sm"
+            className={HIT_AREA}
             onClick={onToggleStar}
             aria-pressed={starred}
             data-testid="card-star"
@@ -186,7 +190,7 @@ export function FaceHeader({
           </IconButton>
         </Tooltip>
         <Tooltip label={soundOn ? sv.session.soundOn : sv.session.soundOff} side="bottom">
-          <IconButton label={soundOn ? sv.session.soundOn : sv.session.soundOff} variant="outline" size="sm" onClick={() => setSoundOn(!soundOn)} aria-pressed={!soundOn}>
+          <IconButton label={soundOn ? sv.session.soundOn : sv.session.soundOff} variant="outline" size="sm" className={HIT_AREA} onClick={() => setSoundOn(!soundOn)} aria-pressed={!soundOn}>
             {soundOn ? <Volume2 size={16} aria-hidden /> : <VolumeX size={16} aria-hidden />}
           </IconButton>
         </Tooltip>

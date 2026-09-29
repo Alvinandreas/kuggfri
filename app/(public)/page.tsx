@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarClock, ChartNoAxesColumn, GraduationCap } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
@@ -14,7 +13,8 @@ const ICONS = [CalendarClock, GraduationCap, ChartNoAxesColumn];
 /**
  * Landningssidan: vad Kuggfri är, i tre rader, och formuläret. Inloggade skickas vidare
  * till hemsidan (eller dit länken de följde pekade). ?next= kommer från inloggningsgrinden
- * i middleware, ?flik=logga-in öppnar inloggningsfliken direkt.
+ * i middleware, ?flik=logga-in öppnar inloggningsfliken direkt. Om, Hjälp och
+ * integritetspolicyn länkas från sidfoten i PublicLayout (krav för inloggning med Google).
  */
 export default async function LandingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
@@ -51,20 +51,6 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
           );
         })}
       </ul>
-
-      {/* Startsidan länkar till vad Kuggfri är och hur personuppgifter hanteras (krav från Google
-          för inloggning med Google, och rimligt för alla som undrar innan de registrerar sig). */}
-      <nav aria-label={sv.landing.footerLabel} className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted lg:col-span-2" data-testid="landing-footer">
-        <Link href="/om" className="hover:text-fg">
-          {sv.landing.footerAbout}
-        </Link>
-        <Link href="/integritet" className="hover:text-fg">
-          {sv.landing.footerPrivacy}
-        </Link>
-        <Link href="/hjalp" className="hover:text-fg">
-          {sv.landing.footerHelp}
-        </Link>
-      </nav>
     </div>
   );
 }

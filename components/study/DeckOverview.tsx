@@ -96,7 +96,7 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
 
   // Progress laddas för alla kort, så att valet Bara originalkorten inte hämtar om den.
   const cardIds = useMemo(() => allCards.map((c) => c.id), [allCards]);
-  // Kort utan kategori får en egen rad ("Utan kategori") så att de aldrig försvinner ur urvalet.
+  // Kort utan område får en egen rad ("Utan område") så att de aldrig försvinner ur urvalet.
   const tableCategories = useMemo(
     () => (cards.some((c) => c.category_id === null) ? [...categories, { id: UNCATEGORIZED_ID, title: sv.deck.uncategorized }] : categories),
     [cards, categories],
@@ -156,7 +156,14 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
     },
     [tableCategories],
   );
-  const selectAll = useCallback((all: boolean) => setSelectedIds(all ? tableCategories.map((c) => c.id) : []), [tableCategories]);
+  // Välj alla: bara områden som har kort (tomma går inte att kryssa i).
+  const selectAll = useCallback(
+    (all: boolean) => {
+      const filled = new Set(perCategory.filter((s) => s.total > 0).map((s) => s.categoryId));
+      setSelectedIds(all ? tableCategories.filter((c) => filled.has(c.id)).map((c) => c.id) : []);
+    },
+    [tableCategories, perCategory],
+  );
   const selectOnly = useCallback((id: string) => setSelectedIds([id]), []);
 
   // I läget kluriga kort går bara kategorier med kluriga kort att välja; övriga avmarkeras.

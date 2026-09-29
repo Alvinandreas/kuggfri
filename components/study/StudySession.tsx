@@ -336,7 +336,9 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
           toggleQuizOption(Number(e.key) - 1);
           return;
         }
-        if ((e.key === "Enter" || e.key === " ") && !onButton) {
+        // Enter på ett alternativ (fokus kvar efter ett musklick) ska svara, inte klicka om alternativet.
+        const onOption = e.target instanceof HTMLElement && e.target.closest("[data-testid='quiz-option']") !== null;
+        if ((e.key === "Enter" && onOption) || ((e.key === "Enter" || e.key === " ") && !onButton)) {
           e.preventDefault();
           quizPrimary();
           return;
@@ -470,7 +472,7 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-5">
       <h1 className="sr-only">
-        {deck.title} – {sv.study.position(position + 1, total)}
+        {deck.title}: {sv.study.position(position + 1, total)}
       </h1>
       <div className="flex items-center justify-between gap-3 text-sm text-muted">
         <Link

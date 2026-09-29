@@ -23,7 +23,7 @@ export function MilestonesCard({ milestones, index }: { milestones: Milestone[];
   return (
     <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: index }} data-testid="mystats-milestones">
       <CardHeader title={sv.myStats.milestones} description={sv.myStats.milestonesHelp(unlocked, milestones.length)} />
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {milestones.map((m) => {
           const Icon = ICONS[m.key];
           const text = sv.myStats.milestone[m.key];
@@ -38,17 +38,19 @@ export function MilestonesCard({ milestones, index }: { milestones: Milestone[];
                 <Icon size={20} aria-hidden />
               </span>
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <p className={cx("font-semibold leading-snug", !m.unlocked && "text-muted")}>{text.title}</p>
-                  {m.unlocked ? <Badge tone="accent">{sv.myStats.unlocked}</Badge> : null}
-                </div>
+                <p className={cx("font-semibold leading-snug", !m.unlocked && "text-muted")}>{text.title}</p>
                 <p className="mt-0.5 text-xs text-muted">{text.body}</p>
-                {!m.unlocked ? (
+                {/* Märket och förloppet på samma plats i varje ruta, så att raderna linjerar. */}
+                {m.unlocked ? (
+                  <div className="mt-2.5">
+                    <Badge tone="accent">{sv.myStats.unlocked}</Badge>
+                  </div>
+                ) : (
                   <div className="mt-2.5 flex items-center gap-2">
                     <ProgressBar value={m.target === 0 ? 0 : m.current / m.target} label={text.title} tone="chart-2" />
                     <span className="shrink-0 text-xs tabular-nums text-muted">{sv.myStats.milestoneProgress(m.current, m.target)}</span>
                   </div>
-                ) : null}
+                )}
               </div>
             </li>
           );

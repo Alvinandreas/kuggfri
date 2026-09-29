@@ -224,6 +224,76 @@ describe("cards", () => {
     await expect(db.query(`update public.cards set options = null where id = $1`, [utkast!.id])).rejects.toThrow();
     await db.query(`delete from public.cards where id = $1`, [utkast!.id]);
   });
+
+  it("flaggor: examinatorn flaggar och åtgärdar, studenten kan inte, och ingen ny kortversion skapas", async () => {
+    const examiner = await createUser(db, "examinator-flagga@example.com", { displayName: "Examinator Exempelsson" });
+    await db.query(`insert into public.deck_examiners (deck_id, user_id) values ($1, $2)`, [publishedDeck, examiner]);
+    const [k] = await db.query<{ id: string }>(`insert into public.cards (deck_id, front, back) values ($1, 'Flaggbar', 'Svar') returning id`, [publishedDeck]);
+
+    const flagged = await user(db, examiner).query(
+      `update public.cards set flag_note = 'Svaret stämmer inte', flagged_at = now(), flagged_by = $2 where id = $1 returning id`,
+      [k!.id, examiner],
+    );
+    expect(flagged).toHaveLength(1);
+    expect(await user(db, alice).query(`update public.cards set flag_note = null, flagged_at = null, flagged_by = null where id = $1 returning id`, [k!.id])).toHaveLength(0);
+    // Flaggan är ingen innehållsändring.
+    expect(await db.query(`select id from public.card_versions where card_id = $1`, [k!.id])).toHaveLength(0);
+    // Tid och vem utan anteckning går inte.
+    await expect(db.query(`update public.cards set flag_note = null where id = $1`, [k!.id])).rejects.toThrow();
+
+    // Namnen på granskarna: bara för redaktörer av kursen.
+    await db.query(`update public.cards set reviewed_by = $2, reviewed_at = now() where id = $1`, [k!.id, admin]);
+    const names = await user(db, examiner).query<{ user_id: string; display_name: string }>(`select * from public.deck_reviewer_names($1)`, [publishedDeck]);
+    expect(names).toEqual([{ user_id: examiner, display_name: "Examinator Exempelsson" }]);
+    expect(await user(db, alice).query(`select * from public.deck_reviewer_names($1)`, [publishedDeck])).toHaveLength(0);
+    await expectDenied(anon(db).query(`select * from public.deck_reviewer_names($1)`, [publishedDeck]));
+
+    const cleared = await user(db, examiner).query(`update public.cards set flag_note = null, flagged_at = null, flagged_by = null where id = $1 returning id`, [k!.id]);
+    expect(cleared).toHaveLength(1);
+    await db.query(`delete from public.cards where id = $1`, [k!.id]);
+    await db.query(`delete from public.deck_examiners where user_id = $1`, [examiner]);
+  });
+
+  it("synken sätter en flagga som källgranskningens och behåller en oförändrad flaggas tid", async () => {
+    const id = "00000000-0000-4000-8000-00000000f1a9";
+    const plan = (flag: string | null) =>
+      JSON.stringify({
+        categories: { create: [], update: [], delete: [] },
+        cards: {
+          create: [],
+          update: [{ id, key: "flaggkort", category_id: null, front: "F", back: "B", hint: null, sort_order: 0, is_active: true, source_hash: "c00000000", kind: "sjalvskattning", options: null, review_status: null, source: null, original: false, flag_note: flag }],
+          deactivate: [],
+          delete: [],
+        },
+      });
+    await db.query(`insert into public.cards (id, deck_id, key, front, back) values ($1, $2, 'flaggkort', 'F', 'B')`, [id, publishedDeck]);
+    await user(db, admin).query(`select public.sync_deck($1, $2::jsonb)`, [publishedDeck, plan("Kolla enheten")]);
+    const [a] = await db.query<{ flag_note: string; flagged_at: string; flagged_by: string | null }>(`select flag_note, flagged_at, flagged_by from public.cards where id = $1`, [id]);
+    expect(a).toMatchObject({ flag_note: "Kolla enheten", flagged_by: null });
+    expect(a?.flagged_at).toBeTruthy();
+    await db.query(`update public.cards set flagged_at = '2026-09-01T00:00:00Z', flagged_by = $2 where id = $1`, [id, admin]);
+    await user(db, admin).query(`select public.sync_deck($1, $2::jsonb)`, [publishedDeck, plan("Kolla enheten")]);
+    const [b] = await db.query<{ flagged_at: Date; flagged_by: string | null }>(`select flagged_at, flagged_by from public.cards where id = $1`, [id]);
+    expect(new Date(b!.flagged_at).toISOString()).toBe("2026-09-01T00:00:00.000Z");
+    expect(b?.flagged_by).toBe(admin);
+    await user(db, admin).query(`select public.sync_deck($1, $2::jsonb)`, [publishedDeck, plan(null)]);
+    const [c] = await db.query(`select flag_note, flagged_at, flagged_by from public.cards where id = $1`, [id]);
+    expect(c).toEqual({ flag_note: null, flagged_at: null, flagged_by: null });
+    expect(await db.query(`select id from public.card_versions where card_id = $1`, [id])).toHaveLength(0);
+    await db.query(`delete from public.cards where id = $1`, [id]);
+  });
+
+  it("import i admin skapar utkast som väntar på granskning", async () => {
+    await user(db, admin).query(`select public.import_cards($1, array[]::text[], $2::jsonb, '[]'::jsonb)`, [
+      publishedDeck,
+      JSON.stringify([{ front: "Importerad fråga", back: "Importerat svar", hint: null, category: null, sort_order: null }]),
+    ]);
+    const [row] = await db.query<{ id: string; is_active: boolean; review_status: string | null }>(
+      `select id, is_active, review_status from public.cards where front = 'Importerad fråga'`,
+    );
+    expect(row).toMatchObject({ is_active: false, review_status: "utkast" });
+    await db.query(`delete from public.cards where id = $1`, [row!.id]);
+  });
 });
 
 describe("profiles", () => {

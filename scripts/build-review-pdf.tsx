@@ -68,11 +68,11 @@ function Page({ manifest, categories, total, date }: { manifest: Manifest; categ
       </head>
       <body>
         <header className="cover">
-          <p className="kicker">Kuggfri · granskningsunderlag</p>
+          <p className="kicker">Kuggfri, granskningsunderlag</p>
           <h1>{manifest.title}</h1>
           <p className="meta">
-            {manifest.course_code ? `${manifest.course_code} · ` : ""}
-            {total} kort i {categories.length} kategorier · utskrivet {date}
+            {manifest.course_code ? `${manifest.course_code}, ` : ""}
+            {total} kort i {categories.length} kategorier, utskrivet {date}
           </p>
           {manifest.source_credit ? <p className="credit">{manifest.source_credit}</p> : null}
           <div className="howto">
@@ -99,7 +99,7 @@ function Page({ manifest, categories, total, date }: { manifest: Manifest; categ
         {categories.map((c, i) => (
           <section key={c.title} className="category">
             <h2>
-              <span className="catno">{i + 1}</span> {c.title} <span className="muted">· {c.cards.length} kort</span>
+              <span className="catno">{i + 1}</span> {c.title} <span className="muted">({c.cards.length} kort)</span>
             </h2>
             {c.cards.map((card) => (
               <article key={card.n} className="card">
@@ -212,7 +212,7 @@ async function main() {
       headerTemplate: "<span></span>",
       footerTemplate:
         '<div style="width:100%;font-size:8pt;color:#666;padding:0 14mm;display:flex;justify-content:space-between;font-family:Segoe UI,Arial,sans-serif;">' +
-        `<span>Kuggfri · ${manifest.title} · granskningsunderlag</span><span>Sida <span class="pageNumber"></span> av <span class="totalPages"></span></span></div>`,
+        `<span>Kuggfri, ${manifest.title}, granskningsunderlag</span><span>Sida <span class="pageNumber"></span> av <span class="totalPages"></span></span></div>`,
     });
   } finally {
     await browser.close();

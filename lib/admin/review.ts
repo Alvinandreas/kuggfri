@@ -1,15 +1,21 @@
 /**
- * Ren logik för granskningsvyn och innehållsöversikten i admin: vilka kort som hör till
- * vilken hög (väntar, avvisade, godkända senaste dygnet), filtrering, gruppering per område,
- * förlopp och vart vyn ska gå efter ett beslut. Inga beroenden på React eller Supabase, så
- * allt här kan enhetstestas.
+ * Ren logik för granskningen och innehållsöversikten i admin. Inga beroenden på React eller
+ * Supabase, så allt här kan enhetstestas.
+ *
+ * Granskningen är en inkorg med tre flikar (Alvins beslut 30 sep):
+ * - Att granska: utkast som inte är flaggade. De är inte i rotation (inaktiva, dolda för
+ *   studenterna) förrän en examinator godkänt dem.
+ * - Granskade: kort i rotation (aktiva, utan status), senast granskade först. Oförändrade
+ *   originalkort har inget granskningsdatum och står sist, som beprövade originalkort.
+ * - Flaggade: kort med en flagga, oavsett status. En flagga är en anteckning om ett misstänkt
+ *   fel; kortet står bara här tills flaggan åtgärdats.
  *
  * Terminologi: ett kort hör till ett OMRÅDE (tabellen categories) och har en UPPGIFTSTYP.
  */
 import { CARD_KINDS, isAutoGraded, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { matchesSource, type SourceFilter } from "@/lib/admin/sources";
 
-/** Det granskningsvyn behöver veta om ett kort. CardRow uppfyller typen. */
+/** Det granskningen behöver veta om ett kort. CardRow uppfyller typen (utom de valfria fälten). */
 export type ReviewCard = {
   id: string;
   category_id: string | null;
@@ -26,117 +32,135 @@ export type ReviewCard = {
   source: string | null;
   sort_order: number;
   created_at: string;
-  /** Del av originaluppsättningen (visas som en badge). */
+  /** Del av originaluppsättningen. */
   original?: boolean;
-  /** Kortet har en tidigare publicerad version i historiken (ett utkast är då en ändring). */
-  published_before?: boolean;
+  flag_note: string | null;
+  flagged_at: string | null;
+  flagged_by: string | null;
+  /**
+   * Utkastet ändrar ett kort som varit publicerat (t.ex. ett rättat originalkort): id:t på den
+   * senast publicerade versionen, som Avvisa återställer. Saknas för nya kort.
+   */
+  published_version_id?: number | null;
 };
 
 export type ReviewArea = { id: string; title: string };
 
-/** Högarna i statusfiltret. */
-export const REVIEW_BUCKETS = ["vantar", "avvisade", "godkanda"] as const;
-export type ReviewBucket = (typeof REVIEW_BUCKETS)[number];
+// ---------------------------------------------------------------------------
+// Flikar
+// ---------------------------------------------------------------------------
+
+export const REVIEW_TABS = ["att-granska", "granskade", "flaggade"] as const;
+export type ReviewTab = (typeof REVIEW_TABS)[number];
+
+export function isReviewTab(value: unknown): value is ReviewTab {
+  return typeof value === "string" && (REVIEW_TABS as readonly string[]).includes(value);
+}
+
+type TabFields = Pick<ReviewCard, "review_status" | "is_active" | "flag_note">;
+
+/** Fliken kortet står under, eller null om det inte hör till granskningen (inaktivt eller avvisat). */
+export function reviewTab(card: TabFields): ReviewTab | null {
+  if (card.flag_note) return "flaggade";
+  if (card.review_status === "utkast") return "att-granska";
+  if (card.review_status === null && card.is_active) return "granskade";
+  return null;
+}
+
+/** Korten som granskningen överhuvudtaget visar. */
+export function reviewRelevant<C extends TabFields>(cards: readonly C[]): C[] {
+  return cards.filter((c) => reviewTab(c) !== null);
+}
+
+/** Antal kort under varje flik. */
+export function countByTab(cards: readonly TabFields[]): Record<ReviewTab, number> {
+  const out: Record<ReviewTab, number> = { "att-granska": 0, granskade: 0, flaggade: 0 };
+  for (const c of cards) {
+    const tab = reviewTab(c);
+    if (tab) out[tab]++;
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Filter
+// ---------------------------------------------------------------------------
 
 /** "alla" = inget filter, "ingen" = kort utan område. */
 export type AreaFilter = "alla" | "ingen" | (string & {});
 export type KindFilter = "alla" | CardKind;
+/** Originalkort (den beprövade uppsättningen) eller nya kort. */
+export const ORIGIN_FILTERS = ["alla", "original", "nya"] as const;
+export type OriginFilter = (typeof ORIGIN_FILTERS)[number];
+
+export function isOriginFilter(value: unknown): value is OriginFilter {
+  return typeof value === "string" && (ORIGIN_FILTERS as readonly string[]).includes(value);
+}
 
 export type ReviewFilter = {
-  bucket: ReviewBucket;
   area: AreaFilter;
   kind: KindFilter;
-  /** Bara ändringar av publicerade kort (kort med en tidigare publicerad version). */
-  changesOnly?: boolean;
-  /** Källtyp (se lib/admin/sources); saknas = alla. */
-  source?: SourceFilter;
+  source: SourceFilter;
+  origin: OriginFilter;
+  /** Fritext: söker i fråga, svar, alternativ, ledtråd, källa och flagga. */
+  query: string;
 };
 
-export const DEFAULT_REVIEW_FILTER: ReviewFilter = { bucket: "vantar", area: "alla", kind: "alla", changesOnly: false, source: "alla" };
+export const DEFAULT_REVIEW_FILTER: ReviewFilter = { area: "alla", kind: "alla", source: "alla", origin: "alla", query: "" };
 
-/**
- * Är utkastet en ändring av ett kort som tidigare varit publicerat? Sådana är dolda för
- * studenterna tills de godkänts, så de visas först bland dem som väntar.
- */
-export function isPublishedChange(card: Pick<ReviewCard, "review_status" | "published_before">): boolean {
-  return card.review_status === "utkast" && card.published_before === true;
+/** Antal aktiva filter (sökningen räknas inte; den syns i sökrutan). */
+export function activeFilterCount(filter: ReviewFilter): number {
+  return [filter.area !== "alla", filter.kind !== "alla", filter.source !== "alla", filter.origin !== "alla"].filter(Boolean).length;
 }
 
-/** Så länge räknas ett godkänt kort till "Godkända senaste dygnet". */
-export const RECENT_MS = 24 * 60 * 60 * 1000;
-
-function isRecent(iso: string | null, now: number): boolean {
-  if (!iso) return false;
-  const t = Date.parse(iso);
-  return Number.isFinite(t) && now - t <= RECENT_MS && t - now <= RECENT_MS;
+function norm(text: string): string {
+  return text.toLocaleLowerCase("sv-SE");
 }
 
-/** Vilken hög kortet ligger i, eller null om det inte hör till granskningen alls. */
-export function reviewBucket(card: Pick<ReviewCard, "review_status" | "reviewed_at">, now: number): ReviewBucket | null {
-  if (card.review_status === "utkast") return "vantar";
-  if (card.review_status === "avvisad") return "avvisade";
-  return isRecent(card.reviewed_at, now) ? "godkanda" : null;
+type FilterFields = Pick<ReviewCard, "category_id" | "kind" | "source" | "original" | "front" | "back" | "hint" | "options" | "flag_note">;
+
+export function matchesReviewFilter(card: FilterFields, filter: ReviewFilter): boolean {
+  if (filter.area === "ingen" ? card.category_id !== null : filter.area !== "alla" && card.category_id !== filter.area) return false;
+  if (filter.kind !== "alla" && card.kind !== filter.kind) return false;
+  if (!matchesSource(card, filter.source)) return false;
+  if (filter.origin === "original" && !card.original) return false;
+  if (filter.origin === "nya" && card.original) return false;
+  const words = norm(filter.query).split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
+  const haystack = norm([card.front, card.back, card.hint ?? "", ...(card.options ?? []).map((o) => o.text), card.source ?? "", card.flag_note ?? ""].join("\n"));
+  return words.every((w) => haystack.includes(w));
 }
 
-/** Har kortet fått ett beslut (godkänt eller avvisat) det senaste dygnet? */
-export function reviewedRecently(card: Pick<ReviewCard, "review_status" | "reviewed_at">, now: number): boolean {
-  return card.review_status !== "utkast" && isRecent(card.reviewed_at, now);
-}
-
-/** Korten som granskningsvyn överhuvudtaget ska känna till (för att hålla sidan liten). */
-export function reviewRelevant<C extends Pick<ReviewCard, "review_status" | "reviewed_at">>(cards: readonly C[], now: number): C[] {
-  return cards.filter((c) => c.review_status !== null || reviewBucket(c, now) !== null);
-}
-
-function matchesArea(card: Pick<ReviewCard, "category_id">, area: AreaFilter): boolean {
-  if (area === "alla") return true;
-  if (area === "ingen") return card.category_id === null;
-  return card.category_id === area;
-}
-
-function matchesKind(card: Pick<ReviewCard, "kind">, kind: KindFilter): boolean {
-  return kind === "alla" || card.kind === kind;
-}
-
-/** Område, uppgiftstyp och källtyp (allt utom status och "bara ändringar"). */
-type ScopeFilter = Pick<ReviewFilter, "area" | "kind" | "source">;
-
-function matchesScope(card: Pick<ReviewCard, "category_id" | "kind" | "source" | "original">, filter: ScopeFilter): boolean {
-  return matchesArea(card, filter.area) && matchesKind(card, filter.kind) && matchesSource(card, filter.source);
-}
-
-/**
- * Korten som syns med filtret, i områdenas ordning (se orderByArea). Bland dem som väntar
- * kommer ändringar av publicerade kort först (se isPublishedChange).
- */
-export function filterReviewCards<C extends ReviewCard>(cards: readonly C[], filter: ReviewFilter, areas: readonly ReviewArea[], now: number): C[] {
-  const ordered = orderByArea(
-    cards.filter(
-      (c) =>
-        reviewBucket(c, now) === filter.bucket &&
-        matchesScope(c, filter) &&
-        (!filter.changesOnly || c.published_before === true),
-    ),
-    areas,
-  );
-  if (filter.bucket !== "vantar") return ordered;
-  return [...ordered.filter(isPublishedChange), ...ordered.filter((c) => !isPublishedChange(c))];
-}
-
-/** Antal ändringar av publicerade kort i högen, inom område-, typ- och källfiltret (för filtrets etikett). */
-export function countPublishedChanges(cards: readonly ReviewCard[], filter: ReviewFilter, now: number): number {
-  return cards.filter((c) => c.published_before === true && reviewBucket(c, now) === filter.bucket && matchesScope(c, filter)).length;
-}
+// ---------------------------------------------------------------------------
+// Ordning och gruppering
+// ---------------------------------------------------------------------------
 
 /**
  * Sorterar korten som områdena är ordnade (kort utan område eller med okänt område sist),
- * inom området på sort_order och sedan skapelsetid. Samma ordning som listan visar, så att
- * Nästa och Föregående följer det granskaren ser.
+ * inom området på sort_order och sedan skapelsetid.
  */
 export function orderByArea<C extends Pick<ReviewCard, "category_id" | "sort_order" | "created_at">>(cards: readonly C[], areas: readonly ReviewArea[]): C[] {
   const rank = new Map(areas.map((a, i) => [a.id, i] as const));
   const areaRank = (c: C) => (c.category_id !== null && rank.has(c.category_id) ? rank.get(c.category_id)! : areas.length);
   return [...cards].sort((a, b) => areaRank(a) - areaRank(b) || a.sort_order - b.sort_order || a.created_at.localeCompare(b.created_at));
+}
+
+/**
+ * Korten under en flik med filtret, i flikens ordning: Att granska och Flaggade i områdenas
+ * ordning (så att ett område kan gås igenom i ett svep), Granskade senast granskade först och
+ * kort utan granskningsdatum (oförändrade originalkort) sist i områdenas ordning.
+ */
+export function reviewList<C extends ReviewCard>(cards: readonly C[], tab: ReviewTab, filter: ReviewFilter, areas: readonly ReviewArea[]): C[] {
+  const ordered = orderByArea(
+    cards.filter((c) => reviewTab(c) === tab && matchesReviewFilter(c, filter)),
+    areas,
+  );
+  if (tab !== "granskade") return ordered;
+  const time = (c: C) => (c.reviewed_at ? Date.parse(c.reviewed_at) : Number.NaN);
+  const dated = ordered.filter((c) => Number.isFinite(time(c)));
+  const undated = ordered.filter((c) => !Number.isFinite(time(c)));
+  // Stabil sortering: samma tidpunkt (massgodkännande) behåller områdenas ordning.
+  return [...dated.sort((a, b) => time(b) - time(a)), ...undated];
 }
 
 export type AreaGroup<C> = { areaId: string | null; title: string | null; cards: C[] };
@@ -160,33 +184,81 @@ export function groupByArea<C extends Pick<ReviewCard, "category_id">>(orderedCa
   return groups;
 }
 
-/**
- * Förloppet "12 av 48 granskade": av korten som väntar eller fått ett beslut det senaste
- * dygnet (inom område-, typ- och källfiltret), hur många har fått ett beslut.
- */
-export function reviewProgress(cards: readonly ReviewCard[], filter: ScopeFilter, now: number): { done: number; total: number } {
-  let done = 0;
-  let total = 0;
-  for (const c of cards) {
-    if (!matchesScope(c, filter)) continue;
-    if (c.review_status === "utkast") total++;
-    else if (reviewedRecently(c, now)) {
-      done++;
-      total++;
-    }
+/** En grupp i inkorgens lista: ett område, en dag (Granskade) eller originalkorten (Granskade). */
+export type ListGroup<C> =
+  | { key: string; type: "area"; areaId: string | null; title: string | null; cards: C[] }
+  | { key: string; type: "day"; day: string; cards: C[] }
+  | { key: "original"; type: "original"; cards: C[] };
+
+/** Listans grupper för redan ordnade kort (reviewList): per dag under Granskade, annars per område. */
+export function groupReviewList<C extends ReviewCard>(orderedCards: readonly C[], tab: ReviewTab, areas: readonly ReviewArea[]): ListGroup<C>[] {
+  if (tab !== "granskade") return groupByArea(orderedCards, areas).map((g) => ({ key: g.areaId ?? "ingen", type: "area" as const, ...g }));
+  const groups: ListGroup<C>[] = [];
+  for (const card of orderedCards) {
+    const day = card.reviewed_at ? stockholmDay(card.reviewed_at) : null;
+    const last = groups[groups.length - 1];
+    if (day === null) {
+      if (last?.type === "original") last.cards.push(card);
+      else groups.push({ key: "original", type: "original", cards: [card] });
+    } else if (last?.type === "day" && last.day === day) last.cards.push(card);
+    else groups.push({ key: day, type: "day", day, cards: [card] });
   }
-  return { done, total };
+  return groups;
 }
+
+// ---------------------------------------------------------------------------
+// Datum (alltid i svensk tid, så att server och klient visar samma sak)
+// ---------------------------------------------------------------------------
+
+const DAY_KEY = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", year: "numeric", month: "2-digit", day: "2-digit" });
+const DAY_MONTH = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", day: "numeric", month: "short" });
+const DAY_MONTH_YEAR = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", day: "numeric", month: "short", year: "numeric" });
+const TIME = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", hour: "2-digit", minute: "2-digit" });
+
+/** Dagen (ÅÅÅÅ-MM-DD) i svensk tid. */
+export function stockholmDay(iso: string): string {
+  return DAY_KEY.format(new Date(iso));
+}
+
+/** "30 sep", med år om det inte är i år ("30 sep 2025"). Månaden utan punkt. */
+export function formatDay(iso: string, now: number): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const sameYear = stockholmDay(iso).slice(0, 4) === stockholmDay(new Date(now).toISOString()).slice(0, 4);
+  return (sameYear ? DAY_MONTH : DAY_MONTH_YEAR).format(d).replace(/\./g, "");
+}
+
+/** Klockslaget ("14:32") i svensk tid. */
+export function formatTime(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : TIME.format(d);
+}
+
+/** Relativ dag: "today", "yesterday" eller null (vyn sätter texten). */
+export function relativeDay(iso: string, now: number): "today" | "yesterday" | null {
+  const day = stockholmDay(iso);
+  if (day === stockholmDay(new Date(now).toISOString())) return "today";
+  if (day === stockholmDay(new Date(now - 24 * 60 * 60 * 1000).toISOString())) return "yesterday";
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// Navigering och beslut
+// ---------------------------------------------------------------------------
 
 /**
  * Vart vyn går efter ett beslut: första kortet i den nya listan som låg efter det aktuella
- * i den gamla, annars det första i den nya listan (runt), annars inget.
+ * i den gamla, annars det sista före (inget runt), annars inget.
  */
 export function nextAfterDecision(before: readonly string[], after: readonly string[], currentId: string): string | null {
   const start = before.indexOf(currentId);
   const remaining = new Set(after);
   if (start >= 0) {
     for (let i = start + 1; i < before.length; i++) {
+      const id = before[i]!;
+      if (id !== currentId && remaining.has(id)) return id;
+    }
+    for (let i = start - 1; i >= 0; i--) {
       const id = before[i]!;
       if (id !== currentId && remaining.has(id)) return id;
     }
@@ -203,44 +275,17 @@ export function step(ids: readonly string[], currentId: string | null, delta: -1
   return to >= 0 && to < ids.length ? ids[to]! : ids[i]!;
 }
 
-export type ReviewListGroup<C> = AreaGroup<C> & { key: string; changes: boolean };
-
-/**
- * Listans grupper för redan filtrerade och ordnade kort (filterReviewCards): står ändringar av
- * publicerade kort först, och finns det även andra kort, får ändringarna en egen grupp överst.
- * Resten grupperas per område. Ordningen blir densamma som listan, så Nästa följer det man ser.
- */
-export function groupReviewList<C extends Pick<ReviewCard, "category_id" | "review_status" | "published_before">>(
-  orderedCards: readonly C[],
-  areas: readonly ReviewArea[],
-): ReviewListGroup<C>[] {
-  let lead = 0;
-  while (lead < orderedCards.length && isPublishedChange(orderedCards[lead]!)) lead++;
-  const byArea = (list: readonly C[]) => groupByArea(list, areas).map((g) => ({ ...g, key: g.areaId ?? "ingen", changes: false }));
-  if (lead === 0 || lead === orderedCards.length) return byArea(orderedCards);
-  return [{ key: "andringar", areaId: null, title: null, cards: orderedCards.slice(0, lead), changes: true }, ...byArea(orderedCards.slice(lead))];
-}
-
-/** Antal kort per område, i områdenas ordning (för bekräftelsen av massgodkännande). */
-export function countByArea(cards: readonly Pick<ReviewCard, "category_id">[], areas: readonly ReviewArea[]): { areaId: string | null; title: string | null; count: number }[] {
-  const out: { areaId: string | null; title: string | null; count: number }[] = [];
-  const byId = new Map<string | null, number>();
-  for (const c of cards) {
-    const known = c.category_id !== null && areas.some((a) => a.id === c.category_id);
-    const key = known ? c.category_id : null;
-    byId.set(key, (byId.get(key) ?? 0) + 1);
-  }
-  for (const a of areas) if (byId.has(a.id)) out.push({ areaId: a.id, title: a.title, count: byId.get(a.id)! });
-  if (byId.has(null)) out.push({ areaId: null, title: null, count: byId.get(null)! });
-  return out;
-}
-
 /** Problem som hindrar att kortet godkänns: tomma sidor eller fel i typ och alternativ. */
 export function approvalIssues(card: Pick<ReviewCard, "front" | "back" | "kind" | "options">): string[] {
   const issues: string[] = [];
-  if (!card.front.trim()) issues.push("Framsidan är tom.");
-  if (!card.back.trim()) issues.push(isAutoGraded(card.kind) ? "Förklaringen är tom." : "Baksidan är tom.");
+  if (!card.front.trim()) issues.push("Frågan är tom.");
+  if (!card.back.trim()) issues.push(isAutoGraded(card.kind) ? "Förklaringen är tom." : "Svaret är tomt.");
   return [...issues, ...validateKind(card.kind, card.options)];
+}
+
+/** En flaggas anteckning: en rad, utan omgivande blanksteg (samma form som i kortfilerna). */
+export function cleanFlagNote(note: string): string {
+  return note.replace(/\s*\r?\n\s*/g, " ").trim();
 }
 
 // ---------------------------------------------------------------------------

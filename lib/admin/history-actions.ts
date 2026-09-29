@@ -85,7 +85,7 @@ export async function restoreCardVersionAction(deckId: string, cardId: string, v
 /**
  * Avvisar en föreslagen ändring av ett publicerat kort: kortet återställs till den publicerade
  * versionen (och syns för studenterna igen), med granskarens kommentar. Förslaget finns kvar i
- * historiken och kan tas tillbaka därifrån.
+ * historiken och kan tas tillbaka därifrån. En flagga på kortet tas bort.
  */
 export async function rejectCorrectionAction(
   deckId: string,
@@ -107,7 +107,8 @@ export async function rejectCorrectionAction(
     const reviewedAt = new Date().toISOString();
     const { data, error } = await supabase
       .from("cards")
-      .update({ ...target, review_note: text || null, reviewed_by: ctx.userId, reviewed_at: reviewedAt })
+      // En flagga på förslaget tas bort med det (samma som när ett kort avvisas).
+      .update({ ...target, review_note: text || null, reviewed_by: ctx.userId, reviewed_at: reviewedAt, flag_note: null, flagged_at: null, flagged_by: null })
       .eq("deck_id", deckId)
       .eq("id", cardId)
       .select("id");

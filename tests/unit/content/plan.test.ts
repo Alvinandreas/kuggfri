@@ -8,7 +8,7 @@ import { deriveKey } from "@/lib/content/store";
 // ---------------------------------------------------------------------------
 
 function card(key: string, front: string, back: string, extra: Partial<ContentCard> = {}): ContentCard {
-  return { key, front, back, hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, original: false, ...extra };
+  return { key, front, back, hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, original: false, flag: null, ...extra };
 }
 
 function course(categories: { key: string; title: string; cards: ContentCard[] }[]): ContentCourse {
@@ -359,5 +359,64 @@ describe("efter pull", () => {
 
     const efter = applySync(db, plan.sync, plan.deckId);
     expect(planSync(pulled, efter).empty).toBe(true);
+  });
+});
+
+describe("flaggor", () => {
+  const flaggad = (note: string | null) =>
+    course([
+      { key: "kat-a", title: "Kategori A", cards: [card("k1", "Fråga 1", "Svar 1", { flag: note }), card("k2", "Fråga 2", "Svar 2")] },
+      { key: "kat-b", title: "Kategori B", cards: [card("k3", "Fråga 3", "Svar 3")] },
+    ]);
+
+  it("en ny flagga i filen är ett ändrat kort som skriver flag_note", () => {
+    const db = synced(BAS);
+    const plan = planSync(flaggad("Svaret stämmer inte."), db);
+    expect(plan.changes.map((c) => c.kind)).toEqual(["card-update"]);
+    expect(plan.sync.cards.update[0]).toMatchObject({ id: cardId("kurs", "k1"), flag_note: "Svaret stämmer inte." });
+    const efter = applySync(db, plan.sync, plan.deckId);
+    expect(planSync(flaggad("Svaret stämmer inte."), efter).empty).toBe(true);
+  });
+
+  it("en borttagen eller ändrad flagga i filen är också en ändring", () => {
+    const db = synced(flaggad("Gammal anteckning"));
+    expect(planSync(flaggad("Ny anteckning"), db).sync.cards.update[0]?.flag_note).toBe("Ny anteckning");
+    expect(planSync(flaggad(null), db).sync.cards.update[0]?.flag_note).toBeNull();
+  });
+
+  it("nya kort tar med flaggan", () => {
+    expect(planSync(flaggad("Kolla"), EMPTY_SNAPSHOT).sync.cards.create.find((c) => c.key === "k1")?.flag_note).toBe("Kolla");
+  });
+
+  it("en flagga som åtgärdats i admin lämnas i fred och kommer in i filerna med pull", () => {
+    const fil = flaggad("Svaret stämmer inte.");
+    const db = synced(fil);
+    const row = db.cards.find((c) => c.key === "k1");
+    if (row) row.flag_note = null;
+    const plan = planSync(fil, db);
+    expect(plan.sync.cards.update).toHaveLength(0);
+    expect(plan.warnings.join(" ")).toContain("ändrat i admin");
+
+    const pulled = courseFromSnapshot(db, fil, deriveKey);
+    expect(pulled.categories[0]?.cards[0]?.flag).toBeNull();
+    const efter = applySync(db, planSync(pulled, db).sync, plan.deckId);
+    expect(planSync(pulled, efter).empty).toBe(true);
+  });
+
+  it("en flagga skriven i admin med radbrytningar blir en rad vid pull, utan falsklarm", () => {
+    const db = synced(BAS);
+    const row = db.cards.find((c) => c.key === "k1");
+    if (row) row.flag_note = "Rad ett.\nRad två.";
+    const pulled = courseFromSnapshot(db, BAS, deriveKey);
+    expect(pulled.categories[0]?.cards[0]?.flag).toBe("Rad ett. Rad två.");
+    const plan = planSync(pulled, db);
+    expect(plan.conflicts).toEqual([]);
+    expect(plan.changes.map((c) => c.kind)).toEqual(["card-sync"]);
+  });
+
+  it("ögonblicksbilder utan flag_note (före migrationen) ger inga ändringar", () => {
+    const db = synced(BAS);
+    for (const c of db.cards) delete (c as { flag_note?: unknown }).flag_note;
+    expect(planSync(BAS, db).empty).toBe(true);
   });
 });

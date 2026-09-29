@@ -60,6 +60,7 @@ export function convertCards(text: string, options: ConvertOptions): ConvertResu
       review: null,
       source: null,
       original: false,
+      flag: null,
     });
   }
 

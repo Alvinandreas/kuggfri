@@ -169,16 +169,22 @@ export function halfSteps(max: number): number[] {
 export type AttemptInfo = { id: string; exam_id: string; started_at: string; submitted_at: string | null; points: number | null; grade: string | null };
 
 /**
- * En tentas försök i listan: pågående (ej inlämnat och tiden inte ute), senaste och bästa
- * inlämnade. Försöken i valfri ordning.
+ * En tentas försök i listan: pågående (ej inlämnat och tiden inte ute), inlämnat men inte rättat
+ * (rättningsläget: poängen är null tills studenten tryckt Rätta), senaste och bästa rättade.
+ * Försöken i valfri ordning.
  */
-export function attemptOverview<A extends AttemptInfo>(attempts: readonly A[], durationMinutes: number, now: number): { inProgress: A | null; latest: A | null; best: A | null; submitted: number } {
+export function attemptOverview<A extends AttemptInfo>(
+  attempts: readonly A[],
+  durationMinutes: number,
+  now: number,
+): { inProgress: A | null; grading: A | null; latest: A | null; best: A | null; submitted: number } {
   const byStart = [...attempts].sort((a, b) => b.started_at.localeCompare(a.started_at));
   // Senaste = senast inlämnade (ett försök som samlats in när tiden tog slut kan ha startat tidigare).
   const done = byStart.filter((a) => a.submitted_at !== null).sort((a, b) => (b.submitted_at ?? "").localeCompare(a.submitted_at ?? ""));
+  const graded = done.filter((a) => a.points !== null);
   const inProgress = byStart.find((a) => a.submitted_at === null && now <= deadlineMs(a.started_at, durationMinutes) + SUBMIT_GRACE_MS) ?? null;
-  const best = done.reduce<A | null>((b, a) => (b === null || Number(a.points ?? 0) > Number(b.points ?? 0) ? a : b), null);
-  return { inProgress, latest: done[0] ?? null, best, submitted: done.length };
+  const best = graded.reduce<A | null>((b, a) => (b === null || Number(a.points ?? 0) > Number(b.points ?? 0) ? a : b), null);
+  return { inProgress, grading: done.find((a) => a.points === null) ?? null, latest: graded[0] ?? null, best, submitted: graded.length };
 }
 
 /** Ett ej inlämnat försök vars tid (med marginal) är slut: servern lämnar in det med de sparade svaren. */
@@ -217,7 +223,18 @@ type QuestionShape = {
   statements: readonly unknown[] | null;
   pairs: readonly unknown[] | null;
   choices: readonly string[] | null;
+  /** StudentQuestion: varje leds egen lista. ExamQuestion har listan i ledet (pairs[i].choices). */
+  pairChoices?: readonly (readonly string[] | null)[] | null;
 };
+
+/** Giltiga svar för led i: ledets egen lista, annars uppgiftens gemensamma. */
+function pairChoicesAt(q: QuestionShape, i: number): readonly string[] {
+  const own = q.pairChoices?.[i];
+  if (own) return own;
+  const pair = q.pairs?.[i] as { choices?: readonly string[] | null } | string | undefined;
+  if (pair && typeof pair === "object" && Array.isArray(pair.choices) && pair.choices.length > 0) return pair.choices;
+  return q.choices ?? [];
+}
 
 export const MAX_TEXT_ANSWER = 20_000;
 const MAX_NUMERIC_ANSWER = 60;
@@ -246,8 +263,7 @@ function cleanAnswer(q: QuestionShape, raw: unknown): Answer | null {
     case "para": {
       const n = q.pairs?.length ?? 0;
       const vals = Array.isArray(a.values) ? a.values : [];
-      const choices = q.choices ?? [];
-      return { kind: "para", values: Array.from({ length: n }, (_, i) => (typeof vals[i] === "string" && choices.includes(vals[i] as string) ? (vals[i] as string) : null)) };
+      return { kind: "para", values: Array.from({ length: n }, (_, i) => (typeof vals[i] === "string" && pairChoicesAt(q, i).includes(vals[i] as string) ? (vals[i] as string) : null)) };
     }
     case "numerisk":
       return { kind: "numerisk", value: typeof a.value === "string" ? a.value.slice(0, MAX_NUMERIC_ANSWER) : "" };

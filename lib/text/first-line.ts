@@ -17,7 +17,7 @@ export function firstLine(text: string, options: { maxLength?: number } = {}): s
 export function plainText(s: string): string {
   return s
     .replace(/\$\$?([^$]*)\$\$?/g, (_, inner: string) => inner) // $E = mc^2$ -> E = mc^2
-    .replace(/\\(?:frac|sqrt|text|mathrm|mathbf|left|right|cdot|times)\b/g, (m) => (m === "\\cdot" ? "·" : m === "\\times" ? "×" : ""))
+    .replace(/\\(?:frac|sqrt|text|mathrm|mathbf|left|right|cdot|times)\b/g, (m) => (m === "\\cdot" || m === "\\times" ? "×" : ""))
     .replace(/\\([a-zA-Z]+)/g, "$1") // \sigma -> sigma
     .replace(/[{}]/g, "")
     .replace(/\^|_(?=\S)/g, "")

@@ -199,16 +199,8 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
           </span>
           <div className="min-w-0">
             <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{deck.title}</h1>
-            <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
-              {deck.course_code ? (
-                <>
-                  <span>
-                    {sv.home.courseCode} {deck.course_code}
-                  </span>
-                  <span aria-hidden="true">·</span>
-                </>
-              ) : null}
-              <span>{sv.deck.totalCards(allCards.length)}</span>
+            <p className="mt-1.5 text-sm text-muted">
+              {[deck.course_code ? `${sv.home.courseCode} ${deck.course_code}` : null, sv.deck.totalCards(allCards.length)].filter(Boolean).join(", ")}
             </p>
           </div>
         </div>

@@ -27,7 +27,9 @@ test.describe("felrapporter", () => {
     try {
       await login(admin, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
       await admin.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
-      await admin.getByTestId("deck-tab-rapporter").click();
+      // Kurssidorna i admin nås från sidomenyn (på mobil i den utdragbara menyn); gå direkt.
+      await admin.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+      await admin.goto(`${admin.url()}/rapporter`);
       await expect(admin.getByRole("heading", { name: /^Felrapporter/ }).first()).toBeVisible();
 
       const row = admin.getByTestId("report-row").filter({ hasText: text });

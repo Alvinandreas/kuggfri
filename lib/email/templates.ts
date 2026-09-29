@@ -36,8 +36,8 @@ export function buildReminderEmail(input: { name: string | null; decks: Reminder
   const first = input.decks[0];
   const subject =
     input.decks.length === 1 && first
-      ? `${first.due} kort att repetera i ${first.title} · cirka ${minutes} min`
-      : `${total} kort att repetera · cirka ${minutes} min`;
+      ? `${first.due} kort att repetera i ${first.title}, cirka ${minutes} min`
+      : `${total} kort att repetera, cirka ${minutes} min`;
   const hello = input.name ? `Hej ${input.name}!` : "Hej!";
   const lines: string[] = [];
   const htmlLines: string[] = [];
@@ -95,17 +95,17 @@ export function buildDigestEmail(input: {
     }.${exam ? ` ${exam}` : ""}`,
   );
   if (data.hardest.length > 0) {
-    paras.push(`Svåraste områdena (snittskattning): ${data.hardest.map((h) => `${h.title} ${h.avg.toFixed(1)}`).join(" · ")}.`);
+    paras.push(`Svåraste områdena (snittskattning): ${data.hardest.map((h) => `${h.title} ${h.avg.toFixed(1)}`).join("; ")}.`);
   } else {
     paras.push(`Svåraste områdena visas när minst ${input.minStudents} studenter skattat en kategori.`);
   }
   if (data.tricky.length > 0) {
-    paras.push(`Kluriga frågor (andel som skattade 1–2): ${data.tricky.map((t) => `”${firstLine(t.front, { maxLength: 90 })}” ${Math.round(t.low_share * 100)} %`).join(" · ")}.`);
+    paras.push(`Kluriga frågor (andel som skattade 1–2): ${data.tricky.map((t) => `”${firstLine(t.front, { maxLength: 90 })}” ${Math.round(t.low_share * 100)} %`).join("; ")}.`);
   }
   if (data.open_reports > 0) {
     paras.push(
       `${data.open_reports === 1 ? "1 öppen felrapport" : `${data.open_reports} öppna felrapporter`}${
-        data.latest_reports.length > 0 ? `: ${data.latest_reports.map((r) => `”${firstLine(r.front, { maxLength: 90 })}”: ${r.message.slice(0, 120)}`).join(" · ")}` : ""
+        data.latest_reports.length > 0 ? `: ${data.latest_reports.map((r) => `”${firstLine(r.front, { maxLength: 90 })}”: ${r.message.slice(0, 120)}`).join("; ")}` : ""
       }.`,
     );
   } else {

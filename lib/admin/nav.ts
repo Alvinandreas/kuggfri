@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminContext } from "./access";
 import { countOpenReports } from "./queries";
 
-/** En kurs i sidomenyns adminsektion, med räknarna som flikarna visar. */
+/** En kurs i sidomenyns adminsektion, med räknarna (att granska, öppna felrapporter). */
 export type AdminNavDeck = { id: string; title: string; pendingDrafts: number; openReports: number };
 
 export type AdminNav = {
@@ -29,7 +29,7 @@ export const getAdminNav = cache(async (): Promise<AdminNav | null> => {
   const decks = await Promise.all(
     (data ?? []).map(async (d) => {
       const [drafts, openReports] = await Promise.all([
-        supabase.from("cards").select("id", { count: "exact", head: true }).eq("deck_id", d.id).eq("review_status", "utkast"),
+        supabase.from("cards").select("id", { count: "exact", head: true }).eq("deck_id", d.id).eq("review_status", "utkast").is("flag_note", null),
         countOpenReports(d.id).catch(() => 0),
       ]);
       return { id: d.id, title: d.title, pendingDrafts: drafts.count ?? 0, openReports };

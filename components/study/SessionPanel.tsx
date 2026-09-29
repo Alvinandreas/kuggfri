@@ -114,7 +114,7 @@ export function SessionPanel({
           </div>
           <p className="text-sm text-muted">
             {mode === "tricky" ? sv.deck.summaryTricky(selectionCount) : sv.deck.summaryCards(selectionCount)}
-            {progressReady && mode !== "tricky" ? ` · ${sv.deck.summaryLearned(plan.selectionLearned)}` : ""}
+            {progressReady && mode !== "tricky" ? `, ${sv.deck.summaryLearned(plan.selectionLearned)}` : ""}
           </p>
         </div>
       ) : null}
@@ -154,7 +154,7 @@ export function SessionPanel({
               ? isStarred
                 ? sv.deck.noStarred
                 : sv.deck.noCardsSelected
-              : `${sv.home.cards(selectionCount)} · cirka ${estimateMinutes(selectionCount)} min`}
+              : `${sv.home.cards(selectionCount)}, cirka ${estimateMinutes(selectionCount)} min`}
         </span>
         {mode === "fsrs" && nothingDue && moreNew > 0 ? (
           <Link href={`${plan.moreHref}${suffix}`} className={buttonClass("outline", "md", "w-full")} data-testid="start-more">

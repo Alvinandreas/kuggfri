@@ -47,7 +47,7 @@ export function AreaCard({ kind, items, index }: { kind: "strongest" | "weakest"
                 </div>
                 <ProgressBar value={a.share} label={`${sv.myStats.learned}: ${a.title}`} className="mt-2.5" />
                 <p className="mt-1.5 text-xs text-muted">
-                  {[sv.myStats.areaLearned(a.learned, a.total), a.deckTitle].filter(Boolean).join(" · ")}
+                  {[sv.myStats.areaLearned(a.learned, a.total), a.deckTitle].filter(Boolean).join(", ")}
                 </p>
               </Link>
             </li>

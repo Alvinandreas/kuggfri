@@ -6,6 +6,7 @@ import { attemptOverview, formatDuration, formatExamDate, formatPoints, kindSumm
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
+import { StudentViewBar, StudentViewButton } from "./StudentView";
 
 type Deck = { id: string; slug: string; title: string; course_code: string | null };
 
@@ -18,9 +19,9 @@ function Header({ deck }: { deck: Deck }) {
         </span>
         <div className="min-w-0">
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{sv.tenta.title}</h1>
-          <p className="mt-1.5 text-sm text-muted">
-            {deck.title}
-            {deck.course_code ? ` · ${deck.course_code}` : null}
+          <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+            <span>{deck.title}</span>
+            {deck.course_code ? <Badge tone="outline">{deck.course_code}</Badge> : null}
           </p>
         </div>
       </div>
@@ -29,9 +30,10 @@ function Header({ deck }: { deck: Deck }) {
 }
 
 /** Låst för studenterna: lugn låsvy med vägen tillbaka till korten. Ingen lista. */
-export function ExamModeLocked({ deck }: { deck: Deck }) {
+export function ExamModeLocked({ deck, studentView = false }: { deck: Deck; studentView?: boolean }) {
   return (
     <div>
+      {studentView ? <StudentViewBar deckId={deck.id} mode="last" /> : null}
       <Header deck={deck} />
       <Card padding="lg" className="anim-fade-up mx-auto max-w-2xl text-center" data-testid="exam-mode-locked">
         <span className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-surface-2 text-fg">
@@ -60,8 +62,8 @@ function Meta({ icon: Icon, children }: { icon: typeof Clock; children: React.Re
   );
 }
 
-function ExamRow({ exam, attempts, slug, now }: { exam: ExamSummary; attempts: AttemptInfo[]; slug: string; now: number }) {
-  const { inProgress, latest, best, submitted } = attemptOverview(attempts, exam.durationMinutes, now);
+function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; attempts: AttemptInfo[]; slug: string; now: number; showDraft: boolean }) {
+  const { inProgress, grading, latest, best, submitted } = attemptOverview(attempts, exam.durationMinutes, now);
   const href = `/d/${slug}/tenta/${exam.key}`;
   const max = formatPoints(exam.maxPoints);
   const date = formatExamDate(exam.date);
@@ -75,8 +77,8 @@ function ExamRow({ exam, attempts, slug, now }: { exam: ExamSummary; attempts: A
                 {exam.title}
               </Link>
             </h2>
-            {exam.status === "utkast" ? <Badge tone="outline">{sv.tenta.draft}</Badge> : null}
-            {inProgress ? <Badge tone="accent">{sv.tenta.inProgress}</Badge> : null}
+            {showDraft && exam.status === "utkast" ? <Badge tone="outline">{sv.tenta.draft}</Badge> : null}
+            {inProgress ? <Badge tone="accent">{sv.tenta.inProgress}</Badge> : grading ? <Badge tone="strong">{sv.tenta.gradingPending}</Badge> : null}
           </div>
           <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
             {date ? <Meta icon={CalendarDays}>{date}</Meta> : null}
@@ -108,6 +110,11 @@ function ExamRow({ exam, attempts, slug, now }: { exam: ExamSummary; attempts: A
               {sv.tenta.resume}
               <ArrowRight size={17} aria-hidden />
             </LinkButton>
+          ) : grading ? (
+            <LinkButton href={`${href}?forsok=${grading.id}`} className="w-full sm:w-auto" data-testid="exam-row-grade">
+              {sv.tenta.gradingContinue}
+              <ArrowRight size={17} aria-hidden />
+            </LinkButton>
           ) : (
             <LinkButton href={href} variant={latest ? "outline" : "primary"} className="w-full sm:w-auto">
               {sv.tenta.start}
@@ -126,33 +133,41 @@ export function ExamModeHome({
   exams,
   attempts,
   canEdit,
+  studentView = false,
   studentsCanSee,
   now,
 }: {
   deck: Deck;
   exams: ExamSummary[];
   attempts: AttemptInfo[];
+  /** Redaktör i redaktörens vy: statusraden, utkastmärkningen och Visa som student. */
   canEdit: boolean;
+  /** Redaktör i studentvyn: som för en student, med raden överst. */
+  studentView?: boolean;
   /** Tentaläget öppet och kursen publicerad. */
   studentsCanSee: boolean;
   now: number;
 }) {
   return (
     <div>
+      {studentView ? <StudentViewBar deckId={deck.id} mode="oppen" /> : null}
       <Header deck={deck} />
       <p className="anim-fade-up -mt-3 mb-6 max-w-3xl text-muted">{sv.tenta.intro}</p>
       {canEdit ? (
-        <p
+        <div
           role="status"
           className="anim-fade-up mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-line-strong bg-surface-2 px-5 py-3.5 text-sm font-medium dark:border-transparent"
           data-testid="exam-mode-editor-note"
         >
           {studentsCanSee ? <LockOpen size={16} aria-hidden className="shrink-0" /> : <Lock size={16} aria-hidden className="shrink-0" />}
-          <span>{studentsCanSee ? sv.tenta.editorOpen : sv.tenta.editorLocked}</span>
-          <Link href={`/admin/deck/${deck.id}/installningar`} className="font-semibold underline underline-offset-2">
-            {sv.tenta.toSettings}
-          </Link>
-        </p>
+          <span className="min-w-0 flex-1 basis-60">
+            {studentsCanSee ? sv.tenta.editorOpen : sv.tenta.editorLocked}{" "}
+            <Link href={`/admin/deck/${deck.id}/installningar`} className="font-semibold underline underline-offset-2">
+              {sv.tenta.toSettings}
+            </Link>
+          </span>
+          <StudentViewButton deckId={deck.id} slug={deck.slug} />
+        </div>
       ) : null}
       {exams.length === 0 ? (
         <Card padding="lg" className="text-muted">
@@ -161,7 +176,7 @@ export function ExamModeHome({
       ) : (
         <ul className="grid gap-3" data-testid="exam-list">
           {exams.map((exam) => (
-            <ExamRow key={exam.key} exam={exam} attempts={attempts.filter((a) => a.exam_id === exam.id)} slug={deck.slug} now={now} />
+            <ExamRow key={exam.key} exam={exam} attempts={attempts.filter((a) => a.exam_id === exam.id)} slug={deck.slug} now={now} showDraft={canEdit} />
           ))}
         </ul>
       )}

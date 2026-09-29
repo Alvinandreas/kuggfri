@@ -166,7 +166,7 @@ export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatVa
         {active && activeCell ? (
           <div
             role="status"
-            className="anim-fade-in pointer-events-none absolute z-10 whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs font-medium shadow-pop"
+            className="anim-fade-in pointer-events-none absolute z-10 flex gap-2 whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs font-medium shadow-pop"
             style={{
               left: `${((LEFT + active.w * STEP + CELL / 2) / W) * 100}%`,
               top: `${((TOP + active.d * STEP) / H) * 100}%`,
@@ -177,8 +177,8 @@ export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatVa
             <span className="text-muted">
               {sv.myStats.date(activeCell.date)}
               {activeCell.isToday ? ` (${sv.myStats.heatToday})` : ""}
-            </span>{" "}
-            · {formatValue(activeCell.count)}
+            </span>
+            <span>{formatValue(activeCell.count)}</span>
           </div>
         ) : null}
       </div>

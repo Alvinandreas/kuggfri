@@ -10,6 +10,7 @@ import { startExamAttemptAction } from "@/lib/tentor/actions";
 import { deadlineMs, formatClock, formatDuration, formatPoints, kindSummary, timeLeftMs } from "@/lib/tentor/session";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { StudentViewBar } from "./StudentView";
 
 export type CoverExam = {
   key: string;
@@ -29,10 +30,18 @@ type Props = {
   deck: { slug: string; title: string; course_code: string | null };
   exam: CoverExam;
   inProgress: { id: string; startedAt: string } | null;
-  /** Inlämnade försök, nyaste först; when är formaterat på servern. */
+  /** Inlämnat men inte rättat (rättningsläget). */
+  grading: { id: string } | null;
+  /** Rättade försök, nyaste först; when är formaterat på servern. */
   submitted: { id: string; when: string; points: number; grade: string }[];
   serverNow: number;
   preview: boolean;
+  /** Vägen tillbaka: tentalägets lista, eller Tentor i admin när förhandsgranskningen startades där. */
+  back: { href: string; label: string };
+  /** Läggs till försökslänkarna ("&fran=admin" från admin). */
+  attemptSuffix: string;
+  /** Redaktörens studentvy: kursens id för raden överst. */
+  studentViewDeck: string | null;
 };
 
 const HOW_ICONS = [Clock, Save, Lock, PenLine];
@@ -47,7 +56,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 }
 
 /** Tentans försättsblad: allt man får veta innan man vänder på pappret, och Starta tentan. */
-export function ExamCover({ deck, exam, inProgress, submitted, serverNow, preview }: Props) {
+export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNow, preview, back, attemptSuffix, studentViewDeck }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +77,7 @@ export function ExamCover({ deck, exam, inProgress, submitted, serverNow, previe
     setError(null);
     startTransition(async () => {
       const res = await startExamAttemptAction(deck.slug, exam.key);
-      if (res.ok) router.push(`${base}?forsok=${res.data.attemptId}`);
+      if (res.ok) router.push(`${base}?forsok=${res.data.attemptId}${attemptSuffix}`);
       else setError(res.error);
     });
   }
@@ -76,9 +85,10 @@ export function ExamCover({ deck, exam, inProgress, submitted, serverNow, previe
   const date = exam.dateLabel;
   return (
     <div className="mx-auto max-w-3xl" data-testid="exam-cover">
-      <Link href={`/d/${deck.slug}/tenta`} className="mb-5 inline-flex items-center gap-1.5 rounded-md text-sm font-semibold text-muted hover:text-fg">
+      {studentViewDeck ? <StudentViewBar deckId={studentViewDeck} mode="oppen" /> : null}
+      <Link href={back.href} className="mb-5 inline-flex items-center gap-1.5 rounded-md text-sm font-semibold text-muted hover:text-fg" data-testid="exam-back">
         <ArrowLeft size={16} aria-hidden />
-        {sv.tenta.toList}
+        {back.label}
       </Link>
       {preview ? (
         <p className="mb-4 rounded-lg border border-line-strong bg-surface-2 px-4 py-3 text-sm font-medium dark:border-transparent" role="note">
@@ -87,9 +97,12 @@ export function ExamCover({ deck, exam, inProgress, submitted, serverNow, previe
       ) : null}
       <Card padding="none" className="anim-fade-up overflow-hidden">
         <div className="border-b border-line bg-surface-2/60 px-6 py-6 sm:px-9 sm:py-8 dark:bg-surface-2/40">
-          <p className="text-sm font-semibold text-muted">
-            {sv.tenta.coverKicker} · {deck.title}
-            {deck.course_code ? ` ${deck.course_code}` : ""}
+          <p className="flex flex-wrap gap-x-3 gap-y-0.5 text-sm font-semibold text-muted">
+            <span>{sv.tenta.coverKicker}</span>
+            <span className="font-medium">
+              {deck.title}
+              {deck.course_code ? ` ${deck.course_code}` : ""}
+            </span>
           </p>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">{exam.title}</h1>
         </div>
@@ -137,12 +150,21 @@ export function ExamCover({ deck, exam, inProgress, submitted, serverNow, previe
               <p className="text-sm font-medium text-muted" data-testid="resume-hint">
                 {left !== null ? sv.tenta.resumeHint(formatClock(left)) : null}
               </p>
+            ) : grading ? (
+              <p className="text-sm font-medium text-muted" data-testid="grading-hint">
+                {sv.tenta.gradingHint}
+              </p>
             ) : (
               <span />
             )}
             {inProgress ? (
-              <Button size="lg" onClick={() => router.push(`${base}?forsok=${inProgress.id}`)} data-testid="exam-resume">
+              <Button size="lg" onClick={() => router.push(`${base}?forsok=${inProgress.id}${attemptSuffix}`)} data-testid="exam-resume">
                 {sv.tenta.resumeExam}
+                <ArrowRight size={18} aria-hidden />
+              </Button>
+            ) : grading ? (
+              <Button size="lg" onClick={() => router.push(`${base}?forsok=${grading.id}${attemptSuffix}`)} data-testid="exam-continue-grading">
+                {sv.tenta.gradingContinue}
                 <ArrowRight size={18} aria-hidden />
               </Button>
             ) : (
@@ -169,7 +191,7 @@ export function ExamCover({ deck, exam, inProgress, submitted, serverNow, previe
             {submitted.map((a) => (
               <li key={a.id}>
                 <Link
-                  href={`${base}?forsok=${a.id}`}
+                  href={`${base}?forsok=${a.id}${attemptSuffix}`}
                   className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface px-5 py-3.5 transition-colors hover:bg-surface-2 dark:border-transparent"
                 >
                   <span className="inline-flex items-center gap-2 text-sm text-muted">

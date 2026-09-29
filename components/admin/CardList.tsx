@@ -172,7 +172,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
                 {card.is_active || card.review_status ? null : <Badge tone="outline">{sv.admin.inactive}</Badge>}
                 <span className="truncate">
                   {firstLine(card.back)}
-                  {card.hint ? ` · ${sv.study.hint}` : ""}
+                  {card.hint ? `, ${sv.study.hint.toLocaleLowerCase("sv-SE")}` : ""}
                 </span>
               </p>
             </div>

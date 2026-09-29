@@ -246,7 +246,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
                       <Badge tone="accent">{sv.dashboard.cardsLeft(v.plan.sessionCards)}</Badge>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm text-muted">{[v.deck.course_code, sv.home.cards(v.deck.cards.length)].filter(Boolean).join(" · ")}</p>
+                  <p className="mt-1 text-sm text-muted">{[v.deck.course_code, sv.home.cards(v.deck.cards.length)].filter(Boolean).join(", ")}</p>
                   <div className="mt-5 flex items-center gap-3">
                     <ProgressBar value={v.knowledge} label={`${sv.dashboard.knowledge}: ${v.deck.title}`} />
                     <span className="text-sm font-semibold tabular-nums">{Math.round(v.knowledge * 100)} %</span>
@@ -274,7 +274,7 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
           </span>
           <div className="min-w-0">
             <h2 className="truncate text-xl font-bold tracking-tight">{deck.title}</h2>
-            <p className="text-sm text-muted">{[deck.course_code, sv.home.cards(deck.cards.length)].filter(Boolean).join(" · ")}</p>
+            <p className="text-sm text-muted">{[deck.course_code, sv.home.cards(deck.cards.length)].filter(Boolean).join(", ")}</p>
           </div>
         </div>
         {exam && examFuture ? (
@@ -411,7 +411,7 @@ function TodayCard({
         <>
           <p className="mt-2 text-4xl font-extrabold tracking-tight tabular-nums">{sv.stats.cards(plan.sessionCards)}</p>
           <p className="mt-1 text-sm text-muted" data-testid="home-today-plan">
-            {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)} · cirka {estimateMinutes(plan.sessionCards)} min
+            {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)}, cirka {estimateMinutes(plan.sessionCards)} min
           </p>
           {/* Till kurssidan, där läge och områden väljs; dagens pass är förvalt där. */}
           <LinkButton href={`/d/${view.deck.slug}`} size="lg" className="mt-5 w-full" data-testid="home-start">
@@ -427,7 +427,7 @@ function TodayCard({
               onClick={() => onQuick("tricky")}
               icon={Target}
               title={sv.deck.modeTricky}
-              meta={`${sv.stats.cards(trickyPlan.selectionCount)} · cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
+              meta={`${sv.stats.cards(trickyPlan.selectionCount)}, cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
               data-testid="home-tricky"
             />
           ) : null}

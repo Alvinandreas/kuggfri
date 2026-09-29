@@ -1,0 +1,465 @@
+"use client";
+
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, FlagTriangleRight, Info, MessageSquareWarning, Pencil, RotateCcw, X } from "lucide-react";
+import { sv } from "@/lib/i18n/sv";
+import { cardSources } from "@/lib/admin/sources";
+import type { ReviewArea, ReviewCard, ReviewTab } from "@/lib/admin/review";
+import { Badge } from "@/components/ui/Badge";
+import { Button, IconButton } from "@/components/ui/Button";
+import { CategoryTag } from "@/components/ui/CategoryTag";
+import { Disclosure } from "@/components/ui/Disclosure";
+import { Menu, MenuItem } from "@/components/ui/Menu";
+import { TextArea } from "@/components/ui/TextArea";
+import { cx } from "@/components/ui/cx";
+import { KindBadge } from "./KindBadge";
+import { ReviewCardFace } from "./ReviewCardFace";
+import { ReviewEditor, type ReviewEdit } from "./ReviewEditor";
+import { SourceBadges, SourceList } from "./SourceBadges";
+
+/** Senaste beslutet eller felet, med Ångra när det går. */
+export type ReviewStatus = { id: number; text: string; undo?: () => void; tone?: "default" | "danger" };
+
+type Panel = { type: "flag"; note: string; edit: boolean } | { type: "reject"; note: string } | null;
+
+type Props = {
+  card: ReviewCard;
+  tab: ReviewTab;
+  /** Platsen i listan (0-baserad), -1 om kortet inte finns i den filtrerade listan. */
+  position: number;
+  total: number;
+  areas: ReviewArea[];
+  areaTitle: (id: string | null) => string;
+  areaColor: (id: string) => number;
+  /** "Granskad 30 sep av Johan Ahlström", "Flaggat av Kuggfris källgranskning i dag" och liknande. */
+  reviewedLine: string | null;
+  flaggedLine: string | null;
+  issues: string[];
+  editing: boolean;
+  status: ReviewStatus | null;
+  onCloseStatus: () => void;
+  onBack: () => void;
+  onStep: (delta: -1 | 1) => void;
+  onApprove: () => void;
+  onResolve: () => void;
+  onEdit: (open: boolean) => void;
+  onSave: (edit: ReviewEdit, approve: boolean) => Promise<string | null>;
+  onFlag: (note: string) => void;
+  onReject: (note: string) => void;
+};
+
+/** Tangenter räknas inte medan man skriver eller står i en lista, meny eller dialog. */
+const TYPING_SELECTOR = 'input, textarea, select, [contenteditable="true"], [role="combobox"], [role="listbox"], [role="menu"], dialog';
+
+/**
+ * Ett kort i taget i granskningen. Överst tillbaka till listan och var i kön man är, sedan en
+ * kort instruktion (Att granska) eller flaggans anteckning (Flaggade), kortets område, typ och
+ * källor, och kortet som studenten ser det, tydligt uppdelat i Fråga och Svar. Åtgärderna står
+ * i en fast rad i nederkant: Godkänn (går direkt till nästa kort), Redigera, Flagga och en meny
+ * med Avvisa. Kortkommandon: G godkänn, R redigera, F flagga, J/K eller pilarna nästa och
+ * föregående, Esc tillbaka till listan, Ctrl+Z ångra.
+ */
+export function ReviewCardView(props: Props) {
+  const { card, tab, position, total, areas, areaTitle, areaColor, reviewedLine, flaggedLine, issues, editing, status } = props;
+  const [panel, setPanel] = useState<Panel>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const flagged = card.flag_note !== null && card.flag_note !== "";
+  const canApprove = tab !== "granskade";
+  const correcting = card.review_status === "utkast" && typeof card.published_version_id === "number";
+  const sources = cardSources(card);
+  const sourceCount = sources.groups.length;
+
+  // Nytt kort: stäng paneler och flytta fokus till rubriken (skärmläsare hör vilket kort det är).
+  useEffect(() => {
+    setPanel(null);
+    headingRef.current?.focus({ preventScroll: true });
+  }, [card.id]);
+
+  // Kortkommandon (inte medan man skriver, i en panel eller i redigeraren).
+  const keys = useRef<(e: KeyboardEvent) => void>(() => {});
+  keys.current = (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
+      if (status?.undo) {
+        e.preventDefault();
+        status.undo();
+      }
+      return;
+    }
+    if (e.ctrlKey || e.metaKey || e.altKey || editing || panel) return;
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key === "j" || key === "ArrowRight") {
+      e.preventDefault();
+      props.onStep(1);
+    } else if (key === "k" || key === "ArrowLeft") {
+      e.preventDefault();
+      props.onStep(-1);
+    } else if (key === "Escape") {
+      e.preventDefault();
+      props.onBack();
+    } else if (key === "g" && canApprove) {
+      e.preventDefault();
+      if (issues.length === 0) props.onApprove();
+    } else if (key === "r") {
+      e.preventDefault();
+      props.onEdit(true);
+    } else if (key === "f") {
+      e.preventDefault();
+      setPanel({ type: "flag", note: flagged ? (card.flag_note ?? "") : "", edit: flagged });
+    }
+  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.repeat) return;
+      const target = e.target as HTMLElement | null;
+      if (target?.closest(TYPING_SELECTOR) || document.querySelector("dialog[open]")) return;
+      keys.current(e);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const statusLine = status ? <StatusLine status={status} onClose={props.onCloseStatus} /> : null;
+  const hasPosition = position >= 0;
+
+  return (
+    <section aria-labelledby="granska-kort-rubrik" className="@container grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4" data-testid="review-card-view" data-card-id={card.id}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Button variant="ghost" size="sm" onClick={props.onBack} className="-ml-3" data-testid="review-back">
+          <ArrowLeft size={16} aria-hidden />
+          {sv.granskning.backToList}
+        </Button>
+        <div className="flex items-center gap-1">
+          <IconButton label={sv.granskning.prev} variant="outline" size="sm" onClick={() => props.onStep(-1)} disabled={!hasPosition || position <= 0} aria-keyshortcuts="K ArrowLeft" data-testid="review-prev">
+            <ChevronLeft size={17} aria-hidden />
+          </IconButton>
+          <h2
+            id="granska-kort-rubrik"
+            ref={headingRef}
+            tabIndex={-1}
+            className="min-w-20 px-2 text-center text-sm font-semibold tabular-nums"
+            // Rubriken får fokus när kortet byts (för skärmläsare), men ska inte se markerad ut.
+            style={{ outline: "none" }}
+            aria-label={hasPosition ? sv.granskning.positionLabel(position + 1, total) : sv.granskning.outsideFilter}
+            data-testid="review-position"
+          >
+            {hasPosition ? sv.granskning.position(position + 1, total) : sv.granskning.outsideFilter}
+          </h2>
+          <IconButton
+            label={sv.granskning.next}
+            variant="outline"
+            size="sm"
+            onClick={() => props.onStep(1)}
+            disabled={!hasPosition || position >= total - 1}
+            aria-keyshortcuts="J ArrowRight"
+            data-testid="review-next"
+          >
+            <ChevronRight size={17} aria-hidden />
+          </IconButton>
+        </div>
+      </div>
+
+      {tab === "att-granska" && !editing ? (
+        <p className="flex gap-2.5 rounded-md bg-surface-2 px-4 py-3 text-sm" data-testid="review-instruction">
+          <Info size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
+          <span>
+            {sv.granskning.instruction} <span className="text-muted">{sv.granskning.instructionApprove}</span>
+          </span>
+        </p>
+      ) : null}
+
+      {flagged ? (
+        <div className="flex gap-3 rounded-md bg-tag-2 px-4 py-3" data-testid="review-flag-note">
+          <FlagTriangleRight size={18} aria-hidden className="mt-0.5 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">{flaggedLine}</p>
+            <p className="mt-0.5 whitespace-pre-wrap break-words">{card.flag_note}</p>
+          </div>
+          {!editing ? (
+            <Button variant="ghost" size="sm" className="-mr-2 -mt-1 shrink-0 hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })} data-testid="review-flag-change">
+              <Pencil size={14} aria-hidden />
+              <span className="max-sm:sr-only">{sv.granskning.changeFlag}</span>
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="grid gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          {card.category_id ? <CategoryTag title={areaTitle(card.category_id)} colorIndex={areaColor(card.category_id)} /> : <Badge tone="outline">{sv.granskning.noArea}</Badge>}
+          <KindBadge kind={card.kind} />
+          <SourceBadges source={card.source} original={card.original} max={4} />
+        </div>
+        <p className="text-sm text-muted" data-testid="review-status-line">
+          {tab === "granskade"
+            ? (reviewedLine ?? sv.granskning.statusOriginal)
+            : card.review_status === "utkast"
+              ? correcting || card.original
+                ? sv.granskning.statusCorrected
+                : sv.granskning.statusNew
+              : reviewedLine ?? (card.original ? sv.granskning.statusOriginal : null)}
+        </p>
+      </div>
+
+      {card.review_note && card.review_status === "utkast" && !editing ? (
+        <div className="flex gap-3 rounded-md bg-surface-2 px-4 py-3 text-sm">
+          <MessageSquareWarning size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
+          <div className="min-w-0">
+            <p className="font-semibold">{sv.granskning.statusRejectedBefore}</p>
+            <p className="whitespace-pre-wrap break-words text-muted">{card.review_note}</p>
+          </div>
+        </div>
+      ) : null}
+
+      {issues.length > 0 && canApprove && !editing ? (
+        <div role="note" className="rounded-md bg-danger-soft px-4 py-3 text-sm text-danger" data-testid="review-issues">
+          <p className="font-semibold">{sv.granskning.cannotApprove}</p>
+          <ul className="mt-1 list-disc pl-5">
+            {issues.map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {editing ? (
+        <ReviewEditor key={card.id} card={card} areas={areas} canApprove={canApprove || flagged} onSave={props.onSave} onCancel={() => props.onEdit(false)} />
+      ) : (
+        <>
+          <div className="anim-fade-in" key={card.id}>
+            <ReviewCardFace front={card.front} back={card.back} hint={card.hint} kind={card.kind} options={card.options} />
+          </div>
+
+          <div className="rounded-lg border border-line bg-surface px-4 py-1 dark:border-transparent" data-testid="review-sources">
+            <Disclosure
+              summary={
+                <span className="flex items-center gap-2 text-sm">
+                  {sv.granskning.sources}
+                  <span className="font-medium text-muted tabular-nums">{sourceCount > 0 ? sourceCount : null}</span>
+                </span>
+              }
+            >
+              <SourceList source={card.source} original={card.original} className="pb-2" />
+            </Disclosure>
+          </div>
+
+          <div className="sticky bottom-3 z-20 mt-1" data-testid="review-actions">
+            <div className="grid gap-2 rounded-lg border border-line bg-surface p-2.5 shadow-pop dark:border-line-strong">
+              {statusLine}
+              {panel?.type === "flag" ? (
+                <NotePanel
+                  key="flagga"
+                  label={sv.granskning.flagNote}
+                  help={sv.granskning.flagNoteHelp}
+                  value={panel.note}
+                  onChange={(note) => setPanel({ ...panel, note })}
+                  required
+                  confirm={panel.edit ? sv.granskning.flagSave : sv.granskning.flagConfirm}
+                  confirmIcon={<FlagTriangleRight size={16} aria-hidden />}
+                  onConfirm={() => {
+                    if (!panel.note.trim()) return;
+                    props.onFlag(panel.note);
+                    setPanel(null);
+                  }}
+                  onCancel={() => setPanel(null)}
+                  testId="review-flag-panel"
+                />
+              ) : panel?.type === "reject" ? (
+                <NotePanel
+                  key="avvisa"
+                  label={sv.granskning.rejectNote}
+                  help={
+                    correcting
+                      ? sv.granskning.rejectHelpCorrection
+                      : card.review_status === null
+                        ? sv.granskning.rejectHelpActive
+                        : card.original
+                          ? sv.granskning.rejectHelpOriginal
+                          : sv.granskning.rejectHelpNew
+                  }
+                  value={panel.note}
+                  onChange={(note) => setPanel({ ...panel, note })}
+                  confirm={sv.granskning.rejectConfirm}
+                  confirmIcon={<X size={16} aria-hidden />}
+                  danger
+                  onConfirm={() => {
+                    props.onReject(panel.note);
+                    setPanel(null);
+                  }}
+                  onCancel={() => setPanel(null)}
+                  testId="review-reject-panel"
+                />
+              ) : (
+                <div role="group" aria-label={sv.granskning.actions} className="flex flex-wrap items-center gap-2">
+                  {canApprove ? (
+                    <Button onClick={props.onApprove} disabled={issues.length > 0} aria-keyshortcuts="G" className="flex-1 @2xl:flex-none" data-testid="review-approve">
+                      <Check size={17} aria-hidden />
+                      {sv.granskning.approve}
+                      <KeyHint>G</KeyHint>
+                    </Button>
+                  ) : null}
+                  {tab === "flaggade" ? (
+                    <Button variant="outline" onClick={props.onResolve} title={sv.granskning.resolveHelp} className="flex-1 @2xl:flex-none" data-testid="review-resolve">
+                      <CheckCheck size={17} aria-hidden />
+                      {sv.granskning.resolve}
+                    </Button>
+                  ) : null}
+                  <Button variant="secondary" onClick={() => props.onEdit(true)} aria-keyshortcuts="R" className="flex-1 @2xl:flex-none" data-testid="review-edit">
+                    <Pencil size={16} aria-hidden />
+                    {sv.granskning.edit}
+                    <KeyHint>R</KeyHint>
+                  </Button>
+                  {tab !== "flaggade" ? (
+                    <Button
+                      variant="secondary"
+                      onClick={() => setPanel({ type: "flag", note: "", edit: false })}
+                      aria-keyshortcuts="F"
+                      className="flex-1 @2xl:flex-none"
+                      data-testid="review-flag"
+                    >
+                      <FlagTriangleRight size={16} aria-hidden />
+                      {sv.granskning.flag}
+                      <KeyHint>F</KeyHint>
+                    </Button>
+                  ) : null}
+                  <Menu
+                    label={sv.granskning.more}
+                    placement="top-end"
+                    width="15rem"
+                    trigger={(t) => (
+                      <button
+                        {...t}
+                        type="button"
+                        aria-label={sv.granskning.more}
+                        title={sv.granskning.more}
+                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
+                        data-testid="review-more"
+                      >
+                        <Ellipsis size={18} aria-hidden />
+                      </button>
+                    )}
+                  >
+                    {flagged ? (
+                      <MenuItem icon={<Pencil size={16} />} onSelect={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })}>
+                        {sv.granskning.changeFlag}
+                      </MenuItem>
+                    ) : null}
+                    <MenuItem icon={<X size={16} />} tone="danger" onSelect={() => setPanel({ type: "reject", note: "" })}>
+                      {sv.granskning.reject}
+                    </MenuItem>
+                  </Menu>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+/** Anteckning till en flagga eller en avvisning, i åtgärdsraden. Enter bekräftar, Esc avbryter. */
+function NotePanel({
+  label,
+  help,
+  value,
+  onChange,
+  required = false,
+  confirm,
+  confirmIcon,
+  danger = false,
+  onConfirm,
+  onCancel,
+  testId,
+}: {
+  label: string;
+  help: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+  confirm: string;
+  confirmIcon: ReactNode;
+  danger?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  testId: string;
+}) {
+  const empty = required && !value.trim();
+  return (
+    <div className="anim-fade-up grid gap-3 p-1.5" data-testid={testId}>
+      <TextArea
+        label={label}
+        hint={help}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={2}
+        maxLength={2000}
+        autoFocus
+        required={required}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            if (!empty) onConfirm();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            onCancel();
+          }
+        }}
+        data-testid={`${testId}-note`}
+      />
+      <div className="flex flex-wrap gap-2">
+        <Button variant={danger ? "danger" : "primary"} onClick={onConfirm} disabled={empty} data-testid={`${testId}-confirm`}>
+          {confirmIcon}
+          {confirm}
+        </Button>
+        <Button variant="ghost" onClick={onCancel}>
+          {sv.common.cancel}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** Tangenten bredvid en knapps etikett, diskret och bara när ytan är bred nog. */
+function KeyHint({ children }: { children: ReactNode }) {
+  return (
+    <kbd aria-hidden className="ml-0.5 hidden h-5 min-w-5 items-center justify-center rounded border border-current/25 px-1 font-mono text-[10px] font-semibold opacity-70 @3xl:inline-flex">
+      {children}
+    </kbd>
+  );
+}
+
+/** Senaste beslutet eller felet, i åtgärdsraden (skymmer inget), med Ångra när det går. */
+function StatusLine({ status, onClose }: { status: ReviewStatus; onClose: () => void }) {
+  return (
+    <div
+      role={status.tone === "danger" ? "alert" : "status"}
+      className={cx("anim-fade-in flex min-w-0 items-center gap-2 rounded-md px-3 py-1.5 text-sm", status.tone === "danger" ? "bg-danger-soft text-danger" : "bg-surface-2 text-fg")}
+      data-testid="review-toast"
+      key={status.id}
+    >
+      <span className="min-w-0 flex-1 truncate" title={status.text}>
+        {status.text}
+      </span>
+      {status.undo ? (
+        <button
+          type="button"
+          onClick={status.undo}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 font-semibold transition-colors duration-150 hover:bg-surface-3"
+          data-testid="review-undo"
+        >
+          <RotateCcw size={14} aria-hidden />
+          {sv.granskning.undo}
+          <span className="hidden text-xs font-medium text-muted sm:inline">Ctrl Z</span>
+        </button>
+      ) : null}
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label={sv.common.close}
+        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-3 hover:text-fg"
+      >
+        <X size={14} aria-hidden />
+      </button>
+    </div>
+  );
+}

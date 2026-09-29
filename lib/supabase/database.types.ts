@@ -135,6 +135,11 @@ export type CardRow = {
   source: string | null;
   /** Del av den beprövade originaluppsättningen (före 28 sep 2026). */
   original: boolean;
+  /** Anteckning om ett misstänkt fel som behöver åtgärdas (Granskning, Flaggade). null = inte flaggat. */
+  flag_note: string | null;
+  flagged_at: string | null;
+  /** Vem som flaggade; null = Kuggfris källgranskning (innehållsverktyget). */
+  flagged_by: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -302,7 +307,7 @@ export type Database = {
         Row: CardRow;
         Insert: Optional<
           CardRow,
-          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original"
+          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original" | "flag_note" | "flagged_at" | "flagged_by"
         >;
         Update: Partial<CardRow>;
         Relationships: [];
@@ -410,6 +415,7 @@ export type Database = {
       deck_reports: { Args: { p_deck_id: string }; Returns: DeckReportRow[] };
       deck_open_report_count: { Args: { p_deck_id: string }; Returns: number };
       can_edit_deck: { Args: { p_deck_id: string }; Returns: boolean };
+      deck_reviewer_names: { Args: { p_deck_id: string }; Returns: { user_id: string; display_name: string }[] };
       list_deck_examiners: {
         Args: { p_deck_id: string };
         Returns: { user_id: string | null; email: string; display_name: string | null; created_at: string; pending: boolean }[];

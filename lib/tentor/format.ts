@@ -1,7 +1,7 @@
 /**
  * Tentafiler (docs/TENTOR.md): markdown in, Exam ut, med problem och radnummer. Ren modul.
  */
-import { QUESTION_KINDS, type Exam, type ExamQuestion, type GradeLimit, type NumericKey, type QuestionKind } from "./model";
+import { QUESTION_KINDS, type Exam, type ExamQuestion, type GradeLimit, type NumericKey, type Pair, type QuestionKind } from "./model";
 
 export type ExamIssue = { line: number; message: string };
 export type ExamParse = { exam: Exam; issues: ExamIssue[] };
@@ -10,6 +10,20 @@ const ATTR = /^([a-zåäöA-ZÅÄÖ-]+)\s*:\s*(.*)$/;
 const OPTION = /^- \[( |x|X)\] (.+)$/;
 const STATEMENT = /^- \[(sant|falskt)\] (.+)$/i;
 const PAIR = /^- (.+?)\s*=>\s*(.+)$/;
+
+/**
+ * Ett led i para ihop. `Led => Svar` använder uppgiftens gemensamma lista (alternativ:). Med en
+ * egen lista per led (lucktexter i Inspera) står alternativen i ledet, i visningsordning,
+ * avskilda med | och det rätta markerat med [x]: `Led => 0,02 % | [x] 0,77 % | 2,1 %`.
+ */
+export function parsePair(prompt: string, rest: string): Pair {
+  if (!rest.includes("|")) return { prompt, answer: rest };
+  const items = rest.split("|").map((c) => c.trim()).filter(Boolean);
+  const marked = items.filter((c) => /^\[x\]\s*/i.test(c));
+  const list = items.map((c) => c.replace(/^\[x\]\s*/i, "").trim());
+  const answer = marked.length === 1 ? marked[0]!.replace(/^\[x\]\s*/i, "").trim() : "";
+  return { prompt, answer, choices: list };
+}
 
 /** "1,5" eller "1.5" → 1.5; annat → null. */
 export function parseNumber(value: string): number | null {
@@ -127,13 +141,13 @@ export function parseExamFile(text: string, key: string): ExamParse {
     const promptLines: string[] = [];
     const options: { text: string; correct: boolean }[] = [];
     const statements: { text: string; answer: boolean }[] = [];
-    const pairs: { prompt: string; answer: string }[] = [];
+    const pairs: Pair[] = [];
     for (const raw of b.body) {
       const t = raw.trim();
       let m: RegExpExecArray | null;
       if ((kind === "flerval" || kind === "flera") && (m = OPTION.exec(t))) options.push({ text: (m[2] ?? "").trim(), correct: m[1] !== " " });
       else if (kind === "sant-falskt" && (m = STATEMENT.exec(t))) statements.push({ text: (m[2] ?? "").trim(), answer: (m[1] ?? "").toLowerCase() === "sant" });
-      else if (kind === "para" && (m = PAIR.exec(t))) pairs.push({ prompt: (m[1] ?? "").trim(), answer: (m[2] ?? "").trim() });
+      else if (kind === "para" && (m = PAIR.exec(t))) pairs.push(parsePair((m[1] ?? "").trim(), (m[2] ?? "").trim()));
       else promptLines.push(raw);
     }
     const prompt = promptLines.join("\n").trim();
@@ -151,9 +165,23 @@ export function parseExamFile(text: string, key: string): ExamParse {
     if (kind === "sant-falskt" && statements.length < 1) where("behöver minst ett påstående (- [sant] … / - [falskt] …).");
     if (kind === "para") {
       choices = (a("alternativ") ?? "").split("|").map((c) => c.trim()).filter(Boolean);
-      if (choices.length < 2) where("alternativ: behöver minst två val, avskilda med |.");
+      const ownLists = pairs.some((p) => p.choices);
+      if (!ownLists && choices.length < 2) where("alternativ: behöver minst två val, avskilda med |.");
+      if (ownLists && choices.length === 0) choices = null;
       if (pairs.length < 1) where("behöver minst ett led (- Led => Svar).");
-      for (const p of pairs) if (!noKey && !choices.includes(p.answer)) where(`svaret ”${p.answer}” finns inte bland alternativen.`);
+      for (const p of pairs) {
+        const list = p.choices ?? choices ?? [];
+        if (p.choices === undefined && !choices) where(`ledet ”${p.prompt}” har ingen lista (alternativ: saknas).`);
+        if (p.choices && p.choices.length < 2) where(`ledet ”${p.prompt}” behöver minst två val.`);
+        if (p.choices && p.choices.filter((c) => c === p.answer).length !== 1) where(`ledet ”${p.prompt}” ska ha exakt ett [x] och inga dubbletter av svaret.`);
+        if (!noKey && !list.includes(p.answer)) where(`svaret ”${p.answer}” finns inte bland alternativen.`);
+      }
+    }
+    const penaltyRaw = a("minuspoang");
+    const penalty = penaltyRaw === null ? null : parseNumber(penaltyRaw);
+    if (penaltyRaw !== null) {
+      if (penalty === null || penalty <= 0) where("minuspoäng: ska vara ett positivt tal (avdraget per fel svar, t.ex. 0,25).");
+      else if (kind !== "sant-falskt" && kind !== "flera" && kind !== "para") where("minuspoäng: gäller bara sant-falskt, flera och para.");
     }
     if (kind === "numerisk" && !noKey) {
       const value = parseNumber(a("svar") ?? "");
@@ -179,6 +207,7 @@ export function parseExamFile(text: string, key: string): ExamParse {
       solution,
       scoring,
       noKey,
+      penalty: penalty !== null && penalty > 0 && (kind === "sant-falskt" || kind === "flera" || kind === "para") ? penalty : null,
       options: kind === "flerval" || kind === "flera" ? options : null,
       statements: kind === "sant-falskt" ? statements : null,
       pairs: kind === "para" ? pairs : null,

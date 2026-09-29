@@ -8,7 +8,6 @@ import {
   FileText,
   FlaskConical,
   GraduationCap,
-  Lightbulb,
   PencilRuler,
   Presentation,
   type LucideIcon,
@@ -73,38 +72,15 @@ export function SourceBadges({ source, original, max = 3, className }: { source:
   );
 }
 
-/** Motiveringen till en rättelse av ett publicerat kort, som en tydlig notis. */
-export function CorrectionNote({ reason, className }: { reason: string; className?: string }) {
-  return (
-    <div role="note" className={cx("flex gap-3 rounded-md bg-accent-soft px-4 py-3 text-sm text-accent-ink", className)} data-testid="review-correction-reason">
-      <Lightbulb size={17} aria-hidden className="mt-0.5 shrink-0" />
-      <p className="min-w-0 break-words">
-        <span className="font-semibold">{sv.admin.sourceWhyChanged}</span> {reason}
-      </p>
-    </div>
-  );
-}
-
 /**
  * Källorna strukturerat: en rad per dokument med typ, dokumentnamn och sidor/frågor
- * ("Kapitel_08 Seghet och Brott · s. 7, 13, 14"). Rättelsens motivering visas som en notis
- * överst (showCorrection), eller inte alls om den redan visas på annat ställe.
+ * ("Kapitel_08 Seghet och Brott" och under det "s. 7, 13, 14"). En eventuell motivering till en
+ * rättelse visas inte (Alvins beslut 30 sep: examinatorerna har inte sett korten förut).
  */
-export function SourceList({
-  source,
-  original,
-  showCorrection = true,
-  className,
-}: {
-  source: string | null;
-  original?: boolean;
-  showCorrection?: boolean;
-  className?: string;
-}) {
-  const { groups, correction, missing } = cardSources({ source, original });
+export function SourceList({ source, original, className }: { source: string | null; original?: boolean; className?: string }) {
+  const { groups, missing } = cardSources({ source, original });
   return (
     <div className={cx("grid gap-3", className)} data-testid="source-list">
-      {showCorrection && correction ? <CorrectionNote reason={correction} /> : null}
       {missing ? (
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
           <SourceBadge tag={missing} />
@@ -117,16 +93,9 @@ export function SourceList({
               <span className="pt-px">
                 <SourceBadge tag={g.kind} />
               </span>
-              <span className="min-w-0 break-words leading-6">
+              <span className="grid min-w-0 break-words leading-6">
                 <span className="font-medium text-fg">{g.document}</span>
-                {g.locator ? (
-                  <>
-                    <span aria-hidden className="px-1.5 text-subtle">
-                      ·
-                    </span>
-                    <span className="text-muted tabular-nums">{g.locator}</span>
-                  </>
-                ) : null}
+                {g.locator ? <span className="text-muted tabular-nums">{g.locator}</span> : null}
               </span>
             </li>
           ))}

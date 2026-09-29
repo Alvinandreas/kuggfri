@@ -53,7 +53,7 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
             <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ${tagBgClass(category.colorIndex)}`} aria-hidden />
             <span>
               {sv.home.cards(total)}
-              {stats && stats.studied === 0 ? ` · ${sv.focus.notStarted}` : null}
+              {stats && stats.studied === 0 ? `. ${sv.focus.notStarted}` : null}
             </span>
           </p>
 
@@ -82,14 +82,14 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
                 href={plans.tricky.startHref}
                 icon={Target}
                 title={sv.focus.trickyArea}
-                meta={`${sv.deck.summaryTricky(plans.tricky.selectionCount)} · cirka ${estimateMinutes(plans.tricky.selectionCount)} min`}
+                meta={`${sv.deck.summaryTricky(plans.tricky.selectionCount)}, cirka ${estimateMinutes(plans.tricky.selectionCount)} min`}
               />
             ) : null}
             <ActionRow
               href={plans.free.startHref}
               icon={BookOpenText}
               title={sv.focus.freeArea}
-              meta={`${sv.home.cards(plans.free.selectionCount)} · ${sv.deck.modeFreeShort}`}
+              meta={`${sv.home.cards(plans.free.selectionCount)}. ${sv.deck.modeFreeShort}`}
             />
             <ActionRow href={`/d/${deck.slug}?lage=exam&omrade=${encodeURIComponent(category.id)}`} icon={GraduationCap} title={sv.focus.examArea} meta={sv.dugga.areaMeta} />
           </ActionList>

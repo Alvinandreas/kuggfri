@@ -3,7 +3,7 @@ import { countCourse, diffCourses, findUtgava, restoreCards, restoreCourse, utga
 import type { ContentCard, ContentCourse } from "@/lib/content/model";
 
 function card(key: string, extra: Partial<ContentCard> = {}): ContentCard {
-  return { key, front: key, back: "b", hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, original: false, ...extra };
+  return { key, front: key, back: "b", hint: null, active: true, kind: "sjalvskattning", options: null, review: null, source: null, original: false, flag: null, ...extra };
 }
 
 function course(areas: { key: string; cards: ContentCard[] }[], title = "Kurs"): ContentCourse {

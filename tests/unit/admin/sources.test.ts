@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parseSource } from "@/lib/cards/sources";
 import { cardSources, countBySourceTag, groupSourceRefs, isSourceFilter, matchesSource, mergeLocators, sourceTags } from "@/lib/admin/sources";
 import { mergeSubsetOrder } from "@/lib/admin/card-form";
-import { DEFAULT_REVIEW_FILTER, countPublishedChanges, filterReviewCards, reviewProgress, type ReviewCard } from "@/lib/admin/review";
+import { DEFAULT_REVIEW_FILTER, reviewList, type ReviewCard } from "@/lib/admin/review";
 
 const BROTTSEGHET =
   "Rättelse: brottvillkoret var omvänt (kortet sa att brott sker när K1c > K1); Canvas, Kapitel_08 Seghet och Brott, s. 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; " +
@@ -98,26 +98,22 @@ describe("källfilter i granskningen", () => {
       source: null,
       sort_order: n,
       created_at: new Date(NOW - 1000 + n).toISOString(),
+      flag_note: null,
+      flagged_at: null,
+      flagged_by: null,
       ...over,
     };
   };
   const areas = [{ id: "a1", title: "Metaller" }];
-  const quiz = card({ source: "Canvas, Quiz vecka 1, fråga 1", published_before: true });
+  const quiz = card({ source: "Canvas, Quiz vecka 1, fråga 1" });
   const lecture = card({ source: "Canvas, Kapitel_08 Seghet och Brott, s. 7" });
   const original = card({ original: true });
 
   it("visar bara kort med källtypen", () => {
     const list = [quiz, lecture, original];
-    expect(filterReviewCards(list, { ...DEFAULT_REVIEW_FILTER, source: "quiz" }, areas, NOW).map((c) => c.id)).toEqual([quiz.id]);
-    expect(filterReviewCards(list, { ...DEFAULT_REVIEW_FILTER, source: "original" }, areas, NOW).map((c) => c.id)).toEqual([original.id]);
-    expect(filterReviewCards(list, DEFAULT_REVIEW_FILTER, areas, NOW)).toHaveLength(3);
-  });
-
-  it("förlopp och ändringsräkning följer källfiltret", () => {
-    const list = [quiz, lecture, original];
-    expect(reviewProgress(list, { area: "alla", kind: "alla", source: "forelasning" }, NOW)).toEqual({ done: 0, total: 1 });
-    expect(countPublishedChanges(list, { ...DEFAULT_REVIEW_FILTER, source: "forelasning" }, NOW)).toBe(0);
-    expect(countPublishedChanges(list, { ...DEFAULT_REVIEW_FILTER, source: "quiz" }, NOW)).toBe(1);
+    expect(reviewList(list, "att-granska", { ...DEFAULT_REVIEW_FILTER, source: "quiz" }, areas).map((c) => c.id)).toEqual([quiz.id]);
+    expect(reviewList(list, "att-granska", { ...DEFAULT_REVIEW_FILTER, source: "original" }, areas).map((c) => c.id)).toEqual([original.id]);
+    expect(reviewList(list, "att-granska", DEFAULT_REVIEW_FILTER, areas)).toHaveLength(3);
   });
 });
 

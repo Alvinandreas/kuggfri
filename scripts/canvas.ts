@@ -403,6 +403,7 @@ function cmdQuizkort(k: Kurs): void {
         review: "utkast",
         source: `Canvas, ${name}, fråga ${item.position}`,
         original: false,
+        flag: null,
       });
     }
     if (cards.length === 0) continue;

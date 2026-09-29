@@ -8,7 +8,7 @@ type Props = {
   href?: string;
   icon: ComponentType<LucideProps>;
   title: string;
-  /** Rad under rubriken, t.ex. "12 kort · cirka 3 min". */
+  /** Rad under rubriken, t.ex. "12 kort, cirka 3 min". */
   meta?: ReactNode;
   /** Den viktigaste raden i en lista: grön ikon och lite tyngre yta. */
   primary?: boolean;

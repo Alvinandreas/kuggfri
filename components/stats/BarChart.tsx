@@ -111,11 +111,12 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
           {hover !== null && points[hover] ? (
             <div
               role="status"
-              className="anim-fade-in pointer-events-none absolute -top-2 whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs font-medium shadow-pop"
+              className="anim-fade-in pointer-events-none absolute -top-2 flex gap-2 whitespace-nowrap rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs font-medium shadow-pop"
               style={{ left: `${((PAD.left + hover * slot + slot / 2) / W) * 100}%`, transform: "translateX(-50%)" }}
             >
-              <span className="text-muted">{points[hover].label}</span> · {formatValue(points[hover].value)}
-              {points[hover].detail ? <span className="text-muted"> · {points[hover].detail}</span> : null}
+              <span className="text-muted">{points[hover].label}</span>
+              <span>{formatValue(points[hover].value)}</span>
+              {points[hover].detail ? <span className="text-muted">{points[hover].detail}</span> : null}
             </div>
           ) : null}
         </div>

@@ -1,11 +1,12 @@
 import "server-only";
 import { cache } from "react";
+import { cookies } from "next/headers";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { createSupabaseServerClient, getCurrentUser } from "@/lib/supabase/server";
 import type { ExamAttemptRow } from "@/lib/supabase/database.types";
 import { gradeExam, gradeFor, type ExamResult } from "./grade";
 import type { Answers, Exam } from "./model";
-import { attemptsAsServer, getExamById, mayView, type ExamAccess } from "./queries";
+import { attemptsAsServer, getExamById, mayView, type ExamAccess, type StudentView } from "./queries";
 import { isExpired, sanitizeAnswers, type AttemptInfo } from "./session";
 
 /**
@@ -17,6 +18,21 @@ import { isExpired, sanitizeAnswers, type AttemptInfo } from "./session";
 
 export type ExamDeck = { id: string; slug: string; title: string; course_code: string | null; is_published: boolean; exam_mode_open: boolean };
 
+/** Kakan för redaktörens studentvy: "<kursens id>:oppen" eller "<kursens id>:last". */
+export const STUDENT_VIEW_COOKIE = "kuggfri_studentvy";
+
+/**
+ * Redaktörens studentvy för kursen, ur kakan. Respekteras bara när besökaren faktiskt är redaktör
+ * för just den kursen: för alla andra är kakan verkningslös (de ser alltid studentens vy, med de
+ * regler som gäller för studenter).
+ */
+async function studentViewFor(deckId: string, canEdit: boolean): Promise<StudentView | null> {
+  if (!canEdit) return null;
+  const raw = (await cookies()).get(STUDENT_VIEW_COOKIE)?.value ?? "";
+  const [id, mode] = raw.split(":");
+  return id === deckId && (mode === "oppen" || mode === "last") ? mode : null;
+}
+
 /** Kursen via adressen och vad besökaren får se i tentaläget. Null om kursen inte finns (eller inte får ses). */
 export const loadExamDeck = cache(async (slug: string): Promise<{ deck: ExamDeck; access: ExamAccess } | null> => {
   const supabase = await createSupabaseServerClient();
@@ -24,7 +40,11 @@ export const loadExamDeck = cache(async (slug: string): Promise<{ deck: ExamDeck
   const { data: deck } = await supabase.from("decks").select("id, slug, title, course_code, is_published, exam_mode_open").eq("slug", slug).maybeSingle();
   if (!deck) return null;
   const ctx = await getAdminContext();
-  return { deck, access: { canEdit: canEditDeck(ctx, deck.id), examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published } };
+  const canEdit = canEditDeck(ctx, deck.id);
+  return {
+    deck,
+    access: { canEdit, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published, studentView: await studentViewFor(deck.id, canEdit) },
+  };
 });
 
 async function deckAccess(deckId: string): Promise<{ slug: string; access: ExamAccess } | null> {
@@ -74,14 +94,16 @@ export async function loadAttempt(attemptId: string): Promise<AttemptContext | n
 
 /**
  * Rättar och lämnar in ett försök med de givna svaren. Ett redan inlämnat försök lämnas orört.
- * Anroparen har kontrollerat att försöket är besökarens (loadAttempt eller listMyAttempts).
+ * Har tentan uppgifter som studenten själv bedömer hamnar försöket i rättningsläget: poäng och
+ * betyg är null tills studenten tryckt Rätta (finishGradingAction). Anroparen har kontrollerat
+ * att försöket är besökarens (loadAttempt eller listMyAttempts).
  */
-export async function finalizeAttempt(attemptId: string, exam: Exam, answers: Answers): Promise<{ points: number; grade: string } | null> {
+export async function finalizeAttempt(attemptId: string, exam: Exam, answers: Answers): Promise<{ points: number | null; grade: string | null } | null> {
   const user = await getCurrentUser();
   if (!user) return null;
   const result: ExamResult = gradeExam(exam, answers);
-  const points = result.autoPoints;
-  const grade = gradeFor(points, exam.grades);
+  const points = result.pending ? null : result.autoPoints;
+  const grade = points === null ? null : gradeFor(points, exam.grades);
   const { data, error } = await attemptsAsServer()
     .update({ answers, result, points, grade, self_grades: {}, submitted_at: new Date().toISOString() })
     .eq("id", attemptId)

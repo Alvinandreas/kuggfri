@@ -3,27 +3,28 @@
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, CircleMinus, PenLine, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, Check, CircleMinus, FlaskConical, PenLine, RotateCcw, Undo2, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { Answer, Answers, Exam, ExamQuestion } from "@/lib/tentor/model";
-import type { ExamResult, QuestionResult } from "@/lib/tentor/grade";
-import { saveSelfGradesAction, startExamAttemptAction } from "@/lib/tentor/actions";
+import { gradeFor, hypotheticalTotal, type ExamResult, type QuestionResult } from "@/lib/tentor/grade";
+import { startExamAttemptAction } from "@/lib/tentor/actions";
 import { formatPoints, halfSteps, partOf } from "@/lib/tentor/session";
 import { Markdown } from "@/components/markdown/Markdown";
+import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
-import { Select } from "@/components/ui/Select";
 import { cx } from "@/components/ui/cx";
 import { ExamFigures } from "./ExamFigures";
+import { PointsPicker } from "./PointsPicker";
+import { StudentViewBar } from "./StudentView";
 
-/** Tentan som den skickas till webbläsaren efter inlämning: med facit men utan källa och status. */
+/** Tentan som den skickas till webbläsaren efter rättningen: med facit men utan källa och status. */
 export type ResultExam = Omit<Exam, "source" | "status">;
 
 type Props = {
   slug: string;
   exam: ResultExam;
-  attemptId: string;
   result: ExamResult;
   answers: Answers;
   selfGrades: Record<string, number>;
@@ -32,6 +33,9 @@ type Props = {
   /** Formaterat på servern. */
   submittedWhen: string;
   preview: boolean;
+  back: { href: string; label: string };
+  attemptSuffix: string;
+  studentViewDeck: string | null;
 };
 
 type Filter = "alla" | "fel" | "sjalv";
@@ -53,25 +57,44 @@ function OutcomeIcon({ outcome }: { outcome: QuestionResult["outcome"] }) {
   return <CircleMinus size={14} aria-hidden />;
 }
 
-/** Stapel med poängen och betygsgränserna som streck. */
-function PointsBar({ points, max, grades }: { points: number; max: number; grades: Exam["grades"] }) {
+/** Stapel med poängen och betygsgränserna som streck; `ghost` visar det verkliga resultatet under det tänkta. */
+function PointsBar({ points, ghost, max, grades, compact = false }: { points: number; ghost?: number | null; max: number; grades: Exam["grades"]; compact?: boolean }) {
   const pct = (n: number) => `${Math.max(0, Math.min(100, (n / max) * 100))}%`;
   return (
-    <div className="mt-5" aria-hidden>
-      <div className="relative h-3 rounded-full bg-surface-3">
+    <div className={compact ? "" : "mt-6"} aria-hidden>
+      <div className={cx("relative rounded-full bg-surface-3", compact ? "h-2" : "h-3")}>
+        {ghost !== undefined && ghost !== null ? <div className="absolute inset-y-0 left-0 rounded-full bg-fg/25" style={{ width: pct(ghost) }} /> : null}
         <div className="absolute inset-y-0 left-0 rounded-full bg-accent transition-[width] duration-500" style={{ width: pct(points) }} />
         {grades.map((g) => (
           <span key={g.grade} className="absolute -bottom-1 -top-1 w-0.5 rounded bg-fg/70" style={{ left: pct(g.min) }} />
         ))}
       </div>
-      <div className="relative mt-1.5 h-4 text-xs font-semibold text-muted">
-        {grades.map((g) => (
-          <span key={g.grade} className="absolute -translate-x-1/2 tabular-nums" style={{ left: pct(g.min) }}>
-            {g.grade}
-          </span>
-        ))}
-      </div>
+      {compact ? null : (
+        <div className="relative mt-1.5 h-9 text-xs font-semibold text-muted">
+          {grades.map((g) => (
+            <span key={g.grade} className="absolute flex -translate-x-1/2 flex-col items-center tabular-nums leading-tight" style={{ left: pct(g.min) }}>
+              <span className="text-fg">{g.grade}</span>
+              <span className="font-medium">{formatPoints(g.min)} p</span>
+            </span>
+          ))}
+        </div>
+      )}
     </div>
+  );
+}
+
+function GradeBadge({ grade, size = "lg", testId }: { grade: string; size?: "lg" | "sm"; testId?: string }) {
+  return (
+    <span
+      className={cx(
+        "inline-flex items-center justify-center rounded-full font-extrabold",
+        size === "lg" ? "h-20 min-w-20 px-5 text-4xl" : "h-9 min-w-9 px-2.5 text-lg",
+        grade === "U" ? "bg-surface-3 text-fg" : "bg-accent text-accent-fg",
+      )}
+      data-testid={testId}
+    >
+      {grade}
+    </span>
   );
 }
 
@@ -102,7 +125,7 @@ function OptionsReview({ q, answer }: { q: ExamQuestion; answer: Answer | undefi
             key={i}
             className={cx(
               "flex flex-wrap items-start gap-x-3 gap-y-1.5 rounded-md border px-4 py-3",
-              right && mine ? "border-accent bg-accent-soft/70" : right ? "border-accent border-dashed" : wrong ? "border-danger bg-danger-soft" : mine ? "border-fg/50 bg-surface-2" : "border-line",
+              right && mine ? "border-accent bg-accent-soft/70" : right ? "border-dashed border-accent" : wrong ? "border-danger bg-danger-soft" : mine ? "border-fg/50 bg-surface-2" : "border-line",
             )}
             data-testid={`review-option-${i}`}
           >
@@ -121,7 +144,8 @@ function OptionsReview({ q, answer }: { q: ExamQuestion; answer: Answer | undefi
   );
 }
 
-function Mark({ ok }: { ok: boolean }) {
+function Mark({ ok, blank }: { ok: boolean; blank?: boolean }) {
+  if (blank) return <CircleMinus size={16} aria-label={sv.tenta.outcome.obesvarad} className="text-muted" />;
   return ok ? <Check size={16} strokeWidth={2.6} aria-label={sv.tenta.outcome.ratt} className="text-accent" /> : <X size={16} strokeWidth={2.6} aria-label={sv.tenta.outcome.fel} className="text-danger" />;
 }
 
@@ -147,14 +171,14 @@ function TableReview({ rows, head }: { rows: { prompt: string; mine: string | nu
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={i} className={cx("border-t border-line align-top", !r.ok && "bg-danger-soft/40")}>
+            <tr key={i} className={cx("border-t border-line align-top", !r.ok && r.mine !== null && "bg-danger-soft/40")}>
               <td className="py-2.5 pr-3">
                 <Markdown text={r.prompt} variant="body" className={inline} />
               </td>
               <td className={cx("py-2.5 pr-3 font-medium", r.mine === null && "text-muted", !r.ok && r.mine !== null && "text-danger")}>{r.mine ?? sv.tenta.noAnswer}</td>
               <td className="py-2.5 pr-3 font-medium text-accent-ink">{r.right}</td>
               <td className="py-2.5">
-                <Mark ok={r.ok} />
+                <Mark ok={r.ok} blank={r.mine === null} />
               </td>
             </tr>
           ))}
@@ -212,94 +236,50 @@ function AnswerReview({ q, answer, outcome }: { q: ExamQuestion; answer: Answer 
   }
 }
 
-function SelfGrade({ id, max, value, onChange, busy }: { id: string; max: number; value: number | undefined; onChange: (v: number) => void; busy: boolean }) {
-  const steps = halfSteps(max);
-  const label = sv.tenta.selfGradeLabel(id);
-  return (
-    <div className="mt-5 rounded-lg border-2 border-dashed border-line-strong p-4 sm:p-5" data-testid={`self-grade-${id}`}>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="inline-flex items-center gap-2 font-bold">
-          <PenLine size={16} aria-hidden />
-          {sv.tenta.selfGradeTitle}
-        </p>
-        <span className={cx("rounded-full px-2.5 py-0.5 text-xs font-bold", value === undefined ? "bg-surface-3 text-muted" : "bg-inverse text-inverse-fg")}>
-          {value === undefined ? sv.tenta.notSelfGraded : `${sv.tenta.selfGraded}: ${formatPoints(value)}/${formatPoints(max)} p`}
-        </span>
-      </div>
-      <p className="mt-1 text-sm text-muted">{sv.tenta.selfGradeHelp}</p>
-      {steps.length <= 13 ? (
-        <div role="radiogroup" aria-label={label} className="mt-3 flex flex-wrap gap-1.5">
-          {steps.map((v) => (
-            <button
-              key={v}
-              type="button"
-              role="radio"
-              aria-checked={value === v}
-              disabled={busy}
-              onClick={() => onChange(v)}
-              className={cx(
-                "inline-flex h-10 min-w-11 items-center justify-center rounded-full border px-3 text-sm font-semibold tabular-nums transition-colors disabled:opacity-60",
-                value === v ? "border-inverse bg-inverse text-inverse-fg" : "border-line-strong hover:bg-surface-2",
-              )}
-              data-testid={`self-grade-${id}-${v}`}
-            >
-              {formatPoints(v)}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <div className="mt-3 max-w-[12rem]">
-          <Select
-            value={value === undefined ? "" : String(v2(value))}
-            onChange={(s) => s !== "" && onChange(Number(s))}
-            options={[{ value: "", label: "-" }, ...steps.map((v) => ({ value: String(v), label: formatPoints(v) }))]}
-            label={label}
-            size="sm"
-          />
-        </div>
-      )}
-    </div>
-  );
+/** Stegen i Tänk om: halva poäng upp till max, plus uppgiftens verkliga poäng (t.ex. 0,75). */
+function whatIfSteps(max: number, actual: number): number[] {
+  return [...new Set([...halfSteps(max), Math.round(actual * 100) / 100])].sort((a, b) => a - b);
 }
 
-const v2 = (n: number) => Math.round(n * 2) / 2;
-
 /**
- * Resultatet efter inlämning: poäng och betyg, och varje uppgift med studentens svar mot facit,
- * lösningen och (för skrivuppgifter) studentens egen bedömning.
+ * Resultatet efter rättningen: poäng, betyg och betygsgränserna överst, sedan varje uppgift med
+ * studentens svar mot facit och lösningen. Tänk om låter studenten pröva andra poäng på valfria
+ * uppgifter och se hur totalen och betyget hade ändrats; inget sparas.
  */
-export function ExamResultView({ slug, exam, attemptId, result, answers, selfGrades: initialSelf, points: initialPoints, grade: initialGrade, submittedWhen, preview }: Props) {
+export function ExamResultView({ slug, exam, result, answers, selfGrades, points, grade, submittedWhen, preview, back, attemptSuffix, studentViewDeck }: Props) {
   const router = useRouter();
-  const [selfGrades, setSelfGrades] = useState(initialSelf);
-  const [total, setTotal] = useState({ points: initialPoints, grade: initialGrade });
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("alla");
+  const [whatIf, setWhatIf] = useState(false);
+  const [overrides, setOverrides] = useState<Record<string, number>>({});
   const [retaking, startRetake] = useTransition();
   const parts = useMemo(() => partOf(exam.questions), [exam.questions]);
   const byId = useMemo(() => new Map(result.questions.map((r) => [r.id, r] as const)), [result.questions]);
 
   const selfQuestions = result.questions.filter((r) => r.outcome === "sjalv");
-  const selfSum = selfQuestions.reduce((s, r) => s + (selfGrades[r.id] ?? 0), 0);
-  const unassessed = selfQuestions.filter((r) => selfGrades[r.id] === undefined).length;
+  const selfSum = selfQuestions.reduce((s, r) => s + Math.max(0, Math.min(r.max, selfGrades[r.id] ?? 0)), 0);
+  const autoMax = result.maxPoints - result.selfMax;
+  const actualOf = (r: QuestionResult) => (r.outcome === "sjalv" ? (selfGrades[r.id] ?? 0) : (r.points ?? 0));
 
-  async function grade(id: string, v: number) {
-    const next = { ...selfGrades, [id]: v };
-    setSelfGrades(next);
-    setBusy(true);
-    setError(null);
-    const res = await saveSelfGradesAction(attemptId, next).catch(() => null);
-    setBusy(false);
-    if (res?.ok) setTotal(res.data);
-    else setError(res?.error ?? sv.errors.generic);
-  }
+  const changed = Object.keys(overrides).filter((id) => {
+    const r = byId.get(id);
+    return r && overrides[id] !== actualOf(r);
+  });
+  const hypo = whatIf && changed.length > 0;
+  const shownPoints = hypo ? hypotheticalTotal(result, selfGrades, overrides) : points;
+  const shownGrade = hypo ? gradeFor(shownPoints, exam.grades) : grade;
+  const next = [...exam.grades].sort((a, b) => a.min - b.min).find((g) => g.min > shownPoints);
 
   function retake() {
     startRetake(async () => {
       const res = await startExamAttemptAction(slug, exam.key);
-      if (res.ok) router.push(`/d/${slug}/tenta/${exam.key}?forsok=${res.data.attemptId}`);
+      if (res.ok) router.push(`/d/${slug}/tenta/${exam.key}?forsok=${res.data.attemptId}${attemptSuffix}`);
       else setError(res.error);
     });
+  }
+
+  function setOverride(id: string, v: number) {
+    setOverrides((o) => ({ ...o, [id]: v }));
   }
 
   const visible = exam.questions.filter((q) => {
@@ -311,64 +291,111 @@ export function ExamResultView({ slug, exam, attemptId, result, answers, selfGra
 
   return (
     <div data-testid="exam-result">
-      <Link href={`/d/${slug}/tenta`} className="mb-5 inline-flex items-center gap-1.5 rounded-md text-sm font-semibold text-muted hover:text-fg">
+      {studentViewDeck ? <StudentViewBar deckId={studentViewDeck} mode="oppen" /> : null}
+      <Link href={back.href} className="mb-5 inline-flex items-center gap-1.5 rounded-md text-sm font-semibold text-muted hover:text-fg" data-testid="exam-back">
         <ArrowLeft size={16} aria-hidden />
-        {sv.tenta.toList}
+        {back.label}
       </Link>
-      <header className="anim-fade-up mb-6">
-        <p className="text-sm font-semibold text-muted">
-          {preview ? `${sv.tenta.preview} · ` : ""}
-          {sv.tenta.resultTitle} · {sv.tenta.attemptRow(submittedWhen)}
+      <header className="anim-fade-up mb-5">
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-muted">
+          {preview ? <Badge tone="strong">{sv.tenta.preview}</Badge> : null}
+          <span>{sv.tenta.resultTitle}</span>
+          <span className="font-medium">{sv.tenta.attemptRow(submittedWhen)}</span>
         </p>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{exam.title}</h1>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">{exam.title}</h1>
       </header>
 
-      <Card padding="lg" className="anim-fade-up">
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <div>
-            <p className="text-sm font-semibold text-muted">{sv.tenta.pointsOf(formatPoints(total.points), formatPoints(exam.maxPoints))}</p>
-            <p className="mt-1 flex items-baseline gap-2">
-              <span className="text-5xl font-extrabold tabular-nums tracking-tight" data-testid="result-points">
-                {formatPoints(total.points)}
+      {/* Tänk om: kompakt sammanfattning som följer med när man rullar. */}
+      {whatIf ? (
+        <div className="sticky top-0 z-30 -mx-4 mb-4 border-b border-line bg-bg/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6" data-testid="whatif-bar">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="inline-flex items-center gap-2">
+              <GradeBadge grade={shownGrade} size="sm" />
+              <span className="text-lg font-extrabold tabular-nums" data-testid="whatif-points">
+                {formatPoints(shownPoints)} / {formatPoints(exam.maxPoints)} p
               </span>
-              <span className="text-xl font-semibold text-muted">/ {formatPoints(exam.maxPoints)}</span>
-            </p>
-            <p className="mt-2 text-sm text-muted">
-              {sv.tenta.autoPart(formatPoints(result.autoPoints))}
-              {selfQuestions.length > 0 ? ` · ${sv.tenta.selfPart(formatPoints(selfSum), formatPoints(result.selfMax))}` : null}
-            </p>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-sm font-semibold text-muted">{sv.tenta.gradeLabel}</span>
-            <span
-              className={cx("mt-1 inline-flex h-16 min-w-16 items-center justify-center rounded-full px-4 text-3xl font-extrabold", total.grade === "U" ? "bg-surface-3 text-fg" : "bg-accent text-accent-fg")}
-              data-testid="result-grade"
-            >
-              {total.grade}
+            </span>
+            <span className="min-w-0 flex-1 basis-40 text-sm">
+              <span className={cx("font-bold", hypo ? "text-accent-ink" : "text-muted")}>{hypo ? sv.tenta.whatIfBadge : sv.tenta.whatIf}</span>
+              <span className="block text-muted">{hypo ? `${sv.tenta.whatIfChanged(changed.length)}. ${sv.tenta.whatIfActual(formatPoints(points), grade)}` : sv.tenta.whatIfActual(formatPoints(points), grade)}</span>
+            </span>
+            <span className="flex gap-1.5">
+              <Button variant="outline" size="sm" onClick={() => setOverrides({})} disabled={!hypo} data-testid="whatif-reset">
+                <Undo2 size={15} aria-hidden />
+                {sv.tenta.whatIfReset}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => { setWhatIf(false); setOverrides({}); }} data-testid="whatif-exit">
+                <X size={15} aria-hidden />
+                <span className="hidden sm:inline">{sv.tenta.whatIfExit}</span>
+                <span className="sr-only sm:hidden">{sv.tenta.whatIfExit}</span>
+              </Button>
             </span>
           </div>
+          <div className="mt-2">
+            <PointsBar points={shownPoints} ghost={hypo ? points : null} max={exam.maxPoints} grades={exam.grades} compact />
+          </div>
         </div>
-        {exam.grades.length > 0 ? <PointsBar points={total.points} max={exam.maxPoints} grades={exam.grades} /> : null}
-        {unassessed > 0 ? (
-          <p className="mt-4 inline-flex items-center gap-2 rounded-md bg-surface-2 px-3 py-2 text-sm font-medium">
-            <PenLine size={15} aria-hidden />
-            {sv.tenta.selfPending}
-          </p>
-        ) : null}
+      ) : null}
+
+      <Card padding="lg" className={cx("anim-fade-up", hypo && "ring-2 ring-accent/50")} data-testid="result-summary">
+        <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-5">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-muted">{hypo ? sv.tenta.whatIfBadge : sv.tenta.totalLabel}</p>
+            <p className="mt-1 flex items-baseline gap-2">
+              <span className="text-5xl font-extrabold tabular-nums tracking-tight sm:text-6xl" data-testid="result-points">
+                {formatPoints(shownPoints)}
+              </span>
+              <span className="text-xl font-semibold text-muted">/ {formatPoints(exam.maxPoints)} p</span>
+            </p>
+            {next ? (
+              <p className="mt-1.5 text-sm font-medium text-muted">{sv.tenta.toGrade(formatPoints(next.min - shownPoints), next.grade)}</p>
+            ) : exam.grades.length > 0 ? (
+              <p className="mt-1.5 text-sm font-medium text-accent-ink">{sv.tenta.topGrade}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-sm font-semibold text-muted">{sv.tenta.gradeLabel}</span>
+            <GradeBadge grade={shownGrade} testId="result-grade" />
+          </div>
+        </div>
+        {exam.grades.length > 0 ? <PointsBar points={shownPoints} ghost={hypo ? points : null} max={exam.maxPoints} grades={exam.grades} /> : null}
+        <dl className="mt-2 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md bg-surface-2 px-4 py-3">
+            <dt className="text-sm font-semibold text-muted">{sv.tenta.autoLabel}</dt>
+            <dd className="mt-0.5 text-lg font-bold tabular-nums" data-testid="result-auto">
+              {sv.tenta.ofMax(formatPoints(result.autoPoints), formatPoints(autoMax))}
+            </dd>
+          </div>
+          {selfQuestions.length > 0 ? (
+            <div className="rounded-md bg-surface-2 px-4 py-3">
+              <dt className="text-sm font-semibold text-muted">{sv.tenta.selfLabel}</dt>
+              <dd className="mt-0.5 text-lg font-bold tabular-nums" data-testid="result-self">
+                {sv.tenta.ofMax(formatPoints(selfSum), formatPoints(result.selfMax))}
+              </dd>
+            </div>
+          ) : null}
+        </dl>
         {error ? (
           <p role="alert" className="mt-3 text-sm font-medium text-danger">
             {error}
           </p>
         ) : null}
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-          <Button onClick={retake} disabled={retaking} data-testid="exam-retake">
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          {whatIf ? null : (
+            <Button variant="inverse" onClick={() => setWhatIf(true)} data-testid="whatif-start">
+              <FlaskConical size={16} aria-hidden />
+              {sv.tenta.whatIf}
+            </Button>
+          )}
+          <Button variant="outline" onClick={retake} disabled={retaking} data-testid="exam-retake">
             <RotateCcw size={16} aria-hidden />
             {retaking ? sv.tenta.starting : sv.tenta.retakeExam}
           </Button>
-          <LinkButton href={`/d/${slug}/tenta`} variant="outline">
-            {sv.tenta.toList}
+          <LinkButton href={back.href} variant="ghost">
+            {back.label}
           </LinkButton>
         </div>
+        {whatIf ? <p className="mt-3 text-sm text-muted">{sv.tenta.whatIfHelp}</p> : null}
       </Card>
 
       <div className="mb-4 mt-10 flex flex-wrap items-center justify-between gap-3">
@@ -392,9 +419,11 @@ export function ExamResultView({ slug, exam, attemptId, result, answers, selfGra
           if (!r) return null;
           const self = r.outcome === "sjalv";
           const mine = answers[q.id];
-          const got = self ? selfGrades[q.id] : r.points;
+          const actual = actualOf(r);
+          const override = whatIf ? overrides[q.id] : undefined;
+          const differs = override !== undefined && override !== actual;
           return (
-            <Card key={q.id} padding="none" className="overflow-hidden" data-testid={`result-${q.id}`} data-outcome={r.outcome}>
+            <Card key={q.id} padding="none" className={cx("overflow-hidden", differs && "ring-2 ring-accent/50")} data-testid={`result-${q.id}`} data-outcome={r.outcome}>
               <div className="flex flex-wrap items-end justify-between gap-3 border-b border-line px-5 pb-3.5 pt-4 sm:px-7">
                 <div className="min-w-0">
                   {parts.get(q.id) ? <p className="text-sm font-semibold text-subtle">{parts.get(q.id)}</p> : null}
@@ -403,10 +432,15 @@ export function ExamResultView({ slug, exam, attemptId, result, answers, selfGra
                 <div className="flex items-center gap-2.5">
                   <span className={cx("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold", OUTCOME_STYLE[r.outcome])}>
                     <OutcomeIcon outcome={r.outcome} />
-                    {self && got !== undefined ? sv.tenta.selfGraded : sv.tenta.outcome[r.outcome]}
+                    {self ? sv.tenta.selfGraded : sv.tenta.outcome[r.outcome]}
                   </span>
-                  <span className="text-sm font-semibold tabular-nums">
-                    {got === undefined || got === null ? "-" : formatPoints(got)}/{formatPoints(r.max)} p
+                  <span className="text-sm font-semibold tabular-nums" data-testid={`result-${q.id}-points`}>
+                    {differs ? (
+                      <s className="mr-2 font-medium text-muted" aria-label={sv.tenta.whatIfWas(formatPoints(actual))}>
+                        {formatPoints(actual)}/{formatPoints(r.max)}
+                      </s>
+                    ) : null}
+                    {formatPoints(differs ? override! : actual)}/{formatPoints(r.max)} p
                   </span>
                 </div>
               </div>
@@ -424,7 +458,7 @@ export function ExamResultView({ slug, exam, attemptId, result, answers, selfGra
                         </div>
                       </div>
                       <div>
-                        <p className="mb-1.5 text-sm font-semibold text-muted">{sv.tenta.solution}</p>
+                        <p className="mb-1.5 text-sm font-semibold text-muted">{sv.tenta.gradingSolution}</p>
                         <div className="rounded-md border border-accent/50 bg-accent-soft/40 px-4 py-3">
                           <Markdown text={q.solution ?? sv.tenta.missingSolution} variant="body" />
                         </div>
@@ -440,8 +474,28 @@ export function ExamResultView({ slug, exam, attemptId, result, answers, selfGra
                     <Markdown text={q.solution} variant="body" />
                   </div>
                 ) : null}
-                {self ? <SelfGrade id={q.id} max={r.max} value={selfGrades[q.id]} onChange={(v) => void grade(q.id, v)} busy={busy} /> : null}
               </div>
+              {whatIf ? (
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-dashed border-accent/60 bg-accent-soft/30 px-5 py-3.5 sm:px-7" data-testid={`whatif-${q.id}`}>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-accent-ink">
+                    <FlaskConical size={15} aria-hidden />
+                    {sv.tenta.whatIfTag}
+                  </span>
+                  <PointsPicker
+                    values={whatIfSteps(r.max, actual)}
+                    value={override ?? actual}
+                    onChange={(v) => setOverride(q.id, v)}
+                    label={sv.tenta.whatIfPoints(q.id)}
+                    testId={`whatif-${q.id}-points`}
+                    size="sm"
+                  />
+                  {actual < r.max && (override ?? actual) < r.max ? (
+                    <Button variant="ghost" size="sm" onClick={() => setOverride(q.id, r.max)} data-testid={`whatif-${q.id}-full`}>
+                      {sv.tenta.whatIfFull}
+                    </Button>
+                  ) : null}
+                </div>
+              ) : null}
             </Card>
           );
         })}

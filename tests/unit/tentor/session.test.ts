@@ -139,6 +139,20 @@ describe("tid", () => {
     expect(isExpired(attempts[2]!, 60, deadlineMs(attempts[2]!.started_at, 60) + SUBMIT_GRACE_MS)).toBe(false);
     expect(isExpired(attempts[0]!, 60, later)).toBe(false);
   });
+
+  it("inlämnat men inte rättat (poängen null) är varken senaste eller bästa", () => {
+    const now = new Date("2026-09-29T12:00:00Z").getTime();
+    const attempts = [
+      { id: "a", exam_id: "e", started_at: "2026-09-28T10:00:00Z", submitted_at: "2026-09-28T12:00:00Z", points: 4, grade: "4" },
+      { id: "r", exam_id: "e", started_at: "2026-09-29T08:00:00Z", submitted_at: "2026-09-29T09:00:00Z", points: null, grade: null },
+    ];
+    const o = attemptOverview(attempts, 60, now);
+    expect(o.grading?.id).toBe("r");
+    expect(o.latest?.id).toBe("a");
+    expect(o.best?.id).toBe("a");
+    expect(o.submitted).toBe(1);
+    expect(attemptOverview(attempts.slice(0, 1), 60, now).grading).toBeNull();
+  });
 });
 
 describe("navigeringsraden", () => {

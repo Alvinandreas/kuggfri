@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Eye, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { QUESTION_KIND_LABEL, type ExamQuestion } from "@/lib/tentor/model";
+import { withImageUrls } from "@/lib/tentor/images";
 import { getExam } from "@/lib/tentor/queries";
 import { formatDuration, formatExamDate, formatPoints, partOf } from "@/lib/tentor/session";
 import { Markdown } from "@/components/markdown/Markdown";
@@ -53,11 +54,14 @@ function Key({ q }: { q: ExamQuestion }) {
     case "para":
       return (
         <div className="grid gap-2">
-          <p className="text-sm text-muted">{(q.choices ?? []).join(" | ")}</p>
+          {q.choices?.length ? <p className="text-sm text-muted">{q.choices.join(" | ")}</p> : <p className="text-sm text-muted">{sv.tenta.ownLists}</p>}
           <ul className="grid gap-1.5">
             {(q.pairs ?? []).map((p, i) => (
               <li key={i} className="grid gap-1 rounded-md border border-line px-3 py-2 sm:grid-cols-[minmax(0,1fr)_14rem] sm:gap-4">
-                <Markdown text={p.prompt} variant="body" className={inline} />
+                <div className="min-w-0">
+                  <Markdown text={p.prompt} variant="body" className={inline} />
+                  {p.choices?.length ? <p className="mt-0.5 text-sm text-muted">{p.choices.join(" | ")}</p> : null}
+                </div>
                 <span className="font-semibold text-accent-ink">{p.answer}</span>
               </li>
             ))}
@@ -92,6 +96,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
   const exam = await getExam(deck.id, key, { canEdit: true, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published });
   if (!exam) notFound();
   const parts = partOf(exam.questions);
+  const questions = withImageUrls(exam.questions, deck.slug, exam.key);
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6" data-testid="admin-exam-key">
@@ -106,13 +111,15 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
               {sv.tenta.keyTitle(exam.title)}
               <Badge tone={exam.status === "publicerad" ? "accent" : "outline"}>{sv.tenta.status[exam.status]}</Badge>
             </h2>
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
               {[formatExamDate(exam.date), formatDuration(exam.durationMinutes), sv.tenta.pointsLong(formatPoints(exam.maxPoints)), exam.grades.map((g) => sv.tenta.gradeLimit(g.grade, formatPoints(g.min))).join(", ")]
                 .filter(Boolean)
-                .join(" · ")}
+                .map((t) => (
+                  <span key={t}>{t}</span>
+                ))}
             </p>
           </div>
-          <LinkButton href={`/d/${deck.slug}/tenta/${exam.key}`} variant="outline" size="sm">
+          <LinkButton href={`/d/${deck.slug}/tenta/${exam.key}?fran=admin`} variant="outline" size="sm">
             <Eye size={15} aria-hidden />
             {sv.tenta.previewLink}
           </LinkButton>
@@ -132,7 +139,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
       </div>
 
       <ol className="grid gap-4">
-        {exam.questions.map((q) => (
+        {questions.map((q) => (
           <li key={q.id}>
             <Card padding="none" className="overflow-hidden" data-testid={`key-${q.id}`}>
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-3 sm:px-6">
@@ -144,6 +151,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
                   <Badge tone="neutral">{QUESTION_KIND_LABEL[q.kind]}</Badge>
                   {q.kind === "flera" ? <Badge tone="outline">{q.scoring === "delpoang" ? sv.tenta.scoringPartial : sv.tenta.scoringAll}</Badge> : null}
                   {q.noKey ? <Badge tone="danger">{sv.tenta.noKey}</Badge> : null}
+                  {q.penalty ? <Badge tone="outline">{sv.tenta.penaltyBadge(formatPoints(q.penalty))}</Badge> : null}
                   <Badge tone="outline">{sv.tenta.points(formatPoints(q.points))}</Badge>
                   {q.page ? <Badge tone="outline">{sv.tenta.page(q.page)}</Badge> : null}
                 </p>

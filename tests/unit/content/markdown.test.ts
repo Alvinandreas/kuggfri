@@ -105,7 +105,7 @@ describe("nycklar", () => {
 });
 
 describe("innehållshashen", () => {
-  const base = { front: "F", back: "B", hint: null, active: true, kind: "sjalvskattning" as const, options: null, review: null, source: null, original: false };
+  const base = { front: "F", back: "B", hint: null, active: true, kind: "sjalvskattning" as const, options: null, review: null, source: null, original: false, flag: null };
 
   it("ändras när något fält i kortet ändras", () => {
     const h = cardContentHash(base, "kat");
@@ -127,7 +127,7 @@ describe("innehållshashen", () => {
   it("påverkas inte av nyckeln eller av fältens ordning", () => {
     const medNyckel = { ...base, key: "k1" } as unknown as typeof base;
     expect(cardContentHash(medNyckel, "kat")).toBe(cardContentHash(base, "kat"));
-    const omkastad = { original: false, source: null, review: null, options: null, kind: "sjalvskattning" as const, active: true, hint: null, back: "B", front: "F" };
+    const omkastad = { flag: null, original: false, source: null, review: null, options: null, kind: "sjalvskattning" as const, active: true, hint: null, back: "B", front: "F" };
     expect(cardContentHash(omkastad, "kat")).toBe(cardContentHash(base, "kat"));
   });
 
@@ -145,5 +145,47 @@ describe("innehållshashen", () => {
     expect(cardContentHash({ ...base, review: "utkast", active: false }, "kat")).not.toBe(cardContentHash({ ...base, active: false }, "kat"));
     expect(cardContentHash({ ...base, source: "Canvas" }, "kat")).not.toBe(h);
     expect(cardContentHash({ ...base, original: true }, "kat")).not.toBe(h);
+    expect(cardContentHash({ ...base, flag: "Svaret stämmer inte med frågan." }, "kat")).not.toBe(h);
+  });
+
+  it("ger samma hash som före flaggorna när flaggan saknas eller är null", () => {
+    // Alla kort som fanns 30 sep ska se oförändrade ut vid nästa synk.
+    const { flag: _flag, ...utanFlagga } = base;
+    void _flag;
+    expect(cardContentHash(utanFlagga as typeof base, "kat")).toBe(cardContentHash(base, "kat"));
+    expect(cardContentHash({ ...base, flag: undefined } as unknown as typeof base, "kat")).toBe(cardContentHash(base, "kat"));
+  });
+});
+
+describe("flaggor i kortfilerna", () => {
+  const FLAGGAD = `# Metaller
+
+## Vad är duktilitet?
+key: duktilitet
+status: utkast
+källa: Canvas, Quiz 2, fråga 3
+flagga: Svaret blandar ihop duktilitet och seghet.
+
+Förmågan att deformeras plastiskt före brott.
+`;
+
+  it("läser flagga: och skriver tillbaka den (rundtur)", () => {
+    const { file, issues } = parseCardFile(FLAGGAD);
+    expect(issues).toEqual([]);
+    expect(file.cards[0]).toMatchObject({ key: "duktilitet", review: "utkast", flag: "Svaret blandar ihop duktilitet och seghet." });
+    expect(serializeCardFile(file)).toBe(FLAGGAD);
+  });
+
+  it("ett kort utan flagga får null, och flag: fungerar också", () => {
+    expect(parseCardFile(FILE).file.cards.every((c) => c.flag === null)).toBe(true);
+    expect(parseCardFile("# T\n\n## F\nkey: f\nflag: Kolla enheten\n\nB\n").file.cards[0]?.flag).toBe("Kolla enheten");
+  });
+
+  it("en flagga med radbrytningar (skriven i admin) blir en rad i filen", () => {
+    const { file } = parseCardFile(FLAGGAD);
+    const card = { ...file.cards[0]!, flag: "Rad ett.\nRad två." };
+    const text = serializeCardFile({ ...file, cards: [card] });
+    expect(text).toContain("flagga: Rad ett. Rad två.\n");
+    expect(parseCardFile(text).file.cards[0]?.flag).toBe("Rad ett. Rad två.");
   });
 });

@@ -55,9 +55,9 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
             <li key={x.user_id ?? x.email} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-surface-2 px-4 py-3 text-sm">
               <div className="flex min-w-0 items-center gap-3">
                 <Avatar name={x.display_name || x.email} size={36} />
-                <div className="min-w-0">
-                  <span className="font-semibold">{x.display_name ? `${x.display_name} · ` : ""}</span>
-                  <span className="break-all">{x.email}</span>
+                <div className="flex min-w-0 flex-wrap items-center gap-x-2">
+                  {x.display_name ? <span className="font-semibold">{x.display_name}</span> : null}
+                  <span className="break-all text-muted">{x.email}</span>
                   {x.pending ? (
                     <Badge tone="outline" className="ml-2">
                       {sv.admin.examinerPending}

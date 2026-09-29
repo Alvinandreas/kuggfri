@@ -9,6 +9,7 @@ import { formatDuration, formatExamDate, formatPoints, kindSummary } from "@/lib
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
+import { StudentViewButton } from "@/components/tenta/StudentView";
 
 type Params = Promise<{ id: string }>;
 
@@ -36,13 +37,17 @@ export default async function AdminExamsPage({ params }: { params: Params }) {
         <h2 className="text-xl font-bold tracking-tight">{sv.admin.tabExams}</h2>
         <p className="mt-1 max-w-3xl text-sm text-muted">{sv.tenta.adminHelp}</p>
       </div>
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-line-strong bg-surface-2 px-5 py-3.5 text-sm font-medium dark:border-transparent" data-testid="admin-exam-mode-status">
-        {open ? <LockOpen size={16} aria-hidden /> : <Lock size={16} aria-hidden />}
-        <span>{open ? sv.tenta.editorOpen : sv.tenta.modeLocked}</span>
-        <Link href={`/admin/deck/${deck.id}/installningar`} className="font-semibold underline underline-offset-2">
-          {sv.tenta.toSettings}
-        </Link>
-      </p>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-line-strong bg-surface-2 px-5 py-3.5 text-sm font-medium dark:border-transparent" data-testid="admin-exam-mode-status">
+        {open ? <LockOpen size={16} aria-hidden className="shrink-0" /> : <Lock size={16} aria-hidden className="shrink-0" />}
+        <span className="min-w-0 flex-1 basis-60">
+          {open ? sv.tenta.editorOpen : sv.tenta.modeLocked}{" "}
+          <Link href={`/admin/deck/${deck.id}/installningar`} className="font-semibold underline underline-offset-2">
+            {sv.tenta.toSettings}
+          </Link>
+          <span className="mt-0.5 block font-normal text-muted">{sv.tenta.studentViewHelp}</span>
+        </span>
+        <StudentViewButton deckId={deck.id} slug={deck.slug} />
+      </div>
       {exams.length === 0 ? (
         <Card className="text-muted">{sv.tenta.emptyEditor}</Card>
       ) : (
@@ -55,13 +60,17 @@ export default async function AdminExamsPage({ params }: { params: Params }) {
                     <h3 className="font-bold tracking-tight">{e.title}</h3>
                     <Badge tone={e.status === "publicerad" ? "accent" : "outline"}>{sv.tenta.status[e.status]}</Badge>
                   </div>
-                  <p className="mt-1 text-sm text-muted">
-                    {[formatExamDate(e.date), formatDuration(e.durationMinutes), sv.tenta.pointsLong(formatPoints(e.maxPoints)), sv.tenta.questionCount(e.questionCount)].filter(Boolean).join(" · ")}
+                  <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
+                    {[formatExamDate(e.date), formatDuration(e.durationMinutes), sv.tenta.pointsLong(formatPoints(e.maxPoints)), sv.tenta.questionCount(e.questionCount)]
+                      .filter(Boolean)
+                      .map((t) => (
+                        <span key={t}>{t}</span>
+                      ))}
                   </p>
                   <p className="mt-0.5 text-sm text-subtle">{kindSummary(e.kinds)}</p>
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">
-                  <LinkButton href={`/d/${deck.slug}/tenta/${e.key}`} variant="outline" size="sm">
+                  <LinkButton href={`/d/${deck.slug}/tenta/${e.key}?fran=admin`} variant="outline" size="sm">
                     <Eye size={15} aria-hidden />
                     {sv.tenta.previewLink}
                   </LinkButton>

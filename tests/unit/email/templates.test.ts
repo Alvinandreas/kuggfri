@@ -11,7 +11,7 @@ describe("påminnelse", () => {
       siteUrl: "https://kuggfri.com",
       now: NOW,
     });
-    expect(e.subject).toBe("14 kort att repetera i Materialteknik · cirka 4 min");
+    expect(e.subject).toBe("14 kort att repetera i Materialteknik, cirka 4 min");
     expect(e.text).toContain("Hej Alvin!");
     expect(e.text).toContain("Tentan om 9 dagar.");
     expect(e.text).toContain("https://kuggfri.com/d/materialteknik/plugga?mode=fsrs&urval=all");
@@ -30,7 +30,7 @@ describe("påminnelse", () => {
       siteUrl: "https://kuggfri.com",
       now: NOW,
     });
-    expect(e.subject).toBe("4 kort att repetera · cirka 1 min");
+    expect(e.subject).toBe("4 kort att repetera, cirka 1 min");
     expect(e.text).toContain("Hej!");
     expect(e.text).not.toContain("Tentan");
     expect(e.text).toContain("B: 1 kort att repetera");
@@ -72,7 +72,7 @@ describe("veckobrev", () => {
     const e = buildDigestEmail({ name: "Johan", deckTitle: "Materialteknik", deckId: "deck-1", data, minStudents: 5, siteUrl: "https://kuggfri.com", now: NOW });
     expect(e.subject).toBe("Veckobrev Materialteknik: 44 aktiva studenter, svårast Kristallstruktur");
     expect(e.text).toContain("44 aktiva studenter av 61 som börjat (9 nya), 2310 repetitioner, snittskattning 3.6 av 5. Tentan om 9 dagar.");
-    expect(e.text).toContain("Kristallstruktur 2.9 · Dislokationer 3.1");
+    expect(e.text).toContain("Kristallstruktur 2.9; Dislokationer 3.1");
     expect(e.text).toContain("”Vad är en eutektisk reaktion?” 41 %");
     expect(e.text).toContain("2 öppna felrapporter: ”Brottseghet”: Formeln saknar kvadratrot");
     expect(e.text).toContain("https://kuggfri.com/admin/deck/deck-1");

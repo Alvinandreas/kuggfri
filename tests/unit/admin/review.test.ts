@@ -1,24 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
-  RECENT_MS,
+  DEFAULT_REVIEW_FILTER,
+  activeFilterCount,
   approvalIssues,
+  cleanFlagNote,
   contentMatrix,
-  countByArea,
-  countPublishedChanges,
-  filterReviewCards,
+  countByTab,
+  formatDay,
   groupByArea,
   groupReviewList,
-  isPublishedChange,
+  matchesReviewFilter,
   nextAfterDecision,
   orderByArea,
-  reviewBucket,
-  reviewProgress,
+  relativeDay,
+  reviewList,
   reviewRelevant,
+  reviewTab,
+  stockholmDay,
   step,
   type ReviewCard,
 } from "@/lib/admin/review";
 
-const NOW = Date.parse("2026-09-28T20:00:00Z");
+const NOW = Date.parse("2026-09-30T08:00:00Z");
 const HOUR = 60 * 60 * 1000;
 const iso = (t: number) => new Date(t).toISOString();
 
@@ -46,101 +49,123 @@ function card(over: Partial<ReviewCard> = {}): ReviewCard {
     source: null,
     sort_order: n,
     created_at: iso(NOW - 10 * HOUR + n),
+    original: false,
+    flag_note: null,
+    flagged_at: null,
+    flagged_by: null,
     ...over,
   };
 }
 
-const approved = (hoursAgo: number, over: Partial<ReviewCard> = {}) =>
+const reviewed = (hoursAgo: number, over: Partial<ReviewCard> = {}) =>
   card({ review_status: null, is_active: true, reviewed_at: iso(NOW - hoursAgo * HOUR), reviewed_by: "u1", ...over });
+const original = (over: Partial<ReviewCard> = {}) => card({ review_status: null, is_active: true, original: true, ...over });
 
-describe("reviewBucket", () => {
-  it("delar in utkast, avvisade och nyss godkända", () => {
-    expect(reviewBucket(card(), NOW)).toBe("vantar");
-    expect(reviewBucket(card({ review_status: "avvisad", reviewed_at: iso(NOW - 100 * HOUR) }), NOW)).toBe("avvisade");
-    expect(reviewBucket(approved(2), NOW)).toBe("godkanda");
+describe("flikarna", () => {
+  it("utkast väntar, kort i rotation är granskade, flaggade kort står bara under Flaggade", () => {
+    expect(reviewTab(card())).toBe("att-granska");
+    expect(reviewTab(reviewed(1))).toBe("granskade");
+    expect(reviewTab(original())).toBe("granskade");
+    expect(reviewTab(card({ flag_note: "Fel enhet" }))).toBe("flaggade");
+    expect(reviewTab(original({ flag_note: "Logiskt fel" }))).toBe("flaggade");
   });
 
-  it("godkända äldre än ett dygn och vanliga kort hör inte till granskningen", () => {
-    expect(reviewBucket(approved(25), NOW)).toBeNull();
-    expect(reviewBucket(card({ review_status: null, is_active: true }), NOW)).toBeNull();
-    expect(reviewBucket({ review_status: null, reviewed_at: iso(NOW - RECENT_MS) }, NOW)).toBe("godkanda");
+  it("inaktiva och avvisade kort hör inte till granskningen", () => {
+    expect(reviewTab(card({ review_status: null, is_active: false }))).toBeNull();
+    expect(reviewTab(card({ review_status: "avvisad" }))).toBeNull();
+    const list = [card(), reviewed(1), card({ review_status: "avvisad" }), card({ review_status: null, is_active: false })];
+    expect(reviewRelevant(list)).toHaveLength(2);
   });
 
-  it("tål klientens klocka en bit före serverns", () => {
-    expect(reviewBucket(approved(-0.01), NOW)).toBe("godkanda");
-  });
-
-  it("reviewRelevant tar bara med kort som hör till granskningen", () => {
-    const list = [card(), approved(1), approved(48), card({ review_status: null, is_active: true })];
-    expect(reviewRelevant(list, NOW).map((c) => c.id)).toEqual([list[0]!.id, list[1]!.id]);
+  it("räknar korten per flik", () => {
+    expect(countByTab([card(), card(), reviewed(1), original(), card({ flag_note: "x" }), card({ review_status: "avvisad" })])).toEqual({
+      "att-granska": 2,
+      granskade: 2,
+      flaggade: 1,
+    });
   });
 });
 
-describe("filtrering, ordning och gruppering", () => {
-  const a = card({ category_id: "a2", sort_order: 1 });
-  const b = card({ category_id: "a1", sort_order: 5, kind: "begrepp" });
-  const c = card({ category_id: null, sort_order: 0 });
-  const d = card({ category_id: "a1", sort_order: 2 });
-  const e = card({ category_id: "okänt", sort_order: 1 });
-  const rejected = card({ category_id: "a1", review_status: "avvisad" });
-  const list = [a, b, c, d, e, rejected, approved(3, { category_id: "a2" })];
-
-  it("ordnar efter områdenas ordning, utan område sist, sedan sort_order", () => {
-    expect(orderByArea([a, b, c, d], areas).map((x) => x.id)).toEqual([d.id, b.id, a.id, c.id]);
+describe("listan under en flik", () => {
+  it("Att granska och Flaggade i områdenas ordning, utan område sist", () => {
+    const a = card({ category_id: "a2" });
+    const b = card({ category_id: null });
+    const c = card({ category_id: "a1" });
+    expect(reviewList([a, b, c], "att-granska", DEFAULT_REVIEW_FILTER, areas).map((x) => x.id)).toEqual([c.id, a.id, b.id]);
+    const f1 = card({ category_id: "a2", flag_note: "x" });
+    const f2 = reviewed(3, { category_id: "a1", flag_note: "y" });
+    expect(reviewList([f1, f2, a], "flaggade", DEFAULT_REVIEW_FILTER, areas).map((x) => x.id)).toEqual([f2.id, f1.id]);
   });
 
-  it("filtrerar på status, område och uppgiftstyp", () => {
-    const f = (bucket: "vantar" | "avvisade" | "godkanda", area = "alla", kind: "alla" | ReviewCard["kind"] = "alla") =>
-      filterReviewCards(list, { bucket, area, kind }, areas, NOW).map((x) => x.id);
-    expect(f("vantar")).toEqual([d.id, b.id, a.id, c.id, e.id]);
-    expect(f("vantar", "a1")).toEqual([d.id, b.id]);
-    expect(f("vantar", "ingen")).toEqual([c.id]);
-    expect(f("vantar", "alla", "begrepp")).toEqual([b.id]);
-    expect(f("avvisade")).toEqual([rejected.id]);
-    expect(f("godkanda", "a2")).toHaveLength(1);
+  it("Granskade: senast granskade först, originalkort utan datum sist i områdenas ordning", () => {
+    const old = reviewed(30);
+    const fresh = reviewed(1);
+    const o2 = original({ category_id: "a2" });
+    const o1 = original({ category_id: "a1" });
+    expect(reviewList([old, o2, fresh, o1], "granskade", DEFAULT_REVIEW_FILTER, areas).map((x) => x.id)).toEqual([fresh.id, old.id, o1.id, o2.id]);
   });
 
-  it("grupperar per område; okända områden räknas som utan område", () => {
-    const groups = groupByArea(orderByArea([a, b, c, d, e], areas), areas);
-    expect(groups.map((g) => [g.title, g.cards.length])).toEqual([
-      ["Metaller", 2],
+  it("grupperar Granskade per dag i svensk tid och originalkorten för sig", () => {
+    const sent = reviewed(0, { reviewed_at: "2026-09-29T22:30:00Z" }); // 00:30 den 30:e i Stockholm
+    const tidig = reviewed(0, { reviewed_at: "2026-09-29T21:30:00Z" }); // 23:30 den 29:e
+    const o = original();
+    const groups = groupReviewList(reviewList([o, tidig, sent], "granskade", DEFAULT_REVIEW_FILTER, areas), "granskade", areas);
+    expect(groups.map((g) => (g.type === "day" ? g.day : g.type))).toEqual(["2026-09-30", "2026-09-29", "original"]);
+  });
+
+  it("grupperar övriga flikar per område; okända områden räknas som utan område", () => {
+    const list = orderByArea([card({ category_id: "a2" }), card({ category_id: "okänt" }), card({ category_id: "a1" })], areas);
+    expect(groupByArea(list, areas).map((g) => [g.title, g.cards.length])).toEqual([
+      ["Metaller", 1],
       ["Polymerer", 1],
-      [null, 2],
+      [null, 1],
     ]);
-  });
-
-  it("räknar per område för massgodkännandet", () => {
-    expect(countByArea([a, b, c, d, e], areas)).toEqual([
-      { areaId: "a1", title: "Metaller", count: 2 },
-      { areaId: "a2", title: "Polymerer", count: 1 },
-      { areaId: null, title: null, count: 2 },
-    ]);
+    expect(groupReviewList(list, "att-granska", areas).every((g) => g.type === "area")).toBe(true);
   });
 });
 
-describe("förlopp", () => {
-  it("räknar beslut senaste dygnet av väntande plus beslutade", () => {
-    const list = [card(), card(), approved(1), card({ review_status: "avvisad", reviewed_at: iso(NOW - 2 * HOUR) }), approved(30), card({ review_status: "avvisad", reviewed_at: iso(NOW - 50 * HOUR) })];
-    expect(reviewProgress(list, { area: "alla", kind: "alla" }, NOW)).toEqual({ done: 2, total: 4 });
+describe("filter och sökning", () => {
+  const quiz = card({ source: "Canvas, Quiz vecka 1, fråga 1", kind: "alternativ", options: [{ text: "Duktilt brott", correct: true }, { text: "Sprött", correct: false }] });
+  const lecture = card({ source: "Canvas, Kapitel_08 Seghet och Brott, s. 7", category_id: "a2", back: "Seghet mäts med slagprov." });
+  const orig = card({ original: true, category_id: null });
+
+  it("filtrerar på område, uppgiftstyp, källtyp och ursprung", () => {
+    const f = DEFAULT_REVIEW_FILTER;
+    expect(matchesReviewFilter(lecture, { ...f, area: "a2" })).toBe(true);
+    expect(matchesReviewFilter(quiz, { ...f, area: "a2" })).toBe(false);
+    expect(matchesReviewFilter(orig, { ...f, area: "ingen" })).toBe(true);
+    expect(matchesReviewFilter(quiz, { ...f, kind: "alternativ" })).toBe(true);
+    expect(matchesReviewFilter(lecture, { ...f, kind: "alternativ" })).toBe(false);
+    expect(matchesReviewFilter(quiz, { ...f, source: "quiz" })).toBe(true);
+    expect(matchesReviewFilter(orig, { ...f, source: "original" })).toBe(true);
+    expect(matchesReviewFilter(orig, { ...f, origin: "original" })).toBe(true);
+    expect(matchesReviewFilter(orig, { ...f, origin: "nya" })).toBe(false);
+    expect(matchesReviewFilter(quiz, { ...f, origin: "nya" })).toBe(true);
   });
 
-  it("följer område- och typfiltret", () => {
-    const list = [card({ category_id: "a1" }), approved(1, { category_id: "a2" }), card({ category_id: "a2", kind: "alternativ" })];
-    expect(reviewProgress(list, { area: "a2", kind: "alla" }, NOW)).toEqual({ done: 1, total: 2 });
-    expect(reviewProgress(list, { area: "a2", kind: "alternativ" }, NOW)).toEqual({ done: 0, total: 1 });
+  it("söker i fråga, svar, alternativ, källa och flagga, skiftlägesokänsligt och på alla ord", () => {
+    const f = DEFAULT_REVIEW_FILTER;
+    expect(matchesReviewFilter(lecture, { ...f, query: "SLAGPROV" })).toBe(true);
+    expect(matchesReviewFilter(quiz, { ...f, query: "duktilt" })).toBe(true);
+    expect(matchesReviewFilter(lecture, { ...f, query: "kapitel_08 seghet" })).toBe(true);
+    expect(matchesReviewFilter(lecture, { ...f, query: "seghet kvantmekanik" })).toBe(false);
+    expect(matchesReviewFilter(card({ flag_note: "Fel enhet på E" }), { ...f, query: "enhet" })).toBe(true);
+  });
+
+  it("räknar aktiva filter utan sökningen", () => {
+    expect(activeFilterCount(DEFAULT_REVIEW_FILTER)).toBe(0);
+    expect(activeFilterCount({ ...DEFAULT_REVIEW_FILTER, area: "a1", origin: "nya", query: "x" })).toBe(2);
   });
 });
 
 describe("navigering", () => {
   it("går till nästa kort som finns kvar efter beslutet", () => {
-    expect(nextAfterDecision(["a", "b", "c", "d"], ["a", "c", "d"], "b")).toBe("c");
-    expect(nextAfterDecision(["a", "b", "c"], ["a", "b"], "c")).toBe("a");
-    expect(nextAfterDecision(["a"], [], "a")).toBeNull();
+    expect(nextAfterDecision(["a", "b", "c"], ["a", "c"], "b")).toBe("c");
   });
 
-  it("går vidare även när kortet står kvar i listan (t.ex. avvisat igen)", () => {
-    expect(nextAfterDecision(["a", "b", "c"], ["a", "b", "c"], "b")).toBe("c");
-    expect(nextAfterDecision(["a", "b"], ["a", "b"], "b")).toBe("a");
+  it("det sista kortet går bakåt i stället för runt, och en tom lista ger inget", () => {
+    expect(nextAfterDecision(["a", "b", "c"], ["a", "b"], "c")).toBe("b");
+    expect(nextAfterDecision(["a"], [], "a")).toBeNull();
   });
 
   it("stegar utan att gå runt", () => {
@@ -152,6 +177,20 @@ describe("navigering", () => {
   });
 });
 
+describe("datum i svensk tid", () => {
+  it("ger dagen, i dag och i går oberoende av datorns tidszon", () => {
+    expect(stockholmDay("2026-09-29T22:30:00Z")).toBe("2026-09-30");
+    expect(relativeDay("2026-09-30T05:00:00Z", NOW)).toBe("today");
+    expect(relativeDay("2026-09-29T05:00:00Z", NOW)).toBe("yesterday");
+    expect(relativeDay("2026-09-20T05:00:00Z", NOW)).toBeNull();
+  });
+
+  it("skriver dag och månad utan punkt, med år bara om det inte är i år", () => {
+    expect(formatDay("2026-09-20T10:00:00Z", NOW)).toBe("20 sep");
+    expect(formatDay("2025-10-02T10:00:00Z", NOW)).toBe("2 okt 2025");
+  });
+});
+
 describe("approvalIssues", () => {
   it("godkänner ett helt kort", () => {
     expect(approvalIssues(card())).toEqual([]);
@@ -159,12 +198,20 @@ describe("approvalIssues", () => {
   });
 
   it("stoppar tomma sidor och ogiltiga alternativ", () => {
-    expect(approvalIssues(card({ front: " " }))).toHaveLength(1);
+    expect(approvalIssues(card({ front: " " }))).toEqual(["Frågan är tom."]);
+    expect(approvalIssues(card({ back: "" }))).toEqual(["Svaret är tomt."]);
     expect(approvalIssues(card({ kind: "alternativ", back: "", options: [{ text: "A", correct: false }, { text: "B", correct: false }] }))).toEqual([
       "Förklaringen är tom.",
       "Minst ett alternativ måste vara rätt.",
     ]);
     expect(approvalIssues(card({ kind: "alternativ", options: null }))).toHaveLength(1);
+  });
+});
+
+describe("flaggans anteckning", () => {
+  it("blir en rad utan omgivande blanksteg", () => {
+    expect(cleanFlagNote("  Fel enhet.\n\n  Ska vara MPa.  ")).toBe("Fel enhet. Ska vara MPa.");
+    expect(cleanFlagNote(" \n ")).toBe("");
   });
 });
 
@@ -193,68 +240,5 @@ describe("contentMatrix", () => {
   it("visar tomma områden men ingen rad utan område om alla kort har ett", () => {
     const m = contentMatrix([card({ review_status: null, is_active: true })], areas);
     expect(m.rows.map((r) => r.title)).toEqual(["Metaller", "Polymerer"]);
-  });
-});
-
-describe("ändringar av publicerade kort", () => {
-  const all = { bucket: "vantar", area: "alla", kind: "alla" } as const;
-
-  it("ett utkast med tidigare publicerad version är en ändring", () => {
-    expect(isPublishedChange(card({ published_before: true }))).toBe(true);
-    expect(isPublishedChange(card())).toBe(false);
-    expect(isPublishedChange(approved(1, { published_before: true }))).toBe(false);
-  });
-
-  it("sorteras först bland dem som väntar, i övrigt i områdenas ordning", () => {
-    const a = card({ category_id: "a1" });
-    const b = card({ category_id: "a2", published_before: true });
-    const c = card({ category_id: "a1", published_before: true });
-    const d = card({ category_id: "a2" });
-    expect(filterReviewCards([a, b, c, d], all, areas, NOW).map((x) => x.id)).toEqual([c.id, b.id, a.id, d.id]);
-  });
-
-  it("sorteras inte först i andra högar", () => {
-    const a = card({ category_id: "a1", review_status: "avvisad" });
-    const b = card({ category_id: "a2", review_status: "avvisad", published_before: true });
-    expect(filterReviewCards([b, a], { ...all, bucket: "avvisade" }, areas, NOW).map((x) => x.id)).toEqual([a.id, b.id]);
-  });
-
-  it("filtret visar bara ändringar och räknas inom högen, området och typen", () => {
-    const a = card({ category_id: "a1", published_before: true });
-    const b = card({ category_id: "a2", published_before: true });
-    const c = card({ category_id: "a1" });
-    const d = card({ category_id: "a1", review_status: "avvisad", published_before: true });
-    const list = [a, b, c, d];
-    expect(filterReviewCards(list, { ...all, changesOnly: true }, areas, NOW).map((x) => x.id)).toEqual([a.id, b.id]);
-    expect(countPublishedChanges(list, all, NOW)).toBe(2);
-    expect(countPublishedChanges(list, { ...all, area: "a1" }, NOW)).toBe(1);
-    expect(countPublishedChanges(list, { ...all, bucket: "avvisade" }, NOW)).toBe(1);
-    expect(countPublishedChanges(list, { ...all, kind: "begrepp" }, NOW)).toBe(0);
-  });
-
-  it("listan får en egen grupp för ändringarna överst, resten per område", () => {
-    const a = card({ category_id: "a1" });
-    const b = card({ category_id: "a2", published_before: true });
-    const c = card({ category_id: "a2" });
-    const ordered = filterReviewCards([a, b, c], all, areas, NOW);
-    const groups = groupReviewList(ordered, areas);
-    expect(groups.map((g) => [g.key, g.changes, g.cards.map((x) => x.id)])).toEqual([
-      ["andringar", true, [b.id]],
-      ["a1", false, [a.id]],
-      ["a2", false, [c.id]],
-    ]);
-    // Samma ordning som navigeringen.
-    expect(groups.flatMap((g) => g.cards.map((x) => x.id))).toEqual(ordered.map((x) => x.id));
-  });
-
-  it("bara ändringar (eller inga) grupperas per område som vanligt", () => {
-    const a = card({ category_id: "a2", published_before: true });
-    const b = card({ category_id: "a1", published_before: true });
-    const ordered = filterReviewCards([a, b], all, areas, NOW);
-    expect(groupReviewList(ordered, areas).map((g) => [g.key, g.changes])).toEqual([
-      ["a1", false],
-      ["a2", false],
-    ]);
-    expect(groupReviewList([card({ category_id: null })], areas).map((g) => g.key)).toEqual(["ingen"]);
   });
 });

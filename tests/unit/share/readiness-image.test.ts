@@ -6,8 +6,8 @@ const card = { deckTitle: "Materialteknik", share: 0.643, streak: 5, reviewed: 8
 describe("beredskapsbild", () => {
   it("rubrik och underrad", () => {
     expect(readinessHeadline(card)).toBe("Jag kan 64 % av Materialteknik");
-    expect(readinessSubline(card)).toBe("88 av 144 kort repeterade · 5 dagar i rad");
+    expect(readinessSubline(card)).toBe("88 av 144 kort repeterade, 5 dagar i rad");
     expect(readinessSubline({ ...card, streak: 0 })).toBe("88 av 144 kort repeterade");
-    expect(readinessSubline({ ...card, streak: 1 })).toBe("88 av 144 kort repeterade · 1 dag i rad");
+    expect(readinessSubline({ ...card, streak: 1 })).toBe("88 av 144 kort repeterade, 1 dag i rad");
   });
 });

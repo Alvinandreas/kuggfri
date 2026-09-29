@@ -37,7 +37,15 @@ export function examFromRow(row: ExamRow): Exam {
   };
 }
 
-export type ExamAccess = { canEdit: boolean; examModeOpen: boolean; deckPublished: boolean };
+/**
+ * Vad besökaren får se. `studentView` sätts bara för redaktörer som valt "Visa som student"
+ * (lib/tentor/server.ts kontrollerar behörigheten): sidorna visas då som för en student, med
+ * utkasten medtagna. Åtkomsten (canEdit) ändras inte av studentvyn.
+ */
+export type ExamAccess = { canEdit: boolean; examModeOpen: boolean; deckPublished: boolean; studentView?: StudentView | null };
+
+/** Redaktörens studentvy: tentaläget som studenterna ser det när det är öppet, eller låst. */
+export type StudentView = "oppen" | "last";
 
 /** En tenta i listan, utan uppgifter (och därmed utan facit). */
 export type ExamSummary = Omit<Exam, "questions"> & {
@@ -52,6 +60,11 @@ export type ExamSummary = Omit<Exam, "questions"> & {
 export function mayView(exam: Pick<Exam, "status">, access: ExamAccess): boolean {
   if (access.canEdit) return true;
   return access.deckPublished && access.examModeOpen && exam.status === "publicerad";
+}
+
+/** Studenterna ser tentaläget (kursen publicerad och läget öppet). */
+export function openForStudents(access: ExamAccess): boolean {
+  return access.deckPublished && access.examModeOpen;
 }
 
 /** Alla tentor för kursen som besökaren får se, nyaste först (utan uppgifter). */

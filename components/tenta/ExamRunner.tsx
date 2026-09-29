@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ChevronLeft, ChevronRight, Cloud, CloudOff, Eye, EyeOff, Flag, Send, Timer } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
@@ -27,6 +28,7 @@ import { Modal } from "@/components/ui/Modal";
 import { cx } from "@/components/ui/cx";
 import { AnswerInput } from "./AnswerInput";
 import { ExamFigures } from "./ExamFigures";
+import { StudentViewBar } from "./StudentView";
 
 type Props = {
   exam: StudentExam;
@@ -36,6 +38,10 @@ type Props = {
   serverNow: number;
   initialAnswers: Answers;
   preview: boolean;
+  /** Förhandsgranskning: vägen ut (Tentor i admin eller tentalägets lista). Studenter har ingen. */
+  exitHref: string | null;
+  /** Redaktörens studentvy: kursens id för raden överst. */
+  studentViewDeck: string | null;
 };
 
 type SaveState = "idle" | "saving" | "saved" | "local" | "error";
@@ -47,7 +53,7 @@ const SAVE_DELAY_MS = 3000;
  * en uppgift i taget och en fast navigeringsrad längst ner med en ruta per uppgift. Svaren
  * sparas direkt i webbläsaren och några sekunder senare på servern. Inget facit här.
  */
-export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswers, preview }: Props) {
+export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswers, preview, exitHref, studentViewDeck }: Props) {
   const router = useRouter();
   const questions = exam.questions;
   const deadline = useMemo(() => deadlineMs(startedAt, exam.durationMinutes), [startedAt, exam.durationMinutes]);
@@ -255,10 +261,16 @@ export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswe
       </header>
 
       <div className="pb-48 pt-10 sm:pb-40">
+        {studentViewDeck ? <StudentViewBar deckId={studentViewDeck} mode="oppen" className="mb-4" /> : null}
         {preview ? (
-          <p className="mb-4 rounded-lg border border-line-strong bg-surface-2 px-4 py-3 text-sm font-medium dark:border-transparent" role="note">
-            {sv.tenta.previewBody}
-          </p>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-lg border border-line-strong bg-surface-2 px-4 py-2.5 text-sm font-medium dark:border-transparent" role="note">
+            <span>{sv.tenta.previewBody}</span>
+            {exitHref ? (
+              <Link href={exitHref} className="font-semibold underline underline-offset-2" data-testid="exit-preview">
+                {sv.tenta.exitPreview}
+              </Link>
+            ) : null}
+          </div>
         ) : null}
         {warning !== null ? (
           <div role="alert" className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-danger/40 bg-danger-soft px-4 py-3 text-sm font-semibold text-danger" data-testid="time-warning">

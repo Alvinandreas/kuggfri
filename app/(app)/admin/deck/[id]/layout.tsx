@@ -2,50 +2,42 @@ import { forbidden, notFound } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
-import { countOpenReports, getDeckForAdmin } from "@/lib/admin/queries";
-import { DeckTabs } from "@/components/admin/DeckTabs";
+import { getDeckForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
 
 type Params = Promise<{ id: string }>;
 
 /**
- * Gemensamt skal för allt som rör ett deck: rubrik, status, flikar.
- * Åtkomsten avgörs här (admin eller examinator för just detta deck).
+ * Gemensamt skal för allt som rör ett deck: rubrik och status. Adminsidorna nås från
+ * sidomenyn (Översikt, Innehåll, Granskning och så vidare), så här finns ingen egen flikrad
+ * (Alvins beslut 30 sep). Åtkomsten avgörs här (admin eller examinator för just detta deck).
  */
 export default async function DeckLayout({ children, params }: { children: React.ReactNode; params: Params }) {
   const { id } = await params;
   const ctx = await getAdminContext();
   if (!canEditDeck(ctx, id)) forbidden();
-  // Båda beror bara på id, så de kan hämtas samtidigt.
-  const [data, openReports] = await Promise.all([getDeckForAdmin(id), countOpenReports(id)]);
+  const data = await getDeckForAdmin(id);
   if (!data) notFound();
   const { deck, categories, cards } = data;
   // Förslag (utkast och avvisade) räknas inte som kursens kort förrän de godkänts.
   const courseCards = cards.filter((c) => c.review_status === null);
   const cardCount = courseCards.length;
   const inactiveCount = courseCards.filter((c) => !c.is_active).length;
-  const pendingDrafts = cards.filter((c) => c.review_status === "utkast").length;
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <div className="anim-fade-up flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{deck.title}</h1>
-          <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted" data-testid="deck-meta">
             {deck.course_code ? <Badge tone="outline">{deck.course_code}</Badge> : null}
-            <span>{sv.admin.cardCount(cardCount)}</span>
-            <span aria-hidden="true">·</span>
-            {inactiveCount > 0 ? (
-              <>
-                <span>{sv.admin.inactiveCount(inactiveCount)}</span>
-                <span aria-hidden="true">·</span>
-              </>
-            ) : null}
             <span>
-              {categories.length} {sv.admin.categories.toLowerCase()}
+              {[sv.admin.cardCount(cardCount), inactiveCount > 0 ? sv.admin.inactiveCount(inactiveCount) : null, `${categories.length} ${sv.admin.categories.toLowerCase()}`]
+                .filter(Boolean)
+                .join(", ")}
             </span>
-            <Badge tone={deck.is_published ? "accent" : "neutral"} className="ml-1">
+            <Badge tone={deck.is_published ? "accent" : "neutral"}>
               <span className={`h-1.5 w-1.5 rounded-full ${deck.is_published ? "bg-accent-ink" : "bg-muted"}`} aria-hidden="true" />
               {deck.is_published ? sv.admin.published : sv.admin.unpublished}
             </Badge>
@@ -56,7 +48,6 @@ export default async function DeckLayout({ children, params }: { children: React
           <ArrowUpRight size={15} aria-hidden />
         </LinkButton>
       </div>
-      <DeckTabs deckId={deck.id} openReports={openReports} pendingDrafts={pendingDrafts} />
       <div className="min-w-0">{children}</div>
     </div>
   );

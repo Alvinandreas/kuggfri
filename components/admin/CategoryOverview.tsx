@@ -205,7 +205,7 @@ function countLabel(c: CategoryCounts): string {
   const parts = [sv.admin.cardCount(c.total)];
   if (c.inactive > 0) parts.push(sv.admin.inactiveCount(c.inactive));
   if (c.drafts > 0) parts.push(sv.admin.draftCount(c.drafts));
-  return parts.join(" · ");
+  return parts.join(", ");
 }
 
 function CategoryRowView({

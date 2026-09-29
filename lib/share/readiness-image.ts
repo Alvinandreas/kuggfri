@@ -34,7 +34,7 @@ export function readinessHeadline(card: ReadinessCard): string {
 export function readinessSubline(card: ReadinessCard): string {
   const parts = [`${card.reviewed} av ${card.total} kort repeterade`];
   if (card.streak > 0) parts.push(card.streak === 1 ? "1 dag i rad" : `${card.streak} dagar i rad`);
-  return parts.join(" · ");
+  return parts.join(", ");
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {

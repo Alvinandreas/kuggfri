@@ -56,10 +56,14 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
             )}
           </h2>
           <p className="mt-2 text-sm text-muted">
-            {sv.admin.cardCount(courseCards)}
-            {inactive > 0 ? ` · ${sv.admin.inactiveCount(inactive)}` : ""}
-            {drafts > 0 ? ` · ${sv.admin.draftCount(drafts)}` : ""}
-            {category ? ` · ${sv.admin.categoryPosition(categories.findIndex((c) => c.id === category.id) + 1, categories.length)}` : ""}
+            {[
+              sv.admin.cardCount(courseCards),
+              inactive > 0 ? sv.admin.inactiveCount(inactive) : null,
+              drafts > 0 ? sv.admin.draftCount(drafts) : null,
+              category ? sv.admin.categoryPosition(categories.findIndex((c) => c.id === category.id) + 1, categories.length) : null,
+            ]
+              .filter(Boolean)
+              .join(", ")}
           </p>
         </div>
         <LinkButton href={newHref} size="sm">

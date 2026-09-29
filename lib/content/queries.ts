@@ -58,7 +58,9 @@ async function loadDeckBySlug(supabase: DeckClient, slug: string): Promise<DeckW
       .order("sort_order")
       .order("created_at"),
   ]);
-  return { deck, categories: categories ?? [], cards: sortCardsByCategory(cards ?? [], categories ?? []) };
+  // Granskningens flaggor är redaktörernas anteckningar och hör inte hemma i studentvyerna.
+  const studentCards = (cards ?? []).map((c) => ({ ...c, flag_note: null, flagged_at: null, flagged_by: null }));
+  return { deck, categories: categories ?? [], cards: sortCardsByCategory(studentCards, categories ?? []) };
 }
 
 const getPublishedDeckBySlug = unstable_cache(async (slug: string) => loadDeckBySlug(publicClient(), slug), ["published-deck"], {

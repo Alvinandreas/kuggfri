@@ -20,7 +20,8 @@ export const QUESTION_KIND_LABEL: Record<QuestionKind, string> = {
 
 export type Option = { text: string; correct: boolean };
 export type Statement = { text: string; answer: boolean };
-export type Pair = { prompt: string; answer: string };
+/** Ett led i para ihop. choices: ledets egen lista (lucktexter i Inspera), annars uppgiftens gemensamma. */
+export type Pair = { prompt: string; answer: string; choices?: string[] | null };
 export type NumericKey = { value: number; tolerance: number; relative: boolean; unit: string | null };
 
 export type ExamQuestion = {
@@ -41,6 +42,11 @@ export type ExamQuestion = {
   scoring: "alltelleringet" | "delpoang";
   /** Facit saknas eller går inte att läsa (status: saknar-facit): självrättas som en skrivuppgift. */
   noKey: boolean;
+  /**
+   * Poängavdrag per fel svar (sant-falskt: fel besvarat påstående, flera: fel valt alternativ,
+   * para: fel valt led). Obesvarat ger 0 och uppgiften ger aldrig under 0. Null: inga avdrag.
+   */
+  penalty?: number | null;
   options: Option[] | null;
   statements: Statement[] | null;
   pairs: Pair[] | null;
@@ -86,6 +92,10 @@ export type StudentQuestion = {
   statements: string[] | null;
   pairs: string[] | null;
   choices: string[] | null;
+  /** para: varje leds egen lista (null för led som använder den gemensamma). */
+  pairChoices: (string[] | null)[] | null;
+  /** Poängavdrag per fel svar (visas som regel i uppgiften). */
+  penalty: number | null;
   unit: string | null;
 };
 
@@ -116,6 +126,8 @@ export function forStudent(exam: Exam): StudentExam {
       statements: q.statements ? q.statements.map((s) => s.text) : null,
       pairs: q.pairs ? q.pairs.map((p) => p.prompt) : null,
       choices: q.choices,
+      pairChoices: q.pairs && q.pairs.some((p) => p.choices?.length) ? q.pairs.map((p) => (p.choices?.length ? p.choices : null)) : null,
+      penalty: q.penalty ?? null,
       unit: q.numeric?.unit ?? null,
     })),
   };
@@ -135,6 +147,11 @@ export type Answer =
   | { kind: "text"; value: string };
 
 export type Answers = Record<string, Answer>;
+
+/** Alternativen för led i i en para ihop-uppgift: ledets egen lista, annars den gemensamma. */
+export function choicesForPair(q: { choices: readonly string[] | null; pairChoices?: readonly (readonly string[] | null)[] | null }, i: number): readonly string[] {
+  return q.pairChoices?.[i] ?? q.choices ?? [];
+}
 
 export function isAnswered(a: Answer | undefined): boolean {
   if (!a) return false;

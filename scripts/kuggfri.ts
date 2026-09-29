@@ -220,7 +220,7 @@ function printPlan(plan: ContentPlan, target: Target): void {
     const shown = plan.changes.filter((c) => !quiet(c.kind)).slice(0, 40);
     for (const c of shown) {
       const color = c.kind === "card-delete" ? C.red : c.kind === "card-create" ? C.green : C.blue;
-      const progress = c.progress ? dim(` · ${c.progress} studenter har progress`) : "";
+      const progress = c.progress ? dim(`, ${c.progress} studenter har progress`) : "";
       const detail = c.detail ? dim(` (${c.detail})`) : "";
       say(`  ${color}${(KIND_LABEL[c.kind] ?? c.kind).padEnd(14)}${C.reset} ${c.label}${detail}${progress}`);
     }
@@ -571,8 +571,11 @@ function cmdSeed(): void {
       );
     }
     for (const c of plan.sync.cards.create) {
+      // Flaggan (Kuggfris källgranskning) bara när den finns, så att seeden för oflaggade kort
+      // ser ut som förut.
+      const flagged = c.flag_note !== null;
       out.push(
-        `insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash, kind, options, review_status, source, original) values (` +
+        `insert into public.cards (id, deck_id, category_id, key, front, back, hint, sort_order, is_active, source_hash, kind, options, review_status, source, original${flagged ? ", flag_note, flagged_at" : ""}) values (` +
           [
             `'${c.id}'`,
             `'${plan.deckId}'`,
@@ -589,6 +592,7 @@ function cmdSeed(): void {
             c.review_status === null ? "null" : sqlLiteral(c.review_status),
             c.source === null ? "null" : sqlLiteral(c.source),
             String(c.original),
+            ...(c.flag_note !== null ? [sqlLiteral(c.flag_note), "now()"] : []),
           ].join(", ") +
           `);`,
       );

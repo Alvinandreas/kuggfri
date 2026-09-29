@@ -20,6 +20,8 @@ export const LIMITS = {
   source: 500,
   /** Granskarens kommentar vid avvisning. */
   reviewNote: 2000,
+  /** Flaggans anteckning (samma gräns som cards_flag_note_length). */
+  flagNote: 2000,
   optionText: 1000,
   maxOptions: 10,
   /** Tak på hur många kort en massåtgärd (godkänn, flytta) får röra i ett anrop. */

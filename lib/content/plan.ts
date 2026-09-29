@@ -23,6 +23,7 @@ import {
   type ContentCard,
   type ContentCourse,
 } from "./model";
+import { oneLine } from "./markdown";
 import { firstLine } from "@/lib/text/first-line";
 import { DEFAULT_CARD_KIND, isCardKind, isReviewStatus, parseOptions, type CardKind, type CardOption, type ReviewStatus } from "@/lib/cards/kinds";
 
@@ -61,6 +62,8 @@ export type SnapshotCard = {
   review_status?: string | null;
   source?: string | null;
   original?: boolean | null;
+  /** Saknas i ögonblicksbilder från före migrationen 20260930000000. */
+  flag_note?: string | null;
 };
 
 export type DeckSnapshot = {
@@ -128,6 +131,7 @@ export type SyncPayload = {
       review_status: ReviewStatus | null;
       source: string | null;
       original: boolean;
+      flag_note: string | null;
     }[];
     update: {
       id: string;
@@ -144,6 +148,7 @@ export type SyncPayload = {
       review_status: ReviewStatus | null;
       source: string | null;
       original: boolean;
+      flag_note: string | null;
     }[];
     deactivate: string[];
     delete: string[];
@@ -186,8 +191,11 @@ function label(text: string): string {
   return firstLine(text, { maxLength: 70 });
 }
 
-/** De senare kortfälten ur en databasrad, med standardvärden för äldre ögonblicksbilder. */
-function laterFields(db: SnapshotCard): Pick<ContentCard, "kind" | "options" | "review" | "source" | "original"> {
+/**
+ * De senare kortfälten ur en databasrad, med standardvärden för äldre ögonblicksbilder. En flagga
+ * skriven i admin kan ha radbrytningar; i filerna är den en rad (oneLine), så den jämförs så.
+ */
+function laterFields(db: SnapshotCard): Pick<ContentCard, "kind" | "options" | "review" | "source" | "original" | "flag"> {
   const kind = isCardKind(db.kind) ? db.kind : DEFAULT_CARD_KIND;
   return {
     kind,
@@ -195,6 +203,7 @@ function laterFields(db: SnapshotCard): Pick<ContentCard, "kind" | "options" | "
     review: isReviewStatus(db.review_status) ? db.review_status : null,
     source: db.source ?? null,
     original: db.original ?? false,
+    flag: db.flag_note ? oneLine(db.flag_note) || null : null,
   };
 }
 
@@ -360,6 +369,7 @@ export function planSync(course: ContentCourse, snapshot: DeckSnapshot, options:
       review_status: card.review,
       source: card.source,
       original: card.original,
+      flag_note: card.flag,
     };
 
     if (!db) {

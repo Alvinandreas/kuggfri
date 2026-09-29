@@ -159,14 +159,14 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
                         <div key={field} className="mt-2 grid gap-2 sm:grid-cols-2">
                           <p className="rounded-md bg-danger-soft px-3 py-2">
                             <span className="text-xs font-semibold uppercase tracking-wide text-muted">
-                              {sv.admin.importBefore} · {field}
+                              {sv.admin.importBefore}: {field}
                             </span>
                             <br />
                             {truncate(String(u.before[field] ?? "–"))}
                           </p>
                           <p className="rounded-md bg-accent-soft px-3 py-2">
                             <span className="text-xs font-semibold uppercase tracking-wide text-muted">
-                              {sv.admin.importAfter} · {field}
+                              {sv.admin.importAfter}: {field}
                             </span>
                             <br />
                             {truncate(String(u.after[field] ?? "–"))}

@@ -35,9 +35,9 @@ test.describe("admin", () => {
     // så vänta in den innan axe körs.
     await expect(page.getByTestId("overview-students")).toBeVisible();
     await expect(page).toHaveTitle(/Kursöversikt/);
-    await expect(page.getByTestId("deck-tab-import")).toBeVisible();
+    // Ingen gemensam flikrad längre (Alvins beslut 30 sep): kurssidorna nås från sidomenyn.
+    await expect(page.locator("[data-testid^='deck-tab-']")).toHaveCount(0);
     await expectNoSeriousA11yViolations(page);
-    // Navigera direkt: på smala skärmar kan flikraden flytta sig medan listorna renderas.
     await page.goto(`${page.url()}/import`);
     await expect(page.getByRole("heading", { name: /Importera kort/ })).toBeVisible();
 
@@ -68,6 +68,21 @@ test.describe("admin", () => {
     await expect(page.getByTestId("admin-card-list").getByText(unique, { exact: true })).toBeVisible();
     await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
+
+    // Importerade kort väntar på granskning och syns inte för studenterna ännu.
+    await page.goto(`/d/${DECK_SLUG}`);
+    const totalPending = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
+    expect(totalPending).toBe(totalBefore);
+
+    // Granskningen: sök fram de två korten under Att granska och godkänn dem ett i taget.
+    await page.goto(`${deckAdminUrl}/granskning?sok=${encodeURIComponent(unique)}`);
+    await expect(page.getByTestId("review-list-count")).toContainText("2 av");
+    await page.getByTestId("review-start").click();
+    await expect(page.getByTestId("review-question")).toContainText(unique);
+    await page.getByTestId("review-approve").click();
+    await expect(page.getByTestId("review-position")).toHaveText("1 av 1");
+    await page.getByTestId("review-approve").click();
+    await expect(page.getByTestId("review-no-match")).toBeVisible();
 
     // Och i det publika decket.
     await page.goto(`/d/${DECK_SLUG}`);
@@ -110,6 +125,8 @@ test.describe("admin", () => {
     // Lägg till ett kort med förhandsvisning.
     await page.goto(`${deckAdminUrl}/innehall`);
     await page.getByRole("link", { name: "Nytt kort", exact: true }).click();
+    // Ett nytt kort väntar alltid på granskning.
+    await expect(page.getByTestId("card-review-notice")).toBeVisible();
     await page.getByTestId("card-front").fill("Vad är $\\sigma = E \\varepsilon$?");
     await page.getByTestId("card-back").fill("Hookes lag.\n\n* Spänning\n* Töjning");
     await expect(page.locator(".katex").first()).toBeVisible();

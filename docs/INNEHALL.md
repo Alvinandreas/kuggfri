@@ -134,6 +134,14 @@ En automaträttad fråga läggs aldrig tillbaka i kön i samma pass. I en dugga 
   Granskning i admin). Ett utkast är aldrig aktivt och kan inte läsas av studenter, inte ens via
   API:t. `status: avvisad` = avvisat förslag som ligger kvar så att det inte föreslås igen.
 - `källa: …` — var innehållet kommer ifrån, t.ex. `Canvas, Tentamen MTT085 24-10, uppgift 3`.
+- `flagga: …` — kortet är flaggat: en anteckning (en rad) om vad som behöver åtgärdas, t.ex.
+  `flagga: Svaret blandar ihop duktilitet och seghet.` Flaggade kort samlas under Granskning,
+  fliken Flaggade, oavsett status, tills en examinator åtgärdat dem (30 sep 2026). En flagga som
+  kommer från filerna visas som satt av "Kuggfris källgranskning" (`flagged_by` null) med tiden
+  för synken. Examinatorer flaggar också direkt i granskningen; `pull` tar in de flaggorna i
+  filerna (radbrytningar blir mellanslag), och en flagga som åtgärdats i admin försvinner ur
+  filen vid nästa `pull`. Att sätta, ändra eller ta bort en flagga i filen är en ändring av
+  kortet i planen, men skapar ingen ny kortversion i historiken.
 
 ```markdown
 ## Vilka gitter är tätpackade?
@@ -150,8 +158,14 @@ Både FCC och HCP har packningstätheten 0,74.
 ```
 
 Saknas förklaring skriver verktyget in rätt svar som baksida (databasen kräver en). Nya fält
-räknas in i innehållshashen bara när de avviker från standardvärdet, så kort från före 28 sep
-ser inte ändrade ut.
+räknas in i innehållshashen bara när de avviker från standardvärdet (för `flagga:` null), så kort
+från före 28 sep och 30 sep ser inte ändrade ut.
+
+Granskningen (30 sep 2026, Alvins beslut): alla kort som inte är oförändrade originalkort ska
+granskas av en examinator innan studenterna ser dem. Nya kort, oavsett om de skrivs i filerna
+(`status: utkast`) eller skapas eller importeras i admin, börjar som utkast under Granskning,
+fliken Att granska. Godkänn sätter kortet i rotation (aktivt, `status` tas bort) och sparar vem
+som granskade och när; kortet syns sedan överst under Granskade.
 
 Verktyg för områden (`scripts/omraden.ts`), alla rör bara filerna: `omraden` (översikt område ×
 uppgiftstyp), `nytt-omrade`, `byt-namn-omrade`, `flytta <kort,…> --till <område>`, `byt-typ`,

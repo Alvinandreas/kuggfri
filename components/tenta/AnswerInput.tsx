@@ -4,8 +4,8 @@ import { useId } from "react";
 import { RotateCcw } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { Answer, StudentQuestion } from "@/lib/tentor/model";
-import { isAnswered } from "@/lib/tentor/model";
-import { wordCount } from "@/lib/tentor/session";
+import { choicesForPair, isAnswered } from "@/lib/tentor/model";
+import { formatPoints, wordCount } from "@/lib/tentor/session";
 import { Markdown } from "@/components/markdown/Markdown";
 import { Badge } from "@/components/ui/Badge";
 import { Checkbox, Radio } from "@/components/ui/Choice";
@@ -52,6 +52,18 @@ function AnswerHead({ id, label, extra, onClear }: { id: string; label: string; 
 
 const inline = "[&_p]:m-0 [&_.katex-display]:my-1";
 
+/** Poängregeln när uppgiften har minuspoäng, som i originalet: rätt ger sin andel, fel ger avdrag. */
+function PenaltyRule({ q }: { q: StudentQuestion }) {
+  if (!q.penalty) return null;
+  const parts = q.kind === "sant-falskt" ? (q.statements?.length ?? 0) : q.kind === "para" ? (q.pairs?.length ?? 0) : (q.correctCount ?? 0);
+  if (parts === 0) return null;
+  return (
+    <p className="mb-3 rounded-md bg-surface-2 px-3 py-2 text-sm text-muted" data-testid="penalty-rule">
+      {sv.tenta.penaltyRule(formatPoints(q.points / parts), formatPoints(q.penalty))}
+    </p>
+  );
+}
+
 /**
  * Svarsdelen för en uppgift, med Insperas etiketter. Ingen återkoppling: rätt eller fel syns
  * först i resultatet efter inlämningen.
@@ -88,7 +100,8 @@ export function AnswerInput({ q, answer, onChange }: Props) {
       };
       return (
         <div role="group" aria-labelledby={headId}>
-          <AnswerHead id={headId} label={sv.tenta.chooseMany} extra={q.correctCount ? <Badge tone="outline">{sv.tenta.chooseN(q.correctCount)}</Badge> : null} onClear={clear} />
+          <AnswerHead id={headId} label={sv.tenta.chooseMany} extra={q.correctCount && !q.penalty ? <Badge tone="outline">{sv.tenta.chooseN(q.correctCount)}</Badge> : null} onClear={clear} />
+          <PenaltyRule q={q} />
           <div className="grid gap-2">
             {(q.options ?? []).map((o, i) => (
               <OptionRow key={i} checked={chosen.includes(i)} control={<Checkbox checked={chosen.includes(i)} onChange={() => toggle(i)} data-testid={`option-${i}`} />}>
@@ -109,6 +122,7 @@ export function AnswerInput({ q, answer, onChange }: Props) {
       return (
         <div>
           <AnswerHead id={headId} label={sv.tenta.trueFalse} onClear={clear} />
+          <PenaltyRule q={q} />
           <table className="w-full border-collapse text-left" aria-labelledby={headId}>
             <thead>
               <tr className="text-sm text-muted">
@@ -152,7 +166,7 @@ export function AnswerInput({ q, answer, onChange }: Props) {
     case "para": {
       const pairs = q.pairs ?? [];
       const values = answer?.kind === "para" ? answer.values : pairs.map(() => null);
-      const options = [{ value: "", label: sv.tenta.choose }, ...(q.choices ?? []).map((c) => ({ value: c, label: c }))];
+      const optionsFor = (i: number) => [{ value: "", label: sv.tenta.choose }, ...choicesForPair(q, i).map((c) => ({ value: c, label: c }))];
       const set = (i: number, v: string) => {
         const next = pairs.map((_, j) => (j === i ? v || null : (values[j] ?? null)));
         onChange(next.some((x) => x !== null) ? { kind: "para", values: next } : undefined);
@@ -160,13 +174,14 @@ export function AnswerInput({ q, answer, onChange }: Props) {
       return (
         <div role="group" aria-labelledby={headId}>
           <AnswerHead id={headId} label={sv.tenta.pairs} onClear={clear} />
+          <PenaltyRule q={q} />
           <div className="grid gap-2">
             {pairs.map((p, i) => (
               <div key={i} className="grid items-center gap-2 border-t border-line pt-2 first:border-t-0 first:pt-0 sm:grid-cols-[minmax(0,1fr)_17rem] sm:gap-4">
                 <div className="min-w-0 font-medium">
                   <Markdown text={p} variant="body" className={inline} />
                 </div>
-                <Select value={values[i] ?? ""} onChange={(v) => set(i, v)} options={options} label={`${sv.tenta.choose}: ${p}`} data-testid={`pair-${i}`} />
+                <Select value={values[i] ?? ""} onChange={(v) => set(i, v)} options={optionsFor(i)} label={`${sv.tenta.choose}: ${p}`} data-testid={`pair-${i}`} />
               </div>
             ))}
           </div>

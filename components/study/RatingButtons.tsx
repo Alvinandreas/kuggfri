@@ -31,7 +31,7 @@ export function RatingButtons({ disabled, onRate, intervals }: Props) {
       <div className="grid grid-cols-5 gap-2">
         {SELF_RATINGS.map((r) => (
           // Namnet (och i schemalagt läge när kortet kommer tillbaka) står i etiketten vid hovring, inte på knappen.
-          <Tooltip key={r} label={intervals ? `${sv.study.rate[r]} · ${intervals[r]}` : sv.study.rate[r]} className="w-full">
+          <Tooltip key={r} label={intervals ? `${sv.study.rate[r]}, ${intervals[r]}` : sv.study.rate[r]} className="w-full">
           <button
             type="button"
             disabled={disabled}

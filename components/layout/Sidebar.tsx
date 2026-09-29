@@ -147,9 +147,10 @@ function selectedDeck(decks: AdminNavDeck[], pathname: string): AdminNavDeck | u
 }
 
 /**
- * Genvägar till adminflikarna för en kurs, i samma ordning som flikraden (DeckTabs) och
- * med samma regler för vilken som är aktiv. Admin, och den som har fler kurser, får också
- * Alla kurser (adminstartsidan, där Ny kurs finns); admin dessutom designsystemet.
+ * Kursens adminsidor. Sidomenyn är den enda navigeringen mellan dem (kurssidorna har ingen
+ * egen flikrad sedan 30 sep); områdes- och kortsidorna räknas till Innehåll. Admin, och den som
+ * har fler kurser, får också Alla kurser (adminstartsidan, där Ny kurs finns); admin dessutom
+ * designsystemet.
  */
 function adminLinks(decks: AdminNavDeck[], isAdmin: boolean, pathname: string): NavLink[] {
   const deck = selectedDeck(decks, pathname);

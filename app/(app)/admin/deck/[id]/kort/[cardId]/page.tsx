@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronRight, FlagTriangleRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getCardForAdmin, getDeckForAdmin } from "@/lib/admin/queries";
 import { getCardHistory } from "@/lib/admin/history-queries";
@@ -58,6 +58,19 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
           ) : null}
         </div>
       </div>
+      {card.flag_note ? (
+        <div className="flex flex-wrap items-start gap-3 rounded-md bg-tag-2 px-4 py-3" data-testid="card-flag">
+          <FlagTriangleRight size={18} aria-hidden className="mt-0.5 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">{sv.granskning.tabFlagged}</p>
+            <p className="whitespace-pre-wrap break-words">{card.flag_note}</p>
+          </div>
+          <LinkButton href={`/admin/deck/${data.deck.id}/granskning?flik=flaggade&kort=${card.id}`} variant="outline" size="sm">
+            {sv.granskning.title}
+            <ArrowRight size={15} aria-hidden />
+          </LinkButton>
+        </div>
+      ) : null}
       <Card padding="md" data-testid="card-sources">
         <CardHeader title={sv.admin.sourcesTitle} as="h3" spacing="sm" />
         <SourceList source={card.source} original={card.original} />

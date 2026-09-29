@@ -27,6 +27,11 @@ export type ContentCard = {
   source: string | null;
   /** Del av den beprövade originaluppsättningen (korten före 28 sep 2026). */
   original: boolean;
+  /**
+   * Flagga: en anteckning om ett misstänkt fel som behöver åtgärdas (Granskning, fliken
+   * Flaggade). En rad. null = inte flaggat.
+   */
+  flag: string | null;
 };
 
 export type ContentCategory = {
@@ -144,8 +149,11 @@ function short(value: string): string {
  * och aldrig skrivit det till databasen. Det är det enda stället i kodbasen där en glömd
  * rad ger tyst dataförlust.
  */
-/** Standardvärden för kortfält som tillkommit efter att hashen infördes (28 sep: uppgiftstyper). */
-const LATER_FIELD_DEFAULTS: Record<string, unknown> = { kind: DEFAULT_CARD_KIND, options: null, review: null, source: null, original: false };
+/**
+ * Standardvärden för kortfält som tillkommit efter att hashen infördes (28 sep: uppgiftstyper,
+ * 30 sep: flagga).
+ */
+const LATER_FIELD_DEFAULTS: Record<string, unknown> = { kind: DEFAULT_CARD_KIND, options: null, review: null, source: null, original: false, flag: null };
 
 export function cardContentHash(card: Omit<ContentCard, "key">, categoryKey: string | null): string {
   const fields = Object.entries(card)
@@ -155,7 +163,8 @@ export function cardContentHash(card: Omit<ContentCard, "key">, categoryKey: str
     .filter(([name]) => name !== "key")
     // Fält som tillkommit senare räknas bara när de avviker från standardvärdet. Då behåller
     // alla kort som fanns innan fälten infördes sin hash, och inget ser ändrat ut vid nästa synk.
-    .filter(([name, value]) => !(name in LATER_FIELD_DEFAULTS && LATER_FIELD_DEFAULTS[name] === value))
+    // Ett senare fält som saknas (undefined, t.ex. i en äldre utgåva) räknas som standardvärdet.
+    .filter(([name, value]) => !(name in LATER_FIELD_DEFAULTS && (value === undefined || LATER_FIELD_DEFAULTS[name] === value)))
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([name, value]) => [name, value ?? ""] as const);
   return `c${short(JSON.stringify([fields, categoryKey ?? ""]))}`;

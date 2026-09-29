@@ -34,6 +34,7 @@
  * Typer: självskattning (standard), begrepp, sant-falskt, alternativ (lib/cards/kinds.ts).
  * `status: utkast` = förslag som väntar på granskning; ett utkast är aldrig aktivt.
  * `original: ja` = del av den beprövade originaluppsättningen (korten före 28 sep 2026).
+ * `flagga: <anteckning>` = kortet är flaggat för åtgärd (Granskning, fliken Flaggade). En rad.
  */
 import type { ContentCard } from "./model";
 import { isValidKey } from "./model";
@@ -61,7 +62,7 @@ export type ParseResult = {
   issues: ParseIssue[];
 };
 
-const ATTRIBUTE_RE = /^(key|nyckel|ledtråd|ledtrad|hint|aktiv|active|typ|type|svar|answer|status|källa|kalla|source|original)\s*:\s*(.*)$/i;
+const ATTRIBUTE_RE = /^(key|nyckel|ledtråd|ledtrad|hint|aktiv|active|typ|type|svar|answer|status|källa|kalla|source|original|flagga|flag)\s*:\s*(.*)$/i;
 
 const OPTION_RE = /^- \[( |x|X)\] (.+)$/;
 
@@ -116,6 +117,7 @@ type Pending = {
   review: ReviewStatus | null;
   source: string | null;
   original: boolean;
+  flag: string | null;
   body: string[];
 };
 
@@ -174,6 +176,7 @@ export function parseCardFile(text: string): ParseResult {
       review: c.review,
       source: c.source,
       original: c.original,
+      flag: c.flag,
     });
   };
 
@@ -203,6 +206,7 @@ export function parseCardFile(text: string): ParseResult {
         review: null,
         source: null,
         original: false,
+        flag: null,
         body: [],
       };
       readingAttributes = true;
@@ -240,6 +244,7 @@ export function parseCardFile(text: string): ParseResult {
           else if (v && v !== "publicerad" && v !== "granskad") issues.push({ line: lineNo, message: `Okänd status ”${value}” (utkast eller avvisad).` });
         } else if (name === "källa" || name === "kalla" || name === "source") current.source = value || null;
         else if (name === "original") current.original = parseBool(value);
+        else if (name === "flagga" || name === "flag") current.flag = value || null;
         else current.hint = value || null;
         return;
       }
@@ -253,6 +258,11 @@ export function parseCardFile(text: string): ParseResult {
 
   if (!title) issues.push({ line: 1, message: "Filen saknar områdesrubrik (# Titel)." });
   return { file: { title, cards }, issues };
+}
+
+/** Ett attributvärde på en rad (en flagga från admin kan ha radbrytningar). */
+export function oneLine(text: string): string {
+  return text.replace(/\s*\r?\n\s*/g, " ").trim();
 }
 
 /** Modell → kanonisk filtext. parseCardFile(serializeCardFile(x)) ger tillbaka x. */
@@ -269,6 +279,7 @@ export function serializeCardFile(file: CardFile): string {
     if (card.original) out.push("original: ja");
     if (card.review) out.push(`status: ${card.review}`);
     if (card.source) out.push(`källa: ${card.source}`);
+    if (card.flag) out.push(`flagga: ${oneLine(card.flag)}`);
     if (card.hint) out.push(`ledtråd: ${card.hint}`);
     if (!card.active && !card.review) out.push("aktiv: nej");
     out.push("");

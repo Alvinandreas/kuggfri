@@ -234,8 +234,9 @@ export type CardInput = {
 
 /**
  * Sparar ett kort. Typ och alternativ kontrolleras med samma regler som redigeraren visar
- * (validateKind); servern är sanningen. Ett utkast eller avvisat förslag förblir inaktivt
- * tills det godkänns under Granskning, oavsett vad formuläret skickar.
+ * (validateKind); servern är sanningen. Ett nytt kort blir ett utkast som väntar på granskning.
+ * Ett utkast eller avvisat förslag förblir inaktivt tills det godkänns under Granskning, oavsett
+ * vad formuläret skickar.
  */
 export async function saveCardAction(input: CardInput): Promise<ActionResult<{ id: string }>> {
   try {
@@ -283,9 +284,11 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult<{ i
     }
     const { data: last } = await supabase.from("cards").select("sort_order").eq("deck_id", input.deck_id).order("sort_order", { ascending: false }).limit(1);
     const sort_order = (last?.[0]?.sort_order ?? -1) + 1;
+    // Ett nytt kort väntar alltid på granskning (Granskning, Att granska) innan studenterna ser
+    // det, oavsett vem som skapat det (Alvins beslut 30 sep).
     const { data, error } = await supabase
       .from("cards")
-      .insert({ ...values, deck_id: input.deck_id, sort_order })
+      .insert({ ...values, is_active: false, review_status: "utkast", deck_id: input.deck_id, sort_order })
       .select("id")
       .single();
     if (error) return fail(error);

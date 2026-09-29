@@ -111,7 +111,7 @@ export function Showcase() {
               </span>
               <div>
                 <h3 className="text-xl font-bold tracking-tight">Materialteknik</h3>
-                <p className="text-sm text-muted">MTM081 · 144 kort</p>
+                <p className="text-sm text-muted">MTM081, 144 kort</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -163,7 +163,7 @@ export function Showcase() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            ["I dag", "20 nya · 34 repetitioner", "Fortsätt"],
+            ["I dag", "20 nya, 34 repetitioner", "Fortsätt"],
             ["Snabbövning", "30 slumpade kort, som på tentan", "Starta"],
             ["Svåraste korten", "De 15 du missat oftast", "Öva"],
           ].map(([title, sub, cta], i) => (
@@ -452,8 +452,8 @@ export function Showcase() {
       <Section title="Handlingsrader" lead="Genvägar rakt in i något: plugga ett område, ta de kluriga korten. Används i radardialogen och på hemsidan.">
         <Card padding="lg" className="max-w-xl">
           <ActionList>
-            <ActionRow href="#" icon={CalendarClock} title="Plugga området" meta="14 kort i dag · cirka 4 min" primary />
-            <ActionRow href="#" icon={Target} title="Kluriga kort i området" meta="3 kluriga kort · cirka 1 min" />
+            <ActionRow href="#" icon={CalendarClock} title="Plugga området" meta="14 kort i dag, cirka 4 min" primary />
+            <ActionRow href="#" icon={Target} title="Kluriga kort i området" meta="3 kluriga kort, cirka 1 min" />
           </ActionList>
         </Card>
       </Section>

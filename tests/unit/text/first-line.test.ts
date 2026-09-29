@@ -11,7 +11,8 @@ describe("firstLine", () => {
 
   it("gör KaTeX läsbart i stället för att visa syntax", () => {
     expect(firstLine("Vad är $\\sigma$?")).toBe("Vad är sigma?");
-    expect(plainText("$a \\cdot b$")).toBe("a · b");
+    // Multiplikationspunkten blir ett gångertecken (mittpunkten används inte i Kuggfri).
+    expect(plainText("$a \\cdot b$")).toBe("a × b");
     expect(plainText("$a \\times b$")).toBe("a × b");
     expect(plainText("$K_{1c}$")).toBe("K1c");
     expect(plainText("$\\frac{a}{b}$")).toBe("ab");

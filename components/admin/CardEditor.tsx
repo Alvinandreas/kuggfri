@@ -135,10 +135,10 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
     <form ref={formRef} onSubmit={onSubmit} onKeyDown={onFormKeyDown} className={cx("grid grid-cols-[minmax(0,1fr)] gap-6", stacked && "@container")} data-testid="card-editor">
       <div className={cx("grid gap-6", stacked ? "@4xl:grid-cols-2 @4xl:items-start" : "lg:grid-cols-2 lg:items-start")}>
         <Card padding="lg" className="grid grid-cols-[minmax(0,1fr)] gap-5">
-          {reviewStatus ? (
-            <div className="flex flex-wrap items-center gap-2 rounded-md bg-surface-2 px-4 py-3 text-sm text-muted">
-              <ReviewStatusBadge status={reviewStatus} />
-              <span>{reviewStatus === "utkast" ? sv.admin.draftNotice : sv.admin.rejectedNotice}</span>
+          {reviewStatus || !card ? (
+            <div className="flex flex-wrap items-center gap-2 rounded-md bg-surface-2 px-4 py-3 text-sm text-muted" data-testid="card-review-notice">
+              <ReviewStatusBadge status={reviewStatus ?? "utkast"} />
+              <span>{!card ? sv.admin.newCardNotice : reviewStatus === "utkast" ? sv.admin.draftNotice : sv.admin.rejectedNotice}</span>
             </div>
           ) : null}
 
@@ -227,7 +227,8 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
                 options={[{ value: "", label: sv.admin.noCategory }, ...categories.map((c) => ({ value: c.id, label: c.title }))]}
               />
             </div>
-            {reviewStatus ? null : (
+            {/* Ett nytt kort och ett kort i granskningen blir aktiva först när de godkänts. */}
+            {reviewStatus || !card ? null : (
               <div className="flex min-h-12 items-center">
                 <CheckboxField label={sv.admin.active} checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
               </div>
@@ -280,8 +281,8 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
   );
 }
 
-/** Redigerbar lista med svarsalternativ: text, rätt/fel, flytta och ta bort. */
-function OptionsEditor({ items, onChange }: { items: OptionDraft[]; onChange: (next: OptionDraft[]) => void }) {
+/** Redigerbar lista med svarsalternativ: text, rätt/fel, flytta och ta bort. Används också i granskningen. */
+export function OptionsEditor({ items, onChange }: { items: OptionDraft[]; onChange: (next: OptionDraft[]) => void }) {
   const update = (key: string, patch: Partial<OptionDraft>) => onChange(items.map((o) => (o.key === key ? { ...o, ...patch } : o)));
   return (
     <fieldset className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2" data-testid="card-options">

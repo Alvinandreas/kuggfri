@@ -5,6 +5,7 @@ import { getAdminContext } from "@/lib/admin/access";
 import { getDeckExaminers, getDeckForAdmin } from "@/lib/admin/queries";
 import { DeckForm } from "@/components/admin/DeckForm";
 import { ExaminerManager } from "@/components/admin/ExaminerManager";
+import { ExamModeToggle } from "@/components/tenta/ExamModeToggle";
 
 type Params = Promise<{ id: string }>;
 
@@ -31,6 +32,15 @@ export default async function AdminSettingsPage({ params }: { params: Params }) 
           <p className="mt-1 text-sm text-muted">{sv.admin.deckSettingsHelp}</p>
         </div>
         <DeckForm deck={data.deck} canDelete={isAdmin} canManage={isAdmin} />
+      </section>
+      <section aria-labelledby="tentalaget" className="grid grid-cols-[minmax(0,1fr)] gap-4">
+        <div>
+          <h2 id="tentalaget" className="text-xl font-bold tracking-tight">
+            {sv.tenta.title}
+          </h2>
+          <p className="mt-1 text-sm text-muted">{sv.tenta.intro}</p>
+        </div>
+        <ExamModeToggle deckId={data.deck.id} open={data.deck.exam_mode_open === true} />
       </section>
       {isAdmin ? (
         <section aria-labelledby="examinatorer" className="grid grid-cols-[minmax(0,1fr)] gap-4">

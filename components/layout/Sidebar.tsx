@@ -10,6 +10,7 @@ import {
   ChevronsLeft,
   CircleHelp,
   ClipboardCheck,
+  ClipboardPen,
   Flag,
   House,
   Info,
@@ -17,8 +18,10 @@ import {
   LayoutDashboard,
   LayoutList,
   Library,
+  Lock,
   Menu as MenuIcon,
   Palette,
+  ScrollText,
   Settings2,
   ShieldCheck,
   Upload,
@@ -44,6 +47,10 @@ type NavLink = {
   badge?: number;
   /** Vad räknaren betyder, i tooltip och skärmläsartext. */
   badgeLabel?: string;
+  /** Låst för användaren (tentaläget före examinatorns öppning): låsikon och "låst" i namnet. */
+  locked?: boolean;
+  lockedLabel?: string;
+  testId?: string;
 };
 
 export type SidebarProps = {
@@ -52,8 +59,11 @@ export type SidebarProps = {
   adminDecks: AdminNavDeck[];
   /** Global admin: ser också Alla kurser och designsystemet. */
   isAdmin: boolean;
-  /** Publicerade kurser. Med en enda kurs pekar menyn direkt på den i stället för på Kurser. */
-  courses: { slug: string; title: string }[];
+  /**
+   * Publicerade kurser. Med en enda kurs pekar menyn direkt på den (Kurssidan och Tentaläget)
+   * i stället för på Kurser. examModeOpen: tentaläget öppet för studenterna.
+   */
+  courses: { id: string; slug: string; title: string; examModeOpen: boolean }[];
 };
 
 const SIDEBAR_KEY = "kuggfri:sidebar";
@@ -71,13 +81,15 @@ function NavItem({ link, pathname, drawer }: { link: NavLink; pathname: string; 
   const active = isActive(pathname, link);
   const Icon = link.icon;
   const badge = link.badge ?? 0;
-  const label = badge > 0 && link.badgeLabel ? `${link.label}, ${link.badgeLabel}` : link.label;
+  const label = link.locked && link.lockedLabel ? link.lockedLabel : badge > 0 && link.badgeLabel ? `${link.label}, ${link.badgeLabel}` : link.label;
   return (
     <Link
       href={link.href}
       aria-label={label}
       title={label}
       aria-current={active ? "page" : undefined}
+      data-testid={link.testId}
+      data-locked={link.locked ? "true" : undefined}
       className={cx(
         "nav-item flex items-center gap-3 rounded-md px-3 text-[0.95rem] font-medium transition-colors duration-150",
         // I mobilens meny trycks posterna med tummen: 44 px höga.
@@ -90,6 +102,12 @@ function NavItem({ link, pathname, drawer }: { link: NavLink; pathname: string; 
         {/* Hopfälld sidomeny: räknaren blir en prick på ikonen (antalet står i tooltipen). */}
         {badge > 0 && !drawer ? (
           <span data-sidebar-collapsed-only aria-hidden className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-accent" />
+        ) : null}
+        {/* Hopfälld sidomeny: låset blir ett litet märke på ikonen. */}
+        {link.locked && !drawer ? (
+          <span data-sidebar-collapsed-only aria-hidden className="absolute -bottom-1 -right-1.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-sidebar">
+            <Lock size={10} strokeWidth={2.6} />
+          </span>
         ) : null}
       </span>
       <span data-sidebar-label className="min-w-0 flex-1 truncate">
@@ -104,6 +122,7 @@ function NavItem({ link, pathname, drawer }: { link: NavLink; pathname: string; 
           {badge}
         </span>
       ) : null}
+      {link.locked ? <Lock data-sidebar-label size={15} strokeWidth={2} aria-hidden className="shrink-0 text-subtle" /> : null}
     </Link>
   );
 }
@@ -141,6 +160,7 @@ function adminLinks(decks: AdminNavDeck[], isAdmin: boolean, pathname: string): 
       { href: base, label: sv.admin.tabOverview, icon: LayoutDashboard, exact: true, also: [`${base}/statistik`] },
       { href: `${base}/innehall`, label: sv.admin.tabContent, icon: Layers, also: [`${base}/kategori`, `${base}/kort`] },
       { href: `${base}/granskning`, label: sv.admin.tabReview, icon: ClipboardCheck, badge: deck.pendingDrafts, badgeLabel: sv.shell.pendingDrafts(deck.pendingDrafts) },
+      { href: `${base}/tentor`, label: sv.admin.tabExams, icon: ScrollText },
       { href: `${base}/rapporter`, label: sv.admin.tabReports, icon: Flag, badge: deck.openReports, badgeLabel: sv.shell.openReports(deck.openReports) },
       { href: `${base}/import`, label: sv.admin.tabImport, icon: Upload },
       { href: `${base}/installningar`, label: sv.admin.tabSettings, icon: Settings2 },
@@ -152,13 +172,28 @@ function adminLinks(decks: AdminNavDeck[], isAdmin: boolean, pathname: string): 
 }
 
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
+/**
+ * Kursens två poster: Kurssidan (lägen, områden, pass) och Tentaläget, med lås när tentaläget
+ * inte är öppet för studenterna och användaren inte är redaktör för kursen.
+ */
+function courseLinks(course: SidebarProps["courses"][number], adminDecks: AdminNavDeck[]): NavLink[] {
+  const base = `/d/${course.slug}`;
+  const locked = !course.examModeOpen && !adminDecks.some((d) => d.id === course.id);
+  return [
+    { href: base, label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [`${base}/plugga`], testId: "nav-course-page" },
+    { href: `${base}/tenta`, label: sv.shell.examMode, icon: ClipboardPen, locked, lockedLabel: sv.shell.examModeLocked, testId: "nav-exam-mode" },
+  ];
+}
+
 function SidebarContent({ user, adminDecks, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
+  // Med flera kurser: Kurser, och kursens två poster när man är inne i en kurs.
+  const inCourse = courses.find((c) => under(pathname, `/d/${c.slug}`));
   const study: NavLink[] = [
     { href: "/hem", label: sv.shell.home, icon: House },
     { href: "/statistik", label: sv.shell.myStats, icon: ChartNoAxesColumn },
-    courses.length === 1 && courses[0]
-      ? { href: `/d/${courses[0].slug}`, label: courses[0].title, icon: BookOpen, also: ["/d"] }
-      : { href: "/kurser", label: sv.shell.courses, icon: Library, also: ["/d"] },
+    ...(courses.length === 1 && courses[0]
+      ? courseLinks(courses[0], adminDecks)
+      : [{ href: "/kurser", label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDecks) : [])]),
   ];
   const admin = adminLinks(adminDecks, isAdmin, pathname);
   // Med fler kurser står kursens namn under rubriken, så att det syns vilken kurs genvägarna gäller.

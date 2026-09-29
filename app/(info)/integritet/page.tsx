@@ -145,6 +145,12 @@ export default function PrivacyPage() {
                   retention="Tills du raderar kontot eller nollställer progressen"
                 />
                 <Row
+                  what="Försök i tentaläget"
+                  why="Dina svar på en gammal tenta, rättningen och dina egna bedömningar av skrivuppgifterna, så att du kan se resultatet och jämföra dina försök."
+                  basis="Avtal"
+                  retention="Tills du raderar kontot"
+                />
+                <Row
                   what="Repetitionshistorik"
                   why="En rad per skattning med tidpunkt och läge. Ger dig dina egna diagram och underlag för kursens anonyma statistik."
                   basis="Avtal"

@@ -24,6 +24,7 @@ export function DeckTabs({ deckId, openReports, pendingDrafts }: Props) {
     { href: base, label: sv.admin.tabOverview, exact: true, prefixes: [`${base}/statistik`] },
     { href: `${base}/innehall`, label: sv.admin.tabContent, prefixes: [`${base}/kategori`, `${base}/kort`] },
     { href: `${base}/granskning`, label: sv.admin.tabReview, badge: pendingDrafts },
+    { href: `${base}/tentor`, label: sv.admin.tabExams },
     { href: `${base}/rapporter`, label: sv.admin.tabReports, badge: openReports },
     { href: `${base}/import`, label: sv.admin.tabImport },
     { href: `${base}/installningar`, label: sv.admin.tabSettings },

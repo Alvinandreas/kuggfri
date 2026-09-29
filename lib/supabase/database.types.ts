@@ -58,8 +58,44 @@ export type DeckRow = {
   source_hash: string | null;
   is_published: boolean;
   sort_order: number;
+  /** Tentaläget öppet för studenterna. */
+  exam_mode_open: boolean;
   created_at: string;
   updated_at: string;
+};
+
+/** En gammal tenta i tentabanken (docs/TENTOR.md). questions innehåller facit. */
+export type ExamRow = {
+  id: string;
+  deck_id: string;
+  key: string;
+  title: string;
+  exam_date: string | null;
+  duration_minutes: number;
+  max_points: number;
+  grade_limits: { grade: string; min: number }[];
+  aids: string | null;
+  instructions: string | null;
+  source: string | null;
+  status: "utkast" | "publicerad";
+  questions: unknown;
+  source_hash: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** En students försök i tentaläget. */
+export type ExamAttemptRow = {
+  id: string;
+  user_id: string;
+  exam_id: string;
+  started_at: string;
+  submitted_at: string | null;
+  answers: unknown;
+  result: unknown;
+  self_grades: Record<string, number>;
+  points: number | null;
+  grade: string | null;
 };
 
 export type CategoryRow = {
@@ -249,6 +285,7 @@ export type Database = {
           | "source_hash"
           | "is_published"
           | "sort_order"
+          | "exam_mode_open"
           | "created_at"
           | "updated_at"
         >;
@@ -268,6 +305,18 @@ export type Database = {
           "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original"
         >;
         Update: Partial<CardRow>;
+        Relationships: [];
+      };
+      exams: {
+        Row: ExamRow;
+        Insert: Optional<ExamRow, "id" | "exam_date" | "aids" | "instructions" | "source" | "status" | "source_hash" | "created_at" | "updated_at" | "grade_limits">;
+        Update: Partial<ExamRow>;
+        Relationships: [];
+      };
+      exam_attempts: {
+        Row: ExamAttemptRow;
+        Insert: Optional<ExamAttemptRow, "id" | "user_id" | "started_at" | "submitted_at" | "answers" | "result" | "self_grades" | "points" | "grade">;
+        Update: Partial<ExamAttemptRow>;
         Relationships: [];
       };
       card_versions: {

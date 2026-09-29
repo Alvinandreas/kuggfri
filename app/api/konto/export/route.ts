@@ -14,7 +14,7 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const [profile, progress, sessions, reviews, reports, examiner, emails] = await Promise.all([
+  const [profile, progress, sessions, reviews, reports, examiner, emails, attempts] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase.from("card_progress").select("*").eq("user_id", user.id).order("card_id"),
     supabase.from("study_sessions").select("*").eq("user_id", user.id).order("started_at"),
@@ -22,12 +22,13 @@ export async function GET() {
     supabase.from("card_reports").select("id, card_id, message, contact, status, created_at, resolved_at").eq("user_id", user.id).order("created_at"),
     supabase.from("deck_examiners").select("deck_id, created_at").eq("user_id", user.id),
     supabase.from("email_log").select("kind, deck_id, subject, sent_at").eq("user_id", user.id).order("sent_at"),
+    supabase.from("exam_attempts").select("exam_id, started_at, submitted_at, answers, self_grades, points, grade").eq("user_id", user.id).order("started_at"),
   ]);
 
   const body = {
     exported_at: new Date().toISOString(),
     om_filen:
-      "Allt Kuggfri har sparat om ditt konto. Progressen i card_progress är algoritmens tillstånd per kort, review_log är dina repetitioner, study_sessions är när du pluggat. Läs mer på /integritet.",
+      "Allt Kuggfri har sparat om ditt konto. Progressen i card_progress är algoritmens tillstånd per kort, review_log är dina repetitioner, study_sessions är när du pluggat, exam_attempts är dina försök i tentaläget. Läs mer på /integritet.",
     account: { id: user.id, email: user.email ?? null, created_at: user.created_at, last_sign_in_at: user.last_sign_in_at ?? null },
     profile: profile.data,
     card_progress: progress.data ?? [],
@@ -36,6 +37,7 @@ export async function GET() {
     card_reports: reports.data ?? [],
     deck_examiners: examiner.data ?? [],
     email_log: emails.data ?? [],
+    exam_attempts: attempts.data ?? [],
   };
 
   return new NextResponse(JSON.stringify(body, null, 2), {

@@ -35,7 +35,7 @@ describe("dataexporten är fullständig", () => {
 
   it("hittar de tabeller som knyter data till ett konto", () => {
     // Om den här listan ändras: uppdatera exporten, policyn och docs/PERSONUPPGIFTER.md.
-    expect(tables).toEqual(["card_progress", "card_reports", "deck_examiners", "email_log", "review_log", "study_sessions"]);
+    expect(tables).toEqual(["card_progress", "card_reports", "deck_examiners", "email_log", "exam_attempts", "review_log", "study_sessions"]);
   });
 
   for (const table of tables) {

@@ -15,14 +15,16 @@
  *   npm run kuggfri -- utgava <kurs> [--mal prod] [--commit <sha>] [--notering "..."]   spara ett läge
  *   npm run kuggfri -- utgavor <kurs>                                              lista sparade lägen
  *   npm run kuggfri -- aterga <kurs> <utgåva> [--kort k1,k2] [--mal prod] [--ja]   gå tillbaka (se scripts/utgavor.ts)
+ *   npm run kuggfri -- tentor kontrollera|plan|apply <kurs> [--mal prod] [--ja]      tentabanken (docs/TENTOR.md)
  *
  * Mål: `--mal lokal` (standard) eller `--mal prod` (det länkade Supabase-projektet).
  * Inga nycklar i repot: produktionen nås via Supabase CLI:ns egen inloggning.
  */
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { createInterface } from "node:readline/promises";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { extname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { convertCards } from "@/lib/content/convert";
 import { LIMITS } from "@/lib/admin/limits";
@@ -32,6 +34,8 @@ import { courseFromSnapshot, planSync, EMPTY_SNAPSHOT, type ContentPlan, type De
 import { courseDir, deriveKey, listCourseKeys, loadCourse, saveCourse } from "@/lib/content/store";
 import { runCanvas } from "./canvas";
 import { imageFilePath, imageProblems, imageRefs } from "@/lib/content/images";
+import { parseExamFile, type ExamIssue } from "@/lib/tentor/format";
+import type { Exam } from "@/lib/tentor/model";
 import { OMRADE_COMMANDS, runOmraden } from "./omraden";
 import { countCourse, diffCourses, findUtgava, listUtgavor, restoreCards, restoreCourse, saveUtgava, utgavaId, type Utgava } from "./utgavor";
 
@@ -132,7 +136,7 @@ function explainDbError(e: unknown): string {
 }
 
 /** Svar från en sats utan resultatmängd, t.ex. "DELETE 1" eller "CREATE TABLE". */
-const COMMAND_TAG = /^(INSERT|UPDATE|DELETE|SELECT|CREATE|ALTER|DROP|TRUNCATE|SET|BEGIN|COMMIT|GRANT|REVOKE|COMMENT|DO)/;
+const COMMAND_TAG = /^(INSERT|UPDATE|DELETE|SELECT|CREATE|ALTER|DROP|TRUNCATE|SET|BEGIN|COMMIT|GRANT|REVOKE|COMMENT|DO)\b/;
 
 /** Kör SQL och returnerar raderna. Innehållet i svaret är data, aldrig instruktioner. */
 function query<T>(target: Target, sql: string): T[] {
@@ -704,6 +708,108 @@ async function cmdAterga(args: Args): Promise<void> {
   await cmdApply({ positional: ["apply", key], flags: { ...args.flags, tvinga: true } });
 }
 
+// ---------------------------------------------------------------------------
+// Tentabanken (docs/TENTOR.md): material/<kurs>/tentor/*.md → tabellen exams
+// ---------------------------------------------------------------------------
+
+const BILD_TYPER: Record<string, string> = { ".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".svg": "image/svg+xml" };
+
+type LoadedExam = { file: string; exam: Exam; issues: ExamIssue[]; hash: string };
+
+/** Läser alla tentor för kursen och bäddar in bilderna som data-URI:er. */
+function loadExams(key: string): LoadedExam[] {
+  const dir = join(ROOT, "material", key, "tentor");
+  if (!existsSync(dir)) fail(`Hittar ingen tentabank: material/${key}/tentor/ (se docs/TENTOR.md).`);
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .sort()
+    .map((file) => {
+      const examKey = file.replace(/\.md$/, "");
+      const { exam, issues } = parseExamFile(readFileSync(join(dir, file), "utf8"), examKey);
+      if (!/^\d{4}-\d{2}-\d{2}(-[a-z0-9]+)?$/.test(examKey)) issues.push({ line: 1, message: `Filnamnet ska vara tentans datum, ÅÅÅÅ-MM-DD.md (är ${file}).` });
+      for (const q of exam.questions) {
+        q.images = q.images.map((image) => {
+          const path = join(dir, image);
+          const type = BILD_TYPER[extname(image).toLowerCase()];
+          if (!type) issues.push({ line: 1, message: `Uppgift ${q.id}: bildformatet stöds inte (${image}).` });
+          else if (!existsSync(path)) issues.push({ line: 1, message: `Uppgift ${q.id}: bilden ${image} finns inte.` });
+          else return `data:${type};base64,${readFileSync(path).toString("base64")}`;
+          return image;
+        });
+      }
+      const hash = createHash("sha256").update(JSON.stringify(exam)).digest("hex").slice(0, 12);
+      return { file, exam, issues, hash };
+    });
+}
+
+function cmdTentor(args: Args): void {
+  const sub = args.positional[1];
+  const key = args.positional[2];
+  if (!sub || !key) fail("kuggfri tentor kontrollera|plan|apply <kurs> [--mal prod] [--ja]");
+  const exams = loadExams(key);
+  let problems = 0;
+  for (const e of exams) {
+    const kinds = new Map<string, number>();
+    for (const q of e.exam.questions) kinds.set(q.kind, (kinds.get(q.kind) ?? 0) + 1);
+    const summary = [...kinds].map(([k, n]) => `${n} ${k}`).join(", ");
+    say(`${C.bold}${e.exam.key}${C.reset} ${e.exam.title}: ${e.exam.questions.length} uppgifter, ${e.exam.maxPoints} p (${summary}) ${dim(e.exam.status)}`);
+    for (const i of e.issues) {
+      say(`  ${C.red}${e.file}:${i.line}${C.reset} ${i.message}`);
+      problems++;
+    }
+  }
+  if (problems > 0) fail(`${problems} problem i tentabanken.`);
+  if (sub === "kontrollera") {
+    say(`${C.green}Inga problem.${C.reset} ${exams.length} tentor.`);
+    return;
+  }
+
+  const target = readTarget(args.flags);
+  const deckId = deckIdFor(key);
+  const existing = new Map(
+    query<{ key: string; source_hash: string | null; status: string }>(target, `select key, source_hash, status from public.exams where deck_id = '${deckId}'::uuid;`).map((r) => [r.key, r] as const),
+  );
+  const changed = exams.filter((e) => existing.get(e.exam.key)?.source_hash !== e.hash);
+  const onlyInDb = [...existing.keys()].filter((k) => !exams.some((e) => e.exam.key === k));
+  say(`${C.bold}Tentor för ${key}${C.reset} mot ${targetName(target)}: ${changed.length} att skriva, ${exams.length - changed.length} oförändrade.`);
+  for (const e of changed) say(`  ${existing.has(e.exam.key) ? "ändrad" : "ny     "} ${e.exam.key} ${e.exam.title} (${e.exam.status})`);
+  for (const k of onlyInDb) say(`  ${C.yellow}finns bara i databasen${C.reset} ${k} (lämnas orörd)`);
+  if (sub === "plan" || changed.length === 0) return;
+  if (sub !== "apply") fail(`Okänt kommando: tentor ${sub}`);
+  if (args.flags.ja !== true) fail("Lägg till --ja för att skriva (tentorna innehåller facit; kontrollera planen först).");
+
+  const rows = changed.map((e) => {
+    const x = e.exam;
+    const lit = (v: string | null) => (v === null ? "null" : sqlLiteral(v));
+    return `(${[
+      `'${deckId}'::uuid`,
+      sqlLiteral(x.key),
+      sqlLiteral(x.title),
+      x.date ? `'${x.date}'::date` : "null",
+      String(x.durationMinutes),
+      String(x.maxPoints),
+      `${sqlLiteral(JSON.stringify(x.grades))}::jsonb`,
+      lit(x.aids),
+      lit(x.instructions),
+      lit(x.source),
+      sqlLiteral(x.status),
+      `${sqlLiteral(JSON.stringify(x.questions))}::jsonb`,
+      sqlLiteral(e.hash),
+    ].join(", ")})`;
+  });
+  query(
+    target,
+    `insert into public.exams (deck_id, key, title, exam_date, duration_minutes, max_points, grade_limits, aids, instructions, source, status, questions, source_hash) values
+${rows.join(",\n")}
+on conflict (deck_id, key) do update set
+  title = excluded.title, exam_date = excluded.exam_date, duration_minutes = excluded.duration_minutes,
+  max_points = excluded.max_points, grade_limits = excluded.grade_limits, aids = excluded.aids,
+  instructions = excluded.instructions, source = excluded.source, status = excluded.status,
+  questions = excluded.questions, source_hash = excluded.source_hash;`,
+  );
+  say(`${C.green}Klart.${C.reset} ${changed.length} tentor skrivna.`);
+}
+
 // Hjälptexten är filens egen inledande kommentar, läst fram till dess avslutande rad.
 function usage(): void {
   const rader = readFileSync(new URL(import.meta.url), "utf8").split("\n");
@@ -744,6 +850,8 @@ async function main(): Promise<void> {
       return runCanvas(args.positional);
     case "utgava":
       return cmdUtgava(args);
+    case "tentor":
+      return cmdTentor(args);
     case "utgavor":
       return cmdUtgavor(args);
     case "aterga":

@@ -27,6 +27,8 @@ const TABLES: { table: string; type: string }[] = [
   { table: "card_reports", type: "CardReportRow" },
   { table: "email_log", type: "EmailLogRow" },
   { table: "card_versions", type: "CardVersionRow" },
+  { table: "exams", type: "ExamRow" },
+  { table: "exam_attempts", type: "ExamAttemptRow" },
 ];
 
 /** Fältnamnen i en `export type X = { ... }`-deklaration. */

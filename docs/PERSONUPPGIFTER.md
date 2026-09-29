@@ -42,6 +42,7 @@ lämna en kontaktadress för svar.
 | 3 | Progress per kort (FSRS-tillstånd, senaste skattning) | `public.card_progress` | Schemalägga repetitioner | Avtal 6.1 b | Vid kontoradering eller nollställning |
 | 4 | Repetitionshistorik (kort, skattning, läge, tidpunkt) | `public.review_log` | Studentens egna diagram, underlag för anonym kursstatistik | Avtal 6.1 b | Vid kontoradering eller nollställning |
 | 5 | Studiesessioner | `public.study_sessions` | Statistik på kontosidan | Avtal 6.1 b | Vid kontoradering |
+| 5b | Försök i tentaläget | `public.exam_attempts` | Svar, rättning och egna bedömningar av gamla tentor | Avtal 6.1 b | Vid kontoradering |
 | 6 | Felrapporter (text, valfri kontaktadress, ev. user_id) | `public.card_reports` | Rätta fel i kursmaterialet | Berättigat intresse 6.1 f | Kontakt nollställs efter 180 dagar; åtgärdade rapporter raderas efter 180 dagar (`purge_old_data()`) |
 | 7 | Examinatorsroll per kurs | `public.deck_examiners`, `deck_examiner_invites` | Behörighet till egen kurs | Berättigat intresse 6.1 f | Vid kontoradering eller när rollen tas bort |
 | 8 | Logg över skickade mejl (typ, ämne, tidpunkt) | `public.email_log` | Undvika dubbla utskick | Berättigat intresse 6.1 f | 90 dagar (`purge_old_data()`) |

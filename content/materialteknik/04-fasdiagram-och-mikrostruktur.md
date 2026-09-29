@@ -346,3 +346,176 @@ källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18; Canv
 ![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
 
 Mellan ca 820 °C och 723 °C ligger stålet i tvåfasområdet $\alpha$ + $\gamma$, där primär ferrit bildas. Vid 723 °C omvandlas den kvarvarande austeniten eutektoidt till perlit, så stålet består till slut av primär ferrit och perlit. Cementit i gränserna mellan perlitområdena hör till övereutektoida stål, och martensit bildas bara vid snabbkylning.
+
+## Binärt fasdiagram
+key: binart-fasdiagram
+typ: begrepp
+status: utkast
+källa: Canvas, Fo 4 Fasdiagram, s. 8; Canvas, GLU 02 Fasdiagram, s. 10, 14; Canvas, Lab_PM_M2_v2026, s. 5, 7
+
+Ett fasdiagram för ett system av två ämnen (komponenter), t.ex. Cu–Ni eller Pb–Sn. Det visar vilka faser som är stabila vid jämvikt vid olika temperaturer (y-axeln) och sammansättningar (x-axeln, halten av det ena ämnet). Enfasområdena skiljs åt av tvåfasområden. I Cu–Ni, med obegränsad löslighet, finns en enda fast fas. I Pb–Sn, med begränsad löslighet, finns två fasta faser och en eutektisk punkt.
+
+## I systemet Pb–Sn har legeringen med eutektisk sammansättning lägre smälttemperatur än både rent bly och rent tenn.
+key: eutektisk-sammansattning-lagst-smalttemperatur
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, GLU 02 Fasdiagram, s. 14, 15; Canvas, Lab_PM_M2_v2026, s. 7, 8, 9
+
+![Fasdiagrammet för Pb–Sn med eutektisk punkt vid 61,9 % Sn och 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+
+Sant. Likviduslinjerna sjunker från rent Pb (327 °C) och rent Sn (232 °C) och möts i den eutektiska punkten vid 61,9 % Sn och 183 °C, den lägsta temperatur där smälta finns i systemet. En smälta med eutektisk sammansättning har inget stelningsintervall utan stelnar vid en enda temperatur till eutektikum. Samma mönster finns i Al–Si: den eutektiska temperaturen, ca 577 °C (vid 12,6 % Si), ligger lägre än smältpunkterna för både Al (660 °C) och Si (1414 °C).
+
+## Hur ser avsvalningskurvan ut när en ren metall, en legering som stelnar till en enda fas och en legering med primär fas och eutektikum stelnar?
+key: avsvalningskurvor-former
+status: utkast
+källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 2, 3, 4, 9, 10; Canvas, Lab_PM_M2_v2026, s. 5, 7, 8
+
+När en fas bildas frigörs värme, som bromsar avsvalningen. I ett enfasområde styrs kurvan bara av värmeledningen.
+
+* **Ren metall (och eutektisk sammansättning):** en platå (hållpunkt) vid en enda temperatur tills allt har stelnat.
+* **Legering som stelnar till en enda fas** (tvåfasområdet smälta + fast fas): en knick där stelningen börjar (likviduslinjen), en flackare kurva genom stelningsintervallet och en ny knick där stelningen är klar (soliduslinjen).
+* **Legering mellan en primär fas och eutektikum:** först en knick när den primära fasen börjar bildas, sedan en platå vid den eutektiska temperaturen när resten av smältan stelnar till eutektikum.
+
+![Tre avsvalningskurvor, temperatur mot tid: ren metall med platå, legering med knick vid likvidus och solidus, legering med knick vid likvidus och platå vid den eutektiska temperaturen](/kort/materialteknik/avsvalningskurvor.svg)
+
+## En Pb–Sn-legering svalnar långsamt från smälta. Avsvalningskurvan har först en knick och sedan en platå vid 183 °C. Vilken sammansättning kan legeringen ha? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+key: avsvalningskurva-pbsn-knick-plata
+typ: alternativ
+status: utkast
+källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9, 10; Canvas, Lab_PM_M2_v2026, s. 7, 8; Canvas, GLU 02 Fasdiagram, s. 14
+
+- [x] Pb–30 % Sn
+- [ ] Pb–61,9 % Sn
+- [ ] Pb–10 % Sn
+- [ ] Rent Sn
+
+Knicken visar att primär $\alpha$ börjar bildas när temperaturen når likviduslinjen. Platån vid 183 °C är den eutektiska reaktionen, där resten av smältan stelnar till eutektikum vid konstant temperatur. Pb–61,9 % Sn har eutektisk sammansättning och ger bara en platå. Pb–10 % Sn stelnar helt till en fas ($\alpha$) inom ett temperaturintervall och når aldrig den eutektiska linjen, så kurvan får knickar men ingen platå. Rent Sn ger bara en platå, vid tennets smältpunkt.
+
+## Ett stål med 0,35 % C svalnar långsamt från austenitområdet. Ungefär hur stor andel perlit och primär ferrit får det? (Perlit bildas ur austenit med 0,8 % C; ferritens kolhalt kan försummas.)
+key: havstang-stal-035-andel-perlit
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 02 Fasdiagram, s. 16, 17, 19; Canvas, Fo 12 Stal, s. 17, 18; Canvas, Lab_PM_M2_v2026, s. 12
+
+- [x] Ca 44 % perlit och 56 % primär ferrit
+- [ ] Ca 56 % perlit och 44 % primär ferrit
+- [ ] Ca 35 % perlit och 65 % primär ferrit
+- [ ] 100 % perlit
+
+![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
+
+Strax ovanför den eutektoida temperaturen (ca 723 °C) består stålet av primär ferrit och austenit med 0,8 % C, och all den austeniten blir perlit vid den eutektoida reaktionen. Hävstångsregeln mellan ferrit (≈ 0 % C) och austenit (0,8 % C): andel perlit $= \dfrac{0{,}35 - 0}{0{,}8 - 0} \approx 0{,}44$, resten, ca 56 %, är primär ferrit. 56 % perlit fås om hävstångsarmarna byts, 35 % om kolhalten tas som andel, och 100 % perlit gäller bara vid ca 0,8 % C.
+
+## Andelen perlit i ett undereutektoidiskt stål efter långsam svalning är lika stor som andelen austenit strax ovanför den eutektoida temperaturen.
+key: stal-austenit-blir-perlit-andel
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, GLU 02 Fasdiagram, s. 17, 19; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18; Canvas, Lab_PM_M2_v2026, s. 11, 12
+
+Sant. I tvåfasområdet ferrit + austenit bildas primär ferrit, och vid den eutektoida temperaturen omvandlas den kvarvarande austeniten, som då har ca 0,8 % C, till perlit. Andelen austenit strax ovanför den eutektoida temperaturen, räknad med hävstångsregeln, blir alltså andelen perlit. Högre upp i tvåfasområdet har austeniten lägre kolhalt och andelen austenit är större; där läser man av austenitens kolhalt vid tvåfasområdets gräns vid den aktuella temperaturen.
+
+## Ett stål med 1,3 % C svalnar långsamt. Ungefär hur stora andelar perlit och cementit har det vid rumstemperatur? (Perlit 0,8 % C, cementit 6,67 % C.)
+key: fe-c-andel-perlit-overeutektoid
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 12 Stal, s. 17, 18; Canvas, GLU 02 Fasdiagram, s. 16, 17, 19; Canvas, Lab_PM_M2_v2026, s. 11, 12
+
+- [x] Ca 91 % perlit och 9 % cementit
+- [ ] Ca 62 % perlit och 38 % cementit
+- [ ] Ca 81 % perlit och 19 % cementit
+- [ ] 100 % perlit
+
+Ett övereutektoidiskt stål består av perlit och cementit, som ligger i gränserna mellan perlitområdena. Hävstångsregeln mellan perlit (0,8 % C) och cementit (6,67 % C) ger andelen perlit $= \dfrac{6{,}67 - 1{,}3}{6{,}67 - 0{,}8} = \dfrac{5{,}37}{5{,}87} \approx 0{,}91$. 62 % fås av $0{,}8/1{,}3$, och 81 % $= (6{,}67 - 1{,}3)/6{,}67$ är andelen av fasen ferrit (hävstång mellan ferrit och cementit), inte av strukturbeståndsdelen perlit.
+
+## Vad bildas när smälta med 4,3 % C svalnar genom den eutektiska punkten i Fe–C-diagrammet (ca 1147 °C)?
+key: fe-c-eutektisk-reaktion
+typ: alternativ
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 9; Canvas, GLU 02 Fasdiagram, s. 19, 20
+
+- [x] Austenit och cementit, i ett eutektikum
+- [ ] Ferrit och cementit, dvs. perlit
+- [ ] Martensit
+- [ ] Bara austenit
+
+Den eutektiska reaktionen i Fe–C är smälta → austenit + cementit ($L \to \gamma + \text{Fe}_3\text{C}$) vid 4,3 % C och ca 1147 °C. Den utnyttjas vid gjutning av gjutjärn (2–4 % C). Perlit (ferrit + cementit) bildas i stället vid den eutektoida reaktionen ur austenit, vid ca 0,8 % C och 723 °C. Martensit bildas bara vid snabbkylning av austenit, och en enda fas är inget eutektikum.
+
+## En Pb–30 % Sn-legering svalnar långsamt genom tvåfasområdet $\alpha$ + L ned mot 183 °C. Vad händer?
+key: pbsn-stelning-sammansattning-andre
+typ: alternativ
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 6, 7; Canvas, GLU 02 Fasdiagram, s. 14, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10
+
+- [x] Smältans Sn-halt följer likviduslinjen och ökar mot 61,9 % Sn.
+- [x] Andelen av den fasta Pb-rika fasen ($\alpha$) ökar.
+- [ ] Smältan har hela tiden legeringens sammansättning, 30 % Sn.
+- [ ] Andelen smälta är konstant tills 183 °C nås.
+
+![Fasdiagrammet för Pb–Sn med enfas- och tvåfasområden kring den eutektiska linjen vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+
+I ett tvåfasområde läser man av fasernas koncentrationer vid områdets gränser, längs en horisontell linje vid den aktuella temperaturen: smältans på likviduslinjen och den fasta fasens på soliduslinjen. När en Sn-fattigare fast fas skiljs ut anrikas smältan på Sn, och andelen $\alpha$ ökar enligt hävstångsregeln. Strax ovanför 183 °C återstår $\frac{30-18{,}3}{61{,}9-18{,}3} \approx 0{,}27$, alltså ca 27 % smälta med eutektisk sammansättning, som stelnar till eutektikum.
+
+## Pb–70 % Sn svalnar långsamt från smälta. Ungefär hur stor andel primär $\beta$ respektive eutektikum finns strax under 183 °C? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+key: havstang-pbsn-70-strukturbestandsdelar
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 02 Fasdiagram, s. 14, 15, 17; Canvas, Lab_PM_M2_v2026, s. 7, 8
+
+- [x] Ca 23 % primär $\beta$ och 77 % eutektikum
+- [ ] Ca 77 % primär $\beta$ och 23 % eutektikum
+- [ ] Ca 70 % primär $\beta$ och 30 % eutektikum
+- [ ] 100 % eutektikum
+
+Legeringen ligger på Sn-sidan om den eutektiska punkten, så först bildas den Sn-rika fasen $\beta$ (97,8 % Sn vid 183 °C). Strax ovanför 183 °C är andelen primär $\beta$ $= \dfrac{70-61{,}9}{97{,}8-61{,}9} = \dfrac{8{,}1}{35{,}9} \approx 0{,}23$. Resten, ca 77 %, är smälta med eutektisk sammansättning, som stelnar till eutektikum vid 183 °C.
+
+## När en Pb–Sn-legering av primär $\alpha$ och eutektikum svalnar vidare från 183 °C till rumstemperatur ändras inte andelen eutektikum, men Sn-rik $\beta$ skiljs ut i den Pb-rika fasen.
+key: pbsn-strukturbestandsdelar-under-eutektisk
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9, 10; Canvas, Lab_PM_M2_v2026, s. 7, 8; Canvas, GLU 02 Fasdiagram, s. 13, 14
+
+Sant. Strukturbeståndsdelarna, primär $\alpha$ och eutektikum, bildas vid stelningen och finns kvar vid fortsatt svalning. Under 183 °C minskar lösligheten av Sn i Pb, så Sn-rik fas $\beta$ bildas som utskiljningar i den Pb-rika fasen. Andelarna av faserna $\alpha$ och $\beta$ ändras alltså något, medan andelarna av strukturbeståndsdelarna är desamma.
+
+## Hur stor andel av själva eutektikumet i Pb–Sn är $\beta$-fas strax under 183 °C, när eutektikumet just har bildats? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
+key: havstang-faser-i-eutektikum
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 02 Fasdiagram, s. 14, 15, 16, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9
+
+- [x] Ca 55 %
+- [ ] Ca 62 %
+- [ ] Ca 27 %
+- [ ] Ca 50 %
+
+Eutektikumet har sammansättningen 61,9 % Sn och består av $\alpha$ (18,3 % Sn) och $\beta$ (97,8 % Sn). Hävstångsregeln med eutektikumets egen sammansättning ger strax under 183 °C andelen $\beta = \dfrac{61{,}9 - 18{,}3}{97{,}8 - 18{,}3} = \dfrac{43{,}6}{79{,}5} \approx 0{,}55$ och andelen $\alpha \approx 0{,}45$. 62 % är eutektikumets Sn-halt, inte andelen $\beta$ vid 183 °C, och 27 % är andelen $\beta$ i hela legeringen Pb–40 % Sn strax under 183 °C. Vid fortsatt långsam svalning blir faserna nästan rent Pb och rent Sn, och då närmar sig andelen $\beta$ i eutektikumet dess Sn-halt, ca 62 %.
+
+## Ungefär vilken är den högsta Cu-halt en Al–Cu-legering kan ha om all Cu ska kunna lösas i $\alpha$ vid upplösningsbehandlingen? ![Al-hörnet av fasdiagrammet Al–Cu med aluminiumfasen (Al), eutektisk linje vid 548 °C och fasen θ = CuAl₂](/kort/materialteknik/al-cu-alhornet.svg)
+key: al-cu-max-halt-utskiljningshardning
+typ: alternativ
+status: utkast
+källa: Canvas, Exempel fasdiagram, s. 7; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU 02 Fasdiagram, s. 13; Canvas, Lab_PM_M2_v2026, s. 7
+
+- [x] Knappt 6 % Cu
+- [ ] Ca 33 % Cu
+- [ ] Ca 54 % Cu
+- [ ] Ca 1 % Cu
+
+Upplösningsbehandlingen kräver att legeringen blir en enda fas, $\alpha$, så att all Cu är löst före snabbkylningen. Lösligheten av Cu i $\alpha$ är störst vid den eutektiska temperaturen 548 °C, där $\alpha$-områdets gräns möter den eutektiska linjen, vid knappt 6 % Cu. Vid högre Cu-halt bildas eutektikum ($\alpha$ + $\theta$) vid stelningen, och det finns ingen temperatur där all Cu är löst i fast $\alpha$. Ca 33 % är den eutektiska sammansättningen, ca 54 % är fasen $\theta$ (CuAl₂), och ca 1 % är lösligheten vid en betydligt lägre temperatur, inte den största lösligheten.
+
+## En Al–3 % Cu-legering har svalnat långsamt till rumstemperatur. Ungefär hur stor viktandel $\theta$ (CuAl₂) har den? ($\alpha$ har då nästan 0 % Cu och $\theta$ ca 54 % Cu.)
+key: al-cu-havstang-andel-theta
+typ: alternativ
+status: utkast
+källa: Canvas, Exempel fasdiagram, s. 7; Canvas, GLU 02 Fasdiagram, s. 16, 17, 21
+
+- [x] Ca 6 %
+- [ ] 3 %
+- [ ] Ca 9 %
+- [ ] Ca 94 %
+
+![Al-hörnet av fasdiagrammet Al–Cu med aluminiumfasen (Al), eutektisk linje vid 548 °C och fasen θ = CuAl₂](/kort/materialteknik/al-cu-alhornet.svg)
+
+Hävstångsregeln mellan $\alpha$ (≈ 0 % Cu) och $\theta$ (≈ 54 % Cu): andel $\theta$ $= \dfrac{3-0}{54-0} \approx 0{,}056$, alltså ca 6 %, och ca 94 % $\alpha$. 3 % är legeringens Cu-halt, inte andelen $\theta$; eftersom $\theta$ själv består till drygt hälften av Cu blir andelen $\theta$ nästan dubbelt så stor som Cu-halten. Ca 9 % fås om man räknar mot den eutektiska sammansättningen (ca 33 % Cu) i stället för mot $\theta$.

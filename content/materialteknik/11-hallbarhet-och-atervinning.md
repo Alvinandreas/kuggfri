@@ -19,11 +19,13 @@ Miljöbelastning:
 ## Hur återanvändningsbara är egentligen metaller? Vad finns det för utmaningar med det?
 key: hur-ateranvandningsbara-ar-egentligen
 original: ja
+status: utkast
+källa: Rättelse: kortet sa att metall från skrot alltid har samma egenskaper som metall från mineral, men kursen säger att återvunnen metall kan ge lika bra material (och kortet räknar själv upp legeringsproblemen); energisiffrorna 1/10 för Al och 1/3 för stål går inte att belägga i kursmaterialet och är strukna; Canvas, Fo 13 Hallbarhet, s. 21; Canvas, Fo 12 Stal, s. 12; Canvas, Kapitel_03 Materialval, s. 45
 
 * Metallskrot är en utmärkt råvara för metalltillverkning
-* Kräver mindre energi än tillverkning från malm: 1/10 för Al och 1/3 för stål
+* Kräver mindre energi än tillverkning från malm
 * Ger mindre miljöbelastning
-* Metall tillverkad från skrot har samma egenskaper som metall tillverkad från mineral
+* Metall tillverkad från skrot kan ge lika bra material som metall tillverkad från mineral
 
 Utmaningar:
 
@@ -110,10 +112,12 @@ jordartsmetaller, platina-gruppen, fissionsämne (U, Th, Pu), W, Ta, Nb, Ga, In
 ## Sammanfatta lite kort hur metaller lämpar sig för återvinning.
 key: sammanfatta-lite-kort-hur-metaller
 original: ja
+status: utkast
+källa: Rättelse: "Ger lika bra material" var ett absolut påstående; föreläsningen säger "Kan ge lika bra material", eftersom föroreningar och legeringsämnen kan ställa till problem; Canvas, Fo 13 Hallbarhet, s. 21
 
 * Metaller lämpar sig väl för återvinning
   - Sparar resurser och energi
-  - Ger lika bra material
+  - Kan ge lika bra material
 * Problem med föroreningar och legeringsämne
 * CO₂ footprint och embodied energy ger viss
 vägledning – kan användas i materialindex
@@ -141,28 +145,6 @@ källa: Canvas, Quiz vecka 1, fråga 6; Canvas, Fö 13 Hållbarhet, s. 6; Canvas
 
 CO₂-avtryck och inbäddad energi kan användas i materialindex, genom att densiteten $\rho$ ersätts med $CO_2\,\rho$ eller $H_m\,\rho$ när utsläpp eller energi ska minimeras. Återvinning minskar behovet av råvara, energiåtgången och CO₂-utsläppen. Kursens "material för morgondagen" ska ha både lågt CO₂-avtryck och låg inbäddad energi. Stål har låga CO₂-utsläpp per kilo; det är den stora användningen som ger stora globala utsläpp.
 
-## Varför räcker inte återvinning för att lösa framtidens materialförsörjning, och vad behövs utöver återvinning?
-key: hallb-atervinning-racker-inte
-status: utkast
-källa: Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 2; Canvas, Fö 13 Hållbarhet, s. 7; Canvas, Fö 13 Hållbarhet, s. 17; Canvas, Fö 13 Hållbarhet, s. 21; Canvas, Fö 13 Hållbarhet, s. 22
-
-Återvinning räcker inte eftersom mängden material i användning ökar: efterfrågan på metaller är i dag ungefär två tredjedelar större än mängden skrot, så en modell för cirkulär ekonomi fungerar inte ensam. Dessutom uppstår förluster, och återvinning kostar energi och resurser.
-
-Utöver återvinning behövs t.ex.:
-
-* minskad materialanvändning, genom bättre design och höghållfasta material
-* lång livslängd, återbruk och refabricering
-* rätt materialval och tillverkningsmetod, cirkulära produktlösningar och ökad användning av förnybara material
-
-## Vad menas med att ett material är en ändlig resurs? Ge ett exempel där resursbristen är en växande utmaning.
-key: hallb-andlig-resurs
-status: utkast
-källa: Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 2; Canvas, Fö 13 Hållbarhet, s. 8
-
-Ett material är en ändlig resurs när det finns i begränsade mängder och riskerar att ta slut inom överskådlig tid.
-
-Exempel: sällsynta jordartsmetaller, som används i magneter och där efterfrågan ökar snabbare än tillgången. Många tekniskt viktiga metaller är kritiska eller sällsynta, och återvinningsgraden är i vissa fall mycket låg, t.ex. för gallium, indium och germanium i halvledare.
-
 ## I kursens eco audit-exempel med krockbarriärer: vilken livscykelfas dominerar för ett fast vägräcke respektive en barriär monterad på en bil?
 key: hallb-eco-audit-vagracken
 typ: alternativ
@@ -175,33 +157,6 @@ källa: Canvas, Kapitel_03 Materialval, s. 43; Canvas, Kapitel_03 Materialval, s
 - [ ] Användningen i båda fallen.
 
 Eco audit visar i vilken livscykelfas mest resurser används, och därmed vad materialvalet ska optimera. För det fasta vägräcket dominerar materialproduktionen, så kriteriet blir böjhållfasthet per energienhet, index $\sigma_y^{2/3}/(H_p\,\rho)$. För barriären på bilen dominerar användningen, så kriteriet blir böjhållfasthet per massa, $\sigma_y^{2/3}/\rho$.
-
-## Vad stämmer om återvinning av metaller?
-key: hallb-atervinning-metaller
-typ: alternativ
-status: utkast
-källa: Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 5; Canvas, Fö 13 Hållbarhet, s. 21; Canvas, Fö 12 Stål, s. 12
-
-- [x] Återvinning minskar behovet av råvara från naturen, energiåtgången och CO₂-utsläppen.
-- [ ] Återvunnen metall får alltid sämre egenskaper än metall tillverkad från malm.
-- [x] Skrot av olika metaller och legeringar behöver sorteras och hållas åtskilt.
-- [ ] Legeringshalten i skrotet spelar ingen roll, eftersom metallen enkelt kan raffineras vid omsmältningen.
-
-Vinsterna med återvinning av metaller är minskat behov av råvara, minskad energiåtgång, minskade CO₂-utsläpp och mindre deponi. En återvunnen metall får i princip inga försämrade egenskaper; metaller kan ge lika bra material. Problemet är föroreningar och legeringshalt: halten måste ligga inom toleranserna för legeringen, och eftersom det är dyrt och ofta omöjligt att raffinera metallen måste skrot av olika metaller sorteras och hållas åtskilt.
-
-## Nämn viktiga punkter i en hållbarhetsstrategi för materialval och materialanvändning på ett företag.
-key: hallb-strategi-foretag
-status: utkast
-källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 3; Canvas, Fö 13 Hållbarhet, s. 22
-
-* Välj material som ger fungerande produkter med lång livslängd.
-* Välj material som ger låga utsläpp av föroreningar och liten resurs- och energianvändning vid tillverkningen.
-* Undvik kritiska och strategiska material.
-* Välj material med litet CO₂-avtryck och låg inbäddad energi.
-* Välj material som kan återvinnas.
-* Tänk på hela produktcykeln: materialtillverkning, produkttillverkning, användning och återvinning.
-
-Hållbara produkter fås av en kombination av rätt materialval, bra design, rätt tillverkningsmetod och rätt återvinning.
 
 ## Hur tar man hänsyn till CO₂-avtrycket i ett materialindex för en lätt och stark balk, $\sigma_y^{2/3}/\rho$?
 key: hallb-co2-i-materialindex
@@ -225,11 +180,47 @@ källa: Canvas, Fö 13 Hållbarhet, s. 17
 
 Sant. Föreläsningen nämner höghållfasta metaller, som ger mindre material, tillsammans med bättre design, förbättrade tillverkningsmetoder, lätta metaller och kompositer när låg vikt behövs och återvunnen metall som sätt att konstruera miljövänligare med metaller.
 
-## En biobaserad plast är alltid bionedbrytbar.
-key: hallb-biobaserad-bionedbrytbar
-typ: sant-falskt
-svar: falskt
+## Bionedbrytbar respektive biobaserad plast
+key: plast-bionedbrytbar-biobaserad
+typ: begrepp
 status: utkast
-källa: Canvas, 2025 MTT085 Fö21, s. 20; Canvas, 2025 MTT085 Fö21, s. 21; Canvas, 2025 MTT085 Fö21, s. 23; Canvas, 2025 MTT085 Fö21, s. 24; Canvas, 2025 MTT085 Fö21, s. 25
+källa: Canvas, 2025 MTT085 Fo21, s. 20, 21, 22
 
-Falskt. Biobaserad betyder att plasten är framställd av biomassa (förnybara resurser), medan bionedbrytbar betyder att mikroorganismer kan bryta ned den till bland annat koldioxid och vatten. Egenskaperna är oberoende av varandra: biobaserad PE är inte bionedbrytbar, PCL och PBAT är bionedbrytbara men fossilbaserade, och PLA är både biobaserad och bionedbrytbar.
+**Bionedbrytbar:** plasten bryts ned av mikroorganismer till bland annat koldioxid, vatten och ny biomassa (utan syre även metan). För att räknas som fullständigt bionedbrytbar enligt den europeiska standarden EN 13432 ska minst 90 % ha brutits ned på mindre än 6 månader.
+
+**Biobaserad:** plasten är framställd av biomassa, alltså förnybara råvaror från växter, djur eller mikroorganismer, i stället för fossila (petrokemiska) råvaror.
+
+De två egenskaperna är oberoende av varandra: råvaran avgör inte om plasten är bionedbrytbar.
+
+## Vilka exempel är rätt placerade i indelningen efter råvara (biobaserad eller fossil) och bionedbrytbarhet?
+key: plast-bio-indelning-exempel
+typ: alternativ
+status: utkast
+källa: Canvas, 2025 MTT085 Fo21, s. 22, 23, 24, 25
+
+- [x] PLA: biobaserad och bionedbrytbar
+- [x] Biobaserad PE: biobaserad men inte bionedbrytbar, med samma kemiska uppbyggnad som vanlig PE
+- [x] PCL: fossilbaserad men bionedbrytbar
+- [ ] Konventionell PP: fossilbaserad och bionedbrytbar
+
+Kursens fyrfältsdiagram har råvaran på ena axeln och bionedbrytbarheten på den andra. PLA och stärkelseblandningar är både biobaserade och bionedbrytbara. Biobaserad PE, PET och PA tillverkas av förnybara råvaror men bryts inte ned biologiskt; biobaserad PE har samma repeterande enhet som fossil PE, det som skiljer är råvaran. PCL och PBAT är fossilbaserade men bionedbrytbara. Konventionella plaster som PE, PP och PET är fossilbaserade och inte bionedbrytbara.
+
+## Vilka påståenden om återvinning av metaller stämmer enligt kursen?
+key: hallb-atervinning-ensam-racker-inte
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 13 Hallbarhet, s. 7, 8, 21
+
+- [x] Efterfrågan på metaller är i dag större än mängden skrot som finns att återvinna.
+- [x] Alla material kan återvinnas, men återvinningen kostar energi och resurser.
+- [ ] Metaller förlorar alltid sina egenskaper när de återvinns.
+- [ ] Kritiska metaller som gallium och indium återvinns redan i mycket hög grad.
+
+En modell för cirkulär ekonomi fungerar inte enbart, eftersom efterfrågan på marknaden för närvarande överstiger mängden skrot, enligt föreläsningen med ungefär två tredjedelar. Därför behöver alla led i metallanvändningen förbättras, från primärproduktion och tillverkning till användning och återvinning. Metaller lämpar sig väl för återvinning, sparar resurser och energi och kan ge lika bra material. För många kritiska metaller, t.ex. gallium, indium och germanium i halvledare, är återvinningsgraden däremot mycket låg.
+
+## Enligt kursen finns inga hållbara material. Hur kan en produkt ändå göras mer hållbar?
+key: hallbara-produkter-kombination
+status: utkast
+källa: Canvas, Fo 13 Hallbarhet, s. 6, 18, 21, 22
+
+Genom en kombination av rätt materialval, bra design, rätt tillverkningsmetod och rätt återvinning, alltså bra ingenjörsarbete. I materialvalet tar man med resursförbrukning, energiförbrukning och CO₂-utsläpp över hela kedjan (materialtillverkning, produkttillverkning, användning, skrotning och återvinning), t.ex. med materialindex för CO₂-avtryck och inbäddad energi, och väljer återvinningsbara material. Dessutom: refabricering, återbruk och återvinning, och värdefulla produkter med lång livslängd.

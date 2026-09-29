@@ -343,26 +343,6 @@ källa: Canvas, 2024 MTT085 Fö17, s. 27; Canvas, MTT085 Tutorials-Part 3-5, s. 
 
 Sant. Viskositeten ökar med molekylvikten ($\eta \propto M_w$ på föreläsningsbilden). Omvänt ger lägre molekylvikt lägre viskositet, så att materialet blir lättare att bearbeta. Fyllmedel höjer också viskositeten.
 
-## MFI för en polymer ökar om den mäts vid högre temperatur.
-key: reo-sf-mfi-temperatur
-typ: sant-falskt
-svar: sant
-status: utkast
-källa: Canvas, MTT085 PM 3, s. 6-7; Canvas, 2024 MTT085 Fö17, s. 27; Canvas, Tentamen MTT085 25-01, s. 10
-
-Sant. Viskositeten sjunker när temperaturen höjs, och MFI har omvänd innebörd mot viskositeten: med samma vikt pressas mer smälta ut på 10 minuter, så MFI blir högre.
-
-## I en enskruvsextruder är trycket högst i inmatningszonen vid tratten.
-key: reo-sf-tryck-inmatningszon
-typ: sant-falskt
-svar: falskt
-status: utkast
-källa: Canvas, MTT085 Polymeric materials L4-5, s. 2-4; Canvas, Svarsförslag Tentamen MTT085 24-01, s. 3
-
-![Enskruvsextruder med tratt, cylinder, skruv, munstycke och de tre zonerna](/kort/materialteknik/enskruvsextruder.svg)
-
-Falskt. Trycket byggs upp i doseringszonen (metering zone) och är högst närmast munstycket, där det behövs för att pressa smältan genom munstycket. Inmatningszonen transporterar granulatet från tratten.
-
 ## Vid låga skjuvhastigheter, i nollskjuvområdet, orienteras polymerkedjorna kraftigt i flödesriktningen.
 key: reo-sf-nollskjuv-orientering
 typ: sant-falskt
@@ -373,15 +353,6 @@ källa: Canvas, MTT085 PM 3, s. 6; Canvas, 2025 MTT085 Fö17, s. 28; Canvas, Ten
 ![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
 
 Falskt. Vid små eller långsamma deformationer hinner kedjornas termiska rörelse återställa deras föredragna konformation, så orienteringen ändras inte och viskositeten är konstant. Kedjorna orienteras först vid högre skjuvhastigheter, i det skjuvförtunnande området.
-
-## För hög insprutningstemperatur vid formsprutning kan ge termisk nedbrytning av polymeren.
-key: reo-sf-hog-insprutningstemperatur
-typ: sant-falskt
-svar: sant
-status: utkast
-källa: Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 7; Canvas, 05142_06b-4, s. 26; Canvas, MTT085 Tutorials-Part 3-5, s. 2
-
-Sant. Smälttemperaturen begränsas uppåt av termisk nedbrytning av materialet och nedåt av kortskott (ofylld kavitet) och svaga svetslinjer.
 
 ## Delkristallina termoplaster krymper mer än amorfa när de stelnar.
 key: reo-sf-delkristallin-krymper-mer
@@ -403,32 +374,6 @@ källa: Canvas, 2025 MTT085 Fö19, s. 9; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 Falskt. Snabb avkylning sänker kristalliniteten, eftersom mikrostrukturen fryses innan kedjorna hunnit ordna sig helt i kristaller.
 
-## Vilken enhet har viskositet?
-key: reo-alt-viskositet-enhet
-typ: alternativ
-status: utkast
-källa: Canvas, 2025 MTT085 Fö17, s. 9; Canvas, MTT085 PM 3, s. 2; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 7
-
-- [x] Pa·s
-- [ ] 1/s
-- [ ] g/10 min
-- [ ] Pa
-
-Ur $\sigma = \eta\dot{\gamma}$ fås $\eta = \sigma/\dot{\gamma}$, dvs. Pa delat med 1/s, alltså Pa·s. 1/s är enheten för skjuvhastighet, Pa för spänning och g/10 min för smältflödesindex (MFI).
-
-## Två polymerer har MFI 2 g/10 min (A) respektive 13 g/10 min (B), mätta enligt samma standard. Vilka påståenden stämmer?
-key: reo-alt-mfi-jamforelse
-typ: alternativ
-status: utkast
-källa: Canvas, MTT085 PM 3, s. 7; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 7
-
-- [x] Polymer A har högre viskositet än polymer B.
-- [x] Med samma vikt och temperatur pressades mer av polymer B ut på 10 minuter.
-- [ ] Polymer B har högre viskositet, eftersom högre MFI betyder trögare smälta.
-- [ ] MFI-värdena anger polymerernas brottöjning.
-
-MFI är antalet gram som pressas ut under 10 minuter med en standardiserad vikt vid standardiserad temperatur. Polymer B gav 13 g och A bara 2 g, så A är trögast. MFI har omvänd innebörd mot viskositeten: högre MFI betyder lägre viskositet. MFI är ett flödesmått och säger inget om brottöjning.
-
 ## Vilka produkter tillverkas typiskt genom extrudering, med eller utan sekundär formning?
 key: reo-alt-produkt-extrudering
 typ: alternativ
@@ -441,19 +386,6 @@ källa: Canvas, MTT085 Polymeric materials L4-5, s. 4-5; Canvas, Tentamen Materi
 - [ ] Massproducerade detaljer med komplex tredimensionell form
 
 Extrudering ger produkter med en viss tvärsnittsprofil, t.ex. rör, slangar, filament, profiler och filmer; med film casting eller filmblåsning blir det tunn film. Tryckknappen i en kulspetspenna formsprutas (tentan 2016-10), och massproducerade detaljer med komplex form är just det formsprutning passar för.
-
-## Vilka är huvudenheter i en formsprutningsmaskin?
-key: reo-alt-formsprutningsmaskinens-enheter
-typ: alternativ
-status: utkast
-källa: Canvas, MTT085 Polymeric materials L4-5, s. 6; Canvas, MTT085 Tutorials-Part 3-5, s. 1; Canvas, Svarsförslag Tentamen MTT085 24-10, s. 19; Canvas, 2025 MTT085 Fö17, s. 22
-
-- [x] Plasticeringsenheten
-- [x] Formen
-- [ ] Enheten för sekundär formning
-- [ ] Kalandreringsenheten
-
-Enligt föreläsningsanteckningarna har en formsprutningsmaskin fyra huvudenheter: insprutningsenhet, plasticeringsenhet (en sorts enskruvsextruder), form och stängningsenhet. Sekundär formning (fiberspinning, film casting, filmblåsning) hör till extrudering, och kalandrering är en egen bearbetningsmetod.
 
 ## Vilka par av processfel och orsak stämmer för formsprutning?
 key: reo-alt-processfonster
@@ -480,32 +412,6 @@ källa: Canvas, MTT085 Polymeric materials L4-5, s. 6-7; Canvas, 2025 MTT085 Fö
 - [ ] Om formen bara har en kavitet behövs ingen sprue.
 
 Smältan går från cylindern genom sprue och fördelas via fördelningskanalerna till ingöten (gates), som leder in i kaviteterna. Ingötet är en liten öppning jämfört med detaljen och kanalerna och stelnar därför före detaljen. Har formen bara en kavitet fungerar sprue själv som ingöt (sprue gate).
-
-## Hur tillverkar man tunna polymerfibrer med starkt orienterad molekylstruktur?
-key: reo-alt-orienterade-fibrer
-typ: alternativ
-status: utkast
-källa: Canvas, Svar Materialteknik 2019-10-26, s. 4; Canvas, MTT085 Polymeric materials L4-5, s. 4-5; Canvas, MTT085 PM 3, s. 6
-
-- [x] Extrudering med fiberspinning som sekundär formning
-- [ ] Extrudering med film casting som sekundär formning
-- [ ] Formsprutning med långt eftertryck
-- [ ] Formpressning (compression molding)
-
-Vid fiberspinning extruderas smältan genom ett munstycke med ett eller flera hål och dras ut av valspar med mycket hög töjningshastighet, vilket ger högre molekylorientering än skjuvflöde. Film casting ger tunn film, inte fibrer. Formsprutning och formpressning ger formade detaljer, och formpressning sker vid låga skjuvhastigheter och ger lite orientering.
-
-## Hur påverkar högt tryck under bearbetning övergångstemperaturerna?
-key: reo-alt-tryck-overgangstemperatur
-typ: alternativ
-status: utkast
-källa: Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, Svar Materialteknik 2019-10-26, s. 4
-
-- [x] Glasövergångstemperaturen hos en amorf termoplast höjs.
-- [x] Smälttemperaturen hos en delkristallin termoplast höjs.
-- [ ] Smälttemperaturen hos en delkristallin termoplast sänks.
-- [ ] Trycket påverkar bara viskositeten, inte övergångstemperaturerna.
-
-Högt tryck pressar ihop molekylerna, så det krävs mer termisk energi för att frigöra dem så att de kan flyta. Därför höjs Tg för amorfa och Tm för delkristallina termoplaster, vilket syns i pVT-diagrammen.
 
 ## Vilket område i viskositetsfunktionen är det skjuvförtunnande? ![Viskositet mot skjuvhastighet i log-log-skala, uppdelad i områdena A, B och C från låg till hög skjuvhastighet](/kort/materialteknik/viskositetsfunktion-fraga.svg)
 key: reo-viskositet-omrade-skjuvfortunnande
@@ -564,3 +470,45 @@ källa: Canvas, MTT085 Polymeric materials L4-5, s. 9-10; Canvas, 2025 MTT085 F�
 ![pVT-diagram: amorf polymer med knäck vid Tg och delkristallin polymer med språng vid Tm](/kort/materialteknik/pvt-amorf-delkristallin.svg)
 
 För en delkristallin polymer sjunker den specifika volymen språngvis vid $T_m$ när kristallisationen börjar under avsvalning. En amorf polymer har inget språng, bara en knäck vid $T_g$ där kurvan byter lutning från smälta till glas.
+
+## När formen öppnas efter ett formsprutningsskott stöts ett sammanhängande plaststycke ut. Vilka delar av stycket är inloppssystem, som skiljs bort från produkten?
+key: reo-formsprutning-produkt-ingotssystem
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, 2025 MTT085 Fo18, s. 40
+
+- [x] Plasten som har stelnat i sprue
+- [x] Plasten som har stelnat i fördelningskanalerna (runners)
+- [x] Ingöten (gates)
+- [ ] Detaljerna som har formats i kaviteterna
+- [ ] Utstötarstiften
+
+Smältan går från cylindern genom sprue, fördelas i fördelningskanalerna och leds via små ingöt in i kaviteterna, där detaljerna får sin form. Plasten i sprue, kanaler och ingöt stelnar också och följer med ut, men den är bara vägen in; produkten är detaljerna från kaviteterna. Utstötarstiften hör till formen och stöter ut stycket, de följer inte med ut.
+
+## Vilka är formsprutningsmaskinens fyra huvudenheter, och vad gör var och en?
+key: reo-formsprutningsmaskinens-enheter-uppgift
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, MTT085 Tutorials-Part 3-5, s. 1, 2; Canvas, 2025 MTT085 Fo18, s. 36, 40; Canvas, 05142_06b-4, s. 26
+
+* **Plasticeringsenhet:** en sorts enskruvsextruder. Granulatet matas från tratten in i den uppvärmda cylindern, där den roterande skruven smälter det (värmeledning från cylindern och värme från friktion och flöde) och samlar en bestämd mängd smälta framför skruvspetsen.
+* **Insprutningsenhet:** förs fram och trycker in smältan i formen med högt tryck och hög hastighet; därefter läggs eftertryck på.
+* **Form:** sprue, fördelningskanaler, ingöt och kavitet, kylsystem (ibland) och utstötare. Detaljen kyls i formen tills den är styv nog att stötas ut.
+* **Stängningsenhet (clamping unit):** stänger formen och håller den stängd mot trycket i kaviteten. Blir trycket i kaviteten för högt i förhållande till maskinens låskraft tränger smälta ut i formens delningsplan (flash).
+
+## Vid formsprutning börjar detaljen stelna först när eftertrycket har släppts.
+key: reo-sf-total-kyltid-eftertryck
+typ: sant-falskt
+svar: falskt
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, MTT085 Tutorials-Part 3-5, s. 1, 2
+
+Falskt. Smältan börjar stelna mot den relativt kalla formen redan medan eftertrycket ligger på; eftertrycket motverkar krympningen och hålls tills ingötet har stelnat. Därefter fortsätter stelningen utan förhöjt tryck tills detaljen är tillräckligt styv för att stötas ut. Den totala kyltiden omfattar alltså både tiden med eftertryck och tiden därefter, och den utgör ungefär 80 % av cykeltiden.
+
+## Högt tryck under bearbetningen höjer glasomvandlingstemperaturen hos en amorf termoplast.
+key: reo-sf-tryck-hojer-tg-tm
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, 2025 MTT085 Fo19, s. 8, 9
+
+Sant. Högt tryck pressar molekylerna närmare varandra, så det krävs mer termisk energi för att frigöra dem så att de kan flyta. I ett pVT-diagram flyttas därför knäcken vid Tg (amorfa termoplaster) och språnget vid Tm (delkristallina termoplaster) till högre temperatur när trycket ökar.

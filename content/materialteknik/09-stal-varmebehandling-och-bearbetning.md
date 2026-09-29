@@ -11,9 +11,9 @@ Stål är järn legerat med kol som beroende på kolhalt och tillverkningsförh�
 key: beskriv-vad-en-anlopning-ar
 original: ja
 status: utkast
-källa: Rättelse: kortet angav fel temperatur (precis under ca 910 °C) och fel produkt (perlit + cementit); anlöpning sker vid måttlig temperatur och ger ferrit med fina cementitpartiklar; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, Lab_PM_M2_v2026, s. 11; Canvas, Lab_PM_M2_v2026, s. 13; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, Fö 12 Stål, s. 16; Canvas, Fö 12 Stål, s. 23; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 22; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 23
+källa: Rättelse: kortet angav fel temperatur (precis under ca 910 °C) och fel produkt (perlit + cementit); anlöpning sker vid måttlig temperatur och ger ferrit med fina cementitpartiklar; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, Lab_PM_M2_v2026, s. 11; Canvas, Lab_PM_M2_v2026, s. 13; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, Fö 12 Stål, s. 16; Canvas, Fö 12 Stål, s. 22; Canvas, Fö 12 Stål, s. 23; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 22; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 23
 
-Anlöpning görs efter martensithärdning, eftersom martensiten är mycket hård men ofta för spröd. Det härdade stålet värms till en måttlig temperatur, under den eutektoida temperaturen 727 °C (i föreläsningens exempel ca 200 till 650 °C, i labb-PM ca 500 °C).
+Anlöpning görs efter martensithärdning, eftersom martensiten är mycket hård men ofta för spröd. Det härdade stålet värms till en måttlig temperatur, under den eutektoida temperaturen, ca 723 °C (727 °C i labb-PM:et). I föreläsningens exempel är anlöpningstemperaturen ca 200 till 650 °C, i labb-PM ca 500 °C.
 
 * Martensiten sönderfaller till anlöpt martensit: ferrit med mycket små cementitpartiklar (inte perlit)
 * Hårdheten och sträckgränsen sjunker något, men segheten ökar kraftigt
@@ -94,8 +94,10 @@ Legeras med Cr för att få ett kromoxidskikt på ytan → korrosionsskydd
 key: vad-innebar-kalldeformation
 typ: begrepp
 original: ja
+status: utkast
+källa: Rättelse: kortet likställde kallbearbetning (processen) med deformationshärdning (härdningsmekanismen som processen ger); Canvas, Fo 12 Stal, s. 4, 13; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 36
 
-Kallbearbetning, även känt som deformationshärdning eller kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
+Kallbearbetning, även kallat kalldeformation, är en process som stärker metall genom plastisk deformation som exempelvis kallvalsning och tråddragning.
 
 Mycket högre dislokationsdensitet efter
 kallbearbetning → högre sträckgräns
@@ -350,3 +352,92 @@ källa: Canvas, Fö 12 Stål, s. 29; Canvas, Övning 7 m lösningar, s. 5
 - [ ] Gjutjärn har lägre kolhalt än stål
 
 Gjutjärn har 2 till 4 % C. I de vanliga typerna gråjärn och segjärn består mikrostrukturen av perlit och grafit. I gråjärn är grafiten fjällformad, vilket ger lägre E-modul (ungefär hälften av ståls), ett relativt sprött material och god vibrationsdämpning. I segjärn är grafiten sfärisk, vilket ger högre seghet. Gjutjärn används t.ex. till maskindelar och maskinstativ.
+
+## Vid martensithärdning får martensiten samma kolhalt som austeniten hade före snabbkylningen.
+key: martensit-samma-kolhalt-som-austenit
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 13; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 23, 25
+
+Sant. Vid snabbkylningen hinner kolet inte diffundera och bilda cementit, så austeniten omvandlas diffusionslöst till martensit med samma kolhalt men en annan gitterstruktur (bct, som liknar ferritens bcc). Det tvångslösta kolet gör martensiten mycket hård. Austenit är den enda fas som kan omvandlas till martensit, så ferrit eller cementit som redan finns när kylningen börjar finns kvar.
+
+## Ett stål med 0,2 % C hålls strax över 723 °C tills jämvikt har ställt in sig och snabbkyls sedan. Vilken struktur får det? (Austeniten har då ca 0,8 % C; ferritens kolhalt kan försummas.)
+key: stal-02-tvafas-snabbkylning
+typ: alternativ
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 13; Canvas, GLU 02 Fasdiagram, s. 17, 19; Canvas, Fo 12 Stal, s. 17
+
+- [x] Ca 75 % ferrit och 25 % martensit med ca 0,8 % C
+- [ ] 100 % martensit med 0,2 % C
+- [ ] Ca 25 % ferrit och 75 % martensit med ca 0,2 % C
+- [ ] Ca 75 % ferrit och 25 % perlit
+
+![Förenklat Fe–C-diagram för stål med faser och strukturbeståndsdelar kring den eutektoida punkten](/kort/materialteknik/fe-c-stalhornet.svg)
+
+Strax över 723 °C ligger stålet i tvåfasområdet ferrit + austenit. Hävstångsregeln ger andelen austenit $= \dfrac{0{,}2 - 0}{0{,}8 - 0} = 0{,}25$. Vid snabbkylningen omvandlas bara austeniten, till martensit med samma kolhalt (ca 0,8 % C), medan ferriten finns kvar. 100 % martensit kräver att stålet först austenitiseras helt, och perlit bildas bara vid långsam kylning.
+
+## Ett verktygsstål med 1,1 % C hålls strax över 723 °C och snabbkyls. Vilka faser finns efteråt? (Austeniten har då ca 0,8 % C; cementit har 6,67 % C.)
+key: stal-11-cementit-och-martensit
+typ: alternativ
+status: utkast
+källa: Canvas, Lab_PM_M2_v2026, s. 12, 13; Canvas, Fo 12 Stal, s. 17, 18; Canvas, GLU 02 Fasdiagram, s. 17
+
+- [x] Ca 95 % martensit med ca 0,8 % C och 5 % cementit
+- [ ] 100 % martensit med 1,1 % C
+- [ ] Ca 84 % martensit och 16 % cementit
+- [ ] Perlit och cementit
+
+Strax över 723 °C ligger ett övereutektoidiskt stål i tvåfasområdet austenit + cementit. Hävstångsregeln ger andelen cementit $= \dfrac{1{,}1 - 0{,}8}{6{,}67 - 0{,}8} \approx 0{,}05$ och andelen austenit ca 95 %. Vid snabbkylningen blir austeniten martensit med samma kolhalt, medan cementiten finns kvar; vid härdning av övereutektoidiska stål går man i vanliga fall inte så högt i temperatur att all cementit i korngränserna löses upp. 16 % fås om man räknar $1{,}1/6{,}67$, som om allt kol låg i cementit. Perlit och cementit bildas vid långsam kylning.
+
+## Ett stål med 0,45 % C härdas till 100 % martensit och anlöps sedan. Ungefär hur stor andel cementit innehåller det efter anlöpningen? (Cementit har 6,67 % C; ferritens kolhalt kan försummas.)
+key: anlopning-andel-cementit
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 12 Stal, s. 16, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24, 25; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, GLU 02 Fasdiagram, s. 17
+
+- [x] Ca 7 %
+- [ ] Ca 56 %
+- [ ] Ca 45 %
+- [ ] 0 %, eftersom cementiten löses upp vid anlöpningen
+
+Anlöpt martensit är ferrit med mycket små cementitpartiklar, och kolhalten avgör andelen cementit. Hävstångsregeln mellan ferrit (≈ 0 % C) och cementit (6,67 % C) ger $0{,}45/6{,}67 \approx 0{,}07$, alltså ca 7 % cementit och 93 % ferrit. 56 % är andelen perlit ($0{,}45/0{,}8$) om samma stål i stället hade svalnat långsamt, och 45 % fås om man tar kolhalten som andel. Anlöpningen sker under den eutektoida temperaturen; martensiten sönderfaller då till ferrit och cementit.
+
+## Ett eutektoidiskt stål kyls snabbt från austenitområdet till en temperatur där perlit bildas, hålls där tills ungefär en fjärdedel av austeniten har omvandlats och snabbkyls sedan till rumstemperatur. Vilken struktur får det?
+key: ttt-avbruten-perlitomvandling
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 12 Stal, s. 20; Canvas, Lab_PM_M2_v2026, s. 13, 14; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20, 21
+
+- [x] Ca 25 % perlit och 75 % martensit
+- [ ] 100 % perlit, eftersom omvandlingen fortsätter under snabbkylningen
+- [ ] 100 % martensit, eftersom perliten omvandlas vid snabbkylningen
+- [ ] Ferrit med sfäroidiserad cementit
+
+TTT-diagrammet visar hur lång tid det tar för instabil austenit att omvandlas till perlit vid olika temperaturer. När hållningen avbryts finns tre fjärdedelar kvar som austenit. Vid snabbkylningen hinner kolet inte diffundera, så den kvarvarande austeniten blir martensit. Perlit som redan har bildats blir inte martensit, eftersom bara austenit kan omvandlas till martensit. Ferrit med sfäroidiserad cementit fås vid mjukglödgning.
+
+## Två prov av samma eutektoida stål har värmebehandlats olika: det ena har mjukglödgats och det andra normaliserats. Vilka påståenden stämmer?
+key: mjukglodgat-normaliserat-jamforelse
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 12 Stal, s. 15; Canvas, Lab_PM_M2_v2026, s. 11, 12; Canvas, GLU 02 Fasdiagram, s. 17, 19
+
+- [x] I det mjukglödgade provet är cementiten sfäroidiserad, som runda partiklar i ferrit.
+- [x] Det normaliserade provet har lamellär perlit, omväxlande lameller av ferrit och cementit.
+- [x] Båda proven har samma andel ferrit och cementit.
+- [ ] Det mjukglödgade provet har högre andel ferrit, eftersom cementiten har lösts upp.
+
+Båda behandlingarna ger jämviktsfaserna ferrit och cementit, och vid samma kolhalt ger hävstångsregeln samma fasandelar. Det som skiljer är cementitens form: normalisering (austenitisering och långsam kylning) ger lamellär perlit, medan mjukglödgning (värmning under ca 723 °C) genom diffusion ger sfäroidiserad cementit, lägre sträckgräns och ett stål som är lättare att maskinbearbeta.
+
+## Samma stål med medelhög kolhalt värmebehandlas på tre sätt: mjukglödgning, normalisering och härdning följd av anlöpning. Vilken ordning gäller för sträckgränsen, från lägst till högst?
+key: stal-varmebehandling-strackgrans-ordning
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 12 Stal, s. 15, 16, 23; Canvas, Ovning 7 m losningar, s. 5; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 46
+
+- [x] Mjukglödgat < normaliserat < härdat och anlöpt
+- [ ] Normaliserat < mjukglödgat < härdat och anlöpt
+- [ ] Härdat och anlöpt < normaliserat < mjukglödgat
+- [ ] Alla tre får samma sträckgräns, eftersom kolhalten är densamma
+
+Mjukglödgning ger sfäroidiserad cementit och lägre sträckgräns, så att stålet blir lätt att maskinbearbeta. Normalisering ger jämviktsstrukturen med lamellär perlit. Härdning och anlöpning ger ferrit med mycket små cementitpartiklar och används när hårdhet och sträckgräns är viktigt; de fina karbiderna ger den höga sträckgränsen. Duktiliteten går i regel åt andra hållet, eftersom starkare material tenderar att ha lägre duktilitet.

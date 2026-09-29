@@ -15,11 +15,13 @@ källa: Rättelse: "atomerna börjar vibrera" var fel, atomerna vibrerar redan o
 ## Beskriv utförligt vad smälttemperatur och glasomvandlingstemperatur är och vilka material respektive är relevant för.
 key: beskriv-utforligt-vad-smalttemperatur
 original: ja
+status: utkast
+källa: Rättelse: kortet listade termoplaster bara under glasomvandlingstemperatur, men delkristallina termoplaster har både Tg (de amorfa delarna) och Tm (kristalliterna); Canvas, MTT085 PM 2, s. 4; Canvas, 2025 MTT085 Fo16, s. 21
 
 Smälttemperatur:
 
 * Kristallina material
-* Metaller, keramer
+* Metaller, keramer, delkristallina termoplaster (som har både Tm och Tg)
 * Går från fast till "lågviskös"
 vätska vid smälttemperaturen, "Tm"
 
@@ -120,12 +122,14 @@ Diffusion i ett fast material är den temperaturberoende process där atomer fö
 ## Vilka är Ficks 1:a och 2:a lag?
 key: vilka-ar-ficks-1-a-och-2-a-lag
 original: ja
+status: utkast
+källa: Rättelse: kortet sa att Ficks lagar inte behöver vara relaterade till temperatur och att ekvationerna bäst löses numeriskt, men diffusionskoefficienten i lagarna ökar exponentiellt med temperaturen och kursen kräver att man kan räkna diffusion vid stationärt tillstånd med Ficks första lag; Canvas, Fo 10 Material och varme, s. 13; Canvas, Lasanvisningar Kapitel 12 och 13, s. 1; Canvas, Short_dictionary_ v2026, s. 10, 13
 
-Ficks lagar beskriver allmänt hur diffusion beter sig i ett material, det behöver nödvändigtvis inte vara relaterat till temperatur.
+Ficks lagar beskriver hur diffusion beter sig i ett material. Proportionalitetskonstanten i dem är diffusionskoefficienten D, som ökar exponentiellt med temperaturen, $D = D_0 e^{-Q/RT}$.
 
 Fick's 1:a lag beskriver hur flödet (J) är proportionellt mot den partiella derivatan av koncentrationen och Fick's 2:a beskriver hur den partiella derivatan av koncentrationen med avseende på tiden är proportionell mot andraderivatan av koncentrationen.
 
-Man får en uppsättning partiella differentialekvationer som bäst löses numeriskt.
+Första lagen används vid stationärt tillstånd (steady state), när koncentrationsprofilen inte ändras med tiden; den andra behövs när koncentrationen ändras med tiden (icke-stationärt).
 
 ## Vad är krypning? Vad finns det för olika typer av krypning?
 key: vad-ar-krypning-vad-finns-det-for-olika
@@ -349,3 +353,42 @@ Termiska spänningar uppstår när sammanfogade material har olika termisk utvid
 
 * Det enklaste är att välja material med liknande utvidgningskoefficienter, men det är ofta inte möjligt i en given konstruktion.
 * Ett alternativ är en graderad fog: mellanliggande material med stegvis ändrat $\alpha$ (t.ex. stål fogat mot en nickellegering med lägre $\alpha$) fungerar som buffert och minskar skillnaden i utvidgning i varje fog.
+
+## Hur beror diffusionskoefficienten D på temperaturen T och aktiveringsenergin Q?
+key: diffusion-arrhenius-samband
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 10 Material och varme, s. 13; Canvas, Lasanvisningar Kapitel 12 och 13, s. 1
+
+- [x] $D = D_0\,e^{-Q/RT}$
+- [x] Vid en given temperatur (och samma $D_0$) ger en högre aktiveringsenergi Q en lägre D.
+- [ ] Det är Q som ökar exponentiellt med temperaturen.
+- [ ] $D = D_0\,e^{Q/RT}$, så D minskar när T ökar.
+
+$D_0$ är en preexponentiell konstant, Q aktiveringsenergin (J/mol), R den allmänna gaskonstanten (8,314 J/(mol·K)) och T temperaturen i kelvin. Q är den energibarriär som atomerna måste övervinna med termisk energi för att kunna hoppa, och den är konstant för en viss atom i ett visst material; det är D, alltså diffusionshastigheten, som ökar exponentiellt med temperaturen. Ju högre Q, desto mindre blir $e^{-Q/RT}$ och därmed D vid en given temperatur, om $D_0$ är densamma. Med $+Q/RT$ i exponenten skulle diffusionen i stället avta med temperaturen.
+
+## Självdiffusion i aluminium har aktiveringsenergin $Q = 142$ kJ/mol. Ungefär hur många gånger större är diffusionskoefficienten vid 500 °C än vid 400 °C?
+key: diffusion-arrhenius-berakning
+typ: alternativ
+status: utkast
+källa: Canvas, Ovning 8 m losningar, s. 4; Canvas, Fo 10 Material och varme, s. 13
+
+- [x] Ca 27 gånger
+- [ ] Ca 1,25 gånger
+- [ ] Ca 1,15 gånger
+- [ ] Ca 5 100 gånger
+
+$\dfrac{D_{500}}{D_{400}} = \exp\!\left[\dfrac{Q}{R}\left(\dfrac{1}{673} - \dfrac{1}{773}\right)\right] = \exp\!\left[\dfrac{142\,000}{8{,}314}\cdot 1{,}92\cdot 10^{-4}\right] \approx e^{3{,}28} \approx 27$. $D_0$ tar ut sig, och temperaturen ska vara i kelvin. 1,25 är bara kvoten 500/400 och 1,15 kvoten 773/673; ingen av dem tar hänsyn till det exponentiella beroendet. Ca 5 100 gånger fås om temperaturerna sätts in i °C. Diffusionen är alltså mycket känslig för temperaturen.
+
+## Vilka påståenden om krypning stämmer?
+key: krypning-pastaenden
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 10 Material och varme, s. 14, 15, 16; Canvas, MTT085 Polymeric materials L6, s. 5; Canvas, 2021 MTT085 Ovningsuppgifter - Polymera material, s. 8
+
+- [x] I metaller blir krypning betydande först över ungefär halva smälttemperaturen (i kelvin).
+- [x] Polymerer kryper redan vid rumstemperatur; kursens krypkurvor för t.ex. PMMA gäller 20 °C.
+- [ ] Krypdeformationen går helt tillbaka när lasten tas bort.
+- [ ] Krypning kräver dislokationsrörelse och kan därför bara ske i kristallina material.
+
+Krypning är långsam, tidsberoende deformation under last. I metaller sker den över cirka 0,5 $T_m$ och ger plastisk (permanent) deformation. Mekanismerna är diffusionskrypning, där kornen förlängs i belastningsriktningen genom diffusion, och power-law-krypning, där diffusion hjälper dislokationer runt hinder; diffusionskrypning kräver alltså ingen dislokationsrörelse, och även amorfa polymerer kryper. När krypspänningen tas bort från en polymer återgår bara en del av töjningen; kedjor som har glidit förbi varandra stannar i sina nya lägen.

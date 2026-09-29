@@ -150,23 +150,6 @@ källa: Canvas, Fö 13 Aluminium och andra metaller, s. 4; Canvas, Fö 13 Alumin
 
 Aluminiumlegeringar delas in i smideslegeringar och gjutlegeringar. Av smideslegeringarna är 2xxx, 6xxx och 7xxx värmebehandlingsbara: de utskiljningshärdas och får hög sträckgräns (t.ex. 2000- och 7000-serierna i flyg och rymd). Serierna 1000, 3000 och 5000 är inte värmebehandlingsbara, dvs. kan inte utskiljningshärdas, och härdas i stället genom lösnings- och deformationshärdning.
 
-## Beskriv likheter och skillnader mellan härdning av stål och utskiljningshärdning av aluminium.
-key: al-stal-hardning-jamforelse
-status: utkast
-källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 4; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 5; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 23; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 27
-
-**Likheter**
-
-* Båda metallerna måste legeras för att kunna härdas: Fe med C, Al med t.ex. Cu.
-* Metallen värms till ett enfasområde där legeringsämnet löses (austenitisering respektive upplösningsbehandling).
-* Snabbkylning ger en metastabil fas (martensit respektive metastabil $\alpha$-fas).
-* Uppvärmning till måttlig temperatur ger utskiljningar av en jämviktsfas; tiden vid temperaturen avgör utskiljningarnas storlek och därmed sträckgränsen.
-
-**Skillnader**
-
-* Sista steget heter anlöpning för stål och åldring för aluminium.
-* Vid anlöpning minskar sträckgränsen kontinuerligt med tiden, medan den vid åldring först ökar, når ett maximum (toppåldrat) och sedan minskar (överåldrat).
-
 ## Vid åldring av en värmebehandlingsbar aluminiumlegering: vilket tillstånd ger högst sträckgräns?
 key: al-toppaldrat
 typ: alternativ
@@ -179,3 +162,49 @@ källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, 
 - [ ] Direkt efter snabbkylningen, före åldringen
 
 Toppåldrat material är så starkt som legeringen kan bli, med måttlig seghet (t.ex. båtmaster och slalomstavar). Underåldrat är segare men har lite lägre sträckgräns. Överåldrat är lite svagare och segare men tåligare mot hög temperatur, eftersom utskiljningarna har vuxit klart; det används t.ex. i motorblock. Det är åldringen, som ger små jämnt fördelade utskiljningar, som höjer sträckgränsen efter snabbkylningen.
+
+## Titanlegeringar kan användas vid betydligt högre temperaturer än aluminium- och magnesiumlegeringar.
+key: titan-anvandningstemperatur
+typ: sant-falskt
+svar: sant
+status: utkast
+källa: Canvas, Fo 13 Aluminium och andra metaller, s. 7, 8, 9, 12, 14
+
+Sant. Enligt föreläsningens data går titanlegeringar att använda upp till knappt 500 °C (487 °C), jämfört med ca 150–200 °C för aluminiumlegeringarna och ca 190 °C för magnesiumlegeringarna. Bland titanlegeringarnas användningsområden nämner föreläsningen kompressorn i jetmotorer, trots att titan är dyrt.
+
+## Vilka par av metall och typisk tillämpning stämmer enligt kursen?
+key: metaller-tillampningar-ti-mg-cu
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 13 Aluminium och andra metaller, s. 11, 12, 13, 14, 15
+
+- [x] Titanlegeringar: kemisk industri, värmeväxlare, implantat och kompressorn i jetmotorer
+- [x] Magnesiumlegeringar: gjutna kåpor till kameror, datorer och mobiltelefoner
+- [ ] Magnesiumlegeringar: komponenter som ska arbeta vid 500 °C
+- [ ] Koppar: lätta bärande konstruktioner där låg densitet är viktigast
+
+Titan har utmärkt hållfasthet och korrosionsskydd och är biokompatibelt, men är dyrt på grund av tillverkningsprocessen. Magnesium har låg densitet (1,8 kg/dm³) och god gjutbarhet; ca 75 % används som gjutgods, bl.a. i flyg, fordon, sport och kåpor, men användningstemperaturen går bara upp till ca 190 °C. Koppar har hög densitet (8,9 kg/dm³) och väljs för sin utmärkta formbarhet och höga elektriska och termiska ledningsförmåga.
+
+## Vilka påståenden om magnesiumlegeringar stämmer?
+key: magnesium-egenskaper-begransningar
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 13 Aluminium och andra metaller, s. 7, 8, 9, 11, 12
+
+- [x] Deras E-modul (ca 42–47 GPa) är lägre än aluminiumlegeringarnas (ca 68–76 GPa).
+- [x] De används bara upp till måttliga temperaturer, ungefär 190 °C.
+- [ ] HCP-strukturen ger dem mycket god plastisk formbarhet.
+- [ ] De används mest som smidesgods.
+
+Magnesium har låg densitet (1,8 kg/dm³), god gjutbarhet och god maskinbarhet. HCP-strukturen ger begränsad plastisk formbarhet, så ca 75 % används som gjutgods och 25 % som smidesgods. Legeringarna har låg E-modul, brottseghet 12–18 MPa√m och användningstemperatur upp till ca 190 °C. Typiska tillämpningar är lätta gjutna detaljer, t.ex. kåpor till maskiner, kameror, datorer och mobiltelefoner.
+
+## Utskiljningshärdning av en Al–4 % Cu-legering görs i tre steg. Vad åstadkommer upplösningsbehandlingen, snabbkylningen och åldringen var för sig?
+key: al-cu-utskiljningshardning-steg
+status: utkast
+källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26, 27; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 18, 19; Canvas, Exempel fasdiagram, s. 7; Canvas, Fo 13 Aluminium och andra metaller, s. 5; Canvas, Ovning 7 m losningar, s. 5
+
+![Al-hörnet av fasdiagrammet Al–Cu med aluminiumfasen (Al), eutektisk linje vid 548 °C och fasen θ = CuAl₂](/kort/materialteknik/al-cu-alhornet.svg)
+
+1. **Upplösningsbehandlingen** löser all Cu i aluminiumet, så att bara $\alpha$ finns kvar. Legeringen värms in i enfasområdet $\alpha$: över solvuslinjen (ca 500 °C för 4 % Cu) men under solidus, så att inget smälter. I kursens exempel görs den strax under den eutektiska temperaturen 548 °C.
+2. **Snabbkylningen** till rumstemperatur behåller all Cu i lösning: Cu hinner inte diffundera och bilda $\theta$, så en metastabil, övermättad $\alpha$-fas bildas. Vid långsam kylning skulle $\theta$ i stället bildas som grova partiklar, främst i korngränserna.
+3. **Åldringen** vid måttligt förhöjd temperatur (eller vid rumstemperatur, naturlig åldring) låter Cu diffundera korta sträckor, så att små, jämnt fördelade $\theta$-utskiljningar bildas i $\alpha$. De hindrar dislokationsrörelse och höjer sträckgränsen. Tid och temperatur avgör utskiljningarnas storlek: underåldrat, toppåldrat eller överåldrat.

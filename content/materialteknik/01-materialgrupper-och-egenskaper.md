@@ -319,3 +319,16 @@ källa: Canvas, Kapitel_02 Material och tillverkning databaser, s. 3, 5; Canvas,
 - [ ] Termoplaster
 
 De sex familjerna är metaller (med legeringar), keramer, glas, polymerer, elastomerer och hybrider (t.ex. kompositer). I den grövre indelningen i fyra grupper räknas glas till keramerna och elastomerer till polymererna. Legeringar hör till metallfamiljen och termoplaster är en undergrupp till polymererna, så ingen av dem är en egen familj.
+
+## Vilka påståenden om kolfiberkompositer stämmer enligt kursen?
+key: komposit-kolfiber-begransningar
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 11; Canvas, Kapitel_03 Materialval, s. 41; Canvas, Fo 13 Hallbarhet, s. 20
+
+- [x] De har hög styrka och låg vikt och används t.ex. i flygplan, vindkraft och sport.
+- [x] Återvinningen beskrivs som en utmaning.
+- [ ] De är billigare per kilo än rostfritt stål.
+- [ ] De har högre densitet än stål.
+
+Kolfiberkompositer kombinerar hög styrka med låg vikt och används i t.ex. flygplan, vindkraft, sport och medicin. De kallas ibland "framtidens material", men återvinningen beskrivs i kursen som en utmaning. Priset är en viktig begränsning: i kursens stolsexempel (BM 65) avfärdas CFRP som för dyrt, och i SpaceX-exemplet bytte man från kolfiberkomposit och gjutet titan till rostfritt stål, bland annat för lägre kostnad per kilo och enklare tillverkning och reparation. Låg vikt betyder här låg densitet, så de har lägre densitet än stål, inte högre.

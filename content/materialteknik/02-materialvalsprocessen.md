@@ -148,7 +148,7 @@ typ: alternativ
 status: utkast
 källa: Canvas, Quiz vecka 3, fråga 9; Canvas, Fo 2 Materialval, s. 6, 7; Canvas, Kapitel_03 Materialval, s. 35; Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25; Canvas, performance-indices-booklet-bokpeien22, s. 2
 
-- [ ] Materialindex är ett numeriskt värde som används för att rangordna material efter hur bra de uppfyller kraven.
+- [ ] Materialindex används i sållningen för att ta bort de material som inte uppfyller kraven.
 - [x] Ett materialindex kan innehålla en eller flera materialegenskaper.
 - [x] Man kan behöva använda flera materialindex för att komma fram till ett bra materialval.
 - [ ] Alla materialindex måste innehålla materialets densitet.
@@ -244,3 +244,80 @@ status: utkast
 källa: Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25
 
 Den används när det finns en konflikt mellan önskemål (mål), t.ex. låg vikt och lågt pris, och det är oklart vilken parameter som är viktigast. Ett paretodiagram visar vilka alternativ som är de bästa kompromisserna mellan målen.
+
+## Lätt och stark panel i böjning (längd och bredd givna, tjockleken fri): vilket materialindex ska minimeras?
+key: materialindex-latt-stark-panel
+typ: alternativ
+status: utkast
+källa: Canvas, Kapitel_03 Materialval, s. 34, 35; Canvas, Ovning 4 m losningar, s. 4
+
+- [x] $\rho/\sigma_y^{1/2}$
+- [ ] $\rho/\sigma_y^{2/3}$
+- [ ] $\rho/\sigma_y$
+- [ ] $\rho/E^{1/3}$
+
+För minsta massa hos en panel i böjning, där hållfastheten är dimensionerande och tjockleken är den fria variabeln, är indexet $\rho/\sigma_y^{1/2}$; välj material med lägst värde, dvs. högst $\sigma_y^{1/2}/\rho$. $\rho/\sigma_y^{2/3}$ gäller en balk med fri tvärsnittsarea, $\rho/\sigma_y$ en dragstång och $\rho/E^{1/3}$ en panel där styvheten är dimensionerande.
+
+## Billig och stark balk i böjning (längd och last givna, tvärsnittsarean fri): vilket materialindex ska maximeras?
+key: materialindex-billig-stark-balk
+typ: alternativ
+status: utkast
+källa: Canvas, Kapitel_03 Materialval, s. 34, 35
+
+- [x] $\sigma_y^{2/3}/(C_m\rho)$
+- [ ] $\sigma_y^{2/3}/\rho$
+- [ ] $\sigma_y^{2/3}/C_m$
+- [ ] $\sigma_y/(C_m\rho)$
+
+När målet är lägsta materialkostnad i stället för lägsta vikt ersätts densiteten $\rho$ med $C_m\rho$, där $C_m$ är materialkostnaden per kg: kostnaden är massan gånger kilopriset. $\sigma_y^{2/3}/\rho$ är indexet för en lätt och stark balk. $\sigma_y^{2/3}/C_m$ saknar densiteten, som behövs eftersom $C_m$ är pris per kilo. $\sigma_y/(C_m\rho)$ gäller en billig och stark dragstång.
+
+## Material för en lätt och stark balk rangordnas med $\sigma_y^{2/3}/\rho$. Vilken lutning har linjer med konstant indexvärde i ett diagram med $\log\sigma_y$ mot $\log\rho$?
+key: materialindex-lutning-hallfast-balk
+typ: alternativ
+status: utkast
+källa: Canvas, Kapitel_03 Materialval, s. 35, 36
+
+- [x] 1,5
+- [ ] 2/3
+- [ ] 2
+- [ ] 1
+
+$\sigma_y^{2/3}/\rho = C$ ger $\sigma_y^{2/3} = C\rho$, alltså $\sigma_y = C^{3/2}\rho^{3/2}$ och $\log\sigma_y = 1{,}5\log\rho + 1{,}5\log C$: en rät linje med lutningen 1,5. Alla material på linjen är lika bra. Material ovanför linjen har högre $\sigma_y$ vid samma densitet, alltså högre indexvärde, och är bättre. Samma härledning ger lutningen 2 för $E^{1/2}/\rho$ i ett $E$–$\rho$-diagram.
+
+## Vilka par av komponent och typiskt lastfall stämmer?
+key: lastfall-identifiera-komponent
+typ: alternativ
+status: utkast
+källa: Canvas, Ovning 3 m losningar, s. 1, 5; Canvas, Kapitel_03 Materialval, s. 33
+
+- [x] Läskburk: skal med inre tryck
+- [x] Luftledning för el: dragstång (ren dragbelastning)
+- [x] Vindkraftverksblad: balk i böjning
+- [ ] Skosula: dragstång
+
+I översättningen beskrivs komponentens funktion som ett typiskt lastfall, eftersom lastfallet avgör vilket materialindex som gäller. Stänger tar upp draglaster, balkar böjmoment, axlar vridmoment och pelare trycklaster. I kursens övning är läskburken ett skal med inre tryck, luftledningen en dragstång och både vindkraftverksbladet och skosulan balkar i böjning.
+
+## Lätt tryckkärl: en cylinder med givet inre tryck och given radie, där väggtjockleken är fri, får inte plasticera. Vilket materialindex ska maximeras?
+key: materialindex-tryckkarl-cylinder
+typ: alternativ
+status: utkast
+källa: Canvas, Ovning 4 m losningar, s. 4; Canvas, Kapitel_03 Materialval, s. 35
+
+- [x] $\sigma_y/\rho$
+- [ ] $\sigma_y^{2/3}/\rho$
+- [ ] $\sigma_y^{1/2}/\rho$
+- [ ] $E^{1/2}/\rho$
+
+I kursens indextabell för hållfasthetsbegränsad design med minsta massa gäller $\sigma_y/\rho$ för en cylinder med inre tryck där trycket och radien är givna och väggtjockleken är fri. Väggen belastas i drag, och indexet blir detsamma som för en stark dragstång. $\sigma_y^{2/3}/\rho$ gäller en balk, $\sigma_y^{1/2}/\rho$ en panel i böjning och $E^{1/2}/\rho$ en styv balk.
+
+## Tältstängerna till ett fjälltält ska vara så lätta som möjligt. Gör en översättning och välj materialindex.
+key: materialval-taltstang-oversattning
+status: utkast
+källa: Canvas, Materialval Flera mal, s. 2, 3, 4; Canvas, Kapitel_03 Materialval, s. 34, 35; Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25
+
+* **Funktion:** balk i böjning, styvhetsbegränsad
+* **Krav:** användningstemperatur −30 till 50 °C, viss brottseghet (5 MPa√m), viss sträckgräns (50 MPa), viss E-modul (50 GPa), kunna formas till tunna rör
+* **Mål:** låg vikt
+* **Fria variabler:** tvärsnittsarea och material (metall eller komposit)
+
+Materialindex: $M = E^{1/2}/\rho$, som maximeras (lätt och styv balk). Kraven används i sållningen och målet i rangordningen. Ska stängerna dessutom vara billiga blir det ett andra index, där $\rho$ ersätts med $C_m\rho$, och målkonflikten hanteras med ett paretodiagram.

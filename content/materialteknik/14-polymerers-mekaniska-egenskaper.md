@@ -13,32 +13,6 @@ källa: Canvas, Quiz Polymeric materials Fo19-21, fråga 4; Canvas, 2025 MTT085 
 
 I ett krypprov hålls spänningen konstant och töjningen mäts över tiden. Konstant töjning med uppmätt spänning är i stället ett relaxationsprov. Snitt genom krypkurvorna vid konstant tid ger isokrona spännings-töjningskurvor. Slagprov är korttidsprov, där polymerer oftast kan betraktas som rent elastiska, medan krypprov är långtidsprov.
 
-## När får polymerer sprött brott i ett kortvarigt dragprov?
-key: polymer-sprott-brott-nar
-typ: alternativ
-status: utkast
-källa: Canvas, 2025 MTT085 Fo21, s. 7; Canvas, 05142_10 (Osswald kap. 10), s. 8; Canvas, MTT085 Polymeric materials L6, s. 7; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 9
-
-- [x] Termoplaster under sitt Tg
-- [x] Högt tvärbundna polymerer (härdplaster)
-- [ ] Delkristallina termoplaster mellan Tg och Tm
-- [ ] Amorfa termoplaster över sitt Tg
-
-Sprött brott uppträder i regel hos termoplaster under Tg och hos högt tvärbundna polymerer, vid mycket små töjningar (kring 1 % eller mindre). Delkristallina termoplaster mellan Tg och Tm får i stället duktilt brott. En amorf termoplast över Tg har förlorat sin styvhet och får inte sprött brott i ett kortvarigt dragprov; sprött brott över Tg kan däremot uppträda vid krypbrott och utmattning.
-
-## Vilken polymer bör få duktilt brott i ett kortvarigt dragprov?
-key: polymer-duktilt-brott-vilken
-typ: alternativ
-status: utkast
-källa: Canvas, 05142_10 (Osswald kap. 10), s. 12; Canvas, MTT085 Polymeric materials L6, s. 7–8; Canvas, 2025 MTT085 Fo21, s. 10; Canvas, Tentamen MTT085 25-01, s. 13
-
-- [x] En delkristallin termoplast mellan Tg och Tm
-- [ ] En amorf termoplast under Tg
-- [ ] En delkristallin termoplast under Tg
-- [ ] En härdplast
-
-Duktilt brott förutsätter flera längdskalor i materialet (sfäruliter, lameller, amorfa områden), och utan mjukgörare gäller det bara delkristallina termoplaster mellan Tg och Tm. Under Tg får både amorfa och delkristallina termoplaster sprött brott, och högt tvärbundna härdplaster är spröda.
-
 ## Vad stämmer om krackelering (crazing) i en amorf polymer?
 key: polymer-krackelering-vad-stammer
 typ: alternativ
@@ -208,16 +182,6 @@ källa: Canvas, 2025 MTT085 Fo21, s. 13; Canvas, 05142_10 (Osswald kap. 10), s. 
 
 En lokal minskning av tvärsnittsarean som följer efter flytpunkten när en delkristallin polymer dras. Därefter följer en lång kalldragning där sfärulitstrukturen först deformeras och sedan bryts upp, så att starkt orienterade områden bildas.
 
-## Beskriv den typiska spännings-töjningskurvan för en amorf termoplast vid rumstemperatur (under Tg) i ett kortvarigt dragprov.
-key: polymer-amorf-dragprovskurva
-status: utkast
-källa: Canvas, Tentamen Materialteknik mrd svar 2021-10-23 korrigerad, uppgift 9a; Canvas, 2025 MTT085 Fo21, s. 7–9; Canvas, 05142_10 (Osswald kap. 10), s. 8–10
-
-Sprött brott vid mycket små töjningar, kring 1 % eller mindre (t.ex. polystyren).
-
-1. Kurvan är först linjär och deformationen reversibel.
-2. Strax före brottet bildas mikrosprickor, krazer (crazing), vinkelrätt mot den största huvudspänningen. Det är de som gör att kurvan slutar vara linjär, och därefter brister provet.
-
 ## Beskriv vad som händer i molekylstrukturen vid halsbildning i en delkristallin polymer.
 key: polymer-halsbildning-molekylmodell
 status: utkast
@@ -234,3 +198,105 @@ status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 6–7; Canvas, 2025 MTT085 Fo20, s. 20
 
 Varje isokron kurva gäller en viss belastningstid, och diagrammet gäller den temperatur som krypproven gjordes vid. Välj kurvan för produktens livslängd, t.ex. 1 år. Gå in med spänningen på y-axeln och läs av vilken töjning detaljen har fått efter krypning under den tiden; jämför med den tillåtna töjningen. Omvänt ger en största tillåten töjning den största tillåtna spänningen.
+
+## Boltzmanns superpositionsprincip
+key: polymer-begrepp-boltzmann-superposition
+typ: begrepp
+status: utkast
+källa: Canvas, 05142_09 (Osswald kap. 9), s. 8, 9
+
+I linjär viskoelasticitet är deformationen summan av de töjningar som varje lastförändring ger upphov till, oberoende av de laster som redan verkar. Vid stegvisa spänningsändringar $\Delta\sigma_i$ vid tiderna $t_i$ blir töjningen
+
+$\varepsilon(t) = \sum_i \Delta\sigma_i\,J(t - t_i)$,
+
+där $J$ är krypkompliansen. Varje steg bidrar efter hur länge det har verkat, så töjningen beror på hela belastningshistorien och inte bara på den spänning som verkar just nu. Principen gäller så länge polymeren beter sig linjärt viskoelastiskt.
+
+## En polymer har krypkompliansen $J(t)$. Spänningen $\sigma_0$ läggs på vid $t = 0$ och höjs till $2\sigma_0$ vid $t_1$. Vilket uttryck ger töjningen vid $t > t_1$ (linjär viskoelasticitet)?
+key: polymer-boltzmann-tvastegs
+typ: alternativ
+status: utkast
+källa: Canvas, 05142_09 (Osswald kap. 9), s. 8, 9
+
+- [x] $\sigma_0 J(t) + \sigma_0 J(t - t_1)$
+- [ ] $2\sigma_0 J(t)$
+- [ ] $2\sigma_0 J(t - t_1)$
+- [ ] $\sigma_0 J(t) + 2\sigma_0 J(t - t_1)$
+
+Enligt Boltzmanns superpositionsprincip adderas bidraget från varje spänningssteg, räknat från den tidpunkt då steget lades på: $\varepsilon(t) = \sigma_0 J(t) + (2\sigma_0 - \sigma_0)\,J(t - t_1)$. Det andra steget är bara ökningen $\sigma_0$, och det har verkat kortare tid. $2\sigma_0 J(t)$ gäller om hela spänningen hade lagts på redan vid $t = 0$; eftersom $J$ växer med tiden blir den töjningen större.
+
+## En polymersmälta och en fast polymer belastas i var sitt krypprov (konstant spänning, linjärt viskoelastiskt område). Vad skiljer smältans töjningskurva från den fasta polymerens?
+key: polymer-smalta-kryp-aterhamtning
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L6, s. 1, 4, 5; Canvas, 2025 MTT085 Fo20, s. 16, 17
+
+- [x] Smältans töjning fortsätter att växa linjärt med tiden, medan den fasta polymerens töjning närmar sig ett gränsvärde.
+- [ ] Smältan har ingen elastisk del, så ingenting av töjningen går tillbaka när lasten tas bort.
+- [ ] Den fasta polymerens töjning går alltid helt tillbaka när lasten tas bort, smältans inte.
+- [ ] Smältans töjning är konstant under hela belastningen, eftersom smältan är en vätska.
+
+En polymersmälta domineras av den viskösa komponenten, eftersom kedjorna i smält tillstånd lätt glider förbi varandra: den beter sig vätskelikt (Maxwellmodellen), och efter den elastiska starten växer töjningen linjärt med lutningen $\sigma_0/\eta$. En fast polymer domineras av den elastiska komponenten, eftersom kedjorna hålls fast av andra kedjor: den beter sig fastlikt (Kelvin–Voigt), och töjningen går mot ett gränsvärde. Båda har en elastisk start, och i båda fallen går en del av töjningen snabbt tillbaka efter avlastning men inte hela; kedjor som har glidit förbi varandra stannar i sina nya lägen.
+
+## Beskriv den typiska dragprovskurvan vid rumstemperatur för en amorf termoplast, en delkristallin termoplast, en härdplast och en elastomer.
+key: polymer-dragkurvor-fyra-typer
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L6, s. 7, 8, 9; Canvas, Lab-PM Polymer_MTT085-1, s. 2, 3; Canvas, MTT085-Turorials-Part12, s. 1, 3; Canvas, 2025 MTT085 Fo21, s. 7, 9, 10, 12, 13
+
+* **Amorf termoplast** (Tg oftast över rumstemperatur, t.ex. PS och PMMA): styv och spröd. Kurvan är linjär och deformationen reversibel tills små mikrosprickor (krazer) bildas strax före brottet; då blir kurvan olinjär. Undantag: PC är mycket slagtålig trots att den är amorf.
+* **Delkristallin termoplast** (mellan Tg och Tm, t.ex. PP och PE): linjärelastiskt område, sedan olinjärt med stress whitening, flytpunkt och spänningsfall, halsbildning och lång kalldragning; duktilt brott vid stor töjning.
+* **Härdplast** (högt tvärbunden, t.ex. epoxi): hög styvhet och låg brottöjning, sprött brott.
+* **Elastomer** (glest tvärbunden, används över sitt Tg): mycket låg styvhet och mycket hög brottöjning; klarar stora deformationer som går tillbaka.
+
+Under sitt Tg går polymerer i regel till sprött brott i ett korttidsdragprov, även delkristallina.
+
+## Vid rumstemperatur ger en polymer i dragprov en tydlig flytpunkt, därefter ett spänningsfall, halsbildning och en lång kalldragning till mycket stor töjning. Vilken typ av polymer är det troligen?
+key: polymer-dragkurva-kalldragning-typ
+typ: alternativ
+status: utkast
+källa: Canvas, MTT085 Polymeric materials L6, s. 7, 8, 9; Canvas, 2025 MTT085 Fo21, s. 10, 12, 13; Canvas, Lab-PM Polymer_MTT085-1, s. 2, 3
+
+- [x] En delkristallin termoplast, t.ex. PP eller PE
+- [ ] En amorf termoplast under sitt Tg, t.ex. PS
+- [ ] En härdplast, t.ex. epoxi
+- [ ] En tvärbunden elastomer
+
+Duktilt brott med stress whitening, flytpunkt, halsbildning och kalldragning förekommer hos delkristallina polymerer mellan Tg och Tm; för delkristallina plaster ligger Tg oftast under rumstemperatur. En amorf termoplast under Tg och en härdplast går till sprött brott vid liten töjning. En elastomer har mycket låg styvhet och stor, reversibel töjning i stället för kalldragning.
+
+## En plastdetalj belastas med konstant spänning 4 MPa i ett år. Den isokrona 1-årskurvan ger då töjningen 0,8 %. Vilken E-modul (krypmodul) ska användas i t.ex. en utböjningsberäkning?
+key: polymer-krypmodul-ur-isokron-kurva
+typ: alternativ
+status: utkast
+källa: Canvas, 2025 MTT085 Fo20, s. 15, 20; Canvas, 05142_09 (Osswald kap. 9), s. 37, 39
+
+- [x] 0,5 GPa
+- [ ] 5 GPa
+- [ ] 50 GPa
+- [ ] 32 kPa
+
+Krypmodulen är $E_c = \sigma_0/\varepsilon(t) = 4\ \text{MPa}/0{,}008 = 500$ MPa $= 0{,}5$ GPa. Den gäller bara för den belastningstiden och temperaturen och sätts in i Hookes lag eller balkformeln i stället för korttidsmodulen. 5 GPa fås om 0,8 % räknas som 0,0008 och 50 GPa om töjningen räknas som 0,00008; 32 kPa fås om spänningen multipliceras med töjningen.
+
+## En plaststång ska bära dragkraften 600 N i ett år utan att töjningen överstiger 1 %. Den isokrona 1-årskurvan ger 12 MPa vid 1 % töjning. Vilken är den minsta tvärsnittsarean?
+key: polymer-dimensionering-isokron-tvarsnitt
+typ: alternativ
+status: utkast
+källa: Canvas, 05142_09 (Osswald kap. 9), s. 39, 76; Canvas, 2021 MTT085 Ovningsuppgifter - Polymera material, s. 8; Canvas, MTT085 Polymeric materials L6, s. 7
+
+- [x] 50 mm²
+- [ ] 5 mm²
+- [ ] 500 mm²
+- [ ] 7 200 mm²
+
+Metoden: välj den isokrona kurvan för produktens livslängd, läs av den tillåtna spänningen vid den tillåtna töjningen och räkna ut arean. Här är $A = F/\sigma = 600\ \text{N}/12\ \text{N/mm}^2 = 50$ mm². 5 och 500 mm² är tiopotensfel, och 7 200 mm² fås om man multiplicerar kraften med spänningen. En längre livslängd ger en lägre kurva och kräver större area.
+
+## En plaströrbit pressas på en metalldubb så att töjningen i röret hålls konstant. Hur ändras spänningen i röret, och därmed kraften som krävs för att dra isär delarna, med tiden?
+key: polymer-presspassning-relaxation
+typ: alternativ
+status: utkast
+källa: Canvas, 05142_09 (Osswald kap. 9), s. 5, 39, 73, 75; Canvas, 2025 MTT085 Fo20, s. 18
+
+- [x] Spänningen minskar med tiden (spänningsrelaxation), så kraften blir mindre; den läses av längs en isometrisk kurva vid den aktuella töjningen.
+- [ ] Spänningen ökar med tiden, eftersom materialet kryper.
+- [ ] Spänningen är konstant, eftersom töjningen är konstant.
+- [ ] Töjningen ökar medan spänningen är konstant.
+
+En påtvingad konstant töjning är ett relaxationsfall. Man räknar ut töjningen (diameterändringen delad med diametern), följer den isometriska kurvan (konstant töjning) ur krypdata och läser av spänningen vid olika tider, t.ex. direkt efter monteringen och efter ett år. Ringspänningen ger trycket mot dubben, och kraften för att dra isär delarna är friktionen mot dubben, så den minskar när spänningen relaxerar. Konstant spänning med ökande töjning är i stället ett krypfall.

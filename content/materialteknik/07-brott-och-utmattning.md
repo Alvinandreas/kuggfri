@@ -209,14 +209,14 @@ Basquins lag beskriver högcykelutmattning, där spänningarna ligger under str�
 key: utm-exempel-basquin-livslangd
 typ: alternativ
 status: utkast
-källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 8; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 6
+källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 8; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5, 6
 
 - [ ] 1 240 000 cykler
 - [ ] 196 000 cykler
 - [ ] 167 000 cykler
 - [x] 32 300 cykler
 
-Basquins lag ger $\Delta\sigma_1 N_1^{\,b} = \Delta\sigma_2 N_2^{\,b}$, alltså $N_2 = N_1\left(\dfrac{\Delta\sigma_1}{\Delta\sigma_2}\right)^{1/b} = 200\,000\left(\dfrac{200}{240}\right)^{10} \approx 32\,300$ cykler. En ökning av spänningsamplituden med 20 % minskar livslängden med 84 %: utmattning är mycket känslig för spänningsnivån.
+Spänningsintervallet är dubbla amplituden, alltså 200 respektive 240 MPa (att medelspänningen är noll behövs för att Basquins lag ska gälla). Basquins lag ger $\Delta\sigma_1 N_1^{\,b} = \Delta\sigma_2 N_2^{\,b}$, alltså $N_2 = N_1\left(\dfrac{\Delta\sigma_1}{\Delta\sigma_2}\right)^{1/b} = 200\,000\left(\dfrac{200}{240}\right)^{10} \approx 32\,300$ cykler. En ökning av spänningsamplituden med 20 % minskar livslängden med 84 %: utmattning är mycket känslig för spänningsnivån.
 
 167 000 cykler fås om exponenten $1/b$ glöms bort, 196 000 om man använder $b$ i stället för $1/b$ och 1 240 000 om kvoten vänds.
 

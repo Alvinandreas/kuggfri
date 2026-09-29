@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 260" role="img" aria-labelledby="titel" font-family="system-ui, sans-serif" font-size="17" fill="#111">
+<title id="titel">Tre schematiska polymerstrukturer: A består av kedjor som är sammanbundna i ett nätverk med punkter där kedjorna är bundna till varandra; B består av kristallina lameller av veckade kedjor i olika riktningar med oordnade kedjor emellan; C består av slumpvis trassliga kedjor utan ordning.</title>
+<g transform="translate(440 20)"><rect x="0" y="0" width="200" height="200" fill="none" stroke="#111" stroke-width="1.5"/>
+<path d="M40.0,40.0 Q39.8,54.0 43.2,67.6 Q43.8,81.6 40.9,95.2 Q49.4,106.3 63.4,105.5 Q74.8,113.6 88.7,115.4 Q101.6,110.0 113.2,117.9 Q125.2,125.0 130.2,138.1 Q135.8,150.9 137.7,164.8 Q148.0,174.2 155.5,162.4 Q169.0,158.6 155.3,155.5 Q144.7,146.3 137.7,134.2" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M160.0,50.0 Q170.8,58.9 158.4,65.4 Q153.0,78.3 159.3,90.8 Q167.9,101.8 165.5,115.6 Q155.7,125.6 142.2,129.3 Q132.7,139.6 122.5,149.2 Q117.4,162.2 121.3,175.7 Q133.6,168.9 140.3,156.6 Q153.9,153.6 166.6,159.6 Q173.5,171.7 172.4,157.8 Q163.4,147.0 151.0,140.4" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M100.0,100.0 Q95.7,86.7 99.5,73.2 Q112.3,67.6 126.3,68.6 Q134.8,79.7 148.8,79.3 Q162.8,77.9 172.6,87.9 Q179.1,100.3 174.7,113.6 Q180.9,126.2 174.0,138.3 Q173.8,152.3 172.5,166.3 Q169.1,179.8 178.4,169.4 Q180.6,155.6 176.8,142.1 Q169.4,130.2 169.1,116.2" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M45.0,160.0 Q56.1,151.5 67.0,142.6 Q72.5,129.8 64.7,118.1 Q61.1,104.6 56.6,91.4 Q59.4,77.6 58.6,63.6 Q65.1,51.2 65.5,37.3 Q73.7,26.0 86.1,19.5 Q97.3,28.0 107.7,37.3 Q114.2,49.7 126.6,56.2 Q138.3,63.9 143.4,76.9 Q153.9,86.2 157.2,99.8" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M150.0,155.0 Q153.3,168.6 152.3,154.6 Q141.1,146.2 130.6,137.0 Q118.0,130.9 105.3,136.7 Q92.5,142.4 89.4,156.0 Q88.0,170.0 97.7,180.1 Q111.7,179.9 125.5,177.6 Q137.9,171.0 142.4,157.8 Q139.3,144.1 139.7,130.1 Q150.9,121.7 163.2,115.1 Q173.9,106.1 160.4,109.6" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M95.0,35.0 Q85.2,45.0 84.7,59.0 Q78.8,71.6 84.1,84.6 Q95.0,93.3 93.5,107.3 Q100.0,119.7 102.7,133.4 Q106.5,146.9 111.5,160.0 Q116.7,173.0 128.4,180.6 Q133.0,167.4 126.5,155.0 Q114.5,147.7 101.7,153.2 Q92.7,164.0 85.9,176.2 Q72.3,179.7 60.0,173.0" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M60.0,110.0 Q47.6,116.5 42.7,129.6 Q30.2,136.0 28.7,150.0 Q27.1,163.9 38.2,172.5 Q52.0,170.0 65.9,169.0 Q79.7,171.3 89.9,161.7 Q97.5,150.0 109.2,142.2 Q120.0,133.3 133.6,130.1 Q142.1,118.9 143.9,105.0 Q135.4,93.9 127.0,82.7 Q129.9,69.0 135.2,56.0" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M130.0,130.0 Q116.7,125.8 104.1,119.5 Q90.2,121.3 78.0,114.5 Q72.2,101.8 70.6,87.9 Q60.6,78.1 51.0,67.9 Q38.6,61.5 24.6,61.9 Q33.5,51.1 47.4,52.7 Q57.2,42.7 71.2,41.6 Q85.1,43.4 99.0,41.9 Q111.0,34.8 124.7,32.1 Q138.2,28.3 152.1,29.7" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+</g>
+<g transform="translate(230 20)"><rect x="0" y="0" width="200" height="200" fill="none" stroke="#111" stroke-width="1.5"/>
+<path d="M-17.5,-19.0 L-17.5,19.0 A2.5,2.5 0 0 1 -12.5,19.0 L-12.5,-19.0 A2.5,2.5 0 0 0 -7.5,-19.0 L-7.5,19.0 A2.5,2.5 0 0 1 -2.5,19.0 L-2.5,-19.0 A2.5,2.5 0 0 0 2.5,-19.0 L2.5,19.0 A2.5,2.5 0 0 1 7.5,19.0 L7.5,-19.0 A2.5,2.5 0 0 0 12.5,-19.0 L12.5,19.0" transform="translate(55 55) rotate(20)" fill="none" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M-17.5,-19.0 L-17.5,19.0 A2.5,2.5 0 0 1 -12.5,19.0 L-12.5,-19.0 A2.5,2.5 0 0 0 -7.5,-19.0 L-7.5,19.0 A2.5,2.5 0 0 1 -2.5,19.0 L-2.5,-19.0 A2.5,2.5 0 0 0 2.5,-19.0 L2.5,19.0 A2.5,2.5 0 0 1 7.5,19.0 L7.5,-19.0 A2.5,2.5 0 0 0 12.5,-19.0 L12.5,19.0" transform="translate(145 50) rotate(-35)" fill="none" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M-17.5,-19.0 L-17.5,19.0 A2.5,2.5 0 0 1 -12.5,19.0 L-12.5,-19.0 A2.5,2.5 0 0 0 -7.5,-19.0 L-7.5,19.0 A2.5,2.5 0 0 1 -2.5,19.0 L-2.5,-19.0 A2.5,2.5 0 0 0 2.5,-19.0 L2.5,19.0 A2.5,2.5 0 0 1 7.5,19.0 L7.5,-19.0 A2.5,2.5 0 0 0 12.5,-19.0 L12.5,19.0" transform="translate(100 110) rotate(80)" fill="none" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M-17.5,-19.0 L-17.5,19.0 A2.5,2.5 0 0 1 -12.5,19.0 L-12.5,-19.0 A2.5,2.5 0 0 0 -7.5,-19.0 L-7.5,19.0 A2.5,2.5 0 0 1 -2.5,19.0 L-2.5,-19.0 A2.5,2.5 0 0 0 2.5,-19.0 L2.5,19.0 A2.5,2.5 0 0 1 7.5,19.0 L7.5,-19.0 A2.5,2.5 0 0 0 12.5,-19.0 L12.5,19.0" transform="translate(50 150) rotate(-20)" fill="none" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M-17.5,-19.0 L-17.5,19.0 A2.5,2.5 0 0 1 -12.5,19.0 L-12.5,-19.0 A2.5,2.5 0 0 0 -7.5,-19.0 L-7.5,19.0 A2.5,2.5 0 0 1 -2.5,19.0 L-2.5,-19.0 A2.5,2.5 0 0 0 2.5,-19.0 L2.5,19.0 A2.5,2.5 0 0 1 7.5,19.0 L7.5,-19.0 A2.5,2.5 0 0 0 12.5,-19.0 L12.5,19.0" transform="translate(150 150) rotate(30)" fill="none" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M100.0,35.0 Q90.3,29.8 80.4,34.5 Q73.3,42.9 62.3,42.4 Q52.1,38.3 41.8,42.3" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M22.0,100.0 Q25.1,110.6 34.1,116.9 Q35.4,127.8 35.1,138.8 Q30.7,148.9 25.2,158.5" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M178.0,100.0 Q167.0,100.8 157.5,106.3 Q152.3,116.0 143.2,122.3 Q132.6,125.0 123.1,119.4" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M100.0,172.0 Q108.9,165.5 111.3,154.8 Q112.9,143.9 118.1,134.2 Q127.8,129.0 137.0,122.9" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M95.0,78.0 Q85.3,83.2 74.6,80.6 Q64.5,85.1 58.2,94.1 Q61.8,104.5 71.7,109.5" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M100.0,140.0 Q98.8,150.9 106.0,159.2 Q115.5,164.7 126.0,161.1 Q128.8,150.5 127.0,139.7" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/>
+</g>
+<g transform="translate(20 20)"><rect x="0" y="0" width="200" height="200" fill="none" stroke="#111" stroke-width="1.5"/>
+<path d="M40,40 Q73.4,41.8 100,30" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M100,30 Q140.8,49.9 165,45" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M40,40 Q41.7,81.8 30,100" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M100,30 Q84.3,61.5 95,95" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M165,45 Q174.9,79.2 160,105" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M30,100 Q73.7,86.7 95,95" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M95,95 Q126.6,92.9 160,105" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M30,100 Q38.7,134.6 45,165" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M95,95 Q88.9,119.6 110,160" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M160,105 Q158.8,149.2 170,170" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M45,165 Q84.9,153.0 110,160" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M110,160 Q148.3,154.9 170,170" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M40,40 Q70.8,57.0 95,95" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<path d="M95,95 Q118.5,142.9 170,170" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+<circle cx="40" cy="40" r="5" fill="#1f7a4d"/>
+<circle cx="100" cy="30" r="5" fill="#1f7a4d"/>
+<circle cx="165" cy="45" r="5" fill="#1f7a4d"/>
+<circle cx="30" cy="100" r="5" fill="#1f7a4d"/>
+<circle cx="95" cy="95" r="5" fill="#1f7a4d"/>
+<circle cx="160" cy="105" r="5" fill="#1f7a4d"/>
+<circle cx="45" cy="165" r="5" fill="#1f7a4d"/>
+<circle cx="110" cy="160" r="5" fill="#1f7a4d"/>
+<circle cx="170" cy="170" r="5" fill="#1f7a4d"/>
+</g>
+<text x="120" y="250" text-anchor="middle" font-size="24" font-weight="700">A</text>
+<text x="330" y="250" text-anchor="middle" font-size="24" font-weight="700">B</text>
+<text x="540" y="250" text-anchor="middle" font-size="24" font-weight="700">C</text>
+</svg>

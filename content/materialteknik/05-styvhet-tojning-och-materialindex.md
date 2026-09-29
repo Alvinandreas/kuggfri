@@ -48,6 +48,8 @@ där brott sker
 ## Hur ser ett typiskt dragprov ut för ett segt material?
 key: hur-ser-ett-typiskt-dragprov-ut-for-ett-2
 original: ja
+status: utkast
+källa: Rättelse: "polymerer" som exempel på sega material stämmer inte generellt, eftersom amorfa termoplaster (med undantag som PC) och härdplaster är spröda vid rumstemperatur; det är de delkristallina termoplasterna, mellan Tg och Tm, som är sega; Canvas, MTT085 Polymeric materials L6, s. 7, 8; Canvas, Lab-PM Polymer_MTT085-1, s. 2; Canvas, MTT085-Turorials-Part12, s. 3; Canvas, Fo 7 Styvhet, s. 7
 
 * Elastiskt beteende upp till
 sträckgränsen
@@ -56,7 +58,7 @@ materialet börjar plasticera
 * Brottgränsen = högsta spänningen
 * Elastisk avlastning även i plastiska
 området
-* Metaller, polymerer
+* Metaller, delkristallina termoplaster (mellan Tg och Tm)
 
 ## Vilka egenskaper kan observeras/kartläggas med hjälp av dragprov?
 key: vilka-egenskaper-kan-observeras

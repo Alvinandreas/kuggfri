@@ -230,3 +230,50 @@ status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 13, 14, 15, 27
 
 Därför att metaller innehåller dislokationer. För att en dislokation ska röra sig behöver bara bindningarna längs dislokationslinjen brytas, vilket är betydligt lättare än att bryta alla bindningar i glidplanet på en gång. Glidförskjutningen per dislokation är mycket liten, men när enormt många dislokationer passerar genom kristallen på flera glidplan deformeras materialet makroskopiskt redan vid en spänning långt under den ideala hållfastheten. (I keramer är förklaringen i stället att de inte kan skapa rörliga dislokationer och därför inte deformeras plastiskt; spänningarna kan inte fördelas till en större volym, och spänningskoncentrationer ger höga lokala spänningar.)
+
+## Hårdhet
+key: hardhet
+typ: begrepp
+status: utkast
+källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 6; Canvas, Fo 8 Plasticitet, s. 3; Canvas, Short_dictionary_ v2026, s. 7
+
+Materialets motstånd mot intryckning. Vid ett hårdhetsprov pressas en diamant- eller kulformad intryckskropp in i ytan med bestämd kraft, och intrycket mäts (t.ex. diagonalerna i ett Vickersintryck). Hårdheten kopplar till sträckgränsen, alltså till motståndet mot plastisk deformation, och korrelerar ganska bra med brottgränsen för duktila material. Undantag: spröda material kan ha hög hårdhet men låg brottgräns i dragprov. Hårdhetsprov kräver bara en liten volym och är oftast oförstörande.
+
+## Vilka kombinationer av härdningsmekanismer används för aluminiumlegeringar enligt kursen?
+key: hardningsmekanismer-kombineras
+typ: alternativ
+status: utkast
+källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 44; Canvas, Ovning 7 m losningar, s. 5; Canvas, Fo 13 Aluminium och andra metaller, s. 7, 8; Canvas, Fo 12 Stal, s. 2
+
+- [x] Icke värmebehandlingsbara legeringar: lösningshärdning och deformationshärdning
+- [x] Värmebehandlingsbara legeringar: utskiljningshärdning och deformationshärdning
+- [ ] Ren aluminium: lösningshärdning och utskiljningshärdning
+- [ ] Ingen kombination, eftersom en metall bara kan härdas med en mekanism åt gången
+
+Härdningsmekanismerna kombineras ofta, men ökad hållfasthet minskar i allmänhet duktiliteten. Alla verkar genom att försvåra dislokationsrörelse. Lösnings- och utskiljningshärdning kräver legeringsämnen, så ren aluminium härdas i stället t.ex. genom deformationshärdning.
+
+## Vilka plan och riktningar bildar glidsystemen i en FCC-metall?
+key: glidsystem-fcc
+typ: alternativ
+status: utkast
+källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 20, 28; Canvas, GLU 01 Kristallstrukturer, s. 11, 15, 19; Canvas, Guided Learning Unit 1, s. 4 (GL1-4); Canvas, Fo 12 Stal, s. 2
+
+- [x] De tätpackade planen $\{111\}$ och de tätpackade riktningarna $\langle 110\rangle$ i dem (ytdiagonalerna)
+- [ ] Kubens sidoytor $\{100\}$ och kanterna $\langle 100\rangle$
+- [ ] Planen $\{110\}$ och rymddiagonalerna $\langle 111\rangle$
+- [ ] Alla plan och riktningar, eftersom hela FCC-strukturen är tätpackad
+
+Glidplan och glidriktningar korrelerar med de mest tätpackade planen och de tätpackade riktningarna i dem. I FCC ligger atomerna tätt längs ytdiagonalerna, $\langle 110\rangle$, och de tätpackade skikten (staplade ABCABC) syns när man tittar längs en rymddiagonal. De är alltså vinkelräta mot $\langle 111\rangle$, och eftersom Millerindex jämförs med planets normal är de $\{111\}$-planen. Ett $\{111\}$-plan, t.ex. triangeln genom (1, 0, 0), (0, 1, 0) och (0, 0, 1), innehåller tre $\langle 110\rangle$-riktningar längs triangelns sidor. Rymddiagonalen $\langle 111\rangle$ är tätpackad i BCC, inte i FCC. FCC har många glidsystem och är lätt att deformera plastiskt; HCP har få.
+
+## I vilka situationer är plastisk deformation önskvärd?
+key: plastisk-deformation-onskvard
+typ: alternativ
+status: utkast
+källa: Canvas, Fo 12 Stal, s. 7; Canvas, Ovning 4 m losningar, s. 1, 6; Canvas, Ovning 7 m losningar, s. 3
+
+- [x] Vid formning av metaller, t.ex. valsning, smide, pressning och tråddragning
+- [x] I energiupptagande konstruktioner, t.ex. krockbarriärer, som tar upp energi genom plastiskt arbete
+- [ ] I en fjäder, som ska lagra elastisk energi
+- [ ] I en bärande balk under normal drift
+
+Plastisk deformation ger en permanent formförändring. Den utnyttjas i de plastiska formningsmetoderna och i konstruktioner som ska ta upp mycket energi, t.ex. energiupptagande strukturer i bilar och krockbarriärer som deformeras plastiskt (de kan då inte återanvändas). En fjäder ska lagra så mycket elastisk energi som möjligt och får inte plasticera, och en bärande komponent dimensioneras normalt så att den inte plasticerar i drift.

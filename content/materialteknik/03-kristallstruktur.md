@@ -241,3 +241,119 @@ källa: Canvas, GLU 01 Kristallstrukturer, s. 20
 - [ ] [011]
 
 Pilen går från origo till hörnet (1, 1, 0), diagonalt över kubens undersida, så riktningen är [110]. [111] är rymddiagonalen till (1, 1, 1), [100] går längs x-axeln och [011] är diagonalen i kubens bakre yta x = 0, till (0, 1, 1).
+
+## Vad kännetecknar enhetscellen: "HCP"?
+key: vad-kannetecknar-enhetscellen-hcp
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 11, 13, 17; Canvas, Guided Learning Unit 1, s. 4 (GL1-4); Canvas, Fo 12 Stal, s. 2; Canvas, Fo 13 Aluminium och andra metaller, s. 11
+
+![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
+
+* Hexagonal close packed (HCP, även CPH)
+* Tätpackad hexagonal
+* Ritas som ett sexkantigt prisma med en atom i varje hörn, en mitt på varje sexkantig yta och tre i mittskiktet; prismat innehåller egentligen tre enhetsceller
+* Tätpackad struktur: packningsgrad 0,74, samma som FCC, men de tätpackade skikten staplas ABAB (FCC: ABCABC)
+* Få glidsystem, så HCP-metaller är svårare att deformera plastiskt än FCC-metaller
+* Ex: Mg, Ti, Zn
+
+## Vilken av enhetscellerna är BCC (rymdcentrerad kubisk)? ![Tre omärkta enhetsceller märkta A, B och C](/kort/materialteknik/enhetsceller-omarkerade.svg)
+key: enhetscell-kanna-igen-bcc
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 12, 13, 15, 16, 17; Canvas, Guided Learning Unit 1, s. 4, 5 (GL1-4, GL1-5)
+
+- [ ] A
+- [ ] B
+- [x] C
+
+C har en atom i varje hörn och en i kubens mitt: rymdcentrerad kubisk (BCC), där atomerna ligger tätt längs rymddiagonalen. A har atomer i hörnen och mitt på varje sidoyta: ytcentrerad kubisk (FCC). B är det sexkantiga prismat: tätpackad hexagonal (HCP). Lätt att blanda ihop: ytcentrerad = FCC, rymdcentrerad = BCC.
+
+## Ett plan skär x-axeln i 1 och y-axeln i −1/2 och är parallellt med z-axeln. Vilket Millerindex har planet?
+key: millerindex-negativt-index
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 19; Canvas, Guided Learning Unit 1, s. 11 (GL1-11)
+
+- [x] $(1\bar{2}0)$
+- [ ] $(120)$
+- [ ] $(2\bar{1}0)$
+- [ ] $(1\bar{1}0)$
+
+Skärningarna är 1, −1/2 och ∞. Inverterat blir det 1, −2 och 0, som redan är heltal. Ett negativt index skrivs med ett streck över siffran: $(1\bar{2}0)$. $(120)$ har tappat minustecknet, $(2\bar{1}0)$ fås om man gör x- och y-skärningarna (1 och −1/2) heltaliga utan att invertera dem, och $(1\bar{1}0)$ är planet som skär y-axeln i −1.
+
+## Hur bestämmer man Millerindex för ett plan som går genom origo?
+key: millerindex-plan-genom-origo
+status: utkast
+källa: Canvas, Guided Learning Unit 1, s. 11, 19 (GL1-11, GL1-24); Canvas, GLU 01 Kristallstrukturer, s. 19
+
+Ett plan genom origo skär axlarna i 0, och 1/0 går inte att invertera. Flytta därför planet en cellängd längs en axel (eller, likvärdigt, flytta origo till ett annat hörn av enhetscellen) så att planet inte går genom origo. Läs sedan av skärningarna, invertera och gör heltaligt som vanligt. En skärning på en axels negativa del ger ett negativt index, som skrivs med streck över siffran.
+
+Exempel: diagonalplanet som innehåller x-axeln (y = z = 0) och den motsatta kanten (y = z = 1). Med origo flyttat till hörnet (0, 0, 1) är planet parallellt med x-axeln, skär y-axeln i 1 och z-axeln i −1. Inverterat blir det 0, 1 och −1, alltså $(01\bar{1})$.
+
+## Planet $(213)$ i en kubisk enhetscell: var skär det axlarna?
+key: millerindex-fran-index-till-plan
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 19; Canvas, Guided Learning Unit 1, s. 11 (GL1-11)
+
+- [x] x = 1/2, y = 1, z = 1/3
+- [ ] x = 2, y = 1, z = 3
+- [ ] x = 1/2, y = 1/3, z = 1
+- [ ] x = 1/3, y = 1, z = 1/2
+
+Gå baklänges genom metoden: invertera indexen 2, 1 och 3 till skärningarna 1/2, 1 och 1/3, och rita planet genom de tre punkterna. Kontroll: inverteras skärningarna igen blir det 2, 1 och 3, alltså $(213)$. Att bara ta indexen som skärningar (2, 1, 3) glömmer inverteringen, och de två sista alternativen har bytt plats på axlarna. Ett index 0 betyder att planet är parallellt med den axeln.
+
+## En riktning går från punkten (0, 1, 1) till punkten (1, 1/2, 0) i enhetscellen. Vilket riktningsindex har den?
+key: riktningsindex-mellan-tva-punkter
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 20; Canvas, Guided Learning Unit 1, s. 13 (GL1-13)
+
+- [x] $[2\bar{1}\bar{2}]$
+- [ ] $[212]$
+- [ ] $[210]$
+- [ ] $[1\bar{2}\bar{1}]$
+
+En riktning flyttas så att den börjar i origo, vilket är samma sak som att ta slutpunkten minus startpunkten: (1 − 0, 1/2 − 1, 0 − 1) = (1, −1/2, −1). Multiplicera med 2 för att få heltal: $[2\bar{1}\bar{2}]$. $[212]$ har tappat minustecknen, $[210]$ fås om man bara tar slutpunkten som om riktningen började i origo, och $[1\bar{2}\bar{1}]$ fås om man inverterar komponenterna som för ett plan; riktningar inverteras inte.
+
+## Vilka riktningar i en kubisk enhetscell hör till riktningsfamiljen $\langle 111\rangle$?
+key: riktningsfamilj-111
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 20; Canvas, Guided Learning Unit 1, s. 13 (GL1-13)
+
+- [x] Kubens rymddiagonaler, från ett hörn genom kubens mitt till det motsatta hörnet
+- [ ] Kubens kanter
+- [ ] Diagonalerna i kubens sidoytor
+
+![Riktningarna 100, 110 och 111 som pilar från origo i var sin kub](/kort/materialteknik/millerindex-riktningar.svg)
+
+$[hkl]$ är en specifik riktning och $\langle hkl\rangle$ en familj av likvärdiga riktningar. $\langle 111\rangle$ är rymddiagonalerna, t.ex. $[111]$, $[\bar{1}11]$, $[1\bar{1}1]$ och $[11\bar{1}]$ (och de motsatta riktningarna). Kubens kanter hör till $\langle 100\rangle$, dvs. $[100]$, $[010]$ och $[001]$, och ytdiagonalerna till $\langle 110\rangle$.
+
+## Vilka plan hör till planfamiljen $\{100\}$ i en kubisk enhetscell?
+key: planfamilj-100
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 19; Canvas, Guided Learning Unit 1, s. 11, 12 (GL1-11, GL1-12)
+
+- [x] Kubens sidoytor: $(100)$, $(010)$ och $(001)$ och de parallella ytorna på motsatt sida
+- [ ] Diagonalplanen genom två motstående kanter, t.ex. $(110)$
+- [ ] Planen som skär alla tre axlarna i 1, t.ex. $(111)$
+- [ ] Bara planet $(100)$
+
+![Planen (100), (110) och (111) markerade i var sin kub med axlarna x, y och z](/kort/materialteknik/millerindex-plan.svg)
+
+$(hkl)$ är ett specifikt plan och $\{hkl\}$ en familj av likvärdiga plan. I en kub är sidoytorna likvärdiga, så $\{100\}$ omfattar $(100)$, $(010)$ och $(001)$ och motsvarande plan med negativa index. Diagonalplanen hör till $\{110\}$ och planen som skär alla tre axlarna i 1 till $\{111\}$.
+
+## En metall med BCC-struktur har atomradien r = 0,125 nm. Hur stor är gitterparametern (kantlängden) a?
+key: bcc-gitterparameter-atomradie
+typ: alternativ
+status: utkast
+källa: Canvas, GLU 01 Kristallstrukturer, s. 15, 16; Canvas, Guided Learning Unit 1, s. 5 (GL1-5); Canvas, Ovning 2 GLU with corrections, s. 1
+
+- [x] Ca 0,289 nm
+- [ ] Ca 0,354 nm
+- [ ] Ca 0,250 nm
+- [ ] Ca 0,866 nm
+
+I BCC ligger atomerna tätt längs rymddiagonalen, som är $a\sqrt{3}$ lång och rymmer fyra atomradier: $4r = a\sqrt{3}$, så $a = 4r/\sqrt{3} = 0{,}500/1{,}732 \approx 0{,}289$ nm. 0,354 nm fås med FCC:s samband $4r = a\sqrt{2}$ (tätpackad ytdiagonal), 0,250 nm om atomerna antas ligga tätt längs kanten ($a = 2r$) och 0,866 nm om man multiplicerar med $\sqrt{3}$ i stället för att dividera.

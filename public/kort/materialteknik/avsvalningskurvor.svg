@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" role="img" aria-labelledby="titel" font-family="system-ui, sans-serif" font-size="17" fill="#111">
+<title id="titel">Tre avsvalningskurvor, temperatur mot tid: en ren metall med en platå vid smälttemperaturen; en legering som stelnar till en enda fas med en knick vid likvidus, en flackare del och en knick vid solidus; en legering med primär fas och eutektikum med en knick vid likvidus, en flackare del och en platå vid den eutektiska temperaturen.</title>
+<defs><marker id="pil" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" fill="#111"/></marker></defs>
+<g transform="translate(15 0)">
+<line x1="25" y1="225" x2="25" y2="25" stroke="#111" stroke-width="1.8" marker-end="url(#pil)"/>
+<line x1="25" y1="225" x2="200" y2="225" stroke="#111" stroke-width="1.8" marker-end="url(#pil)"/>
+<text x="12" y="38" font-size="16" font-style="italic">T</text><text x="198" y="244" text-anchor="end" font-size="15">tid</text>
+<path d="M35,45 L85,125 L140,125 L185,205" fill="none" stroke="#111" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="85" cy="125" r="4" fill="#1f7a4d"/>
+<text x="110" y="145" text-anchor="middle" font-size="14" fill="#1f7a4d">platå</text>
+<text x="110" y="268" text-anchor="middle" font-size="16" font-weight="600">Ren metall</text>
+</g>
+<g transform="translate(230 0)">
+<line x1="25" y1="225" x2="25" y2="25" stroke="#111" stroke-width="1.8" marker-end="url(#pil)"/>
+<line x1="25" y1="225" x2="200" y2="225" stroke="#111" stroke-width="1.8" marker-end="url(#pil)"/>
+<text x="12" y="38" font-size="16" font-style="italic">T</text><text x="198" y="244" text-anchor="end" font-size="15">tid</text>
+<path d="M35,45 L70,100 L140,150 L185,205" fill="none" stroke="#111" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="70" cy="100" r="4" fill="#1f7a4d"/>
+<text x="78" y="94" font-size="14" fill="#1f7a4d">likvidus</text>
+<circle cx="140" cy="150" r="4" fill="#1f7a4d"/>
+<text x="148" y="144" font-size="14" fill="#1f7a4d">solidus</text>
+<text x="110" y="268" text-anchor="middle" font-size="16" font-weight="600">Legering som stelnar</text>
+<text x="110" y="289" text-anchor="middle" font-size="16" font-weight="600">till en fas</text>
+</g>
+<g transform="translate(445 0)">
+<line x1="25" y1="225" x2="25" y2="25" stroke="#111" stroke-width="1.8" marker-end="url(#pil)"/>
+<line x1="25" y1="225" x2="200" y2="225" stroke="#111" stroke-width="1.8" marker-end="url(#pil)"/>
+<text x="12" y="38" font-size="16" font-style="italic">T</text><text x="198" y="244" text-anchor="end" font-size="15">tid</text>
+<path d="M35,45 L70,100 L125,135 L160,135 L190,205" fill="none" stroke="#111" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="70" cy="100" r="4" fill="#1f7a4d"/>
+<text x="78" y="94" font-size="14" fill="#1f7a4d">likvidus</text>
+<circle cx="125" cy="135" r="4" fill="#1f7a4d"/>
+<text x="108" y="156" text-anchor="middle" font-size="14" fill="#1f7a4d">eutektisk temp.</text>
+<text x="110" y="268" text-anchor="middle" font-size="16" font-weight="600">Legering: primär fas</text>
+<text x="110" y="289" text-anchor="middle" font-size="16" font-weight="600">+ eutektikum</text>
+</g>
+</svg>

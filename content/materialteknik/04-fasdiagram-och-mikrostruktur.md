@@ -8,7 +8,6 @@ Ett fasdiagram visar vilka faser som är stabila vid vilka specifika temperature
 
 ## Vad är Ferrit och när uppstår det?
 key: vad-ar-ferrit-och-nar-uppstar-det
-typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: temperaturen följer nu 2026 års material och δ-ferriten nämns, så att "upp till 910 °C" inte läses som enda BCC-området; Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_M2_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
@@ -24,7 +23,6 @@ Figuren följer Lab-PM:ets fasdiagram (912 °C); GLU 02 anger 913 °C.
 
 ## Vad är Austenit och när uppstår det?
 key: vad-ar-austenit-och-nar-uppstar-det
-typ: begrepp
 original: ja
 status: utkast
 källa: Rättelse: "upp över 910 °C" gällde inte över ca 1394 °C, där rent järn blir delta-ferrit (BCC); Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_M2_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
@@ -38,7 +36,6 @@ Figuren följer Lab-PM:ets fasdiagram (912 °C); GLU 02 anger 913 °C.
 
 ## Vad är cementit och när uppstår det?
 key: vad-ar-cementit-och-nar-uppstar-det
-typ: begrepp
 original: ja
 flagga: Kortet kallar cementit en "intermediär fas" som Fö 12 Stål s. 17, men GLU 02 s. 18 och kortet intermetall använder intermediär för faser med brett sammansättningsintervall, och Fe3C har exakt sammansättning (6,67 % C). Baksidan säger dessutom inte när cementit uppstår, trots att frågan gäller det. Vilken term ska kortet använda, och ska baksidan kompletteras?
 

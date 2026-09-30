@@ -221,6 +221,10 @@ export default function PrivacyPage() {
           <li>
             <code>kuggfri:stars:v1</code>: vilka kort du har stjärnmärkt.
             </li>
+            <li>
+              <code>kuggfri:passinstallningar:v1</code>: dina inställningar för passet i varje läge, till exempel
+              antal kort och ordning.
+            </li>
           </ul>
           <p>Allt detta försvinner om du rensar webbplatsdata.</p>
         </section>

@@ -1,10 +1,11 @@
 /**
- * Uppgiftstyper. Ren modul utan beroenden, delas av innehållspipelinen, admin och studievyerna.
+ * Uppgiftstyper. Ren modul (bara texterna i sv.ts), delas av innehållspipelinen, admin och studievyerna.
  *
  * Terminologi: ett kort hör till ett OMRÅDE (kursens ämnesindelning, tabellen categories) och
  * har en UPPGIFTSTYP (det här). Typen avgör hur kortet visas och rättas, området avgör var
  * kunskapen räknas (radarn, "Kan nu" per område).
  */
+import { sv } from "@/lib/i18n/sv";
 import type { SelfRating } from "@/lib/progress/types";
 
 export const CARD_KINDS = ["sjalvskattning", "begrepp", "sant-falskt", "alternativ"] as const;
@@ -17,19 +18,19 @@ export type CardOption = { text: string; correct: boolean };
 export const REVIEW_STATUSES = ["utkast", "avvisad"] as const;
 export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
 
-export const CARD_KIND_LABEL: Record<CardKind, string> = {
-  sjalvskattning: "Självskattning",
-  begrepp: "Begrepp",
-  "sant-falskt": "Sant/Falskt",
-  alternativ: "Alternativ",
-};
+/** Typens namn i admin och innehållsverktyget. Texterna ligger i lib/i18n/sv.ts (cardKind). */
+export const CARD_KIND_LABEL: Record<CardKind, string> = sv.cardKind.label;
 
-export const CARD_KIND_DESCRIPTION: Record<CardKind, string> = {
-  sjalvskattning: "Fråga och svar. Du vänder kortet och skattar hur väl du kunde det.",
-  begrepp: "Ett begrepp som ska förklaras. Du vänder kortet och skattar dig själv.",
-  "sant-falskt": "Ett påstående som är sant eller falskt. Rättas automatiskt.",
-  alternativ: "Välj rätt svar bland alternativen, som på tentan. Rättas automatiskt.",
-};
+export const CARD_KIND_DESCRIPTION: Record<CardKind, string> = sv.cardKind.description;
+
+/**
+ * Typen som uppmaning till studenten, överst på kortet: "Självskattning", "Förklara begreppet",
+ * "Sant eller falskt", "Välj rätt alternativ" eller, med flera rätta, "Välj alla rätta alternativ".
+ */
+export function cardKindInstruction(kind: CardKind, options: readonly CardOption[] | null = null): string {
+  if (kind === "alternativ" && options && options.filter((o) => o.correct).length > 1) return sv.cardKind.instructionMulti;
+  return sv.cardKind.instruction[kind];
+}
 
 export function isCardKind(value: unknown): value is CardKind {
   return typeof value === "string" && (CARD_KINDS as readonly string[]).includes(value);

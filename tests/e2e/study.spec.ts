@@ -142,6 +142,74 @@ test.describe("hemsidan", () => {
     await expect(page.getByTestId("flashcard")).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("6 kort kvar");
   });
+
+  test("grönt betyder klart: Plugga området och Kluriga kort lyser först när området är gjort", async ({ page }) => {
+    const openArea = async () => {
+      await page.goto("/hem");
+      await page.getByRole("button", { name: "Öppna Materialvalsprocessen" }).first().click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog.getByTestId("focus-study")).toBeVisible();
+      return dialog;
+    };
+    // Allt kvar: båda genvägarna är gråa (ingen grön yta).
+    let dialog = await openArea();
+    await expect(dialog.getByTestId("focus-study")).toContainText("6 kort i dag");
+    await expect(dialog.getByTestId("focus-study")).not.toHaveClass(/bg-accent-soft/);
+    await expect(dialog.getByTestId("focus-tricky")).not.toHaveClass(/bg-accent-soft/);
+
+    // Plugga områdets schemalagda kort med skattning 4: inget kvar i dag och inga kluriga kort.
+    await dialog.getByTestId("focus-study").click();
+    for (let i = 0; i < 6; i++) {
+      if (await page.getByTestId("session-summary").isVisible()) break;
+      await rateCurrentCard(page, 4);
+    }
+    await expect(page.getByTestId("session-summary")).toBeVisible();
+
+    dialog = await openArea();
+    await expect(dialog.getByTestId("focus-study")).toContainText("Klart för i dag");
+    await expect(dialog.getByTestId("focus-study")).toHaveClass(/bg-accent-soft/);
+    await expect(dialog.getByTestId("focus-tricky")).toContainText("Inga kluriga kort kvar");
+    await expect(dialog.getByTestId("focus-tricky")).toHaveClass(/bg-accent-soft/);
+    await expectNoSeriousA11yViolations(page);
+    // Knappen fungerar fortfarande: den startar Plugga vidare på området.
+    await dialog.getByTestId("focus-study").click();
+    await expect(page.getByTestId("session-banner")).toContainText("Plugga vidare");
+  });
+});
+
+test.describe("inställningar för passet", () => {
+  test("varje läge har egna inställningar som följer med in i passet och sparas", async ({ page }) => {
+    await page.goto(`/d/${DECK_SLUG}`);
+    // Schemalagt: Dagens är förvalt, 10 ger ett kortare pass.
+    const settings = page.getByTestId("session-settings");
+    await expect(settings).toHaveAttribute("data-mode", "fsrs");
+    await expect(settings.getByRole("button", { name: /Dagens/ })).toHaveAttribute("aria-pressed", "true");
+    await settings.getByTestId("settings-size").getByRole("button", { name: "10", exact: true }).click();
+    await expect(page.getByTestId("start-info")).toContainText("10 nya kort");
+    await page.getByTestId("start-session").click();
+    await expect(page).toHaveURL(/antal=10/);
+    await expect(page.getByTestId("remaining")).toHaveText("10 kort kvar");
+
+    // Valet sparas per läge: tillbaka på kurssidan är 10 fortfarande valt för schemalagt,
+    // medan fri repetition har sina egna val.
+    await page.goto(`/d/${DECK_SLUG}`);
+    await expect(settings.getByTestId("settings-size").getByRole("button", { name: "10", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await page.getByLabel("Fri repetition").check();
+    await expect(settings).toHaveAttribute("data-mode", "free");
+    await expect(settings.getByTestId("settings-size").getByRole("button", { name: /Alla/ })).toHaveAttribute("aria-pressed", "true");
+    await settings.getByTestId("settings-size").getByRole("button", { name: "20", exact: true }).click();
+    await settings.getByTestId("settings-order").getByRole("button", { name: "Kursordning" }).click();
+    await page.getByTestId("start-session").click();
+    await expect(page).toHaveURL(/antal=20&ordning=kurs/);
+    await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
+
+    // Kluriga kort: Svåraste först och osedda kort är reglage.
+    await page.goto(`/d/${DECK_SLUG}`);
+    await page.getByLabel("Kluriga kort").check();
+    await expect(settings.getByRole("switch", { name: "Svåraste först" })).toHaveAttribute("aria-checked", "true");
+    await expect(settings.getByRole("switch", { name: "Ta med osedda kort" })).toHaveAttribute("aria-checked", "true");
+    await expectNoSeriousA11yViolations(page);
+  });
 });
 
 test.describe("dosering", () => {
@@ -225,7 +293,8 @@ test.describe("dugga", () => {
   test("slumpade kort ur en kategori, ingen tillbaka, resultat i procent, svaren räknas in i schemat", async ({ page }) => {
     await page.goto(`/d/${DECK_SLUG}`);
     await page.getByLabel("Dugga").check();
-    await expect(page.getByTestId("dugga-settings")).toBeVisible();
+    await expect(page.getByTestId("session-settings")).toHaveAttribute("data-mode", "exam");
+    await expect(page.getByTestId("session-settings")).toContainText("Inställningar");
     await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check({ force: true });
     await expect(page.getByTestId("start-info")).toContainText("6 kort");
     await page.getByTestId("start-session").click();

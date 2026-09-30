@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import type { CardOption } from "@/lib/cards/kinds";
+import { cardKindInstruction, type CardOption } from "@/lib/cards/kinds";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
 import { cx } from "@/components/ui/cx";
-import { FaceHeader } from "./Flashcard";
+import { CENTERED_EXPLANATION, CENTERED_QUESTION, FaceHeader } from "./Flashcard";
 
 export type QuizResult = { chosen: number[]; correct: boolean; rating: SelfRating };
 
@@ -50,6 +50,7 @@ export function QuizCard({
   const correctCount = options.filter((o) => o.correct).length;
   const multi = kind === "alternativ" && correctCount > 1;
   const answered = result !== null;
+  const kindLabel = cardKindInstruction(kind, options);
   // Förklaringen tonar in först efter att facit hunnit synas.
   const [showExplanation, setShowExplanation] = useState(false);
   useEffect(() => {
@@ -65,17 +66,17 @@ export function QuizCard({
     <div className="card-stack" data-testid="quizcard" data-card-id={cardId} data-answered={answered}>
       <div className="card-enter">
         <section
-          aria-label={sv.quiz.kind[kind]}
+          aria-label={kindLabel}
           className="flex min-h-[var(--card-min-height)] flex-col rounded-lg border border-line bg-surface p-5 shadow-card dark:border-transparent sm:p-8"
         >
-          <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} starred={starred} onToggleStar={onToggleStar} />
-          <p className="text-center text-xs font-semibold uppercase tracking-wide text-muted">{sv.quiz.kind[kind]}</p>
-          <div className="py-3 text-center">
-            <Markdown text={front} className="mx-auto w-full" />
+          <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} kindLabel={kindLabel} starred={starred} onToggleStar={onToggleStar} />
+          <div className="py-3">
+            <Markdown text={front} className={`mx-auto w-full ${CENTERED_QUESTION}`} />
           </div>
-          {kind === "alternativ" && !answered ? (
+          {/* Med ett rätt svar säger huvudet redan "Välj rätt alternativ"; med flera talar raden om hur många. */}
+          {multi && !answered ? (
             <p className="-mt-1 mb-1 text-center text-sm text-muted" data-testid="quiz-instruction">
-              {multi ? sv.quiz.pickMany(correctCount) : sv.quiz.pickOne}
+              {sv.quiz.pickMany(correctCount)}
             </p>
           ) : null}
 
@@ -157,9 +158,9 @@ export function QuizCard({
                 </span>
               </p>
               {showExplanation ? (
-                <div className="anim-fade-in border-t border-line pt-3">
+                <div className="anim-fade-in border-t border-line pt-3 text-center">
                   <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">{sv.quiz.explanation}</p>
-                  <Markdown text={back} variant="body" />
+                  <Markdown text={back} variant="body" className={CENTERED_EXPLANATION} />
                 </div>
               ) : null}
             </div>

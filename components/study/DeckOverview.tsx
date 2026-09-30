@@ -9,7 +9,7 @@ import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } fr
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
-import { DEFAULT_DUGGA, duggaExamSize, type DuggaSettings } from "@/lib/study/dugga";
+import { kindMatches, readStoredSettings, writeStoredSettings, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
 import { useStars } from "@/lib/progress/stars";
 import { Badge } from "@/components/ui/Badge";
 import { CategoryTable, type SortMode } from "./CategoryTable";
@@ -39,8 +39,8 @@ type Props = {
     exam_date: string | null;
   };
   categories: { id: string; title: string }[];
-  /** Med frågetexten, för listan över stjärnmärkta kort. */
-  cards: (SelectableCard & { front: string; original: boolean })[];
+  /** Med frågetexten, för listan över stjärnmärkta kort. hasHint: kortet har en ledtråd. */
+  cards: (SelectableCard & { front: string; original: boolean; hasHint?: boolean })[];
   userId: string | null;
   /** Förvalt läge och område (?lage=, ?omrade=), t.ex. från Duggan på hemsidan. */
   initialMode?: StudyMode;
@@ -60,7 +60,8 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
   const mode = runMode(pick);
   const [starredOpen, setStarredOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>(initialAreaId ? [initialAreaId] : []);
-  const [dugga, setDugga] = useState<DuggaSettings>(DEFAULT_DUGGA);
+  // Passets inställningar, en uppsättning per läge. Sparas i webbläsaren när de ändras.
+  const [allSettings, setAllSettings] = useState<Record<SettingsMode, SessionSettings>>(() => readStoredSettings(null));
   const { stars } = useStars();
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
@@ -69,6 +70,11 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
   // Nya kort per dag ställs in under Konto; här läses bara värdet.
   useEffect(() => {
     setPrefs(readPrefs(window.localStorage));
+    try {
+      setAllSettings(readStoredSettings(window.localStorage));
+    } catch {
+      // Utan lagring gäller standardvärdena.
+    }
     try {
       setOnlyOriginal(window.localStorage.getItem(ONLY_ORIGINAL_KEY(deck.id)) === "1");
     } catch {
@@ -88,11 +94,41 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
     [deck.id],
   );
 
+  const changeSettings = useCallback(
+    (next: SessionSettings) => {
+      setAllSettings((prev) => {
+        const all = { ...prev, [pick]: next };
+        try {
+          writeStoredSettings(window.localStorage, all);
+        } catch {
+          // Valet gäller ändå för den här sidvisningen.
+        }
+        return all;
+      });
+    },
+    [pick],
+  );
+
   // Bara originalkorten: den beprövade uppsättningen. Filtret gäller alla lägen och alla siffror
   // på sidan, så att det som visas stämmer med passet som startas.
   const originalCount = useMemo(() => allCards.filter((c) => c.original).length, [allCards]);
   const offerOriginal = originalCount > 0 && originalCount < allCards.length;
   const cards = useMemo(() => (onlyOriginal && offerOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal, offerOriginal]);
+
+  // Uppgiftstyper går bara att välja när kursen har både vändkort och flerval; annars gäller
+  // alla typer, så att ett sparat val aldrig tömmer passet utan att reglaget syns.
+  const kindsOffered = useMemo(() => {
+    const quiz = cards.filter((c) => kindMatches(c.kind, "flerval")).length;
+    return quiz > 0 && quiz < cards.length;
+  }, [cards]);
+  const effectiveSettings = useMemo(
+    () =>
+      kindsOffered
+        ? allSettings
+        : (Object.fromEntries(Object.entries(allSettings).map(([m, s]) => [m, { ...s, kinds: "alla" }])) as Record<SettingsMode, SessionSettings>),
+    [allSettings, kindsOffered],
+  );
+  const settings = effectiveSettings[pick];
 
   // Progress laddas för alla kort, så att valet Bara originalkorten inte hämtar om den.
   const cardIds = useMemo(() => allCards.map((c) => c.id), [allCards]);
@@ -176,18 +212,25 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
   const starredCount = useMemo(() => cards.filter((c) => stars.has(c.id)).length, [cards, stars]);
   const starredCards = useMemo(() => cards.filter((c) => stars.has(c.id)), [cards, stars]);
 
-  // En plan per läge med samma urval: ger lägesrutornas siffror och det valda passet.
+  // En plan per läge med samma urval och lägets egna inställningar: ger lägesrutornas
+  // siffror och det valda passet.
   const plans = useMemo(
     () => {
-      const base = { deck, progress, reviews, selectedIds, dailyNew: prefs.dailyNew, examSize: duggaExamSize(dugga.size) };
+      const base = { deck, progress, reviews, selectedIds, dailyNew: prefs.dailyNew };
       return {
-        ...Object.fromEntries(MODES.map((m) => [m, planDeckSession({ ...base, cards, mode: m })])),
-        starred: planDeckSession({ ...base, cards: starredCards, mode: "free" }),
+        ...Object.fromEntries(MODES.map((m) => [m, planDeckSession({ ...base, cards, mode: m, settings: effectiveSettings[m] })])),
+        starred: planDeckSession({ ...base, cards: starredCards, mode: "free", settings: effectiveSettings.starred }),
       } as Record<PickerMode, DeckPlan>;
     },
-    [deck, cards, starredCards, progress, reviews, selectedIds, prefs.dailyNew, dugga.size],
+    [deck, cards, starredCards, progress, reviews, selectedIds, prefs.dailyNew, effectiveSettings],
   );
   const plan = plans[pick];
+  // Ledtrådsvalet visas bara när passets kort har ledtrådar.
+  const hintCards = useMemo(() => {
+    const withHint = new Set(cards.filter((c) => c.hasHint).map((c) => c.id));
+    const pool = pick === "random" && !settings.followAreas ? cards : plan.selectionCards;
+    return withHint.size === 0 ? 0 : pool.filter((c) => withHint.has(c.id)).length;
+  }, [cards, plan, pick, settings.followAreas]);
   const selectedTitles = categories.filter((c) => selectedSet.has(c.id));
 
   return (
@@ -256,8 +299,10 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
             firstVisit={firstVisit}
             totalCards={cards.length}
             dailyNew={prefs.dailyNew}
-            dugga={dugga}
-            onDugga={setDugga}
+            settings={settings}
+            onSettings={changeSettings}
+            hintCards={hintCards}
+            kindsOffered={kindsOffered}
             starredCount={starredCount}
             onShowStarred={() => setStarredOpen(true)}
             original={offerOriginal ? { count: originalCount, on: onlyOriginal, onChange: changeOnlyOriginal } : null}

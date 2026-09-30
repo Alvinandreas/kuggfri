@@ -1,21 +1,40 @@
 "use client";
 
-import { useRef } from "react";
-import { Lightbulb, Star, Volume2, VolumeX } from "lucide-react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Lightbulb, Star } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
 import { buttonClass, IconButton } from "@/components/ui/Button";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Tooltip } from "@/components/ui/Tooltip";
-import { useSoundEnabled } from "@/lib/ui/sound";
+import { cx } from "@/components/ui/cx";
 import { ratingClass } from "./RatingButtons";
+
+/**
+ * Frågan: stycken, bilder och formler centreras som text. Listor, tabeller och kodblock
+ * centreras som block (mitt i kortet, bara så breda som innehållet) med vänsterställda rader.
+ */
+export const CENTERED_QUESTION =
+  "text-center [&>:is(ul,ol,table,pre)]:mx-auto [&>:is(ul,ol,table,pre)]:w-fit [&>:is(ul,ol,table,pre)]:max-w-full [&>:is(ul,ol,table,pre)]:text-left";
+
+/**
+ * Svaret (baksidan) är ett block mitt i kortet, bara så brett som sin längsta rad. Ett kort svar
+ * blir därför centrerat som text, och i en lista eller ett svar över flera rader ligger punkterna
+ * och radernas vänsterkant i linje inuti blocket, som går att läsa även när det är långt. Blocket
+ * är högst 28em brett (en bekväm radlängd), så även ett långt svar står synligt mitt i kortet;
+ * på mobilen fyller det kortets bredd.
+ */
+export const CENTERED_ANSWER = "mx-auto w-fit max-w-[min(100%,28em)] text-left";
+
+/** Samma sak för förklaringen på automaträttade kort, som har mindre text (prose-body). */
+export const CENTERED_EXPLANATION = "mx-auto w-fit max-w-[min(100%,42em)] text-left";
 
 type Props = {
   cardId: string;
   front: string;
   back: string;
-  /** Liten rubrik ovanför framsidan, t.ex. "Förklara begreppet" för uppgiftstypen Begrepp. */
+  /** Uppgiftstypen som uppmaning i kortets huvud, fram och bak (cardKindInstruction), t.ex. "Förklara begreppet". */
   eyebrow?: string | null;
   hint: string | null;
   categoryTitle: string | null;
@@ -114,12 +133,11 @@ export function Flashcard({
           style={{ touchAction: "pan-y" }}
         >
           <section aria-label={sv.study.front} aria-hidden={flipped} inert={flipped} className={`${faceClass} flip-front border border-line dark:border-transparent`}>
-            <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} starred={starred} onToggleStar={onToggleStar} />
-            {eyebrow ? <p className="text-center text-xs font-semibold uppercase tracking-wide text-muted">{eyebrow}</p> : null}
+            <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} kindLabel={eyebrow} starred={starred} onToggleStar={onToggleStar} />
             {/* m-auto på innehållet (inte items-center på behållaren): centrerat när det får plats,
                 scrollbart från toppen när det inte gör det, så inget hamnar under rubrikraden. */}
-            <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2 text-center">
-              <Markdown text={front} className="m-auto w-full" />
+            <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2">
+              <Markdown text={front} className={`m-auto w-full ${CENTERED_QUESTION}`} />
             </div>
             {hint ? (
               <div className="mt-4 border-t border-line pt-3 text-center text-sm">
@@ -144,9 +162,9 @@ export function Flashcard({
           </section>
 
           <section aria-label={sv.study.back} aria-hidden={!flipped} inert={!flipped} className={`${faceClass} flip-back border border-accent/40`}>
-            <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} starred={starred} onToggleStar={onToggleStar} />
+            <FaceHeader categoryTitle={categoryTitle} colorIndex={categoryColorIndex} kindLabel={eyebrow} starred={starred} onToggleStar={onToggleStar} />
             <div className="flex max-h-[var(--card-content-max)] flex-1 overflow-y-auto py-2">
-              <Markdown text={back} className="m-auto w-full" />
+              <Markdown text={back} className={`m-auto ${CENTERED_ANSWER}`} />
             </div>
             {feedback !== null ? <Stamp rating={feedback} /> : null}
             {feedback !== null && feedback >= 4 ? <span aria-hidden="true" className={`rate-burst rate-burst-${feedback}`} /> : null}
@@ -157,44 +175,110 @@ export function Flashcard({
   );
 }
 
-/** Kategori till vänster; stjärna och ljud till höger, som på Knowts kort. Knapparna vänder inte kortet. */
+/** Stjärnknappen är 32 px bred (IconButton size sm). */
+const STAR_PX = 32;
+/** Minsta luft mellan uppgiftstypen och områdesnamnet (eller stjärnan) när de står på samma rad. */
+const CLEARANCE_PX = 24;
+
+/**
+ * Kortets huvud, en rad: område till vänster, uppgiftstypen mitt i kortet på samma höjd och
+ * stjärnan ensam i övre högra hörnet. Får områdesnamnet och typen inte plats bredvid varandra
+ * (smal skärm, långt områdesnamn) hamnar typen centrerad på en egen rad under. Det mäts, inte
+ * gissas: ett osynligt lager håller områdets och typens naturliga bredd. Stjärnan vänder inte kortet.
+ */
 export function FaceHeader({
   categoryTitle,
   colorIndex,
+  kindLabel,
   starred,
   onToggleStar,
 }: {
   categoryTitle: string | null;
   colorIndex: number;
+  /** Uppgiftstypen som uppmaning, t.ex. "Förklara begreppet" (cardKindInstruction). */
+  kindLabel: string | null;
   starred: boolean;
   onToggleStar: () => void;
 }) {
-  const [soundOn, setSoundOn] = useSoundEnabled();
+  const rowRef = useRef<HTMLDivElement>(null);
+  const tagMeasure = useRef<HTMLSpanElement>(null);
+  const labelMeasure = useRef<HTMLSpanElement>(null);
+  const [stacked, setStacked] = useState(false);
+
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    if (!row || !kindLabel) return;
+    const measure = () => {
+      const width = row.clientWidth;
+      const tag = tagMeasure.current?.offsetWidth ?? 0;
+      const label = labelMeasure.current?.offsetWidth ?? 0;
+      // Typen står mitt i raden; varje sida behöver plats för sitt innehåll plus luft, så att
+      // typen inte ser ihopklistrad ut med områdesnamnet.
+      const side = (width - label) / 2 - CLEARANCE_PX;
+      setStacked(tag > side || STAR_PX > side);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(row);
+    if (tagMeasure.current) observer.observe(tagMeasure.current);
+    if (labelMeasure.current) observer.observe(labelMeasure.current);
+    return () => observer.disconnect();
+  }, [kindLabel, categoryTitle]);
+
+  const star = (
+    <Tooltip label={starred ? sv.session.unstar : sv.session.star} side="bottom">
+      <IconButton
+        label={starred ? sv.session.unstar : sv.session.star}
+        variant="outline"
+        size="sm"
+        className={HIT_AREA}
+        onClick={onToggleStar}
+        aria-pressed={starred}
+        data-testid="card-star"
+        // Inline: klasser kan inte skriva över knappens kant- och textfärg förutsägbart.
+        style={starred ? { color: "var(--chart-3)", borderColor: "var(--chart-3)" } : undefined}
+      >
+        <Star size={16} aria-hidden fill={starred ? "currentColor" : "none"} />
+      </IconButton>
+    </Tooltip>
+  );
+
   return (
-    <div className="mb-4 flex items-start justify-between gap-3">
-      {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} size="lg" /> : <span />}
-      <div className="flex shrink-0 items-center gap-1.5">
-        <Tooltip label={starred ? sv.session.unstar : sv.session.star} side="bottom">
-          <IconButton
-            label={starred ? sv.session.unstar : sv.session.star}
-            variant="outline"
-            size="sm"
-            className={HIT_AREA}
-            onClick={onToggleStar}
-            aria-pressed={starred}
-            data-testid="card-star"
-            // Inline: klasser kan inte skriva över knappens kant- och textfärg förutsägbart.
-            style={starred ? { color: "var(--chart-3)", borderColor: "var(--chart-3)" } : undefined}
-          >
-            <Star size={16} aria-hidden fill={starred ? "currentColor" : "none"} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip label={soundOn ? sv.session.soundOn : sv.session.soundOff} side="bottom">
-          <IconButton label={soundOn ? sv.session.soundOn : sv.session.soundOff} variant="outline" size="sm" className={HIT_AREA} onClick={() => setSoundOn(!soundOn)} aria-pressed={!soundOn}>
-            {soundOn ? <Volume2 size={16} aria-hidden /> : <VolumeX size={16} aria-hidden />}
-          </IconButton>
-        </Tooltip>
+    <div
+      ref={rowRef}
+      data-testid="card-header"
+      data-stacked={kindLabel ? stacked : undefined}
+      className={cx(
+        "relative mb-4 grid items-center gap-x-3 gap-y-3",
+        kindLabel && !stacked ? "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)_auto]",
+      )}
+    >
+      <div className="col-start-1 row-start-1 min-w-0 justify-self-start">
+        {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} size="lg" /> : null}
       </div>
+      {kindLabel ? (
+        <p
+          className={cx(
+            "text-center text-xs font-semibold uppercase leading-snug tracking-wide text-muted",
+            stacked ? "col-span-2 row-start-2" : "col-start-2 row-start-1 whitespace-nowrap",
+          )}
+          data-testid="card-kind"
+        >
+          {kindLabel}
+        </p>
+      ) : null}
+      <div className={cx("row-start-1 flex justify-self-end", kindLabel && !stacked ? "col-start-3" : "col-start-2")}>{star}</div>
+      {kindLabel ? (
+        // Mätlagret: osynligt, utan egen plats i layouten och dolt för skärmläsare.
+        <div aria-hidden="true" className="pointer-events-none invisible absolute left-0 top-0 flex whitespace-nowrap">
+          <span ref={tagMeasure} className="inline-flex">
+            {categoryTitle ? <CategoryTag title={categoryTitle} colorIndex={colorIndex} size="lg" className="whitespace-nowrap" /> : null}
+          </span>
+          <span ref={labelMeasure} className="text-xs font-semibold uppercase tracking-wide">
+            {kindLabel}
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }

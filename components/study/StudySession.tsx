@@ -24,7 +24,7 @@ import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { filterCards, selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
 import { EXTRA_SESSION_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
 import { buildSessionResult, type SessionResult } from "@/lib/study/session-result";
-import { duggaExamSize, type DuggaSettings } from "@/lib/study/dugga";
+import { settingsQuery, sizeLimit, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
 import { readStars, useStars } from "@/lib/progress/stars";
 import { playRatingSound } from "@/lib/ui/sound";
 import { countIntroducedToday } from "@/lib/stats/progress-stats";
@@ -58,8 +58,10 @@ type Props = {
   extra?: boolean;
   /** Löpnummer i en kedja av fortsättningar (URL-parametern pass), se buildSessionResult. */
   pass?: number;
-  /** Duggans regler (antal frågor, ledtrådar, tidtagning); null i övriga lägen. */
-  dugga: DuggaSettings | null;
+  /** Läget som inställningarna hör till (Stjärnmärkta har egna, fast passet är fri repetition). */
+  settingsMode?: SettingsMode;
+  /** Passets inställningar (antal, ledtrådar, ordning, uppgiftstyper, duggans tidtagning …). */
+  settings: SessionSettings;
   /** Bara stjärnmärkta kort. */
   onlyStarred: boolean;
   /** Bara originalkorten (den beprövade uppsättningen). */
@@ -91,7 +93,23 @@ function clock(ms: number): string {
   return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
 }
 
-export function StudySession({ deck, categories, cards: allCards, mode, selection, userId, extraNew, extra = false, pass = 0, dugga, onlyStarred, onlyOriginal = false }: Props) {
+export function StudySession({
+  deck,
+  categories,
+  cards: allCards,
+  mode,
+  selection,
+  userId,
+  extraNew,
+  extra = false,
+  pass = 0,
+  settingsMode = mode,
+  settings,
+  onlyStarred,
+  onlyOriginal = false,
+}: Props) {
+  // Duggans regler är passets inställningar i duggaläget (tidtagning, märket i toppen).
+  const dugga = mode === "exam" ? settings : null;
   // Bara originalkorten: allt i passet (kö, dagsplan, sammanfattning) räknar på dem.
   const cards = useMemo(() => (onlyOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal]);
   const store = useProgressStore(userId);
@@ -124,7 +142,7 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
   // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
   const cardsRef = useRef(cards);
   cardsRef.current = cards;
-  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${extra}|${JSON.stringify(dugga)}|${onlyStarred}|${onlyOriginal}`;
+  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${extra}|${JSON.stringify(settings)}|${onlyStarred}|${onlyOriginal}`;
   useEffect(() => {
     if (!store) return;
     let cancelled = false;
@@ -157,9 +175,9 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
       const isExtra = mode === "fsrs" && extra;
       const finalReview = mode === "fsrs" && !isExtra && phase.kind === "final";
       const maxNew = mode === "fsrs" && !finalReview && !isExtra ? (extraNew ?? plan.limit) : undefined;
-      const examSize = dugga ? duggaExamSize(dugga.size) : undefined;
-      const extraSize = isExtra ? EXTRA_SESSION_SIZE : undefined;
-      const order = selectCardIds({ cards: pool, progress: loaded, mode, selection, now, maxNew, finalReview, examSize, extraSize });
+      // Plugga vidare tar lika många kort som passets antal, annars ett block på EXTRA_SESSION_SIZE.
+      const extraSize = isExtra ? (sizeLimit(settings.size) ?? EXTRA_SESSION_SIZE) : undefined;
+      const order = selectCardIds({ cards: pool, progress: loaded, mode, selection, now, maxNew, finalReview, extraSize, settings });
       setPrefs(currentPrefs);
       setProgress(loaded);
       setReviews(history);
@@ -204,8 +222,8 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardKey]);
 
-  // Ledtrådar: alltid, utom i en dugga där studenten valt bort dem.
-  const hintAllowed = mode !== "exam" || !!dugga?.hints;
+  // Ledtrådar: inställningen Tillåt ledtrådar (på som standard, av som standard i duggan).
+  const hintAllowed = settings.hints;
 
   const flip = useCallback(() => {
     if (!card || !cardKey) return;
@@ -442,6 +460,8 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
 
   if (session.finished) {
     const summary = summarize(session);
+    // Länkarna vidare behåller passets inställningar och originalfiltret.
+    const suffix = `${settingsQuery(settingsMode, settings)}${onlyOriginal ? "&original=1" : ""}`;
     // Alla lägen utom duggan visar nästa repetition (varje skattning räknas in i schemat), men
     // bara den schemalagda kön har en slutpunkt för dagen och erbjuder Plugga vidare.
     const result: SessionResult | null =
@@ -457,8 +477,16 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
             finalReview: sessionPlan.finalReview,
             extraPass: sessionPlan.extra,
             pass,
+            suffix,
+            newCards: settings.newCards,
+            size: sizeLimit(settings.size),
           })
         : null;
+    // Ett pass till med samma läge, urval och inställningar (inte schemalagt: där finns Plugga vidare).
+    const againHref =
+      mode === "fsrs"
+        ? null
+        : `/d/${deck.slug}/plugga?mode=${mode}&urval=${encodeURIComponent(serializeSelection(selection))}${suffix}${onlyStarred ? "&stjarnor=1" : ""}&pass=${pass + 1}`;
     return (
       <SessionSummary
         summary={summary}
@@ -471,6 +499,7 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
         deckSlug={deck.slug}
         onPrevious={mode !== "exam" && canGoPrevious(session) ? previous : undefined}
         duration={dugga?.timer ? clock(elapsed) : null}
+        againHref={againHref}
       />
     );
   }
@@ -547,7 +576,7 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
           cardId={card.id}
           front={card.front}
           back={card.back}
-          eyebrow={card.kind === "begrepp" ? sv.quiz.conceptPrompt : null}
+          eyebrow={sv.cardKind.instruction[card.kind]}
           hint={hintAllowed ? card.hint : null}
           categoryTitle={categoryTitle(card.category_id)}
           categoryColorIndex={card.category_id ? (colorIndex.get(card.category_id) ?? 0) : 0}

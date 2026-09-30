@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { BookOpenText, CalendarClock, GraduationCap, Target } from "lucide-react";
+import { BookOpenText, CalendarClock, CircleCheckBig, GraduationCap, Target } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { planDeckSession } from "@/lib/study/deck-plan";
@@ -29,6 +29,11 @@ type Props = {
  * Ett område i radardiagrammet, öppnat: hur det går (inlärda, kan nu, kluriga) och
  * genvägar till ett pass på bara det området. Samma planering som kurssidan, så antal
  * kort och länkar stämmer med vad passet sedan innehåller.
+ *
+ * Grönt betyder klart (Alvins beslut 30 sep 2026): alla genvägar är gråa så länge det finns
+ * något kvar. Plugga området blir grönt när dagens schemalagda kort i området är gjorda (och
+ * startar då Plugga vidare), Kluriga kort när inga kluriga kort finns kvar i området. Fri
+ * repetition och Dugga har ingen slutpunkt och förblir gråa.
  */
 export function CategoryFocusDialog({ open, onClose, deck, cards, category, stats, progress, reviews, dailyNew }: Props) {
   const plans = useMemo(() => {
@@ -44,6 +49,9 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
   const total = stats?.total ?? 0;
   const learnedPct = total === 0 ? 0 : ((stats?.learned ?? 0) / total) * 100;
   const partialPct = total === 0 ? 0 : ((stats?.partial ?? 0) / total) * 100;
+  // Innan progress laddats vet vi inte vad som är klart: allt är grått.
+  const fsrsDone = progress !== null && !!plans?.fsrs.nothingDue;
+  const trickyDone = progress !== null && total > 0 && plans?.tricky.selectionCount === 0;
 
   return (
     <Modal open={open && category !== null} onClose={onClose} title={category?.title ?? ""} size="md">
@@ -70,19 +78,40 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
 
           <ActionList>
             <ActionRow
-              href={plans.fsrs.canStart ? plans.fsrs.startHref : plans.fsrs.moreNew > 0 ? plans.fsrs.moreHref : plans.free.startHref}
-              icon={CalendarClock}
+              href={
+                fsrsDone && plans.fsrs.canExtra
+                  ? plans.fsrs.extraHref
+                  : plans.fsrs.canStart
+                    ? plans.fsrs.startHref
+                    : plans.fsrs.moreNew > 0
+                      ? plans.fsrs.moreHref
+                      : plans.free.startHref
+              }
+              icon={fsrsDone ? CircleCheckBig : CalendarClock}
               title={sv.focus.studyArea}
-              meta={plans.fsrs.canStart ? sv.focus.studyAreaMeta(plans.fsrs.sessionCards, estimateMinutes(plans.fsrs.sessionCards)) : sv.focus.studyAreaDone}
-              primary
+              meta={
+                fsrsDone
+                  ? `${sv.focus.studyAreaDoneTitle}. ${sv.focus.studyAreaDoneMeta}`
+                  : plans.fsrs.canStart
+                    ? sv.focus.studyAreaMeta(plans.fsrs.sessionCards, estimateMinutes(plans.fsrs.sessionCards))
+                    : sv.focus.studyAreaDone
+              }
+              primary={fsrsDone}
               data-testid="focus-study"
             />
-            {plans.tricky.selectionCount > 0 ? (
+            {total > 0 ? (
               <ActionRow
-                href={plans.tricky.startHref}
-                icon={Target}
+                // Inga kluriga kort kvar: fortsätt med de svagaste korten (fri repetition, svagast först).
+                href={trickyDone ? plans.free.startHref : plans.tricky.startHref}
+                icon={trickyDone ? CircleCheckBig : Target}
                 title={sv.focus.trickyArea}
-                meta={`${sv.deck.summaryTricky(plans.tricky.selectionCount)}, cirka ${estimateMinutes(plans.tricky.selectionCount)} min`}
+                meta={
+                  trickyDone
+                    ? `${sv.focus.trickyAreaDone}. ${sv.focus.trickyAreaDoneMeta}`
+                    : `${sv.deck.summaryTricky(plans.tricky.selectionCount)}, cirka ${estimateMinutes(plans.tricky.selectionCount)} min`
+                }
+                primary={trickyDone}
+                data-testid="focus-tricky"
               />
             ) : null}
             <ActionRow

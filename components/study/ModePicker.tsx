@@ -37,7 +37,8 @@ function meta(mode: PickerMode, plan: DeckPlan, progressReady: boolean, totalCar
     case "tricky":
       return sv.deck.summaryTricky(plan.selectionCount);
     case "random":
-      return sv.home.cards(totalCards);
+      // Hela kursen, eller det inställningarna begränsar passet till.
+      return sv.home.cards(Math.min(totalCards, plan.selectionCount));
     case "exam":
       return sv.deck.metaExam(plan.selectionCount);
     case "starred":

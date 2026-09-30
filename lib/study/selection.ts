@@ -4,10 +4,18 @@
 import { buildExtraQueue, buildFinalReviewQueue, buildFsrsQueue, retrievability, shuffleIds } from "@/lib/fsrs/scheduler";
 import { EXAM_SIZE } from "@/lib/study/plan";
 import { isTricky, type ProgressMap, type StudyMode } from "@/lib/progress/types";
+import type { CardKind } from "@/lib/cards/kinds";
+import { defaultSettings, filterKinds, sizeLimit, type SessionOrder, type SessionSettings } from "@/lib/study/session-settings";
 
 export type Selection = { kind: "all" } | { kind: "categories"; categoryIds: string[] } | { kind: "low" };
 
-export type SelectableCard = { id: string; category_id: string | null; sort_order: number };
+export type SelectableCard = {
+  id: string;
+  category_id: string | null;
+  sort_order: number;
+  /** Uppgiftstyp, för inställningen Uppgiftstyper. Saknas = självskattning. */
+  kind?: CardKind;
+};
 
 /**
  * Pseudo-id för kort som saknar kategori. Låter studenten välja och se statistik för dem
@@ -82,6 +90,39 @@ function orderByWeakness(ids: readonly string[], progress: ProgressMap, random: 
   return [...groups.keys()].sort((a, b) => a - b).flatMap((g) => shuffleIds(groups.get(g) ?? [], random));
 }
 
+/** Aldrig skattat: ingen progress, eller ingen självskattning. */
+function unseen(progress: ProgressMap, id: string): boolean {
+  const p = progress[id];
+  return !p || p.self_rating === null;
+}
+
+/** Kort i kursens ordning (sort_order). */
+function byCourseOrder(ids: readonly string[], cards: readonly SelectableCard[]): string[] {
+  const pos = new Map(cards.map((c) => [c.id, c.sort_order] as const));
+  return [...ids].sort((a, b) => (pos.get(a) ?? 0) - (pos.get(b) ?? 0));
+}
+
+/**
+ * Ett område i taget: korten grupperas per område i kursens ordning (områdets första kort),
+ * och behåller kön ordning inom området. Sorteringen är stabil.
+ */
+function byArea(ids: readonly string[], cards: readonly SelectableCard[]): string[] {
+  const areaOf = new Map(cards.map((c) => [c.id, c.category_id ?? UNCATEGORIZED_ID] as const));
+  const areaPos = new Map<string, number>();
+  for (const c of [...cards].sort((a, b) => a.sort_order - b.sort_order)) {
+    const area = c.category_id ?? UNCATEGORIZED_ID;
+    if (!areaPos.has(area)) areaPos.set(area, c.sort_order);
+  }
+  return [...ids].sort((a, b) => (areaPos.get(areaOf.get(a) ?? "") ?? 0) - (areaPos.get(areaOf.get(b) ?? "") ?? 0));
+}
+
+/** Fri repetition, kluriga och stjärnmärkta: svagast först, kursordning eller slumpat. */
+function orderIds(ids: readonly string[], order: SessionOrder, cards: readonly SelectableCard[], progress: ProgressMap, random: () => number): string[] {
+  if (order === "kurs") return byCourseOrder(ids, cards);
+  if (order === "slump") return shuffleIds(ids, random);
+  return orderByWeakness(ids, progress, random);
+}
+
 /**
  * Kort-id i den ordning sessionen ska visa dem.
  * - fsrs: förfallna och nya kort ur urvalet, förfallna först (blandat inom samma dag).
@@ -90,6 +131,11 @@ function orderByWeakness(ids: readonly string[], progress: ProgressMap, random: 
  * - tricky: bara kluriga kort ur urvalet, svagast först, blandat inom samma skattning.
  * - random: hela decket i slumpad ordning (urvalet ignoreras).
  * - exam: examSize (standard EXAM_SIZE) slumpade kort ur urvalet, som en dugga.
+ *
+ * Passets inställningar (settings, se session-settings.ts) finslipar urvalet: antal kort
+ * (taket tas efter ordningen, så att schemalagt behåller de förfallna och kluriga de
+ * svåraste), uppgiftstyper, nya kort, ordning, osedda kluriga kort och områden i
+ * slumpläget. Utan settings gäller lägets standard, alltså samma kö som tidigare.
  */
 export function selectCardIds(input: {
   cards: readonly SelectableCard[];
@@ -106,26 +152,47 @@ export function selectCardIds(input: {
   examSize?: number;
   /** Schemalagt läge: Plugga vidare med så här många kort (buildExtraQueue). */
   extraSize?: number;
+  /** Passets inställningar. Undefined = lägets standard. */
+  settings?: SessionSettings;
 }): string[] {
   const random = input.random ?? Math.random;
-  const ordered = [...input.cards].sort((a, b) => a.sort_order - b.sort_order);
+  const s = input.settings ?? defaultSettings(input.mode);
+  const limit = sizeLimit(s.size);
+  const cap = (ids: string[]) => (limit === undefined ? ids : ids.slice(0, limit));
+  const ordered = filterKinds([...input.cards].sort((a, b) => a.sort_order - b.sort_order), s.kinds);
   if (input.mode === "random") {
-    return shuffleIds(ordered.map((c) => c.id), random);
+    // Slumpläget går genom hela kursen, om inte studenten valt att följa de ikryssade områdena.
+    const pool = s.followAreas ? filterCards(ordered, input.progress, input.selection) : ordered;
+    return cap(shuffleIds(pool.map((c) => c.id), random));
   }
   const filtered = filterCards(ordered, input.progress, input.selection);
   if (input.mode === "exam") {
-    return shuffleIds(filtered.map((c) => c.id), random).slice(0, input.examSize ?? EXAM_SIZE);
+    const size = input.examSize ?? (input.settings ? (limit ?? Number.POSITIVE_INFINITY) : EXAM_SIZE);
+    return shuffleIds(filtered.map((c) => c.id), random).slice(0, size);
   }
   if (input.mode === "fsrs") {
-    const ids = filtered.map((c) => c.id);
-    if (input.extraSize !== undefined) return buildExtraQueue(ids, input.progress, input.now ?? new Date(), random, { size: input.extraSize });
-    if (input.finalReview) return buildFinalReviewQueue(ids, input.progress, input.now ?? new Date(), random);
-    return buildFsrsQueue(ids, input.progress, input.now ?? new Date(), random, { maxNew: input.maxNew });
+    const now = input.now ?? new Date();
+    // Utan nya kort: bara kort som redan finns i schemat.
+    const ids = filtered.map((c) => c.id).filter((id) => s.newCards || !(input.progress[id] === undefined || input.progress[id]?.state === 0));
+    let queue: string[];
+    if (input.extraSize !== undefined) queue = buildExtraQueue(ids, input.progress, now, random, { size: input.extraSize });
+    else if (input.finalReview) queue = cap(buildFinalReviewQueue(ids, input.progress, now, random));
+    else queue = cap(buildFsrsQueue(ids, input.progress, now, random, { maxNew: s.newCards ? input.maxNew : 0 }));
+    return s.order === "omrade" ? byArea(queue, ordered) : queue;
   }
   if (input.mode === "tricky") {
-    return orderByWeakness(trickyCards(filtered, input.progress).map((c) => c.id), input.progress, random);
+    const tricky = trickyCardsFor(filtered, input.progress, s.unseen).map((c) => c.id);
+    return cap(orderIds(tricky, s.order, ordered, input.progress, random));
   }
-  return orderByWeakness(filtered.map((c) => c.id), input.progress, random);
+  return cap(orderIds(filtered.map((c) => c.id), s.order, ordered, input.progress, random));
+}
+
+/**
+ * Kluriga kort efter inställningen Osedda kort: med osedda (standard) alla kluriga, utan
+ * bara de som skattats 1–2.
+ */
+export function trickyCardsFor(cards: readonly SelectableCard[], progress: ProgressMap, includeUnseen: boolean): SelectableCard[] {
+  return trickyCards(cards, progress).filter((c) => includeUnseen || !unseen(progress, c.id));
 }
 
 export type CategoryStats = {

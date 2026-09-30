@@ -5,7 +5,7 @@ import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { isStudyMode, type StudyMode } from "@/lib/progress/types";
 import { parseSelection } from "@/lib/study/selection";
-import { parseDugga } from "@/lib/study/dugga";
+import { parseSessionSettings } from "@/lib/study/session-settings";
 import { StudySession } from "@/components/study/StudySession";
 import { sv } from "@/lib/i18n/sv";
 
@@ -29,8 +29,10 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const rawExtra = Array.isArray(query.nya) ? query.nya[0] : query.nya;
   const parsedExtra = rawExtra ? Number.parseInt(rawExtra, 10) : Number.NaN;
   const extraNew = Number.isFinite(parsedExtra) && parsedExtra > 0 ? Math.min(200, parsedExtra) : null;
-  const dugga = mode === "exam" ? parseDugga(query) : null;
   const onlyStarred = (Array.isArray(query.stjarnor) ? query.stjarnor[0] : query.stjarnor) === "1";
+  // Passets inställningar (antal, ledtrådar, ordning, uppgiftstyper …), valda under Ditt pass.
+  const settingsMode = onlyStarred && mode === "free" ? "starred" : mode;
+  const settings = parseSessionSettings(settingsMode, query);
   const onlyOriginal = (Array.isArray(query.original) ? query.original[0] : query.original) === "1";
   // Plugga vidare (vidare=1): ett extra pass i schemalagt läge när dagens kort är klara.
   const extra = mode === "fsrs" && (Array.isArray(query.vidare) ? query.vidare[0] : query.vidare) === "1";
@@ -40,12 +42,13 @@ export default async function StudyPage({ params, searchParams }: { params: Para
 
   return (
     <StudySession
-      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(dugga)}-${onlyStarred}-${onlyOriginal}-${extra}-${pass}`}
+      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(settings)}-${onlyStarred}-${onlyOriginal}-${extra}-${pass}`}
       deck={{ id: data.deck.id, slug: data.deck.slug, title: data.deck.title, exam_date: data.deck.exam_date }}
       extraNew={extraNew}
       extra={extra}
       pass={pass}
-      dugga={dugga}
+      settingsMode={settingsMode}
+      settings={settings}
       onlyStarred={onlyStarred}
       onlyOriginal={onlyOriginal}
       categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}

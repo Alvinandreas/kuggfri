@@ -9,7 +9,8 @@ import { queueStats } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
 import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import { EXAM_SIZE, EXTRA_SESSION_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
-import { filterCards, serializeSelection, trickyCards, type SelectableCard, type Selection } from "@/lib/study/selection";
+import { filterCards, serializeSelection, trickyCardsFor, type SelectableCard, type Selection } from "@/lib/study/selection";
+import { defaultSettings, filterKinds, sizeLimit, type SessionSettings } from "@/lib/study/session-settings";
 
 export type DeckPlan = {
   phase: ExamPhase;
@@ -17,8 +18,13 @@ export type DeckPlan = {
   finalReview: boolean;
   /** Korten i urvalet, efter läge (kluriga kort filtrerar bort resten). */
   selectionCards: SelectableCard[];
-  /** Antal kort läget skulle visa. Tentaläget har ett eget tak. */
+  /** Antal kort läget skulle visa. Tentaläget har ett eget tak, och inställningen Antal kort ett. */
   selectionCount: number;
+  /**
+   * Kort passet kunde ha utan inställningen Antal kort, för valet "Alla (N)": urvalet, och
+   * i schemalagt läge dagens kort (förfallna och doserade nya).
+   */
+  availableCount: number;
   /** Hur många av korten i urvalet studenten skattat som säkra. */
   selectionLearned: number;
   /** Dosering för schemalagd repetition, eller null innan progress laddats. */
@@ -53,23 +59,41 @@ export function planDeckSession(input: {
   /** Valda kategorier. Tom lista = hela kursen. */
   selectedIds: readonly string[];
   dailyNew: number;
-  /** Duggans antal frågor. Undefined = EXAM_SIZE. */
+  /** Duggans antal frågor. Undefined = EXAM_SIZE (eller inställningarnas antal). */
   examSize?: number;
+  /**
+   * Passets inställningar (antal, nya kort, uppgiftstyper, osedda kluriga, områden i
+   * slumpläget). Undefined = lägets standard, samma plan som innan inställningarna fanns.
+   */
+  settings?: SessionSettings;
   now?: Date;
 }): DeckPlan {
   const now = input.now ?? new Date();
   const progress = input.progress ?? {};
+  const s = input.settings ?? defaultSettings(input.mode);
+  const limit = sizeLimit(s.size);
+  const cap = (n: number) => (limit === undefined ? n : Math.min(limit, n));
+  const cards = filterKinds(input.cards, s.kinds);
 
   const categorySelection: Selection =
     input.selectedIds.length > 0 ? { kind: "categories", categoryIds: [...input.selectedIds] } : { kind: "all" };
-  const selectedCards = filterCards(input.cards, progress, categorySelection);
-  const selectionCards = input.mode === "tricky" ? trickyCards(selectedCards, progress) : selectedCards;
+  const selectedCards = filterCards(cards, progress, categorySelection);
+  const selectionCards = input.mode === "tricky" ? trickyCardsFor(selectedCards, progress, s.unseen) : selectedCards;
   const selectionLearned = selectionCards.filter((c) => progress[c.id]?.self_rating === 5).length;
 
-  // Slumpläget går alltid genom hela kursen, oavsett vilka kategorier som är valda.
-  const effectiveSelection: Selection = input.mode === "random" ? { kind: "all" } : categorySelection;
+  // Slumpläget går genom hela kursen, oavsett vilka kategorier som är valda, om inte
+  // studenten valt att följa de ikryssade områdena.
+  const randomAll = input.mode === "random" && !s.followAreas;
+  const effectiveSelection: Selection = randomAll ? { kind: "all" } : categorySelection;
+  const examLimit = input.examSize ?? (input.settings ? (limit ?? Number.POSITIVE_INFINITY) : EXAM_SIZE);
   const selectionCount =
-    input.mode === "random" ? input.cards.length : input.mode === "exam" ? Math.min(input.examSize ?? EXAM_SIZE, selectionCards.length) : selectionCards.length;
+    input.mode === "random"
+      ? cap(randomAll ? cards.length : selectedCards.length)
+      : input.mode === "exam"
+        ? Math.min(examLimit, selectionCards.length)
+        : input.mode === "fsrs"
+          ? selectionCards.length
+          : cap(selectionCards.length);
   const startHref = `/d/${input.deck.slug}/plugga?mode=${input.mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
 
   const phase = examPhase(parseExamDate(input.deck.exam_date), now);
@@ -84,12 +108,17 @@ export function planDeckSession(input: {
       })
     : null;
 
-  const sessionDue = selStats?.due ?? 0;
-  const sessionNew = finalReview ? 0 : Math.min(selStats?.new ?? 0, newCardPlan?.limit ?? 0);
-  const sessionCards = finalReview ? selectionCount : sessionDue + sessionNew;
+  // Schemalagt: antal kort är ett tak på dagens pass (förfallna först), och utan nya kort
+  // blir passet bara repetitioner. Taket gör passet kortare; det som blir kvar väntar.
+  const seenCount = selStats ? selStats.total - selStats.new : 0;
+  const allDue = selStats?.due ?? 0;
+  const allNew = !s.newCards || finalReview ? 0 : Math.min(selStats?.new ?? 0, newCardPlan?.limit ?? 0);
+  const sessionDue = cap(allDue);
+  const sessionNew = Math.min(allNew, cap(allDue + allNew) - sessionDue);
+  const sessionCards = finalReview ? cap(s.newCards ? selectionCount : seenCount) : sessionDue + sessionNew;
   const nothingDue = input.mode === "fsrs" && selStats !== null && sessionCards === 0;
-  const moreNew = Math.min(input.dailyNew, selStats?.new ?? 0);
-  const extraCount = Math.min(EXTRA_SESSION_SIZE, selectedCards.length);
+  const moreNew = s.newCards ? cap(Math.min(input.dailyNew, selStats?.new ?? 0)) : 0;
+  const extraCount = Math.min(limit ?? EXTRA_SESSION_SIZE, s.newCards ? selectedCards.length : seenCount);
   const fsrsHref = `/d/${input.deck.slug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(categorySelection))}`;
 
   return {
@@ -97,6 +126,7 @@ export function planDeckSession(input: {
     finalReview,
     selectionCards,
     selectionCount,
+    availableCount: input.mode === "fsrs" ? (finalReview ? (s.newCards ? selectionCards.length : seenCount) : allDue + allNew) : input.mode === "random" ? (randomAll ? cards.length : selectedCards.length) : selectionCards.length,
     selectionLearned,
     newCardPlan,
     sessionDue,

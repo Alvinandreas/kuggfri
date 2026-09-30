@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseCardFile, serializeCardFile } from "@/lib/content/markdown";
-import { autoRating, isCorrectAnswer, trueFalseAnswer, validateKind } from "@/lib/cards/kinds";
+import { CARD_KINDS, autoRating, cardKindInstruction, isCorrectAnswer, trueFalseAnswer, validateKind } from "@/lib/cards/kinds";
 
 const FIL = `# Kristallstruktur
 
@@ -113,5 +113,15 @@ describe("rättning och skattning", () => {
     expect(validateKind("sant-falskt", [{ text: "Sant", correct: true }, { text: "Falskt", correct: true }])).not.toEqual([]);
     expect(validateKind("begrepp", [{ text: "a", correct: true }])).not.toEqual([]);
     expect(validateKind("begrepp", null)).toEqual([]);
+  });
+
+  it("ger varje uppgiftstyp en instruktion på kortet, och flera rätta alternativ en egen", () => {
+    for (const kind of CARD_KINDS) expect(cardKindInstruction(kind).trim()).not.toBe("");
+    expect(cardKindInstruction("sjalvskattning")).toBe("Självskattning");
+    expect(cardKindInstruction("begrepp")).toBe("Förklara begreppet");
+    const ett = [{ text: "FCC", correct: true }, { text: "BCC", correct: false }];
+    const tva = [{ text: "FCC", correct: true }, { text: "HCP", correct: true }];
+    expect(cardKindInstruction("alternativ", ett)).toBe("Välj rätt alternativ");
+    expect(cardKindInstruction("alternativ", tva)).toBe("Välj alla rätta alternativ");
   });
 });

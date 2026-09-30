@@ -7,13 +7,13 @@ import type { StudyMode } from "@/lib/progress/types";
 import type { PickerMode } from "./ModePicker";
 import type { DeckPlan } from "@/lib/study/deck-plan";
 import { estimateMinutes } from "@/lib/study/plan";
-import { duggaQuery, type DuggaSettings } from "@/lib/study/dugga";
+import { settingsQuery, type SessionSettings } from "@/lib/study/session-settings";
 import { Badge } from "@/components/ui/Badge";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { ToggleRow } from "@/components/ui/Toggle";
 import { CategoryTag } from "@/components/ui/CategoryTag";
-import { DuggaSettingsFields } from "./DuggaSettingsFields";
+import { SessionSettingsFields } from "./SessionSettingsFields";
 
 const MODE_TITLES: Record<PickerMode, string> = {
   starred: sv.deck.modeStarred,
@@ -39,8 +39,13 @@ type Props = {
   totalCards: number;
   /** Nya kort per dag (ställs in under Konto), för hälsningen vid första besöket. */
   dailyNew: number;
-  dugga: DuggaSettings;
-  onDugga: (settings: DuggaSettings) => void;
+  /** Inställningarna för det valda läget (antal, ordning, ledtrådar …). */
+  settings: SessionSettings;
+  onSettings: (settings: SessionSettings) => void;
+  /** Kort i passets urval som har en ledtråd: styr om ledtrådsvalet visas. */
+  hintCards: number;
+  /** Kursen har både vändkort och flerval: då går uppgiftstyperna att välja. */
+  kindsOffered: boolean;
   starredCount: number;
   onShowStarred: () => void;
   /** Valet "Bara originalkorten", eller null när kursen inte har både original och nya kort. */
@@ -49,8 +54,8 @@ type Props = {
 
 /**
  * Ditt pass: vad som startar när man trycker på knappen (läge, urval, antal kort och tid),
- * och duggans regler. Nya kort per dag och vardagsrytmen ställs in under Konto. Står fast
- * i höger kolumn på desktop.
+ * och lägets inställningar. Nya kort per dag och vardagsrytmen ställs in under Konto. Står
+ * fast i höger kolumn på desktop.
  */
 export function SessionPanel({
   pick,
@@ -62,8 +67,10 @@ export function SessionPanel({
   firstVisit,
   totalCards,
   dailyNew,
-  dugga,
-  onDugga,
+  settings,
+  onSettings,
+  hintCards,
+  kindsOffered,
   starredCount,
   onShowStarred,
   original,
@@ -74,9 +81,11 @@ export function SessionPanel({
   // Det första passet i det valda urvalet (inte hela dagsmålet när bara ett område är valt).
   const firstCount = sessionCards > 0 ? sessionCards : Math.min(dailyNew, totalCards);
   const isDugga = mode === "exam";
-  // Duggans regler och stjärnfiltret följer med i adressen till passet.
+  // Inställningarna och stjärnfiltret följer med i adressen till passet.
   const isStarred = pick === "starred";
-  const suffix = `${isDugga ? duggaQuery(dugga) : ""}${isStarred ? "&stjarnor=1" : ""}${original?.on ? "&original=1" : ""}`;
+  const suffix = `${settingsQuery(pick, settings)}${isStarred ? "&stjarnor=1" : ""}${original?.on ? "&original=1" : ""}`;
+  // Slumpläget går genom hela kursen, om inte studenten valt att följa de ikryssade områdena.
+  const showSelection = mode !== "random" || settings.followAreas;
 
   return (
     <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
@@ -104,7 +113,7 @@ export function SessionPanel({
         </button>
       ) : null}
 
-      {mode !== "random" ? (
+      {showSelection ? (
         <div className="grid gap-2" data-testid="selection-summary">
           <p className="text-sm font-semibold text-muted">{sv.deck.summaryTitle}</p>
           <div className="flex flex-wrap gap-1.5">
@@ -115,7 +124,8 @@ export function SessionPanel({
             )}
           </div>
           <p className="text-sm text-muted">
-            {mode === "tricky" ? sv.deck.summaryTricky(selectionCount) : sv.deck.summaryCards(selectionCount)}
+            {/* Urvalet före inställningen Antal kort; hur många passet tar står vid Starta. */}
+            {mode === "tricky" ? sv.deck.summaryTricky(plan.selectionCards.length) : sv.deck.summaryCards(plan.selectionCards.length)}
             {progressReady && mode !== "tricky" ? `, ${sv.deck.summaryLearned(plan.selectionLearned)}` : ""}
           </p>
         </div>
@@ -132,7 +142,7 @@ export function SessionPanel({
         </div>
       ) : null}
 
-      {isDugga ? <DuggaSettingsFields value={dugga} onChange={onDugga} available={plan.selectionCards.length} /> : null}
+      <SessionSettingsFields mode={pick} value={settings} onChange={onSettings} available={plan.availableCount} hintCards={hintCards} kindsOffered={kindsOffered} />
 
       {offerExtra ? (
         <div className="flex gap-3 rounded-lg bg-accent-soft p-4 text-sm" data-testid="extra-panel">

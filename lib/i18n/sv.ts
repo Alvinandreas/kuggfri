@@ -146,12 +146,12 @@ export const sv = {
       },
     ],
     modesLead:
-      "Du väljer läge på kursens sida. Alla lägen räknas: varje skattning uppdaterar kortets schema, oavsett läge. Schemalagd repetition ser till att du hinner det du behöver, och allt du pluggar utöver det gör de kommande passen lättare.",
+      "Du väljer läge på kursens sida. Under Inställningar i Ditt pass ställer du in passet för just det läget, till exempel hur många kort du vill ta. Valen sparas i webbläsaren till nästa gång. Alla lägen räknas: varje skattning uppdaterar kortets schema, oavsett läge. Schemalagd repetition ser till att du hinner det du behöver, och allt du pluggar utöver det gör de kommande passen lättare.",
     modes: {
-      fsrs: "Nya och förfallna kort. Din skattning styr när kortet kommer tillbaka, och kort du skattar 1 eller 2 kommer igen senare i samma pass. När dagens pass är klart kan du plugga vidare så länge du vill.",
-      tricky: "Bara kort du skattat 1 eller 2, och kort du aldrig sett. Ett kort du nu kan slutar räknas som klurigt.",
-      free: "Bläddra fritt genom ett urval, hur många gånger du vill. Bra för att läsa in ett område.",
-      random: "Hela kursen i slumpad ordning. Bra för att se att du kan korten utan att ordningen hjälper till.",
+      fsrs: "Nya och förfallna kort. Din skattning styr när kortet kommer tillbaka, och kort du skattar 1 eller 2 kommer igen senare i samma pass. Du kan ta färre kort än dagens, hoppa över nya kort och bara repetera, eller ta ett område i taget. När dagens pass är klart kan du plugga vidare så länge du vill.",
+      tricky: "Bara kort du skattat 1 eller 2, och kort du aldrig sett. Ett kort du nu kan slutar räknas som klurigt. Du väljer antal, om de svåraste ska komma först och om osedda kort ska vara med.",
+      free: "Bläddra fritt genom ett urval, hur många gånger du vill. Bra för att läsa in ett område. Du väljer antal, ordning (svagast först, kursens ordning eller slumpat) och om du vill ha vändkort, flerval eller båda.",
+      random: "Hela kursen i slumpad ordning. Bra för att se att du kan korten utan att ordningen hjälper till. Du väljer antal och uppgiftstyper, och kan begränsa passet till de områden du kryssat i.",
       exam: "Innan duggan väljer du antal frågor (10, 20, 30 eller alla), om ledtrådar är tillåtna och om en timer ska visas. Efteråt ser du hur du ligger till.",
     },
     affectsSchedule: "Räknas i schemat",
@@ -194,7 +194,7 @@ export const sv = {
     homeBody:
       "Hemsidan visar dagens pass, din streak, din inlärda kunskap och tiden kvar till tentan. Genvägarna Kluriga kort och Dugga öppnar en ruta där du ser vad som ingår, väljer inställningar och startar direkt. Radardiagrammet visar hur mycket du kan inom varje område av kursen.",
     homeRadar:
-      "Klicka på ett område i diagrammet eller i listan bredvid för att öppna det. Där pluggar du bara det området: schemalagt, som kluriga kort, fritt eller som dugga.",
+      "Klicka på ett område i diagrammet eller i listan bredvid för att öppna det. Där pluggar du bara det området: schemalagt, som kluriga kort, fritt eller som dugga. Grönt betyder klart: Plugga området lyser grönt när dagens schemalagda kort i området är gjorda, och Kluriga kort när inga kluriga kort finns kvar.",
     statsBody:
       "Min statistik i menyn samlar din egen studiestatistik på ett ställe. Den bygger bara på dina egna repetitioner och syns bara för dig.",
     statsLink: "Öppna Min statistik",
@@ -255,7 +255,11 @@ export const sv = {
     studyArea: "Plugga området",
     studyAreaMeta: (n: number, minutes: number) => `${n === 1 ? "1 kort" : `${n} kort`} i dag, cirka ${minutes} min`,
     studyAreaDone: "Inget att repetera här i dag",
+    studyAreaDoneTitle: "Klart för i dag",
+    studyAreaDoneMeta: "Plugga vidare på området, det räknas också",
     trickyArea: "Kluriga kort i området",
+    trickyAreaDone: "Inga kluriga kort kvar",
+    trickyAreaDoneMeta: "Fortsätt med de svagaste korten i området",
     freeArea: "Fri repetition av området",
     examArea: "Dugga på området",
     notStarted: "Du har inte börjat på det här området än.",
@@ -587,15 +591,34 @@ export const sv = {
     queued: (n: number) => (n === 1 ? "1 skattning väntar på anslutning och skickas automatiskt." : `${n} skattningar väntar på anslutning och skickas automatiskt.`),
     examProgress: (i: number, total: number) => `Fråga ${i} av ${total}`,
   },
-  /** Automaträttade uppgiftstyper (Sant/Falskt, Alternativ) och Begrepp i passet. */
-  quiz: {
-    kind: {
+  /**
+   * Uppgiftstyperna (lib/cards/kinds.ts). Samma logik på båda ställena: label är typens namn i
+   * admin och innehållsverktyget, instruction är samma typ som uppmaning till studenten överst
+   * på kortet (fram och bak). Alternativkort med flera rätta svar får instructionMulti.
+   */
+  cardKind: {
+    label: {
       sjalvskattning: "Självskattning",
       begrepp: "Begrepp",
-      "sant-falskt": "Sant eller falskt?",
+      "sant-falskt": "Sant/Falskt",
       alternativ: "Alternativ",
     } as Record<"sjalvskattning" | "begrepp" | "sant-falskt" | "alternativ", string>,
-    conceptPrompt: "Förklara begreppet",
+    instruction: {
+      sjalvskattning: "Självskattning",
+      begrepp: "Förklara begreppet",
+      "sant-falskt": "Sant eller falskt",
+      alternativ: "Välj rätt alternativ",
+    } as Record<"sjalvskattning" | "begrepp" | "sant-falskt" | "alternativ", string>,
+    instructionMulti: "Välj alla rätta alternativ",
+    description: {
+      sjalvskattning: "Fråga och svar. Du vänder kortet och skattar hur väl du kunde det.",
+      begrepp: "Ett begrepp som ska förklaras. Du vänder kortet och skattar dig själv.",
+      "sant-falskt": "Ett påstående som är sant eller falskt. Rättas automatiskt.",
+      alternativ: "Välj rätt svar bland alternativen, som på tentan. Ett eller flera kan vara rätt. Rättas automatiskt.",
+    } as Record<"sjalvskattning" | "begrepp" | "sant-falskt" | "alternativ", string>,
+  },
+  /** Automaträttade uppgiftstyper (Sant/Falskt, Alternativ) i passet. */
+  quiz: {
     pickOne: "Välj ett alternativ",
     pickMany: (n: number) => `Välj ${n} alternativ`,
     submit: "Svara",
@@ -649,6 +672,8 @@ export const sv = {
     trickyModeNote: "Skattningarna räknas in i schemat. Kort du nu kan slutar räknas som kluriga.",
     backToDeck: "Tillbaka till kursen",
     home: "Till hem",
+    again: "Ett pass till",
+    againExam: "Ny dugga",
   },
   time: {
     now: "nu",
@@ -1323,8 +1348,35 @@ export const sv = {
       `${n === 1 ? "1 fråga" : `${n} frågor`}, cirka ${minutes} min, ${hints ? "med ledtrådar" : "utan ledtrådar"}`,
     onCoursePage: "Fler val på kurssidan",
   },
+  /** Inställningar under Ditt pass på kurssidan: olika för varje läge, styr passet. */
+  passSettings: {
+    size: "Antal kort",
+    sizeToday: (n: number) => `Dagens (${n})`,
+    sizeAll: (n: number) => `Alla (${n})`,
+    sizeTodayHelp: "Förfallna kort kommer först. Tar du färre väntar resten till nästa pass.",
+    newCards: "Nya kort i dag",
+    newCardsHelp: "Följ dagens dos av nya kort. Av: bara repetitioner.",
+    byArea: "Ett område i taget",
+    byAreaHelp: "Ta korten område för område i stället för blandat.",
+    hardestFirst: "Svåraste först",
+    hardestFirstHelp: "Kort du skattat 1 kommer först. Av: slumpad ordning.",
+    unseen: "Ta med osedda kort",
+    unseenHelp: "Kort du aldrig skattat räknas som kluriga. Av: bara kort du skattat 1 eller 2.",
+    order: "Ordning",
+    orderHelp: "Svagast först, i kursens ordning eller slumpat.",
+    orderStandard: "Svagast",
+    orderCourse: "Kursordning",
+    orderRandom: "Slumpad",
+    kinds: "Uppgiftstyper",
+    kindsHelp: "Vändkort skattar du själv. Flerval (sant eller falskt och alternativ) rättas direkt.",
+    kindsAll: "Alla",
+    kindsFlip: "Vändkort",
+    kindsQuiz: "Flerval",
+    followAreas: "Bara valda områden",
+    followAreasHelp: "Av: hela kursen, oavsett vilka områden som är ikryssade.",
+  },
   dugga: {
-    settingsTitle: "Duggans regler",
+    settingsTitle: "Inställningar",
     questions: "Antal frågor",
     questionsOption: (n: number) => (n === 1 ? "1 fråga" : `${n} frågor`),
     questionsAll: (n: number) => `Alla (${n})`,

@@ -26,6 +26,8 @@ type Props = {
   onPrevious?: () => void;
   /** Duggans tid ("4:07") när tidtagning var vald. */
   duration?: string | null;
+  /** Ett pass till med samma läge, urval och inställningar, eller null. */
+  againHref?: string | null;
 };
 
 const barClass: Record<1 | 2 | 3 | 4 | 5, string> = {
@@ -36,7 +38,7 @@ const barClass: Record<1 | 2 | 3 | 4 | 5, string> = {
   5: "bg-rate-5",
 };
 
-export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, today, deckSlug, onPrevious, duration = null }: Props) {
+export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, today, deckSlug, onPrevious, duration = null, againHref = null }: Props) {
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));
   const categoryTitle = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null);
   const done = today?.done ?? false;
@@ -213,6 +215,11 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
         <LinkButton href={`/d/${deckSlug}`} variant={offerExtra ? "secondary" : "primary"} size="lg">
           {sv.summary.backToDeck}
         </LinkButton>
+        {againHref ? (
+          <LinkButton href={againHref} variant="secondary" size="lg" data-testid="again">
+            {isExam ? sv.summary.againExam : sv.summary.again}
+          </LinkButton>
+        ) : null}
         {today?.continueHref && !offerExtra ? (
           <LinkButton href={today.continueHref} variant="secondary" size="lg" data-testid="continue-new">
             {sv.summary.continueNew(today.continueCount)}

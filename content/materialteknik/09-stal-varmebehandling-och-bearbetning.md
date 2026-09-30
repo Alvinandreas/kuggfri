@@ -32,7 +32,6 @@ Stål med högre kolhalt (maskinstål, 0,25 till 0,75 % C) kan härdas men är s
 
 ## Vad är martensit och hur uppstår det?
 key: vad-ar-martensit-och-hur-uppstar-det
-typ: begrepp
 original: ja
 
 Kan fås vid snabbkylning av stål från austenitområdet. Det är utöver det en metastabil fas med tetragonal struktur = distorderad BCC.

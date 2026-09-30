@@ -39,6 +39,15 @@ export function buildSessionResult(input: {
    * man står i: då skulle klicket inte starta något nytt pass.
    */
   pass?: number;
+  /**
+   * Passets inställningar i adressform (settingsQuery, plus t.ex. &original=1), som länkarna
+   * vidare behåller: samma antal kort, samma val av nya kort.
+   */
+  suffix?: string;
+  /** Inställningen Nya kort i dag. Av: inga "Ta N nya kort till", och Plugga vidare utan nya kort. */
+  newCards?: boolean;
+  /** Antal kort per pass enligt inställningarna. Undefined = EXTRA_SESSION_SIZE i Plugga vidare. */
+  size?: number;
   now?: Date;
 }): SessionResult {
   const now = input.now ?? new Date();
@@ -55,12 +64,13 @@ export function buildSessionResult(input: {
   // dos. Under slutrepetitionen inför tentan ska däremot allt gås igenom, så då räknas
   // kvarvarande nya kort som att dagen inte är slut.
   const done = queue.due === 0 && (queue.new === 0 || !input.finalReview);
-  const continueCount = Math.min(input.dailyNew, queue.new);
+  const newCards = input.newCards ?? true;
+  const continueCount = newCards ? Math.min(input.dailyNew, queue.new, input.size ?? Number.POSITIVE_INFINITY) : 0;
   const canContinue = continueCount > 0 && !input.finalReview;
   // Plugga vidare finns alltid när dagen är klar och urvalet har kort: ingen dos, inget tak.
-  const extraCount = Math.min(EXTRA_SESSION_SIZE, inSelection.length);
+  const extraCount = Math.min(input.size ?? EXTRA_SESSION_SIZE, newCards ? inSelection.length : inSelection.length - queue.new);
   const base = `/d/${input.deckSlug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(input.selection))}`;
-  const next = `&pass=${(input.pass ?? 0) + 1}`;
+  const next = `${input.suffix ?? ""}&pass=${(input.pass ?? 0) + 1}`;
 
   return {
     nextDue,

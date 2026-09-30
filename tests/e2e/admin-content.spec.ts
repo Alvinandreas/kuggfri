@@ -51,6 +51,13 @@ test.describe("admin: innehåll", () => {
     await page.waitForURL(/\/kategori\/[0-9a-f-]{36}$/);
     await expect(page.getByTestId("admin-card-list")).toContainText(front);
 
+    // Nya kort från admin väntar på granskning (Alvins beslut 30 sep); godkänn det så att studenten ser det.
+    await page.goto(`${deckUrl}/granskning?sok=${encodeURIComponent(front)}`);
+    await page.getByTestId("review-start").click();
+    await expect(page.getByTestId("review-question")).toContainText(front);
+    await page.getByTestId("review-approve").click();
+    await expect(page.getByTestId("review-inbox")).toHaveAttribute("data-saving", "0");
+
     // Byt namn
     await page.goto(`${deckUrl}/innehall`);
     const renamed = `${title} B`;

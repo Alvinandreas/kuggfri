@@ -21,11 +21,6 @@ test.describe("admin", () => {
     await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
 
-    // Antal kort före import (publik sida).
-    await page.goto(`/d/${DECK_SLUG}`);
-    const totalBefore = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
-    expect(totalBefore).toBeGreaterThan(0);
-
     await page.goto("/admin/deck");
     await page.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
     // Första kompileringen av admin-sidan i dev-läge kan ta en stund.
@@ -69,10 +64,12 @@ test.describe("admin", () => {
     await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
 
-    // Importerade kort väntar på granskning och syns inte för studenterna ännu.
+    // Importerade kort väntar på granskning och syns inte för studenterna ännu (ett område utan
+    // granskade kort visas med 0 kort).
+    const e2eRow = page.getByTestId("category-row").filter({ hasText: "E2E-kategori" });
     await page.goto(`/d/${DECK_SLUG}`);
-    const totalPending = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
-    expect(totalPending).toBe(totalBefore);
+    await expect(page.getByText(/kort totalt/)).toBeVisible();
+    await expect(e2eRow.filter({ hasText: "2 kort" })).toHaveCount(0);
 
     // Granskningen: sök fram de två korten under Att granska och godkänn dem ett i taget.
     await page.goto(`${deckAdminUrl}/granskning?sok=${encodeURIComponent(unique)}`);
@@ -83,12 +80,19 @@ test.describe("admin", () => {
     await expect(page.getByTestId("review-position")).toHaveText("1 av 1");
     await page.getByTestId("review-approve").click();
     await expect(page.getByTestId("review-no-match")).toBeVisible();
-
-    // Och i det publika decket.
-    await page.goto(`/d/${DECK_SLUG}`);
-    const totalAfter = Number((await page.getByText(/kort totalt/).textContent())?.match(/\d+/)?.[0] ?? "0");
-    expect(totalAfter).toBe(totalBefore + 2);
-    await expect(page.getByTestId("category-row").filter({ hasText: "E2E-kategori" }).first()).toBeVisible();
+    // Besluten visas direkt men sparas i bakgrunden; vänta tills servern har sparat båda.
+    await expect(page.getByTestId("review-inbox")).toHaveAttribute("data-saving", "0");
+    // Och i det publika decket. Innehållet ligger i en cache som töms när korten godkänns; ladda om
+    // tills sidan visar området (utan att jämföra totalsiffror, som andra tester kan påverka).
+    await expect
+      .poll(
+        async () => {
+          await page.goto(`/d/${DECK_SLUG}`);
+          return e2eRow.filter({ hasText: "2 kort" }).count();
+        },
+        { timeout: 30_000 },
+      )
+      .toBeGreaterThan(0);
 
     // Kortet kan pluggas: fri repetition i den nya kategorin via kryssrutan.
     await page.getByLabel("Fri repetition").check();

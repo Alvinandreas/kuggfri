@@ -164,6 +164,18 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [query, setQuery] = useState(view.filter.query);
   const inFlight = useRef(new Map<string, number>());
+  // Beslut som ännu inte sparats på servern. Lämnar man sidan då kan beslutet gå förlorat,
+  // så webbläsaren varnar tills allt är sparat.
+  const [saving, setSaving] = useState(0);
+  useEffect(() => {
+    if (saving === 0) return;
+    const warn = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [saving]);
   const lastOpened = useRef<string | null>(null);
   const latestCards = useRef(cards);
   useEffect(() => {
@@ -189,17 +201,36 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
     setQuery((q) => (q === view.filter.query ? q : view.filter.query));
   }, [view.filter.query]);
 
+  // Adressen skrivs först när inga beslut sparas: ändras adressen medan ett beslut är på väg
+  // avbryter Next förfrågan, och beslutet når aldrig tillbaka hit. Vyn byter kort direkt ändå.
+  const pendingUrl = useRef<{ url: string; mode: "push" | "replace" } | null>(null);
+  const writeUrl = useCallback((url: string, mode: "push" | "replace") => {
+    if (url === `${window.location.pathname}${window.location.search}`) return;
+    if (mode === "push") window.history.pushState(null, "", url);
+    else window.history.replaceState(null, "", url);
+  }, []);
+
   const navigate = useCallback(
     (next: Partial<View>, mode: "push" | "replace" = "push") => {
       const v: View = { ...view, ...next, filter: { ...view.filter, ...next.filter } };
       setView(v);
       const url = `${pathname}${viewQuery(v)}`;
-      if (url === `${window.location.pathname}${window.location.search}`) return;
-      if (mode === "push") window.history.pushState(null, "", url);
-      else window.history.replaceState(null, "", url);
+      // Nästa tick: ett beslut som fattas i samma klick har då hunnit markeras som pågående.
+      window.setTimeout(() => {
+        const busy = [...inFlight.current.values()].some((n) => n > 0);
+        if (busy) pendingUrl.current = { url, mode: pendingUrl.current?.mode === "push" ? "push" : mode };
+        else writeUrl(url, mode);
+      }, 0);
     },
-    [pathname, view],
+    [pathname, view, writeUrl],
   );
+
+  useEffect(() => {
+    if (saving > 0 || !pendingUrl.current) return;
+    const { url, mode } = pendingUrl.current;
+    pendingUrl.current = null;
+    writeUrl(url, mode);
+  }, [saving, writeUrl]);
 
   // Sökningen skrivs till adressen när man slutat skriva en stund.
   useEffect(() => {
@@ -291,6 +322,7 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
 
   function mark(ids: string[], delta: 1 | -1) {
     for (const id of ids) inFlight.current.set(id, (inFlight.current.get(id) ?? 0) + delta);
+    setSaving((n) => Math.max(0, n + delta * ids.length));
   }
 
   function patchList(list: ReviewCard[], id: string, fn: (c: ReviewCard) => ReviewCard): ReviewCard[] {
@@ -587,7 +619,7 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
 
   if (current) {
     return (
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-5" data-testid="review-inbox">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5" data-testid="review-inbox" data-saving={saving}>
         {tabs}
         <ReviewCardView
           card={current}
@@ -626,7 +658,7 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
   const total = counts[tab];
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-5" data-testid="review-inbox">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-5" data-testid="review-inbox" data-saving={saving}>
       {tabs}
       <p className="-mt-1 text-sm text-muted">{TAB_HELP[tab]}</p>
 

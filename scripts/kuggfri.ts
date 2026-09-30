@@ -803,16 +803,21 @@ function cmdTentor(args: Args): void {
       sqlLiteral(e.hash),
     ].join(", ")})`;
   });
-  query(
-    target,
-    `insert into public.exams (deck_id, key, title, exam_date, duration_minutes, max_points, grade_limits, aids, instructions, source, status, questions, source_hash) values
-${rows.join(",\n")}
+  // En tenta per fråga: figurerna ligger inbäddade, och produktionens API tar inte emot hela
+  // tentabanken i en förfrågan (413).
+  rows.forEach((row, i) => {
+    query(
+      target,
+      `insert into public.exams (deck_id, key, title, exam_date, duration_minutes, max_points, grade_limits, aids, instructions, source, status, questions, source_hash) values
+${row}
 on conflict (deck_id, key) do update set
   title = excluded.title, exam_date = excluded.exam_date, duration_minutes = excluded.duration_minutes,
   max_points = excluded.max_points, grade_limits = excluded.grade_limits, aids = excluded.aids,
   instructions = excluded.instructions, source = excluded.source, status = excluded.status,
   questions = excluded.questions, source_hash = excluded.source_hash;`,
-  );
+    );
+    say(`  ${dim(`skrev ${changed[i]?.exam.key ?? ""}`)}`);
+  });
   say(`${C.green}Klart.${C.reset} ${changed.length} tentor skrivna.`);
 }
 

@@ -33,7 +33,7 @@ export default async function DeckLayout({ children, params }: { children: React
           <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted" data-testid="deck-meta">
             {deck.course_code ? <Badge tone="outline">{deck.course_code}</Badge> : null}
             <span>
-              {[sv.admin.cardCount(cardCount), inactiveCount > 0 ? sv.admin.inactiveCount(inactiveCount) : null, `${categories.length} ${sv.admin.categories.toLowerCase()}`]
+              {[sv.admin.cardCount(cardCount), inactiveCount > 0 ? sv.admin.inactiveCount(inactiveCount) : null, sv.admin.categoryCount(categories.length)]
                 .filter(Boolean)
                 .join(", ")}
             </span>

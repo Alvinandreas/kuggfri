@@ -139,7 +139,13 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
                           role: "button",
                           tabIndex: 0,
                           "aria-label": sv.focus.open(a.label),
-                          className: "cursor-pointer outline-none",
+                          // Webbläsarens fokusram runt en SVG-grupp blir en rektangel runt hela
+                          // tårtbiten, som sticker ut ur diagrammet. Tangentbordsfokus visas i
+                          // stället som designsystemets ring runt numret (fokusringen nedan).
+                          className: "group cursor-pointer outline-none",
+                          // Ett musklick flyttar inte fokus hit: annars återställer dialogen fokus
+                          // till området när den stängs, och ringen blir kvar efter musklicket.
+                          onMouseDown: (e: React.MouseEvent) => e.preventDefault(),
                           onClick: () => onSelect(i),
                           onFocus: () => setHover(i),
                           onBlur: () => setHover(null),
@@ -155,6 +161,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
                     <path d={wedge} fill="transparent" />
                     <circle cx={px} cy={py} r={active ? 5 : 3.5} className={active ? "fill-accent-hover stroke-bg" : "fill-chart-1 stroke-bg"} strokeWidth={1.5} />
                     <circle cx={lx} cy={ly} r={active ? 10 : 8.5} fill={active ? "var(--accent)" : tagFill(a.colorIndex)} className="transition-[r] duration-150" />
+                    {onSelect ? <circle cx={lx} cy={ly} r={13.5} fill="none" stroke="var(--focus)" strokeWidth={2} className="opacity-0 group-focus-visible:opacity-100" aria-hidden /> : null}
                     <text x={lx} y={ly + 3.5} textAnchor="middle" className={active ? "fill-accent-fg" : "fill-fg"} fontSize={10} fontWeight={700}>
                       {i + 1}
                     </text>
@@ -232,7 +239,9 @@ export function RadarBars({
             >
             <div className="flex min-w-0 items-center gap-2.5 text-sm">
               <span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-fg ${tagBgClass(a.colorIndex)}`}>{i + 1}</span>
-              <span className="min-w-0 flex-1 truncate font-medium" title={a.label}>
+              {/* Områdets namn radbryts (högst två rader) i stället för att klippas: "Plasticitet,
+                  dislokationer och härdning" ska gå att läsa utan att hovra. */}
+              <span className="line-clamp-2 min-w-0 flex-1 font-medium leading-snug" title={a.label}>
                 {a.label}
               </span>
               <span className="shrink-0 tabular-nums text-muted">{percent(a.learned, a.total)} %</span>

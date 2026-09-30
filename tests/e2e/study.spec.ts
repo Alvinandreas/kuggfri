@@ -42,31 +42,40 @@ test.describe("plugga", () => {
     expect(seen).toContain("10 av");
   });
 
-  test("4. fri repetition ändrar inte nästa schemalagda datum", async ({ page }) => {
+  test("4. fri repetition räknas in i schemat (30 sep 2026)", async ({ page }) => {
     // Schemalägg ett par kort först.
     await studyCards(page, "fsrs", 2, 5);
     await expectStoredCount(2);
     const before = await accountProgress(email);
 
-    // Fri repetition med låga skattningar över flera kort, inklusive de schemalagda.
+    // Fri repetition tar svagast först: fem aldrig sedda kort, före de två som fick 5.
     await startSession(page, "free", "all");
     for (let i = 0; i < 5; i++) {
       await rateCurrentCard(page, 1);
     }
-    await expect(page.getByTestId("session-summary").or(page.getByTestId("flashcard"))).toBeVisible();
-
-    expect(await accountProgress(email)).toEqual(before);
+    // De fem korten är nu introducerade i schemat, precis som i schemalagd repetition.
+    await expectStoredCount(7);
+    const after = await accountProgress(email);
+    for (const [id, p] of Object.entries(before)) expect(after[id]).toEqual(p);
+    const fresh = Object.values(after).filter((p) => !(p.card_id in before));
+    expect(fresh).toHaveLength(5);
+    for (const p of fresh) {
+      expect(p.reps).toBe(1);
+      expect(p.self_rating).toBe(1);
+    }
   });
 
-  test("slumpad genomkörning ändrar inte heller progressen", async ({ page }) => {
+  test("slumpad genomkörning räknas också in i schemat", async ({ page }) => {
     await studyCards(page, "fsrs", 1, 3);
     await expectStoredCount(1);
-    const before = await accountProgress(email);
+    const repsOf = async () => Object.values(await accountProgress(email)).reduce((sum, p) => sum + p.reps, 0);
+    const before = await repsOf();
 
     await startSession(page, "random");
     await rateCurrentCard(page, 2);
     await rateCurrentCard(page, 4);
-    expect(await accountProgress(email)).toEqual(before);
+    // Varje skattning är en FSRS-repetition, oavsett läge.
+    await expect.poll(repsOf, { timeout: 15_000 }).toBe(before + 2);
   });
 
   test("tangentbord: mellanslag vänder, siffra skattar, pil hoppar", async ({ page }) => {
@@ -99,7 +108,7 @@ test.describe("plugga", () => {
     }
     await expect(page.getByTestId("session-summary")).toBeVisible();
     await expect(page.getByTestId("summary-reviewed")).toContainText("kort genomgångna");
-    await expect(page.getByTestId("next-due")).toContainText("Fri repetition påverkar inte schemat.");
+    await expect(page.getByTestId("next-due")).toContainText("Fri repetition räknas in i schemat");
     await expectNoSeriousA11yViolations(page);
   });
 });
@@ -163,13 +172,18 @@ test.describe("dosering", () => {
     await expect(summary).toHaveAttribute("data-done", "true");
     await expect(summary.getByRole("heading", { level: 1 })).toHaveText("Klar för i dag");
     await expect(page.getByTestId("today-tiles")).toContainText("Dagar i rad");
+    // Man hindras aldrig från att plugga: Plugga vidare och fler nya kort erbjuds direkt.
+    await expect(page.getByTestId("extra-offer")).toContainText("räknas in i schemat");
+    await expect(page.getByTestId("continue-extra")).toHaveText(/Plugga vidare/);
     await expect(page.getByTestId("continue-new")).toContainText("Ta 20 nya kort till");
     await expectNoSeriousA11yViolations(page);
 
-    // Deck-sidan: dagsmålet är nått, men fler nya kort kan tas frivilligt.
+    // Deck-sidan: dagsmålet är nått, men man kan plugga vidare eller ta fler nya kort.
     await expectStoredCount(20);
     await page.goto(`/d/${DECK_SLUG}`);
-    await expect(page.getByTestId("start-info")).toHaveText("Klar för i dag");
+    await expect(page.getByTestId("extra-panel")).toContainText("Dagens pass är klart");
+    await expect(page.getByTestId("start-extra")).toHaveText(/Plugga vidare/);
+    await expect(page.getByTestId("start-info")).toHaveText("Extra plugg räknas, så länge du vill");
     await expect(page.getByTestId("start-more")).toContainText("Ta 20 nya kort till");
     expect(await seenCountText(page)).toContain("20 av");
     await page.goto(`/d/${DECK_SLUG}`);
@@ -177,16 +191,38 @@ test.describe("dosering", () => {
     // Hemsidan säger samma sak.
     await page.goto("/hem");
     await expect(page.getByTestId("home-today")).toContainText("Klart för i dag");
+    await expect(page.getByTestId("home-extra")).toHaveText(/Plugga vidare/);
     await expect(page.getByTestId("home-lead")).toContainText("klar för i dag");
 
     await page.goto(`/d/${DECK_SLUG}`);
     await page.getByTestId("start-more").click();
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
   });
+
+  test("Plugga vidare när dagens pass är klart: ett block till, räknas in i schemat, och går att fortsätta igen", async ({ page }) => {
+    await studyCards(page, "fsrs", 20, 4);
+    await expect(page.getByTestId("session-summary")).toHaveAttribute("data-done", "true");
+    await expectStoredCount(20);
+
+    await page.goto(`/d/${DECK_SLUG}`);
+    await page.getByTestId("start-extra").click();
+    await expect(page.getByTestId("session-banner")).toContainText("Plugga vidare");
+    await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
+    for (let i = 0; i < 20; i++) {
+      if (await page.getByTestId("session-summary").isVisible()) break;
+      await rateCurrentCard(page, 4);
+    }
+    const summary = page.getByTestId("session-summary");
+    await expect(summary.getByRole("heading", { level: 1 })).toHaveText("Snyggt, extra pass klart");
+    await expect(page.getByTestId("continue-extra")).toBeVisible();
+    // Alla dagens kort är redan sedda i dag, så blocket bestod av nya kort utöver dosen.
+    await expectStoredCount(40);
+    await expectNoSeriousA11yViolations(page);
+  });
 });
 
 test.describe("dugga", () => {
-  test("slumpade kort ur en kategori, ingen tillbaka, resultat i procent, progressen orörd", async ({ page }) => {
+  test("slumpade kort ur en kategori, ingen tillbaka, resultat i procent, svaren räknas in i schemat", async ({ page }) => {
     await page.goto(`/d/${DECK_SLUG}`);
     await page.getByLabel("Dugga").check();
     await expect(page.getByTestId("dugga-settings")).toBeVisible();
@@ -203,7 +239,7 @@ test.describe("dugga", () => {
     await expect(page.getByTestId("session-summary")).toBeVisible();
     await expect(page.getByTestId("exam-result")).toContainText("4 av 6");
     await expect(page.getByTestId("exam-result")).toContainText("67 %");
-    expect(await accountProgress(email)).toEqual({});
+    await expectStoredCount(6);
     await expectNoSeriousA11yViolations(page);
   });
 });

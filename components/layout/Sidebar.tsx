@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -55,8 +55,13 @@ type NavLink = {
 
 export type SidebarProps = {
   user: ShellUser;
-  /** Kurser användaren får administrera (admin: alla, examinator: sina). Tom lista = inga adminflikar. */
-  adminDecks: AdminNavDeck[];
+  /**
+   * Kursen adminposterna gäller: låst till Materialteknik (lib/admin/active-course.ts).
+   * null = inga adminflikar.
+   */
+  adminDeck: AdminNavDeck | null;
+  /** Id för kurserna användaren får redigera (för låset på Tentaläget). */
+  adminDeckIds: string[];
   /** Global admin: ser också Alla kurser och designsystemet. */
   isAdmin: boolean;
   /**
@@ -127,33 +132,21 @@ function NavItem({ link, pathname, drawer }: { link: NavLink; pathname: string; 
   );
 }
 
-function SectionLabel({ children, hint }: { children: string; hint?: string }) {
+function SectionLabel({ children }: { children: string }) {
   return (
     <p data-sidebar-label className="px-3 pb-1.5 pt-5 text-xs font-semibold text-subtle">
       {children}
-      {hint ? (
-        <span className="block truncate pt-0.5 font-medium" title={hint}>
-          {hint}
-        </span>
-      ) : null}
     </p>
   );
 }
 
-/** Kursen som adminposterna gäller: den i adressen (/admin/deck/<id>/…), annars den första. */
-function selectedDeck(decks: AdminNavDeck[], pathname: string): AdminNavDeck | undefined {
-  const id = /^\/admin\/deck\/([^/]+)/.exec(pathname)?.[1];
-  return decks.find((d) => d.id === id) ?? decks[0];
-}
-
 /**
  * Kursens adminsidor. Sidomenyn är den enda navigeringen mellan dem (kurssidorna har ingen
- * egen flikrad sedan 30 sep); områdes- och kortsidorna räknas till Innehåll. Admin, och den som
- * har fler kurser, får också Alla kurser (adminstartsidan, där Ny kurs finns); admin dessutom
- * designsystemet.
+ * egen flikrad sedan 30 sep); områdes- och kortsidorna räknas till Innehåll. Posterna leder
+ * alltid till den låsta kursen (Materialteknik, beslut 30 sep), och inget kursnamn står under
+ * rubriken. Bara admin får Alla kurser (adminstartsidan, där Ny kurs finns) och designsystemet.
  */
-function adminLinks(decks: AdminNavDeck[], isAdmin: boolean, pathname: string): NavLink[] {
-  const deck = selectedDeck(decks, pathname);
+function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean): NavLink[] {
   const links: NavLink[] = [];
   if (deck) {
     const base = `/admin/deck/${deck.id}`;
@@ -167,38 +160,36 @@ function adminLinks(decks: AdminNavDeck[], isAdmin: boolean, pathname: string): 
       { href: `${base}/installningar`, label: sv.admin.tabSettings, icon: Settings2 },
     );
   }
-  if (isAdmin || decks.length > 1) links.push({ href: "/admin/deck", label: sv.shell.allCourses, icon: LayoutList, exact: true, also: ["/admin/deck/ny"] });
+  if (isAdmin) links.push({ href: "/admin/deck", label: sv.shell.allCourses, icon: LayoutList, exact: true, also: ["/admin/deck/ny"] });
   if (isAdmin) links.push({ href: "/designsystem", label: sv.shell.designSystem, icon: Palette });
   return links;
 }
 
-/** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
 /**
  * Kursens två poster: Kurssidan (lägen, områden, pass) och Tentaläget, med lås när tentaläget
  * inte är öppet för studenterna och användaren inte är redaktör för kursen.
  */
-function courseLinks(course: SidebarProps["courses"][number], adminDecks: AdminNavDeck[]): NavLink[] {
+function courseLinks(course: SidebarProps["courses"][number], adminDeckIds: string[]): NavLink[] {
   const base = `/d/${course.slug}`;
-  const locked = !course.examModeOpen && !adminDecks.some((d) => d.id === course.id);
+  const locked = !course.examModeOpen && !adminDeckIds.includes(course.id);
   return [
     { href: base, label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [`${base}/plugga`], testId: "nav-course-page" },
     { href: `${base}/tenta`, label: sv.shell.examMode, icon: ClipboardPen, locked, lockedLabel: sv.shell.examModeLocked, testId: "nav-exam-mode" },
   ];
 }
 
-function SidebarContent({ user, adminDecks, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
+/** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
+function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
   // Med flera kurser: Kurser, och kursens två poster när man är inne i en kurs.
   const inCourse = courses.find((c) => under(pathname, `/d/${c.slug}`));
   const study: NavLink[] = [
     { href: "/hem", label: sv.shell.home, icon: House },
     { href: "/statistik", label: sv.shell.myStats, icon: ChartNoAxesColumn },
     ...(courses.length === 1 && courses[0]
-      ? courseLinks(courses[0], adminDecks)
-      : [{ href: "/kurser", label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDecks) : [])]),
+      ? courseLinks(courses[0], adminDeckIds)
+      : [{ href: "/kurser", label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDeckIds) : [])]),
   ];
-  const admin = adminLinks(adminDecks, isAdmin, pathname);
-  // Med fler kurser står kursens namn under rubriken, så att det syns vilken kurs genvägarna gäller.
-  const adminHint = adminDecks.length > 1 ? selectedDeck(adminDecks, pathname)?.title : undefined;
+  const admin = adminLinks(adminDeck, isAdmin);
   return (
     <>
       {top}
@@ -211,7 +202,7 @@ function SidebarContent({ user, adminDecks, isAdmin, courses, pathname, top, dra
         </div>
         {admin.length > 0 ? (
           <>
-            <SectionLabel hint={adminHint}>{sv.shell.sectionAdmin}</SectionLabel>
+            <SectionLabel>{sv.shell.sectionAdmin}</SectionLabel>
             <div className="space-y-0.5" data-testid="sidebar-admin">
               {admin.map((l) => (
                 <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
@@ -240,6 +231,15 @@ export function Sidebar(props: SidebarProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+
+  /** Stänger menyn och lämnar fokus på menyknappen, så att det inte tappas till sidans början. */
+  function closeDrawer() {
+    setDrawerOpen(false);
+    menuButtonRef.current?.focus();
+  }
 
   useEffect(() => {
     setCollapsed(document.documentElement.dataset.sidebar === "collapsed");
@@ -252,8 +252,28 @@ export function Sidebar(props: SidebarProps) {
 
   useEffect(() => {
     if (!drawerOpen) return;
+    // Fokus in i menyn när den öppnas, så att Tab går genom posterna och inte sidan bakom.
+    closeButtonRef.current?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
+      // Redan hanterat, t.ex. Esc som stänger profilmenyn inne i menyn.
+      if (e.defaultPrevented) return;
+      if (e.key === "Escape") {
+        setDrawerOpen(false);
+        menuButtonRef.current?.focus();
+      } else if (e.key === "Tab") {
+        // Tab stannar i menyn: sidan bakom är täckt och fokus där syns inte.
+        const items = Array.from(drawerRef.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? []).filter((el) => el.tabIndex >= 0);
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (!first || !last) return;
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -300,7 +320,7 @@ export function Sidebar(props: SidebarProps) {
       <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
         <Logo variant="menu" height={34} decorative />
       </Link>
-      <IconButton label={sv.shell.closeMenu} variant="outline" size="sm" className="relative after:absolute after:-inset-1.5" onClick={() => setDrawerOpen(false)}>
+      <IconButton ref={closeButtonRef} label={sv.shell.closeMenu} variant="outline" size="sm" className="relative after:absolute after:-inset-1.5" onClick={closeDrawer}>
         <X size={16} strokeWidth={2} aria-hidden />
       </IconButton>
     </div>
@@ -313,7 +333,7 @@ export function Sidebar(props: SidebarProps) {
       </aside>
 
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b border-line bg-bg/85 px-2 backdrop-blur lg:hidden">
-        <IconButton label={sv.shell.openMenu} className="relative after:absolute after:-inset-0.5" onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>
+        <IconButton ref={menuButtonRef} label={sv.shell.openMenu} className="relative after:absolute after:-inset-0.5" onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>
           <MenuIcon size={20} strokeWidth={2} aria-hidden />
         </IconButton>
         <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
@@ -324,8 +344,8 @@ export function Sidebar(props: SidebarProps) {
 
       {drawerOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <button type="button" aria-label={sv.shell.closeMenu} tabIndex={-1} onClick={() => setDrawerOpen(false)} className="anim-fade-in absolute inset-0 bg-overlay" />
-          <aside aria-label={sv.shell.mainNav} className="anim-drawer absolute inset-y-0 left-0 flex w-[min(18rem,85vw)] flex-col bg-sidebar shadow-pop">
+          <button type="button" aria-label={sv.shell.closeMenu} tabIndex={-1} onClick={closeDrawer} className="anim-fade-in absolute inset-0 bg-overlay" />
+          <aside ref={drawerRef} aria-label={sv.shell.mainNav} className="anim-drawer absolute inset-y-0 left-0 flex w-[min(18rem,85vw)] flex-col bg-sidebar shadow-pop">
             <SidebarContent {...props} pathname={pathname} top={drawerTop} drawer />
           </aside>
         </div>

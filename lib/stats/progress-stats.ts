@@ -189,17 +189,34 @@ export function computeStreak(
   return { streak, freezesLeft: freezes, freezeUsedRecently };
 }
 
-/** Antal kort vars första schemalagda repetition skedde i dag (räknas mot dagsmålet för nya kort). */
-export function countIntroducedToday(reviews: readonly ReviewEntry[], now: Date): number {
+/**
+ * Antal kort som introducerades i dag, i vilket läge som helst (räknas mot dagsmålet för nya
+ * kort). Sedan 30 sep 2026 schemalägger varje skattning kortet, så ett kort som först setts i
+ * fri repetition eller en dugga är lika introducerat som ett från det schemalagda passet.
+ *
+ * Med progress: kortet är inte längre nytt, och alla dess FSRS-repetitioner (reps) skedde
+ * i dag, dvs. reps är högst antalet skattningar i dag. Regeln tål att äldre historik har
+ * rader från lägen som då inte rörde schemat, och att schemat nollställts (reps börjar om).
+ * Utan progress: kortets första skattning i historiken skedde i dag.
+ */
+export function countIntroducedToday(reviews: readonly ReviewEntry[], now: Date, progress?: ProgressMap): number {
   const today = localDayKey(now);
+  const todayCount = new Map<string, number>();
   const first = new Map<string, string>();
   for (const r of reviews) {
-    if (r.mode !== "fsrs") continue;
     const day = localDayKey(new Date(r.reviewed_at));
+    if (day === today) todayCount.set(r.card_id, (todayCount.get(r.card_id) ?? 0) + 1);
     const prev = first.get(r.card_id);
     if (!prev || day < prev) first.set(r.card_id, day);
   }
   let n = 0;
+  if (progress) {
+    for (const [cardId, count] of todayCount) {
+      const p = progress[cardId];
+      if (p && p.state !== 0 && p.reps <= count) n++;
+    }
+    return n;
+  }
   for (const day of first.values()) if (day === today) n++;
   return n;
 }

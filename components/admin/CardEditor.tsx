@@ -215,8 +215,10 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
             className="[&_textarea]:field-sizing-content [&_textarea]:min-h-12! [&_textarea]:resize-none"
             data-testid="card-source"
           />
-          <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
-            <div>
+          {/* Området får all bredd som kryssrutan inte behöver: i halva bredden klipptes långa
+              områdesnamn ("Materialgrupper och e..."). */}
+          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <div className="min-w-0">
               <label htmlFor="kort-omrade" className="mb-1.5 block text-sm font-semibold">
                 {sv.admin.category}
               </label>

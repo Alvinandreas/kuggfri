@@ -1,7 +1,7 @@
 /**
  * Urval av kort för en session. Ren modul.
  */
-import { buildFinalReviewQueue, buildFsrsQueue, retrievability, shuffleIds } from "@/lib/fsrs/scheduler";
+import { buildExtraQueue, buildFinalReviewQueue, buildFsrsQueue, retrievability, shuffleIds } from "@/lib/fsrs/scheduler";
 import { EXAM_SIZE } from "@/lib/study/plan";
 import { isTricky, type ProgressMap, type StudyMode } from "@/lib/progress/types";
 
@@ -85,6 +85,7 @@ function orderByWeakness(ids: readonly string[], progress: ProgressMap, random: 
 /**
  * Kort-id i den ordning sessionen ska visa dem.
  * - fsrs: förfallna och nya kort ur urvalet, förfallna först (blandat inom samma dag).
+ *   Med extraSize (Plugga vidare): kort närmast att förfalla, sedan nya kort utan dos.
  * - free: urvalet, svagast först, blandat inom samma skattning.
  * - tricky: bara kluriga kort ur urvalet, svagast först, blandat inom samma skattning.
  * - random: hela decket i slumpad ordning (urvalet ignoreras).
@@ -103,6 +104,8 @@ export function selectCardIds(input: {
   finalReview?: boolean;
   /** Dugga: antal frågor. Undefined = EXAM_SIZE. */
   examSize?: number;
+  /** Schemalagt läge: Plugga vidare med så här många kort (buildExtraQueue). */
+  extraSize?: number;
 }): string[] {
   const random = input.random ?? Math.random;
   const ordered = [...input.cards].sort((a, b) => a.sort_order - b.sort_order);
@@ -115,6 +118,7 @@ export function selectCardIds(input: {
   }
   if (input.mode === "fsrs") {
     const ids = filtered.map((c) => c.id);
+    if (input.extraSize !== undefined) return buildExtraQueue(ids, input.progress, input.now ?? new Date(), random, { size: input.extraSize });
     if (input.finalReview) return buildFinalReviewQueue(ids, input.progress, input.now ?? new Date(), random);
     return buildFsrsQueue(ids, input.progress, input.now ?? new Date(), random, { maxNew: input.maxNew });
   }

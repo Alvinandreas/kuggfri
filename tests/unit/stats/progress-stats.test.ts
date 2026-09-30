@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildProgressStats, localDayKey } from "@/lib/stats/progress-stats";
+import { buildProgressStats, countIntroducedToday, localDayKey } from "@/lib/stats/progress-stats";
 import { reviewCard } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 
@@ -114,5 +114,45 @@ describe("buildProgressStats", () => {
     expect(s.hasReviews).toBe(false);
     expect(s.avg7).toBeNull();
     expect(s.streak).toBe(0);
+  });
+});
+
+describe("countIntroducedToday: dagsmålet räknar kort introducerade i alla lägen", () => {
+  const entry = (card_id: string, daysAgo: number, mode: ReviewEntry["mode"], hour = 10): ReviewEntry => ({
+    card_id,
+    rating: 4,
+    mode,
+    reviewed_at: at(daysAgo, hour),
+  });
+  /** Progress som om kortet repeterats `reps` gånger (bara reps och state spelar roll här). */
+  const withReps = (cardId: string, reps: number): ProgressMap[string] => ({ ...reviewCard(cardId, undefined, 4, NOW), reps });
+
+  it("kort som först setts i fri repetition, dugga eller Plugga vidare i dag räknas", () => {
+    const reviews = [entry("fri", 0, "free"), entry("dugga", 0, "exam"), entry("vidare", 0, "fsrs"), entry("vidare", 0, "fsrs", 11)];
+    const progress: ProgressMap = { fri: withReps("fri", 1), dugga: withReps("dugga", 1), vidare: withReps("vidare", 2) };
+    expect(countIntroducedToday(reviews, NOW, progress)).toBe(3);
+    // Utan progress: första skattningen i historiken, i vilket läge som helst.
+    expect(countIntroducedToday(reviews, NOW)).toBe(3);
+  });
+
+  it("kort som introducerades tidigare räknas inte, även om de repeteras i dag", () => {
+    const reviews = [entry("gammal", 3, "fsrs"), entry("gammal", 0, "free")];
+    expect(countIntroducedToday(reviews, NOW, { gammal: withReps("gammal", 2) })).toBe(0);
+    expect(countIntroducedToday(reviews, NOW)).toBe(0);
+  });
+
+  it("gammal historik från lägen som då inte rörde schemat hindrar inte att kortet räknas i dag", () => {
+    // Före 30 sep ändrade fri repetition inte progressen: kortet var fortfarande nytt i går.
+    const reviews = [entry("k", 1, "free"), entry("k", 0, "fsrs")];
+    expect(countIntroducedToday(reviews, NOW, { k: withReps("k", 1) })).toBe(1);
+  });
+
+  it("kort vars schema nollställts räknas när de introduceras igen", () => {
+    const reviews = [entry("k", 5, "fsrs"), entry("k", 4, "fsrs"), entry("k", 0, "fsrs")];
+    expect(countIntroducedToday(reviews, NOW, { k: withReps("k", 1) })).toBe(1);
+  });
+
+  it("nya kort utan progress räknas inte som introducerade", () => {
+    expect(countIntroducedToday([entry("x", 0, "free")], NOW, {})).toBe(0);
   });
 });

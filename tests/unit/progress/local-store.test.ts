@@ -102,18 +102,23 @@ describe("LocalProgressStore", () => {
     expect(await store.load(["c"])).toEqual({});
   });
 
-  it("fri repetition lämnar lagret orört", async () => {
+  it("fri repetition sparas i lagret och räknas in i schemat (30 sep 2026)", async () => {
     const storage = new FakeStorage();
     const store = new LocalProgressStore(storage);
     await store.save(reviewCard("a", undefined, 5, NOW));
-    const snapshot = storage.getItem(LOCAL_PROGRESS_KEY);
+    const before = await store.load(["a"]);
 
     const progress = await store.load(["a", "b"]);
+    const later = new Date(NOW.getTime() + 24 * 60 * 60 * 1000);
     for (const cardId of ["a", "b"]) {
-      const next = applyRating({ mode: "free", cardId, rating: 1, progress, now: NOW });
-      if (next) await store.save(next);
+      await store.save(applyRating({ mode: "free", cardId, rating: 1, progress, now: later }));
     }
-    expect(storage.getItem(LOCAL_PROGRESS_KEY)).toBe(snapshot);
+    const after = await store.load(["a", "b"]);
+    expect(after.a?.reps).toBe((before.a?.reps ?? 0) + 1);
+    expect(after.a?.lapses).toBe(1);
+    expect(after.a?.last_review).toBe(later.toISOString());
+    expect(after.b?.state).not.toBe(0);
+    expect(after.b?.self_rating).toBe(1);
   });
 });
 

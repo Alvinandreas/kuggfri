@@ -3,6 +3,7 @@
 import { useId, useState, type PointerEvent } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { niceTicks } from "@/components/stats/BarChart";
+import { useSvgTextScale } from "./useSvgTextScale";
 
 export type LineTone = "chart-1" | "chart-2" | "chart-3" | "chart-4";
 
@@ -48,6 +49,7 @@ const PAD = { top: 12, right: 10, bottom: 26, left: 30 };
 export function LineChart({ labels, series, title, help, formatValue, area = false, hideTitle = false }: Props) {
   const [hover, setHover] = useState<number | null>(null);
   const titleId = useId();
+  const [svgRef, k] = useSvgTextScale(W);
   const n = labels.length;
 
   const max = Math.max(1, ...series.flatMap((s) => s.values));
@@ -118,18 +120,18 @@ export function LineChart({ labels, series, title, help, formatValue, area = fal
       </div>
 
       <div className="relative">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={titleId} className="h-auto w-full touch-pan-y" onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
+        <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} overflow="visible" role="img" aria-labelledby={titleId} className="h-auto w-full touch-pan-y" onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
           {ticks.map((t) => (
             <g key={t}>
               <line x1={PAD.left} x2={W - PAD.right} y1={y(t)} y2={y(t)} className="stroke-chart-grid" strokeWidth={1} />
-              <text x={PAD.left - 6} y={y(t) + 3} textAnchor="end" className="fill-muted" fontSize={11}>
+              <text x={PAD.left - 6} y={y(t) + 3} textAnchor="end" className="fill-muted" fontSize={11 * k}>
                 {t}
               </text>
             </g>
           ))}
           {labels.map((label, i) =>
             i % labelStep === 0 ? (
-              <text key={`${label}-${i}`} x={x(i)} y={H - 8} textAnchor={i === 0 && n > 1 ? "start" : "middle"} className="fill-muted" fontSize={11}>
+              <text key={`${label}-${i}`} x={x(i)} y={H - 8} textAnchor={i === 0 && n > 1 ? "start" : "middle"} className="fill-muted" fontSize={11 * k}>
                 {label}
               </text>
             ) : null,

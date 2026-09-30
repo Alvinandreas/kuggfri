@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { StudentViewButton } from "@/components/tenta/StudentView";
+import { KeepDates } from "@/components/ui/KeepDates";
 
 type Params = Promise<{ id: string }>;
 
@@ -57,7 +58,9 @@ export default async function AdminExamsPage({ params }: { params: Params }) {
               <Card className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-bold tracking-tight">{e.title}</h3>
+                    <h3 className="font-bold tracking-tight">
+                      <KeepDates>{e.title}</KeepDates>
+                    </h3>
                     <Badge tone={e.status === "publicerad" ? "accent" : "outline"}>{sv.tenta.status[e.status]}</Badge>
                   </div>
                   <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">

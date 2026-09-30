@@ -226,10 +226,15 @@ body {
 }
 
 /* Fokusramen följer elementets egna hörn (outline gör det i moderna webbläsare);
-   :where() håller specificiteten på noll så att komponenter kan skriva över den. */
-:where(*:focus-visible) {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
+   :where() håller specificiteten på noll så att komponenter kan skriva över den. Regeln ligger i
+   lagret base: olagrade regler vinner alltid över Tailwinds utilities, och då slog den igenom även
+   där en komponent ritar en egen fokusmarkering med outline-none (radardiagrammets områden fick en
+   rektangel runt hela träffytan, fälten både ram och ring). */
+@layer base {
+  :where(*:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
 
 /* Knappar, reglage och valrutor klickas ofta, ibland snabbt efter varandra; texten i dem

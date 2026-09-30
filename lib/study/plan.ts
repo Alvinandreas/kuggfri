@@ -6,6 +6,8 @@
  * - Tentadatum styr: alla kort ska vara sedda i god tid, inget intervall får sträcka sig
  *   förbi tentan, och de sista dagarna görs en slutrepetition av allt.
  * - Ikappläget är synligt: dagsmålet höjs öppet i stället för att kön tyst växer.
+ * - Dosen är ett golv, inte ett tak (30 sep 2026): när dagens pass är klart kan studenten
+ *   alltid plugga vidare, och allt extra plugg räknas in i schemat.
  */
 
 /** Standard för nya kort per dag. Kan ändras av studenten (10/20/40). */
@@ -20,6 +22,12 @@ export const INTRO_MARGIN_DAYS = 4;
 
 /** De sista dagarna före tentan körs slutrepetition av hela urvalet. */
 export const FINAL_REVIEW_DAYS = 2;
+
+/**
+ * Plugga vidare: så många kort per extra pass. Inget tak på hur många pass man tar, men ett
+ * block i taget ger en naturlig paus med sammanfattning, och kön räknas om mellan blocken.
+ */
+export const EXTRA_SESSION_SIZE = 20;
 
 /** Duggan: så många slumpade kort ur urvalet om inget annat valts (se lib/study/dugga.ts). */
 export const EXAM_SIZE = 30;

@@ -55,6 +55,8 @@ export function Menu({ trigger, children, label, placement = "bottom-start", wid
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const initialFocus = useRef<"first" | "last">("first");
+  /** Menyn har öppnats men fokus har ännu inte flyttats in i den. */
+  const focusPending = useRef(false);
   const menuId = useId();
 
   const close = useCallback((focusTrigger = false) => {
@@ -96,15 +98,23 @@ export function Menu({ trigger, children, label, placement = "bottom-start", wid
     else if (r.left < EDGE) el.style.translate = `${EDGE - r.left}px 0`;
   }, [open, style]);
 
+  // Fokus flyttas in när menyn väl finns i DOM:en. Första gången den öppnas saknas positionen
+  // (style) tills place() körts, och då fanns menyn inte ännu när fokus skulle flyttas: fokus
+  // blev kvar på knappen, och varken Esc eller piltangenterna fungerade.
   useEffect(() => {
-    if (!open) return;
-    place();
-    const focusItem = () => {
+    if (!open || !style || !focusPending.current) return;
+    const raf = requestAnimationFrame(() => {
+      focusPending.current = false;
       const items = menuRef.current?.querySelectorAll<HTMLElement>(ITEM_SELECTOR);
       if (!items || items.length === 0) return menuRef.current?.focus();
       (initialFocus.current === "last" ? items[items.length - 1] : items[0])?.focus();
-    };
-    const raf = requestAnimationFrame(focusItem);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [open, style]);
+
+  useEffect(() => {
+    if (!open) return;
+    place();
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node;
       if (menuRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
@@ -114,7 +124,6 @@ export function Menu({ trigger, children, label, placement = "bottom-start", wid
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
     return () => {
-      cancelAnimationFrame(raf);
       document.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
@@ -123,11 +132,15 @@ export function Menu({ trigger, children, label, placement = "bottom-start", wid
 
   function openWith(focus: "first" | "last") {
     initialFocus.current = focus;
+    focusPending.current = true;
     setOpen(true);
   }
 
   function onTriggerKeyDown(e: KeyboardEvent<HTMLButtonElement>) {
-    if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+    if (open && e.key === "Escape") {
+      e.preventDefault();
+      close(true);
+    } else if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       openWith("first");
     } else if (e.key === "ArrowUp") {

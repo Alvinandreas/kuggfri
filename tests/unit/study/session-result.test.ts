@@ -28,7 +28,7 @@ function scheduled(cardId: string, days: number): CardProgress {
   };
 }
 
-function build(progress: ProgressMap, options: { finalReview?: boolean; dailyNew?: number } = {}) {
+function build(progress: ProgressMap, options: { finalReview?: boolean; dailyNew?: number; extraPass?: boolean } = {}) {
   return buildSessionResult({
     deckSlug: "mtt015",
     cards,
@@ -38,6 +38,7 @@ function build(progress: ProgressMap, options: { finalReview?: boolean; dailyNew
     dailyNew: options.dailyNew ?? 10,
     weekdaysOnly: false,
     finalReview: options.finalReview ?? false,
+    extraPass: options.extraPass,
     now: NOW,
   });
 }
@@ -85,7 +86,7 @@ describe("buildSessionResult: ta fler nya kort", () => {
 
   it("länkar tillbaka till samma urval och läge", () => {
     const href = build({ a: scheduled("a", 3) }).today.continueHref;
-    expect(href).toBe("/d/mtt015/plugga?mode=fsrs&urval=all&nya=2");
+    expect(href).toBe("/d/mtt015/plugga?mode=fsrs&urval=all&nya=2&pass=1");
   });
 
   it("erbjuder inget när allt är introducerat eller under slutrepetitionen", () => {
@@ -120,5 +121,42 @@ describe("buildSessionResult: dagsläge", () => {
     expect(Number.isInteger(result.today.known)).toBe(true);
     expect(result.today.known).toBeGreaterThanOrEqual(0);
     expect(result.today.known).toBeLessThanOrEqual(3);
+  });
+});
+
+describe("buildSessionResult: Plugga vidare", () => {
+  it("erbjuds alltid när dagen är klar, även när alla kort är introducerade", () => {
+    const allSeen = { a: scheduled("a", 3), b: scheduled("b", 4), c: scheduled("c", 5) };
+    const result = build(allSeen);
+    expect(result.today.done).toBe(true);
+    expect(result.today.extraHref).toBe("/d/mtt015/plugga?mode=fsrs&urval=all&vidare=1&pass=1");
+    expect(result.today.extraCount).toBe(3);
+  });
+
+  it("erbjuds även efter slutrepetitionen och efter ett extra pass, så att man aldrig hindras", () => {
+    const allSeen = { a: scheduled("a", 3), b: scheduled("b", 4), c: scheduled("c", 5) };
+    expect(build(allSeen, { finalReview: true }).today.extraHref).not.toBeNull();
+    const again = buildSessionResult({
+      deckSlug: "mtt015",
+      cards,
+      progress: allSeen,
+      reviews: [],
+      selection: { kind: "all" },
+      dailyNew: 10,
+      weekdaysOnly: false,
+      finalReview: false,
+      extraPass: true,
+      pass: 3,
+      now: NOW,
+    });
+    expect(again.today.extraPass).toBe(true);
+    // Nästa block får en egen adress, annars startar klicket inget nytt pass.
+    expect(again.today.extraHref).toBe("/d/mtt015/plugga?mode=fsrs&urval=all&vidare=1&pass=4");
+  });
+
+  it("erbjuds inte medan schemalagda kort fortfarande väntar", () => {
+    const result = build({ a: scheduled("a", -1) });
+    expect(result.today.done).toBe(false);
+    expect(result.today.extraHref).toBeNull();
   });
 });

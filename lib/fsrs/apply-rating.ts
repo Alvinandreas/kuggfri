@@ -1,12 +1,17 @@
-import { newProgress, reviewCard, type ScheduleOptions } from "./scheduler";
+import { reviewCard, type ScheduleOptions } from "./scheduler";
 import type { CardProgress, ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
 
 /**
  * Enda vägen från en självskattning till ny progress.
- * - fsrs: full omschemaläggning med FSRS.
- * - tricky: bara self_rating och last_review uppdateras; schemat lämnas orört
- *   (ett aldrig sett kort får en rad i state New så att det slutar räknas som klurigt).
- * - free, random och exam: null, progressen rörs aldrig.
+ *
+ * Varje skattning räknas, i alla lägen (Alvins beslut 30 sep 2026): schemalagd repetition,
+ * Plugga vidare, fri repetition, slumpad genomkörning, kluriga kort och dugga schemalägger
+ * alla om kortet med FSRS. Tidiga repetitioner och flera repetitioner samma dag hanteras av
+ * FSRS själv med den verkliga förflutna tiden (se kommentaren i scheduler.ts), så extra plugg
+ * ger rätt effekt utan att blåsa upp intervallen.
+ *
+ * Läget tas fortfarande emot: det loggas i review_log och avgör vad passet visar, men inte
+ * hur schemat räknas.
  */
 export function applyRating(input: {
   mode: StudyMode;
@@ -14,20 +19,9 @@ export function applyRating(input: {
   rating: SelfRating;
   progress: ProgressMap;
   now?: Date;
-  /** Schemalagt läge: intervalltak (t.ex. dagar till tentan). */
+  /** Intervalltak (t.ex. dagar till tentan). Gäller i alla lägen. */
   schedule?: ScheduleOptions;
-}): CardProgress | null {
+}): CardProgress {
   const now = input.now ?? new Date();
-  switch (input.mode) {
-    case "fsrs":
-      return reviewCard(input.cardId, input.progress[input.cardId], input.rating, now, input.schedule);
-    case "tricky": {
-      const previous = input.progress[input.cardId] ?? newProgress(input.cardId, now);
-      return { ...previous, self_rating: input.rating, last_review: now.toISOString() };
-    }
-    case "free":
-    case "random":
-    case "exam":
-      return null;
-  }
+  return reviewCard(input.cardId, input.progress[input.cardId], input.rating, now, input.schedule);
 }

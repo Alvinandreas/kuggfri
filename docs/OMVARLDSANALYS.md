@@ -66,6 +66,8 @@ delbara beredskapsbilden (2.5): Fas 2 är därmed byggd i sin helhet, kvar att s
 - Gästläge med progress i localStorage och sömlös migrering till konto. Detta är Duolingos
   dyraste lärdom, och vi har den redan.
 - FSRS med ren, testad modul; fri repetition rör aldrig schemat; historik i `review_log`.
+  (Ändrat 30 sep 2026: varje skattning räknas nu i alla lägen och man kan alltid plugga vidare
+  efter dagens pass, se DECISIONS.md.)
 - "Kluriga kort" är i praktiken Duolingos "Mistakes review", som är deras mest uppskattade
   gratisfunktion.
 - Sessionssammanfattningen med "behöver mest arbete" (det Johan reagerade på).

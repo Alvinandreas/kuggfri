@@ -38,4 +38,9 @@ export type TodaySummary = {
   /** Länk för att ta fler nya kort utöver dagsmålet, eller null. */
   continueHref: string | null;
   continueCount: number;
+  /** Plugga vidare: nästa extra pass (kort närmast att förfalla, sedan nya), eller null. */
+  extraHref: string | null;
+  extraCount: number;
+  /** Passet som just tog slut var ett Plugga vidare-pass. */
+  extraPass: boolean;
 };

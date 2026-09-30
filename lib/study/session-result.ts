@@ -10,6 +10,7 @@ import { countDueBy, nextDueDate, queueStats } from "@/lib/fsrs/scheduler";
 import { buildProgressStats } from "@/lib/stats/progress-stats";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { filterCards, serializeSelection, type SelectableCard, type Selection } from "@/lib/study/selection";
+import { EXTRA_SESSION_SIZE } from "@/lib/study/plan";
 import { endOfDay } from "@/lib/time/day";
 import type { TodaySummary } from "@/components/study/types";
 
@@ -30,6 +31,14 @@ export function buildSessionResult(input: {
   weekdaysOnly: boolean;
   /** True när sessionen var en slutrepetition inför tentan. */
   finalReview: boolean;
+  /** True när sessionen var ett Plugga vidare-pass. */
+  extraPass?: boolean;
+  /**
+   * Löpnummer för passet i en kedja av fortsättningar (URL-parametern pass, 0 från kurssidan).
+   * Länkarna vidare får nästa nummer, så att de aldrig pekar på exakt samma adress som passet
+   * man står i: då skulle klicket inte starta något nytt pass.
+   */
+  pass?: number;
   now?: Date;
 }): SessionResult {
   const now = input.now ?? new Date();
@@ -48,6 +57,10 @@ export function buildSessionResult(input: {
   const done = queue.due === 0 && (queue.new === 0 || !input.finalReview);
   const continueCount = Math.min(input.dailyNew, queue.new);
   const canContinue = continueCount > 0 && !input.finalReview;
+  // Plugga vidare finns alltid när dagen är klar och urvalet har kort: ingen dos, inget tak.
+  const extraCount = Math.min(EXTRA_SESSION_SIZE, inSelection.length);
+  const base = `/d/${input.deckSlug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(input.selection))}`;
+  const next = `&pass=${(input.pass ?? 0) + 1}`;
 
   return {
     nextDue,
@@ -59,10 +72,11 @@ export function buildSessionResult(input: {
       known: Math.round(stats.knowledge.known),
       total: stats.totalCards,
       done,
-      continueHref: canContinue
-        ? `/d/${input.deckSlug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(input.selection))}&nya=${continueCount}`
-        : null,
+      continueHref: canContinue ? `${base}&nya=${continueCount}${next}` : null,
       continueCount,
+      extraHref: done && extraCount > 0 ? `${base}&vidare=1${next}` : null,
+      extraCount,
+      extraPass: input.extraPass ?? false,
     },
   };
 }

@@ -22,7 +22,7 @@ import { SELF_RATINGS, type ProgressMap, type ReviewEntry, type SelfRating, type
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { filterCards, selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
-import { examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
+import { EXTRA_SESSION_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
 import { buildSessionResult, type SessionResult } from "@/lib/study/session-result";
 import { duggaExamSize, type DuggaSettings } from "@/lib/study/dugga";
 import { readStars, useStars } from "@/lib/progress/stars";
@@ -54,6 +54,10 @@ type Props = {
   userId: string | null;
   /** Uttryckligt antal nya kort för den här sessionen (från "Ta N nya kort till"), utöver dagsmålet. */
   extraNew: number | null;
+  /** Plugga vidare: extra pass när dagens schema är klart (kort närmast att förfalla, sedan nya). */
+  extra?: boolean;
+  /** Löpnummer i en kedja av fortsättningar (URL-parametern pass), se buildSessionResult. */
+  pass?: number;
   /** Duggans regler (antal frågor, ledtrådar, tidtagning); null i övriga lägen. */
   dugga: DuggaSettings | null;
   /** Bara stjärnmärkta kort. */
@@ -68,6 +72,8 @@ type SessionPlan = {
   /** Tak på nya kort som sessionen byggdes med. */
   maxNew: number | undefined;
   finalReview: boolean;
+  /** Plugga vidare-pass. */
+  extra: boolean;
 };
 
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -85,7 +91,7 @@ function clock(ms: number): string {
   return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
 }
 
-export function StudySession({ deck, categories, cards: allCards, mode, selection, userId, extraNew, dugga, onlyStarred, onlyOriginal = false }: Props) {
+export function StudySession({ deck, categories, cards: allCards, mode, selection, userId, extraNew, extra = false, pass = 0, dugga, onlyStarred, onlyOriginal = false }: Props) {
   // Bara originalkorten: allt i passet (kö, dagsplan, sammanfattning) räknar på dem.
   const cards = useMemo(() => (onlyOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal]);
   const store = useProgressStore(userId);
@@ -118,7 +124,7 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
   // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
   const cardsRef = useRef(cards);
   cardsRef.current = cards;
-  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${JSON.stringify(dugga)}|${onlyStarred}|${onlyOriginal}`;
+  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${extra}|${JSON.stringify(dugga)}|${onlyStarred}|${onlyOriginal}`;
   useEffect(() => {
     if (!store) return;
     let cancelled = false;
@@ -143,18 +149,21 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
       const newRemaining = inSelection.filter((c) => !loaded[c.id] || loaded[c.id]?.state === 0).length;
       const plan = planNewCards({
         newRemaining,
-        introducedToday: countIntroducedToday(history, now),
+        introducedToday: countIntroducedToday(history, now, loaded),
         dailyGoal: currentPrefs.dailyNew,
         phase,
       });
-      const finalReview = mode === "fsrs" && phase.kind === "final";
-      const maxNew = mode === "fsrs" && !finalReview ? (extraNew ?? plan.limit) : undefined;
+      // Plugga vidare har ingen dos och ingen slutrepetition: kön är kort närmast att förfalla, sedan nya.
+      const isExtra = mode === "fsrs" && extra;
+      const finalReview = mode === "fsrs" && !isExtra && phase.kind === "final";
+      const maxNew = mode === "fsrs" && !finalReview && !isExtra ? (extraNew ?? plan.limit) : undefined;
       const examSize = dugga ? duggaExamSize(dugga.size) : undefined;
-      const order = selectCardIds({ cards: pool, progress: loaded, mode, selection, now, maxNew, finalReview, examSize });
+      const extraSize = isExtra ? EXTRA_SESSION_SIZE : undefined;
+      const order = selectCardIds({ cards: pool, progress: loaded, mode, selection, now, maxNew, finalReview, examSize, extraSize });
       setPrefs(currentPrefs);
       setProgress(loaded);
       setReviews(history);
-      setSessionPlan({ phase, plan, maxNew, finalReview });
+      setSessionPlan({ phase, plan, maxNew, finalReview, extra: isExtra });
       setSession(createSession(order, mode));
     })();
     return () => {
@@ -218,15 +227,15 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
     (cardId: string, rating: SelfRating) => {
       if (!store || !progress) return;
       const now = new Date();
+      // Varje skattning räknas, i alla lägen: FSRS schemalägger om kortet (tidiga repetitioner
+      // och flera samma dag hanteras i lib/fsrs/scheduler.ts).
       const next = applyRating({ mode, cardId, rating, progress, now, schedule });
-      if (next) {
-        setProgress((p) => ({ ...(p ?? {}), [cardId]: next }));
-        store
-          .save(next)
-          .then(() => setQueued(store.pending()))
-          .catch(() => setSaveError(true));
-      }
-      // Historiken loggas i alla lägen (underlag för statistiken); progressen rörs bara enligt applyRating.
+      setProgress((p) => ({ ...(p ?? {}), [cardId]: next }));
+      store
+        .save(next)
+        .then(() => setQueued(store.pending()))
+        .catch(() => setSaveError(true));
+      // Historiken loggas i alla lägen, med samma skattning som schemat fick.
       const entry: ReviewEntry = { card_id: cardId, rating, mode, reviewed_at: now.toISOString() };
       setReviews((r) => [...r, entry]);
       store
@@ -269,14 +278,16 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
       if (!card || !cardKey || !card.options || !store || !progress || quizResult) return;
       if (chosen.length === 0) return;
       const correct = isCorrectAnswer(card.options, chosen);
-      // En dugga är ett prov: rätt eller fel. Annars Alvins trappa 3 → 4 → 5 (lib/cards/kinds.ts).
-      const rating: SelfRating = mode === "exam" ? (correct ? 5 : 1) : autoRating(correct, progress[card.id]?.self_rating);
+      // Schemat får Alvins trappa 3 → 4 → 5 (lib/cards/kinds.ts) i alla lägen, även i duggan:
+      // ett enda rätt svar på en flervalsfråga ska inte göra kortet "Klockrent". Duggans
+      // resultat räknar ändå bara rätt eller fel (se continueQuiz).
+      const rating: SelfRating = autoRating(correct, progress[card.id]?.self_rating);
       persistRating(card.id, rating);
       setQuizState({ key: cardKey, selected: chosen, result: { chosen, correct, rating } });
       setAnnounce(sv.quiz.answeredAnnounce(correct));
       playRatingSound(rating);
     },
-    [card, cardKey, store, progress, quizResult, mode, persistRating],
+    [card, cardKey, store, progress, quizResult, persistRating],
   );
 
   const toggleQuizOption = useCallback(
@@ -298,10 +309,11 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
 
   const continueQuiz = useCallback(() => {
     if (!quizResult) return;
-    const rating = quizResult.rating;
+    // En dugga är ett prov: sammanfattningen räknar rätt (5) eller fel (1).
+    const rating: SelfRating = mode === "exam" ? (quizResult.correct ? 5 : 1) : quizResult.rating;
     setQuizState(null);
     setSession((s) => (s ? rateCurrent(s, rating, { requeue: false }) : s));
-  }, [quizResult]);
+  }, [quizResult, mode]);
 
   /** Mittenknappen och Enter på ett automaträttat kort: svara, eller gå vidare efter svaret. */
   const quizPrimary = useCallback(() => {
@@ -387,9 +399,10 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
 
   const canRate = flipped && !!card && feedback === null;
 
-  // Intervalltext per skattning, bara i schemalagt läge och bara när kortet är vänt.
+  // Intervalltext per skattning när kortet är vänt. Alla lägen räknas in i schemat, så knapparna
+  // visar överallt när kortet kommer tillbaka, utom i duggan där provet inte ska störas.
   const intervals = useMemo(() => {
-    if (mode !== "fsrs" || !flipped || !card || !progress) return null;
+    if (mode === "exam" || !flipped || !card || !progress) return null;
     const now = new Date();
     const dates = previewIntervals(card.id, progress[card.id], now, schedule);
     const result = {} as Record<SelfRating, string>;
@@ -429,9 +442,10 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
 
   if (session.finished) {
     const summary = summarize(session);
-    // Bara den schemalagda kön har en slutpunkt för dagen; övriga lägen är fria pass.
+    // Alla lägen utom duggan visar nästa repetition (varje skattning räknas in i schemat), men
+    // bara den schemalagda kön har en slutpunkt för dagen och erbjuder Plugga vidare.
     const result: SessionResult | null =
-      mode === "fsrs"
+      mode !== "exam"
         ? buildSessionResult({
             deckSlug: deck.slug,
             cards,
@@ -441,6 +455,8 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
             dailyNew: prefs.dailyNew,
             weekdaysOnly: prefs.weekdaysOnly,
             finalReview: sessionPlan.finalReview,
+            extraPass: sessionPlan.extra,
+            pass,
           })
         : null;
     return (
@@ -451,7 +467,7 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
         colorIndex={colorIndex}
         mode={mode}
         nextDue={result?.nextDue ?? null}
-        today={result?.today ?? null}
+        today={mode === "fsrs" ? (result?.today ?? null) : null}
         deckSlug={deck.slug}
         onPrevious={mode !== "exam" && canGoPrevious(session) ? previous : undefined}
         duration={dugga?.timer ? clock(elapsed) : null}
@@ -463,11 +479,13 @@ export function StudySession({ deck, categories, cards: allCards, mode, selectio
   const banner =
     mode !== "fsrs"
       ? null
-      : sessionPlan.finalReview && sessionPlan.phase.kind === "final"
-        ? sv.study.finalReviewBanner(sessionPlan.phase.daysLeft)
-        : sessionPlan.plan.catchUp && sessionPlan.plan.neededPerDay !== null && extraNew === null
-          ? sv.study.catchUpBanner(sessionPlan.plan.neededPerDay)
-          : null;
+      : sessionPlan.extra
+        ? sv.study.extraBanner
+        : sessionPlan.finalReview && sessionPlan.phase.kind === "final"
+          ? sv.study.finalReviewBanner(sessionPlan.phase.daysLeft)
+          : sessionPlan.plan.catchUp && sessionPlan.plan.neededPerDay !== null && extraNew === null
+            ? sv.study.catchUpBanner(sessionPlan.plan.neededPerDay)
+            : null;
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-5">

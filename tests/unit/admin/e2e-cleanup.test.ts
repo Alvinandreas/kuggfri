@@ -1,0 +1,39 @@
+import { describe, expect, it } from "vitest";
+import { isE2eDeck, isLocalSupabase } from "../../e2e/cleanup";
+import { ACTIVE_ADMIN_COURSE_SLUG, pickActiveAdminCourse } from "@/lib/admin/active-course";
+
+const deck = (slug: string, title: string, id = "1fd9bb0d-b779-540f-bbbd-604e02cdaf6b") => ({ id, slug, title });
+
+describe("E2E-städningen", () => {
+  it("känner igen kurser som testerna skapat", () => {
+    expect(isE2eDeck(deck("e2e-deck-123", "Något"))).toBe(true);
+    expect(isE2eDeck(deck("en-kurs", "E2E-deck 123"))).toBe(true);
+    expect(isE2eDeck(deck("fast-id", "Fast id", "00000000-0000-4000-8000-0000000e0001"))).toBe(true);
+  });
+
+  it("rör aldrig Materialteknik eller vanliga kurser", () => {
+    expect(isE2eDeck(deck("materialteknik", "E2E Materialteknik"))).toBe(false);
+    expect(isE2eDeck(deck("materialteknik", "Materialteknik", "00000000-0000-4000-8000-0000000e0001"))).toBe(false);
+    expect(isE2eDeck(deck("hallfasthetslara", "Hållfasthetslära"))).toBe(false);
+  });
+
+  it("städar bara en lokal Supabase", () => {
+    expect(isLocalSupabase("http://127.0.0.1:54321")).toBe(true);
+    expect(isLocalSupabase("http://localhost:54321")).toBe(true);
+    expect(isLocalSupabase("https://abcdefgh.supabase.co")).toBe(false);
+    expect(isLocalSupabase("inte en adress")).toBe(false);
+  });
+});
+
+describe("adminvyns låsta kurs", () => {
+  it("är Materialteknik även när andra kurser kommer först", () => {
+    const decks = [deck("e2e-deck-1", "E2E-deck 1", "a"), deck(ACTIVE_ADMIN_COURSE_SLUG, "Materialteknik", "b")];
+    expect(ACTIVE_ADMIN_COURSE_SLUG).toBe("materialteknik");
+    expect(pickActiveAdminCourse(decks)?.id).toBe("b");
+  });
+
+  it("faller tillbaka på den första kursen för den som inte får redigera Materialteknik", () => {
+    expect(pickActiveAdminCourse([deck("annan", "Annan", "c")])?.id).toBe("c");
+    expect(pickActiveAdminCourse([])).toBeUndefined();
+  });
+});

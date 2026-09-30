@@ -56,13 +56,16 @@ const SECTIONS = [
 
 type SectionId = (typeof SECTIONS)[number]["id"];
 
-/** Lägena i samma ordning och med samma ikoner som på kursens sida (ModePicker). */
-const MODES: ReadonlyArray<{ title: string; body: string; icon: Icon; effect: "schedule" | "rating" | "none" }> = [
-  { title: sv.deck.modeFsrs, body: t.modes.fsrs, icon: CalendarClock, effect: "schedule" },
-  { title: sv.deck.modeTricky, body: t.modes.tricky, icon: Target, effect: "rating" },
-  { title: sv.deck.modeFree, body: t.modes.free, icon: BookOpenText, effect: "none" },
-  { title: sv.deck.modeRandom, body: t.modes.random, icon: Shuffle, effect: "none" },
-  { title: sv.deck.modeExam, body: t.modes.exam, icon: GraduationCap, effect: "none" },
+/**
+ * Lägena i samma ordning och med samma ikoner som på kursens sida (ModePicker). Sedan
+ * 30 sep 2026 räknas varje skattning in i schemat i alla lägen, så alla får samma märke.
+ */
+const MODES: ReadonlyArray<{ title: string; body: string; icon: Icon }> = [
+  { title: sv.deck.modeFsrs, body: t.modes.fsrs, icon: CalendarClock },
+  { title: sv.deck.modeTricky, body: t.modes.tricky, icon: Target },
+  { title: sv.deck.modeFree, body: t.modes.free, icon: BookOpenText },
+  { title: sv.deck.modeRandom, body: t.modes.random, icon: Shuffle },
+  { title: sv.deck.modeExam, body: t.modes.exam, icon: GraduationCap },
 ];
 
 /**
@@ -123,12 +126,6 @@ function HelpSection({ id, lead, children }: { id: SectionId; lead?: string; chi
       {children}
     </section>
   );
-}
-
-function EffectBadge({ effect }: { effect: "schedule" | "rating" | "none" }) {
-  if (effect === "schedule") return <Badge tone="accent">{t.affectsSchedule}</Badge>;
-  if (effect === "rating") return <Badge>{t.savesRating}</Badge>;
-  return <Badge tone="outline">{t.noSchedule}</Badge>;
 }
 
 export default function HelpPage() {
@@ -202,7 +199,7 @@ export default function HelpPage() {
                     <h3 className="font-semibold">{m.title}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-muted">{m.body}</p>
                     <div className="mt-3">
-                      <EffectBadge effect={m.effect} />
+                      <Badge tone="accent">{t.affectsSchedule}</Badge>
                     </div>
                   </div>
                 </Card>

@@ -160,7 +160,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
             {sv.account.displayName}
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <input id="display_name" name="display_name" defaultValue={displayName} maxLength={80} placeholder={sv.auth.displayNamePlaceholder} autoComplete="name" className={cx(inputClass, "h-12 min-w-0 flex-1")} />
+            <input id="display_name" name="display_name" defaultValue={displayName} maxLength={80} placeholder={sv.auth.displayNamePlaceholder} autoComplete="name" className={cx(inputClass, "h-12 min-w-0 shrink-0 sm:flex-1")} />
             <Button type="submit" variant="outline" disabled={namePending}>
               {sv.account.save}
             </Button>
@@ -247,7 +247,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
               autoComplete="new-password"
               autoFocus={focusPassword}
               aria-describedby="new_password-hint"
-              className={cx(inputClass, "h-12 min-w-0 flex-1")}
+              className={cx(inputClass, "h-12 min-w-0 shrink-0 sm:flex-1")}
             />
             <Button type="submit" disabled={passwordPending} data-testid="save-password">
               {sv.account.savePassword}

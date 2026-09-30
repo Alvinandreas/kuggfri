@@ -1,12 +1,10 @@
 import { expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321";
+// Adressen och service role-nyckeln bor i cleanup.ts, som också körs fristående med tsx.
+import { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } from "./cleanup";
 
-/** Standardnycklarna som lokala Supabase CLI använder. Skriv över med env om de skiljer sig (se `supabase status`). */
-export const SUPABASE_SERVICE_ROLE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ??
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
+export { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL };
 
 export const ADMIN_USER = { email: "admin@kuggfri.test", password: "admin-losenord-123" };
 

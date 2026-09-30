@@ -12,6 +12,8 @@ export default defineConfig({
   // Dev-servern kompilerar sidor vid första anropet; ge förväntningar tid för det.
   expect: { timeout: 15_000 },
   globalSetup: "./tests/e2e/global-setup.ts",
+  // Tar bort kurserna testerna skapat (e2e-…, "E2E …"), även efter fallerade tester.
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   use: {
     baseURL,
     trace: "retain-on-failure",

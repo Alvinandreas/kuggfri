@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { Rating } from "ts-fsrs";
 import {
+  buildExtraQueue,
   buildFinalReviewQueue,
   buildFsrsQueue,
   countDueBy,
@@ -128,41 +129,131 @@ describe("resetScheduleKeepRating", () => {
   });
 });
 
-describe("applyRating – fri och slumpad repetition rör inte progressen", () => {
+describe("applyRating: varje skattning räknas, i alla lägen (30 sep 2026)", () => {
   const progress: ProgressMap = { k: reviewCard("k", undefined, 5, NOW) };
   const snapshot = JSON.stringify(progress);
+  const later = new Date(NOW.getTime() + DAY);
 
-  it("fri repetition returnerar null och lämnar progressen orörd", () => {
-    expect(applyRating({ mode: "free", cardId: "k", rating: 1, progress, now: NOW })).toBeNull();
-    expect(applyRating({ mode: "free", cardId: "ny", rating: 5, progress, now: NOW })).toBeNull();
+  it("fri repetition, slumpad genomkörning, kluriga kort och dugga schemalägger om precis som schemalagd repetition", () => {
+    const expected = reviewCard("k", progress.k, 4, later);
+    for (const mode of ["fsrs", "free", "random", "tricky", "exam"] as const) {
+      expect(applyRating({ mode, cardId: "k", rating: 4, progress, now: later })).toEqual(expected);
+    }
+    expect(expected.reps).toBe(2);
+    expect(expected.last_review).toBe(later.toISOString());
     expect(JSON.stringify(progress)).toBe(snapshot);
   });
 
-  it("slumpad genomkörning returnerar null och lämnar progressen orörd", () => {
-    expect(applyRating({ mode: "random", cardId: "k", rating: 1, progress, now: NOW })).toBeNull();
-    expect(JSON.stringify(progress)).toBe(snapshot);
+  it("ett aldrig sett kort blir introducerat, oavsett läge", () => {
+    const fresh = applyRating({ mode: "free", cardId: "ny", rating: 2, progress, now: later });
+    expect(fresh.state).not.toBe(0);
+    expect(fresh.reps).toBe(1);
+    expect(fresh.self_rating).toBe(2);
+    expect(isDue(fresh, later)).toBe(false);
   });
 
-  it("kluriga kort uppdaterar bara self_rating och last_review, inte schemat", () => {
-    const later = new Date(NOW.getTime() + DAY);
-    const next = applyRating({ mode: "tricky", cardId: "k", rating: 4, progress, now: later });
-    expect(next?.self_rating).toBe(4);
-    expect(next?.last_review).toBe(later.toISOString());
-    expect(next?.due).toBe(progress.k?.due);
-    expect(next?.reps).toBe(progress.k?.reps);
-    expect(next?.state).toBe(progress.k?.state);
-    // Ett aldrig sett kort får en ny rad i state New (0), fortfarande nytt för schemat.
-    const fresh = applyRating({ mode: "tricky", cardId: "ny", rating: 2, progress, now: later });
-    expect(fresh?.state).toBe(0);
-    expect(fresh?.self_rating).toBe(2);
-    expect(JSON.stringify(progress)).toBe(snapshot);
+  it("intervalltaket (tentadatum) gäller i alla lägen", () => {
+    let p = reviewCard("t", undefined, 5, NOW);
+    p = reviewCard("t", p, 5, new Date(p.due));
+    const at = new Date(p.due);
+    const capped = applyRating({ mode: "free", cardId: "t", rating: 5, progress: { t: p }, now: at, schedule: { maxInterval: 5 } });
+    expect(capped.scheduled_days).toBeLessThanOrEqual(5 + 2);
+  });
+});
+
+describe("tidiga repetitioner och repetitioner samma dag", () => {
+  /** Ett kort med ett intervall på drygt två veckor: Bra i dag, Bra igen när det förföll. */
+  function matureCard() {
+    const first = reviewCard("m", undefined, 4, NOW);
+    return reviewCard("m", first, 4, new Date(first.due));
+  }
+
+  it("återkallelsesannolikheten räknas på den verkliga förflutna tiden", () => {
+    const p = matureCard();
+    const last = Date.parse(p.last_review ?? "");
+    const early = retrievability(p, new Date(last + 2 * DAY));
+    const onTime = retrievability(p, new Date(p.due));
+    expect(early).toBeGreaterThan(0.95);
+    // Vid förfallodagen är sannolikheten nära målet 90 % (fuzz flyttar dagen några procent).
+    expect(onTime).toBeGreaterThan(0.85);
+    expect(onTime).toBeLessThan(0.95);
   });
 
-  it("schemalagd repetition returnerar ny progress utan att mutera kartan", () => {
-    const next = applyRating({ mode: "fsrs", cardId: "k", rating: 1, progress, now: new Date(NOW.getTime() + DAY) });
-    expect(next).not.toBeNull();
-    expect(next?.self_rating).toBe(1);
-    expect(JSON.stringify(progress)).toBe(snapshot);
+  it("en tidig repetition ökar stabiliteten, men mindre än en repetition i tid", () => {
+    const p = matureCard();
+    const last = Date.parse(p.last_review ?? "");
+    const early = reviewCard("m", p, 4, new Date(last + 2 * DAY));
+    const onTime = reviewCard("m", p, 4, new Date(p.due));
+    expect(early.elapsed_days).toBe(2);
+    expect(onTime.elapsed_days).toBe(p.scheduled_days);
+    expect(early.stability).toBeGreaterThan(p.stability);
+    expect(early.stability).toBeLessThan(onTime.stability);
+    expect(early.scheduled_days).toBeLessThan(onTime.scheduled_days);
+    // Det nya intervallet räknas från den tidiga repetitionen, inte från det gamla datumet.
+    expect(Date.parse(early.due)).toBeGreaterThan(Date.parse(p.due));
+  });
+
+  it("flera repetitioner samma dag blåser aldrig upp stabiliteten eller intervallet", () => {
+    const first = reviewCard("s", undefined, 4, NOW);
+    let p = first;
+    const days: number[] = [];
+    for (let h = 1; h <= 6; h++) {
+      p = reviewCard("s", p, 5, new Date(NOW.getTime() + h * 60 * 60 * 1000));
+      expect(p.stability).toBe(first.stability);
+      days.push(p.scheduled_days);
+    }
+    expect(p.reps).toBe(7);
+    // Samma intervall varje gång: sex Lätt samma dag ger inte längre intervall än ett.
+    expect(new Set(days).size).toBe(1);
+    // Jämför med sex Lätt på förfallodagarna: där växer stabiliteten kraftigt.
+    let spaced = first;
+    for (let i = 0; i < 6; i++) spaced = reviewCard("s", spaced, 5, new Date(spaced.due));
+    expect(spaced.stability).toBeGreaterThan(first.stability * 10);
+  });
+
+  it("en miss samma dag sänker stabiliteten, och kortet förfaller inte igen förrän i morgon", () => {
+    const first = reviewCard("a", undefined, 4, NOW);
+    const missed = reviewCard("a", first, 1, new Date(NOW.getTime() + 2 * 60 * 60 * 1000));
+    expect(missed.stability).toBeLessThan(first.stability);
+    expect(missed.scheduled_days).toBeGreaterThanOrEqual(1);
+    expect(isDue(missed, new Date(NOW.getTime() + 12 * 60 * 60 * 1000))).toBe(false);
+  });
+});
+
+describe("Plugga vidare: buildExtraQueue", () => {
+  const H = 60 * 60 * 1000;
+  /** Repeterat kort med given stabilitet och senaste repetition för `ago` ms sedan. */
+  function reviewed(cardId: string, stability: number, ago: number): ProgressMap[string] {
+    return {
+      ...reviewCard(cardId, undefined, 4, new Date(NOW.getTime() - ago)),
+      stability,
+    };
+  }
+  const progress: ProgressMap = {
+    forfallet: reviewed("forfallet", 2, 10 * DAY),
+    snart: reviewed("snart", 3, 2 * DAY),
+    langt: reviewed("langt", 100, DAY),
+    idag: reviewed("idag", 3, 1 * H),
+  };
+  const ids = ["idag", "ny1", "langt", "snart", "ny2", "forfallet"];
+
+  it("tar kort närmast att förfalla först, sedan nya kort, sist kort som redan repeterats i dag", () => {
+    const queue = buildExtraQueue(ids, progress, NOW, () => 0.5);
+    expect(queue.slice(0, 3)).toEqual(["forfallet", "snart", "langt"]);
+    expect(new Set(queue.slice(3, 5))).toEqual(new Set(["ny1", "ny2"]));
+    expect(queue[5]).toBe("idag");
+  });
+
+  it("ett block i taget, men aldrig tomt så länge urvalet har kort", () => {
+    expect(buildExtraQueue(ids, progress, NOW, () => 0.5, { size: 2 })).toEqual(["forfallet", "snart"]);
+    expect(buildExtraQueue(["idag"], progress, NOW, () => 0.5, { size: 20 })).toEqual(["idag"]);
+    expect(buildExtraQueue([], progress, NOW)).toEqual([]);
+  });
+
+  it("nya kort utöver dagens dos: inget tak utöver blockets storlek", () => {
+    const many = Array.from({ length: 60 }, (_, i) => `n${i}`);
+    expect(buildExtraQueue(many, {}, NOW, Math.random, { size: 40 })).toHaveLength(40);
+    expect(buildExtraQueue(many, {}, NOW)).toHaveLength(60);
   });
 });
 

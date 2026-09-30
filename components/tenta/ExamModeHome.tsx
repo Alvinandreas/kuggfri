@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { StudentViewBar, StudentViewButton } from "./StudentView";
+import { KeepDates } from "@/components/ui/KeepDates";
 
 type Deck = { id: string; slug: string; title: string; course_code: string | null };
 
@@ -74,7 +75,7 @@ function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; 
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-bold tracking-tight">
               <Link href={href} className="rounded-sm hover:underline">
-                {exam.title}
+                <KeepDates>{exam.title}</KeepDates>
               </Link>
             </h2>
             {showDraft && exam.status === "utkast" ? <Badge tone="outline">{sv.tenta.draft}</Badge> : null}

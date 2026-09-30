@@ -231,7 +231,9 @@ export class SupabaseProgressStore implements ProgressStore {
           .select("card_id, rating, mode, reviewed_at")
           .eq("user_id", this.userId)
           .in("card_id", chunk)
-          .order("reviewed_at", { ascending: true })
+          // Nyast först, så att taket kapar den äldsta historiken och aldrig dagens rader:
+          // dagsmålet, streaken och "i dag" räknas ur dem. Listan sorteras stigande nedan.
+          .order("reviewed_at", { ascending: false })
           // Taket gäller per del, inte totalt: en del är högst CHUNK kort, och diagrammen
           // behöver inte fler rader än så för att bli rättvisande.
           .limit(REVIEW_LIMIT_PER_CHUNK),

@@ -8,7 +8,7 @@
 import { queueStats } from "@/lib/fsrs/scheduler";
 import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
 import { countIntroducedToday } from "@/lib/stats/progress-stats";
-import { EXAM_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
+import { EXAM_SIZE, EXTRA_SESSION_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
 import { filterCards, serializeSelection, trickyCards, type SelectableCard, type Selection } from "@/lib/study/selection";
 
 export type DeckPlan = {
@@ -34,6 +34,13 @@ export type DeckPlan = {
   /** "Ta N nya kort till" när dagen är slut men nya kort finns kvar. */
   moreNew: number;
   moreHref: string;
+  /**
+   * Plugga vidare när dagens schemalagda pass är klart: kort närmast att förfalla, sedan nya
+   * kort utöver dosen. Alltid möjligt så länge urvalet har kort (Alvins beslut 30 sep 2026).
+   */
+  canExtra: boolean;
+  extraCount: number;
+  extraHref: string;
 };
 
 export function planDeckSession(input: {
@@ -71,7 +78,7 @@ export function planDeckSession(input: {
   const newCardPlan = selStats
     ? planNewCards({
         newRemaining: selStats.new,
-        introducedToday: countIntroducedToday(input.reviews, now),
+        introducedToday: countIntroducedToday(input.reviews, now, input.progress ?? undefined),
         dailyGoal: input.dailyNew,
         phase,
       })
@@ -82,6 +89,8 @@ export function planDeckSession(input: {
   const sessionCards = finalReview ? selectionCount : sessionDue + sessionNew;
   const nothingDue = input.mode === "fsrs" && selStats !== null && sessionCards === 0;
   const moreNew = Math.min(input.dailyNew, selStats?.new ?? 0);
+  const extraCount = Math.min(EXTRA_SESSION_SIZE, selectedCards.length);
+  const fsrsHref = `/d/${input.deck.slug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(categorySelection))}`;
 
   return {
     phase,
@@ -98,5 +107,8 @@ export function planDeckSession(input: {
     startHref,
     moreNew,
     moreHref: `${startHref}&nya=${moreNew}`,
+    canExtra: extraCount > 0,
+    extraCount,
+    extraHref: `${fsrsHref}&vidare=1`,
   };
 }

@@ -31,11 +31,15 @@ export function isSelfRating(value: unknown): value is SelfRating {
 export type ProgressMap = Record<string, CardProgress>;
 
 /**
- * fsrs   = schemalagd repetition (uppdaterar FSRS-schemat)
- * free   = fri repetition (rör inte progressen)
- * random = slumpad genomkörning (rör inte progressen)
- * tricky = kluriga kort: låg skattning eller aldrig sedda (uppdaterar bara self_rating)
- * exam   = provtenta: 30 slumpade kort ur urvalet, ingen ledtråd, ingen tillbaka (rör inte progressen)
+ * fsrs   = schemalagd repetition: förfallna och doserade nya kort. Även Plugga vidare
+ *          (URL-parametern vidare=1) och "Ta N nya kort till" körs i det här läget.
+ * free   = fri repetition av ett urval
+ * random = slumpad genomkörning av hela kursen
+ * tricky = kluriga kort: låg skattning eller aldrig sedda
+ * exam   = dugga: slumpade kort ur urvalet, ingen tillbaka
+ *
+ * Sedan 30 sep 2026 uppdaterar varje skattning FSRS-schemat, i alla lägen (lib/fsrs/apply-rating.ts).
+ * Läget styr vilka kort passet visar och loggas i review_log, men inte hur schemat räknas.
  */
 export type StudyMode = "fsrs" | "free" | "random" | "tricky" | "exam";
 

@@ -401,8 +401,15 @@ function TodayCard({
             {sv.dashboard.doneTitle}
           </p>
           <p className="mt-1 text-sm text-muted">{sv.dashboard.doneBody}</p>
+          {/* Dagens schema är klart, men extra plugg är alltid tillåtet och räknas (30 sep 2026). */}
+          {plan.canExtra ? (
+            <LinkButton href={plan.extraHref} size="lg" className="mt-5 w-full" data-testid="home-extra">
+              {sv.dashboard.extra}
+              <ArrowRight size={18} aria-hidden />
+            </LinkButton>
+          ) : null}
           {plan.moreNew > 0 ? (
-            <LinkButton href={plan.moreHref} variant="outline" className="mt-5 w-full">
+            <LinkButton href={plan.moreHref} variant="outline" className={plan.canExtra ? "mt-2 w-full" : "mt-5 w-full"}>
               {sv.dashboard.moreNew(plan.moreNew)}
             </LinkButton>
           ) : null}

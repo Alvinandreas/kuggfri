@@ -32,12 +32,19 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const dugga = mode === "exam" ? parseDugga(query) : null;
   const onlyStarred = (Array.isArray(query.stjarnor) ? query.stjarnor[0] : query.stjarnor) === "1";
   const onlyOriginal = (Array.isArray(query.original) ? query.original[0] : query.original) === "1";
+  // Plugga vidare (vidare=1): ett extra pass i schemalagt läge när dagens kort är klara.
+  const extra = mode === "fsrs" && (Array.isArray(query.vidare) ? query.vidare[0] : query.vidare) === "1";
+  // Löpnummer i en kedja av fortsättningar från sammanfattningen: ger varje nytt pass en egen adress.
+  const rawPass = Number.parseInt((Array.isArray(query.pass) ? query.pass[0] : query.pass) ?? "", 10);
+  const pass = Number.isFinite(rawPass) && rawPass > 0 ? Math.min(10_000, rawPass) : 0;
 
   return (
     <StudySession
-      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(dugga)}-${onlyStarred}-${onlyOriginal}`}
+      key={`${mode}-${JSON.stringify(selection)}-${extraNew ?? ""}-${JSON.stringify(dugga)}-${onlyStarred}-${onlyOriginal}-${extra}-${pass}`}
       deck={{ id: data.deck.id, slug: data.deck.slug, title: data.deck.title, exam_date: data.deck.exam_date }}
       extraNew={extraNew}
+      extra={extra}
+      pass={pass}
       dugga={dugga}
       onlyStarred={onlyStarred}
       onlyOriginal={onlyOriginal}

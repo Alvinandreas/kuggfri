@@ -133,6 +133,29 @@ describe("planDeckSession: när det inte finns något att göra", () => {
     expect(p.moreNew).toBe(0);
   });
 
+  it("dagens schema klart: Plugga vidare erbjuds för samma urval, utan dos", () => {
+    const progress: ProgressMap = {};
+    for (const c of cards) progress[c.id] = rated(c.id, 4, 3);
+    const p = plan({ progress, selectedIds: ["k2"] });
+    expect(p.nothingDue).toBe(true);
+    expect(p.canExtra).toBe(true);
+    expect(p.extraCount).toBe(20);
+    expect(p.extraHref).toBe("/d/mtt015/plugga?mode=fsrs&urval=kategori%3Ak2&vidare=1");
+    // Extra plugg även i andra lägen leder till schemalagt läge.
+    expect(plan({ progress, mode: "free" }).extraHref).toBe("/d/mtt015/plugga?mode=fsrs&urval=all&vidare=1");
+  });
+
+  it("dagsmålet räknar kort som introducerats i dag i vilket läge som helst", () => {
+    // Fem kort sågs för första gången i fri repetition i dag.
+    const progress: ProgressMap = {};
+    const reviews = [0, 1, 2, 3, 4].map((i) => {
+      progress[`c${i}`] = { ...rated(`c${i}`, 4, 3), reps: 1, last_review: NOW.toISOString() };
+      return { card_id: `c${i}`, rating: 4 as const, mode: "free" as const, reviewed_at: NOW.toISOString() };
+    });
+    const p = planDeckSession({ deck: { slug: "mtt015", exam_date: null }, cards, progress, reviews, mode: "fsrs", selectedIds: [], dailyNew: 10, now: NOW });
+    expect(p.sessionNew).toBe(5);
+  });
+
   it("gäller bara schemalagt läge: fri repetition går alltid att starta", () => {
     const progress: ProgressMap = {};
     for (const c of cards) progress[c.id] = rated(c.id, 4, 3);

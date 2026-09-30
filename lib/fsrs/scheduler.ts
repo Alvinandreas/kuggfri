@@ -13,7 +13,7 @@ import {
   type Grade,
 } from "ts-fsrs";
 import type { CardProgress, ProgressMap, SelfRating } from "@/lib/progress/types";
-import { DAY_MS } from "@/lib/time/day";
+import { DAY_MS, startOfDay } from "@/lib/time/day";
 import { SELF_RATINGS } from "@/lib/progress/types";
 
 /** Längsta intervall i dagar när inget tentadatum styr. */
@@ -31,6 +31,19 @@ export const DEFAULT_MAX_INTERVAL = 365;
  * Intervalltaket kan sättas per anrop (tentadatum): ett kort ska aldrig schemaläggas
  * bortom tentan. ts-fsrs håller ändå ordningen Again < Hard < Good < Easy med minst en
  * dags mellanrum, så taket biter i praktiken först från fyra dagar.
+ *
+ * Varje skattning räknas, i alla lägen (Alvins beslut 30 sep 2026, DECISIONS.md). Därför
+ * måste tidiga och upprepade repetitioner hanteras rätt, och det gör FSRS själv:
+ * - Förfluten tid är den verkliga: t = hela kalenderdagar (UTC) sedan last_review, inte
+ *   det schemalagda intervallet. Återkallelsesannolikheten blir R = (1 + F * t / S)^C.
+ * - Stabiliteten växer med S' = S * (1 + e^w8 * (11 - D) * S^-w9 * (e^(w10 * (1 - R)) - 1)).
+ *   En tidig repetition har högt R, så tillväxten blir mindre än vid en repetition i tid.
+ * - Samma dag (t = 0) är R = 1 och faktorn blir exakt 1: stabiliteten står still vid
+ *   Hard, Good och Easy (skattning 3–5), och kan bara sjunka vid Again (1–2). Intervallet
+ *   räknas om från S och kan alltså inte blåsa upp hur många gånger kortet än repeteras
+ *   samma dag. Svårigheten D uppdateras som vanligt. FSRS-5/6:s korttidsformel
+ *   (enable_short_term) används inte: den kräver inlärningssteg, och den höjer S för varje
+ *   Easy samma dag, vilket belönar att nöta samma kort om och om igen.
  */
 function makeScheduler(maxInterval: number): FSRS {
   return fsrs(
@@ -278,6 +291,55 @@ export function buildFinalReviewQueue(
   const scored = shuffleIds(cardIds, random).map((id) => ({ id, r: retrievability(progress[id], now) }));
   scored.sort((a, b) => a.r - b.r);
   return scored.map((s) => s.id);
+}
+
+/**
+ * Återkallelsesannolikhet med förfluten tid i bråkdelar av dygn. Bara för att ordna kön i
+ * Plugga vidare: två kort som repeterades i går ska kunna skiljas åt även om det inte gått
+ * ett helt dygn. Schemaläggningen själv räknar i hela dagar, som FSRS är tränat på.
+ */
+function exactRetrievability(p: CardProgress, now: Date): number {
+  if (p.state === 0 || !p.last_review) return 0;
+  const t = Math.max(0, (now.getTime() - Date.parse(p.last_review)) / DAY_MS);
+  const r = schedulerFor().forgetting_curve(t, p.stability);
+  return Number.isFinite(r) ? Math.max(0, Math.min(1, r)) : 0;
+}
+
+/**
+ * Plugga vidare: kön när dagens schema är klart och studenten vill fortsätta. Ingen dos
+ * och inget tak, men en ordning som gör varje extra kort så nyttigt som möjligt:
+ * 1. Repeterade kort som inte redan setts i dag, lägst återkallelsesannolikhet först
+ *    (de som ligger närmast att förfalla, eller redan har förfallit).
+ * 2. Nya kort, utöver dagens dos, i slumpad ordning.
+ * 3. Kort som redan repeterats i dag, lägst återkallelsesannolikhet först. De ger inget
+ *    längre intervall (se ovan) men finns med så att kön aldrig tar slut i onödan.
+ * Kort med samma sannolikhet blandas. `size` begränsar passet (ett block i taget).
+ */
+export function buildExtraQueue(
+  cardIds: readonly string[],
+  progress: ProgressMap,
+  now: Date = new Date(),
+  random: () => number = Math.random,
+  options: { size?: number } = {},
+): string[] {
+  const todayStart = startOfDay(now).getTime();
+  const earlier: { id: string; r: number }[] = [];
+  const reviewedToday: { id: string; r: number }[] = [];
+  const fresh: string[] = [];
+  for (const id of shuffleIds(cardIds, random)) {
+    const p = progress[id];
+    if (!p || p.state === 0) {
+      fresh.push(id);
+      continue;
+    }
+    const last = p.last_review ? Date.parse(p.last_review) : Number.NEGATIVE_INFINITY;
+    (last >= todayStart ? reviewedToday : earlier).push({ id, r: exactRetrievability(p, now) });
+  }
+  // Array.prototype.sort är stabil: lika sannolikheter behåller den slumpade ordningen.
+  earlier.sort((a, b) => a.r - b.r);
+  reviewedToday.sort((a, b) => a.r - b.r);
+  const queue = [...earlier.map((c) => c.id), ...fresh, ...reviewedToday.map((c) => c.id)];
+  return options.size === undefined ? queue : queue.slice(0, Math.max(0, options.size));
 }
 
 /** Fisher–Yates utan beroende på session-modulen (som importerar härifrån). */

@@ -11,6 +11,7 @@ import { deadlineMs, formatClock, formatDuration, formatPoints, kindSummary, tim
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { StudentViewBar } from "./StudentView";
+import { KeepDates } from "@/components/ui/KeepDates";
 
 export type CoverExam = {
   key: string;
@@ -104,7 +105,9 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
               {deck.course_code ? ` ${deck.course_code}` : ""}
             </span>
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">{exam.title}</h1>
+          <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <KeepDates>{exam.title}</KeepDates>
+          </h1>
         </div>
         <div className="px-6 pb-7 pt-3 sm:px-9">
           <dl>

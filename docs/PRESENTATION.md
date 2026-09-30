@@ -43,7 +43,7 @@ Visa i telefonen eller laptopen. Poängen att göra:
    Förklara i en mening: FSRS är en öppen algoritm för spaced repetition som lägger nästa repetition
    beroende på hur väl man kunde kortet. Kort man kan sällan, kort man inte kan snart och igen samma session.
 3. Kryssa i en eller två kategorier, visa **fri repetition** på dem och nämn **slumpad genomkörning**:
-   cram-läge inför tentan som inte rör schemat. Visa **Kluriga kort**: bara det man inte kan än.
+   cram-läge inför tentan, som sedan 30 sep också räknas in i schemat. Visa **Kluriga kort**: bara det man inte kan än.
    Sortera kategorilistan på "Minst inlärt först": det är så studenten hittar vad den behöver jobba mest med.
 3b. Scrolla till **Din progress**: dagar i rad, repetitioner per dag och kurvan över inlärda kort.
    Poängen: studenten ser sin egen kurva, det är det som håller igång pluggandet.

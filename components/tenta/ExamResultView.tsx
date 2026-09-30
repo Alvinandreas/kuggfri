@@ -18,6 +18,7 @@ import { cx } from "@/components/ui/cx";
 import { ExamFigures } from "./ExamFigures";
 import { PointsPicker } from "./PointsPicker";
 import { StudentViewBar } from "./StudentView";
+import { KeepDates } from "@/components/ui/KeepDates";
 
 /** Tentan som den skickas till webbläsaren efter rättningen: med facit men utan källa och status. */
 export type ResultExam = Omit<Exam, "source" | "status">;
@@ -302,7 +303,9 @@ export function ExamResultView({ slug, exam, result, answers, selfGrades, points
           <span>{sv.tenta.resultTitle}</span>
           <span className="font-medium">{sv.tenta.attemptRow(submittedWhen)}</span>
         </p>
-        <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">{exam.title}</h1>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">
+          <KeepDates>{exam.title}</KeepDates>
+        </h1>
       </header>
 
       {/* Tänk om: kompakt sammanfattning som följer med när man rullar. */}

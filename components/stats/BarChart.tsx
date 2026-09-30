@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { sv } from "@/lib/i18n/sv";
+import { useSvgTextScale } from "./useSvgTextScale";
 
 export type BarPoint = { key: string; label: string; value: number; /** Tailwind fill-klass för just den här stapeln. */ colorClass?: string; /** Extra rad i tooltipen. */ detail?: string };
 
@@ -27,6 +28,7 @@ const PAD = { top: 12, right: 8, bottom: 26, left: 30 };
 export function BarChart({ points, title, help, formatValue, hideTitle = false }: Props) {
   const [hover, setHover] = useState<number | null>(null);
   const titleId = useId();
+  const [svgRef, k] = useSvgTextScale(W);
 
   const max = Math.max(1, ...points.map((p) => p.value));
   const ticks = niceTicks(max);
@@ -72,7 +74,9 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
       {(
         <div className="relative">
           <svg
+            ref={svgRef}
             viewBox={`0 0 ${W} ${H}`}
+            overflow="visible"
             role="img"
             aria-labelledby={titleId}
             className="h-auto w-full"
@@ -81,7 +85,7 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
             {ticks.map((t) => (
               <g key={t}>
                 <line x1={PAD.left} x2={W - PAD.right} y1={y(t)} y2={y(t)} className="stroke-chart-grid" strokeWidth={1} />
-                <text x={PAD.left - 6} y={y(t) + 3} textAnchor="end" className="fill-muted" fontSize={11}>
+                <text x={PAD.left - 6} y={y(t) + 3} textAnchor="end" className="fill-muted" fontSize={11 * k}>
                   {t}
                 </text>
               </g>
@@ -100,7 +104,7 @@ export function BarChart({ points, title, help, formatValue, hideTitle = false }
                     <rect x={x} y={y(0) - 1} width={barW} height={1} className="fill-chart-grid" />
                   )}
                   {i % labelStep === 0 && (
-                    <text x={x + barW / 2} y={H - 8} textAnchor="middle" className="fill-muted" fontSize={11}>
+                    <text x={x + barW / 2} y={H - 8} textAnchor="middle" className="fill-muted" fontSize={11 * k}>
                       {p.label}
                     </text>
                   )}

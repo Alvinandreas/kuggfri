@@ -39,6 +39,8 @@ export function Select<T extends string>({ value, onChange, options, label, id, 
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const typed = useRef({ text: "", at: 0 });
+  /** Listan har öppnats men fokus har ännu inte flyttats in i den. */
+  const focusPending = useRef(false);
   const style = useAnchoredPopup(triggerRef, open, options.length * 40 + 12);
 
   const selectedIndex = Math.max(
@@ -50,6 +52,7 @@ export function Select<T extends string>({ value, onChange, options, label, id, 
   function openList() {
     if (disabled) return;
     setActive(selectedIndex);
+    focusPending.current = true;
     setOpen(true);
   }
 
@@ -64,9 +67,19 @@ export function Select<T extends string>({ value, onChange, options, label, id, 
     close();
   }
 
+  // Fokus flyttas in när listan väl finns: första gången saknas positionen (style) ett ögonblick,
+  // och då blev fokus kvar på knappen så att varken piltangenterna eller Esc fungerade.
+  useEffect(() => {
+    if (!open || !style || !focusPending.current) return;
+    const raf = requestAnimationFrame(() => {
+      focusPending.current = false;
+      listRef.current?.focus();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [open, style]);
+
   useEffect(() => {
     if (!open) return;
-    const raf = requestAnimationFrame(() => listRef.current?.focus());
     const onDown = (e: PointerEvent) => {
       const target = e.target as Node;
       if (listRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
@@ -74,7 +87,6 @@ export function Select<T extends string>({ value, onChange, options, label, id, 
     };
     document.addEventListener("pointerdown", onDown);
     return () => {
-      cancelAnimationFrame(raf);
       document.removeEventListener("pointerdown", onDown);
     };
   }, [open]);
@@ -97,7 +109,10 @@ export function Select<T extends string>({ value, onChange, options, label, id, 
   }
 
   function onButtonKey(e: KeyboardEvent<HTMLButtonElement>) {
-    if (["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) {
+    if (open && e.key === "Escape") {
+      e.preventDefault();
+      close();
+    } else if (["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) {
       e.preventDefault();
       openList();
     }

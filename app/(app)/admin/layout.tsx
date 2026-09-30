@@ -19,9 +19,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user) redirect("/logga-in?next=%2Fadmin");
   if (!ctx) forbidden();
 
-  // En examinator med en enda kurs har ingen annan adminsida att gå till ("Admin" leder
-  // tillbaka till samma kurs), så undermenyn visas bara när den har något att erbjuda.
-  const showNav = ctx.isAdmin || ctx.examinerDeckIds.length > 1;
+  // Undermenyn (Admin, Alla kurser, Ny kurs) är administratörens. Adminfunktionerna gäller
+  // Materialteknik (beslut 30 sep 2026), så examinatorer ser varken andra kurser eller menyn.
+  const showNav = ctx.isAdmin;
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:gap-8">

@@ -106,12 +106,16 @@ slutrepetition av allt, svagast först. Utan tentadatum gäller det vanliga lån
 
 Studenten får 20 nya kort per dag som standard (valbart 10/20/40 på decksidan, sparas i
 webbläsaren under `kuggfri:prefs:v1`); förfallna kort kommer alltid med. Sessionen slutar med
-"Klar för i dag" när inget förfallet finns kvar, med möjlighet att ta fler nya kort. Streaken
+"Klar för i dag" när inget förfallet finns kvar, och därefter kan studenten alltid **plugga vidare**
+(`vidare=1`): 20 kort i taget, först de närmast att förfalla, sedan nya kort utöver dosen, utan tak.
+Varje skattning räknas in i schemat i alla lägen (fri repetition, slumpad, kluriga, dugga); FSRS
+hanterar tidiga repetitioner med verklig förfluten tid, och flera repetitioner samma dag ger inget
+längre intervall (se DECISIONS.md, 30 sep 2026). Streaken
 tål enstaka missade dagar (två frysningar, en ny var sjunde aktiva dag) och kan undanta helger.
 Logiken ligger i `lib/study/plan.ts` och `lib/stats/progress-stats.ts` och är enhetstestad.
 
 Läget **Provtenta** tar 30 slumpade kort ur urvalet utan ledtråd och utan att gå tillbaka, och
-visar resultatet i procent; det rör inte schemat. För inloggade köas skrivningar som misslyckas
+visar resultatet i procent; svaren räknas in i schemat. För inloggade köas skrivningar som misslyckas
 (tappad anslutning) i en utkorg i webbläsaren (`kuggfri:outbox:v1`) och skickas automatiskt när
 nätet är tillbaka.
 

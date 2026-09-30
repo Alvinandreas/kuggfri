@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, Zap } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
 import { percent } from "@/lib/text/percent";
@@ -40,6 +40,9 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));
   const categoryTitle = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null);
   const done = today?.done ?? false;
+  // Ett Plugga vidare-pass som tog slut med dagen klar: egen rubrik, ingen "Klar för i dag" igen.
+  const extraDone = done && (today?.extraPass ?? false);
+  const offerExtra = !!today?.extraHref;
   const isExam = mode === "exam";
   const examOk = summary.distribution[4] + summary.distribution[5];
   const examPct = percent(examOk, summary.reviewed);
@@ -55,10 +58,10 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
               </svg>
             </span>
           ) : null}
-          <h1 className="text-3xl font-extrabold tracking-tight">{isExam ? sv.summary.examTitle : done ? sv.summary.doneTitle : sv.summary.title}</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">{isExam ? sv.summary.examTitle : extraDone ? sv.summary.extraTitle : done ? sv.summary.doneTitle : sv.summary.title}</h1>
         </div>
         <p className="mt-2 text-lg text-muted" data-testid="summary-reviewed">
-          {done ? sv.summary.doneBody : sv.summary.reviewed(summary.reviewed)}
+          {extraDone ? sv.summary.extraBody : done ? sv.summary.doneBody : sv.summary.reviewed(summary.reviewed)}
         </p>
         {isExam ? (
           <Card padding="lg" className="mt-5 grid gap-1" data-testid="exam-result">
@@ -89,6 +92,33 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
           />
           <StatTile label={sv.summary.tileKnown} help={sv.summary.tileKnownHelp} value={`${today.known}`} sub={`av ${today.total}`} tone="green" />
         </dl>
+      ) : null}
+
+      {offerExtra && today?.extraHref ? (
+        <section aria-labelledby="plugga-vidare" className="anim-fade-up grid gap-4 rounded-lg bg-accent-soft p-5 sm:p-6" data-testid="extra-offer">
+          <div className="flex gap-3">
+            <span aria-hidden="true" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-fg">
+              <Zap size={20} />
+            </span>
+            <div className="min-w-0">
+              <h2 id="plugga-vidare" className="text-lg font-bold tracking-tight text-accent-ink">
+                {sv.summary.extraHeading}
+              </h2>
+              <p className="mt-1 text-sm text-fg">{sv.summary.extraOffer(today.extraCount)}</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <LinkButton href={today.extraHref} size="lg" data-testid="continue-extra">
+              {sv.summary.extraButton}
+              <ArrowRight size={18} aria-hidden />
+            </LinkButton>
+            {today.continueHref ? (
+              <LinkButton href={today.continueHref} variant="outline" size="lg" className="bg-surface" data-testid="continue-new">
+                {sv.summary.continueNew(today.continueCount)}
+              </LinkButton>
+            ) : null}
+          </div>
+        </section>
       ) : null}
 
       <Card padding="lg" role="region" aria-labelledby="fordelning" className="anim-fade-up" style={{ ["--i" as string]: 1 }}>
@@ -160,31 +190,30 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
         )}
       </Card>
 
-      {/* Duggans resultatruta säger redan att schemat inte rörs. */}
+      {/* Duggans resultatruta säger redan hur svaren räknas in i schemat. */}
       {isExam ? null : (
         <Card padding="lg" role="region" aria-labelledby="nasta" className="anim-fade-up" style={{ ["--i" as string]: 3 }}>
           <h2 id="nasta" className="text-lg font-bold tracking-tight">
             {sv.summary.nextDue}
           </h2>
           <p className="mt-2 text-muted" data-testid="next-due">
-            {mode === "fsrs"
-              ? nextDue
-                ? sv.summary.nextDueCount(nextDue.count, formatRelative(nextDue.date))
-                : sv.summary.nextDueNone
-              : mode === "tricky"
-                ? sv.summary.trickyModeNote
-                : mode === "random"
-                  ? sv.summary.randomModeNote
-                  : sv.summary.freeModeNote}
+            {nextDue ? sv.summary.nextDueCount(nextDue.count, formatRelative(nextDue.date)) : sv.summary.nextDueNone}
+            {/* Övriga lägen räknas också in i schemat: säg det, så att ingen tror att passet var bortkastat. */}
+            {mode === "fsrs" ? null : (
+              <>
+                {" "}
+                {mode === "tricky" ? sv.summary.trickyModeNote : mode === "random" ? sv.summary.randomModeNote : sv.summary.freeModeNote}
+              </>
+            )}
           </p>
         </Card>
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <LinkButton href={`/d/${deckSlug}`} variant="primary" size="lg">
+        <LinkButton href={`/d/${deckSlug}`} variant={offerExtra ? "secondary" : "primary"} size="lg">
           {sv.summary.backToDeck}
         </LinkButton>
-        {today?.continueHref ? (
+        {today?.continueHref && !offerExtra ? (
           <LinkButton href={today.continueHref} variant="secondary" size="lg" data-testid="continue-new">
             {sv.summary.continueNew(today.continueCount)}
           </LinkButton>
@@ -200,7 +229,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
           </Button>
         ) : null}
       </div>
-      {today?.continueHref ? <p className="-mt-3 text-sm text-muted">{sv.summary.continueHelp}</p> : null}
+      {today?.continueHref && !offerExtra ? <p className="-mt-3 text-sm text-muted">{sv.summary.continueHelp}</p> : null}
     </div>
   );
 }

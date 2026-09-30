@@ -61,10 +61,11 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 
 - **Skattning 1–5 → FSRS**: 1 och 2 → Again, 3 → Hard, 4 → Good, 5 → Easy (enligt spec). Rå
   skattning sparas i `self_rating`.
-- **Fri och slumpad repetition skriver aldrig till `card_progress`**, inte ens `self_rating`.
-  Specen säger att `card_progress` inte får muteras i fri repetition, och jag tolkar slumpad
-  genomkörning på samma sätt. Sessionens skattningar visas i sammanfattningen men försvinner sedan.
-  Sessionen loggas i `study_sessions` för inloggade (mode `free`/`random`).
+- ~~**Fri och slumpad repetition skriver aldrig till `card_progress`**, inte ens `self_rating`.~~
+  Ersatt 2026-09-30: varje skattning räknas i alla lägen, se "Beslut 2026-09-30: extra plugg
+  räknas" längst ner. (Ursprungligen: specen sa att `card_progress` inte fick muteras i fri
+  repetition, och slumpad genomkörning tolkades på samma sätt. Sessionen loggas i `study_sessions`
+  för inloggade med mode `free`/`random`, vilket gäller fortfarande.)
 - **"Föregående" i schemalagt läge** går tillbaka till senast visade kort, men en ny skattning där
   schemalägger om kortet igen (senaste skattningen vinner). "Nästa" utan skattning i schemalagt läge
   lägger kortet sist i kön.
@@ -384,3 +385,70 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
   tillåtelselista och gör bara GET. Nya kurser kräver den examinatorns tillstånd.
 - **E-post** från noreply@kuggfri.com via Hostinger; e-postbekräftelse på vid registrering;
   inloggningslänken skapar inga nya konton.
+
+## Beslut 2026-09-30: adminvyn gäller Materialteknik, E2E städar efter sig
+
+- **Adminfunktionerna är låsta till Materialteknik.** Tjänsten har en aktiv kurs, och det ska
+  aldrig vara oklart för examinatorerna vilken kurs de administrerar. Sidomenyn skriver därför inget
+  kursnamn under Administrera, och posterna (Översikt, Innehåll, Granskning, Tentor, Felrapporter,
+  Import, Inställningar) leder alltid till Materialteknik, oavsett sida och oavsett andra kurser i
+  databasen. `/admin` leder också dit. Undermenyn Admin, Alla kurser, Ny kurs och sidomenyns Alla
+  kurser visas bara för admin; examinatorer ser bara sina kurser. Låset är en konstant,
+  `ACTIVE_ADMIN_COURSE_SLUG` i `lib/admin/active-course.ts`; vill du ha kursval igen byter du
+  låsningen i `lib/admin/nav.ts` och `app/(app)/admin/page.tsx`.
+- **E2E-testerna tar bort kurserna de skapar.** Testet som skapar en kurs tar bort den i
+  `afterEach` även när testet faller, och en global teardown (`tests/e2e/global-teardown.ts`) tar
+  efter varje körning bort alla kurser vars adress börjar med `e2e-` eller vars titel börjar med
+  `E2E` (områden, kort och progress följer med via kaskad), och felrapporterna som börjar med
+  "E2E-rapport". Kursen `materialteknik` rörs aldrig, och teardownen körs bara mot en lokal
+  Supabase. Kör den för hand med `npx tsx tests/e2e/global-teardown.ts`.
+- **Den globala fokusramen ligger i `@layer base`** (`app/globals.css`). Som olagrad regel vann den
+  över Tailwinds utilities, så komponenter som ritar egen fokusmarkering fick webbläsarens ram ovanpå:
+  radardiagrammets områden fick en rektangel runt hela träffytan efter att dialogen stängts, fälten
+  både ram och ring. Radarns områden visar nu tangentbordsfokus som en ring runt numret, och ett
+  musklick flyttar inte fokus dit.
+
+## Beslut 2026-09-30: extra plugg räknas, och man hindras aldrig från att plugga
+
+Alvins motivering i korthet: fri repetition bidrar faktiskt till inlärningen, och studenter pluggar
+ofta i långa block. Då ska tjänsten aldrig säga stopp när dagens schemalagda kort är slut (det är
+det mest frustrerande med Anki). Schemat håller en lagom hög lägstanivå så att man hinner allt
+långsiktigt, och ovanpå det får man plugga precis så mycket man vill. Högre lägsta nivå, högre
+högsta nivå.
+
+- **Varje skattning uppdaterar FSRS, i alla lägen** (`lib/fsrs/apply-rating.ts`): schemalagd
+  repetition, Plugga vidare, fri repetition, slumpad genomkörning, kluriga kort, stjärnmärkta och
+  dugga. Allt loggas som förut i `review_log` med sitt läge. Kluriga kort uppdaterade tidigare bara
+  `self_rating` och `last_review`, vilket dessutom gav FSRS fel förfluten tid; det är borta.
+- **Tidiga repetitioner hanteras av FSRS själv** med den verkliga förflutna tiden:
+  t = hela kalenderdagar (UTC, som ts-fsrs räknar) sedan `last_review`, R = (1 + F * t / S)^C (FSRS-6),
+  och stabilitetens tillväxtfaktor är 1 + e^w8 * (11 − D) * S^−w9 * (e^(w10 * (1 − R)) − 1). Ett tidigt
+  kort har högt R och växer därför mindre: ett kort med 16 dagars intervall som repeteras med Bra
+  efter 2 dagar går från S 13,8 till 22,2, mot 61,2 om det repeteras i tid. Intervallet räknas från
+  den tidiga repetitionen.
+- **Samma dag blåser aldrig upp intervallen.** Med t = 0 är R = 1 och tillväxtfaktorn exakt 1:
+  stabiliteten står still vid skattning 3–5 och kan bara sjunka vid 1–2; svårigheten D uppdateras
+  som vanligt. FSRS-5/6:s korttidsformel (`enable_short_term`) används medvetet inte: den kräver
+  inlärningssteg och höjer S för varje Lätt samma dag, så att nöta samma kort belönas. Enhetstester
+  i `tests/unit/fsrs/scheduler.test.ts` låser båda reglerna.
+- **Plugga vidare** (`buildExtraQueue` i `lib/fsrs/scheduler.ts`, URL-parametern `vidare=1` i
+  schemalagt läge): när inget är förfallet erbjuds det på kurssidan (i stället för en grå
+  Starta-knapp), på hemsidan och i sammanfattningen efter passet, och igen efter varje extra pass.
+  Ordning: repeterade kort som inte redan setts i dag, lägst återkallelsesannolikhet först; sedan
+  nya kort utöver dosen; sist kort som redan repeterats i dag (ger inget längre intervall, men kön tar
+  aldrig slut i onödan). 20 kort per block (`EXTRA_SESSION_SIZE`), inget tak på antalet block.
+  "Ta N nya kort till" finns kvar bredvid. Ingen ny databaskolumn eller migration behövdes: passet
+  körs och loggas som `fsrs`.
+- **Doseringen är golvet, inte taket.** Dagens rekommenderade nya kort är fortfarande standard och
+  det schemat bygger på. Dagsmålet räknar nu kort som introducerats i dag i vilket läge som helst
+  (`countIntroducedToday`): kortet är inte längre nytt och alla dess FSRS-repetitioner (`reps`) skedde
+  i dag. Regeln tål äldre historik från lägen som då inte rörde schemat, och nollställda scheman.
+- **Duggan** ger schemat samma trappa 3 → 4 → 5 för automaträttade kort som övriga lägen (ett enda
+  rätt flervalssvar ska inte göra kortet "Klockrent"); duggans resultat räknar fortfarande rätt/fel.
+- **Knapparna visar intervall i alla lägen utom duggan**, eftersom skattningen nu styr schemat överallt.
+- **Historiken hämtas nyast först** (`loadReviews`): taket på 5000 rader per del kapar nu den äldsta
+  historiken i stället för dagens rader, som dagsmål och streak räknas ur. Mer historik loggas nu
+  när alla lägen räknas.
+- Texterna i lägesrutorna, Hjälp (lägen, schemat, vanliga frågor), Om-sidan, dugga- och
+  klurigt-dialogerna och sammanfattningen säger nu att allt räknas. Vill du tillbaka till det gamla:
+  låt `applyRating` returnera `null` för andra lägen än `fsrs` igen och ta bort `vidare`-grenen.

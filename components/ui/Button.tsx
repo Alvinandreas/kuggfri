@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import Link from "next/link";
 
 /**
@@ -60,6 +60,7 @@ export function LinkButton({ href, variant = "primary", size = "md", className =
 type IconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "aria-label"> & {
   /** Krävs: knappen har ingen synlig text. */
   label: string;
+  ref?: Ref<HTMLButtonElement>;
   variant?: "ghost" | "outline" | "secondary";
   size?: "sm" | "md";
 };

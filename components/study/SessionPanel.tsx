@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Info, Star } from "lucide-react";
+import { ArrowRight, CircleCheckBig, Info, Star } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { StudyMode } from "@/lib/progress/types";
 import type { PickerMode } from "./ModePicker";
@@ -69,6 +69,8 @@ export function SessionPanel({
   original,
 }: Props) {
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
+  // Dagens schemalagda pass är klart: erbjud Plugga vidare i stället för en död Starta-knapp.
+  const offerExtra = mode === "fsrs" && nothingDue && plan.canExtra;
   // Det första passet i det valda urvalet (inte hela dagsmålet när bara ett område är valt).
   const firstCount = sessionCards > 0 ? sessionCards : Math.min(dailyNew, totalCards);
   const isDugga = mode === "exam";
@@ -132,8 +134,23 @@ export function SessionPanel({
 
       {isDugga ? <DuggaSettingsFields value={dugga} onChange={onDugga} available={plan.selectionCards.length} /> : null}
 
+      {offerExtra ? (
+        <div className="flex gap-3 rounded-lg bg-accent-soft p-4 text-sm" data-testid="extra-panel">
+          <CircleCheckBig size={18} aria-hidden className="mt-0.5 shrink-0 text-accent-ink" />
+          <div>
+            <p className="font-semibold text-accent-ink">{sv.deck.extraTitle}</p>
+            <p className="mt-0.5 text-fg">{sv.deck.extraBody(plan.extraCount)}</p>
+          </div>
+        </div>
+      ) : null}
+
       <div className="grid gap-2">
-        {canStart ? (
+        {offerExtra ? (
+          <Link href={`${plan.extraHref}${suffix}`} className={buttonClass("primary", "lg", "w-full")} data-testid="start-extra">
+            {sv.deck.extraStart}
+            <ArrowRight size={18} aria-hidden />
+          </Link>
+        ) : canStart ? (
           <Link href={`${plan.startHref}${suffix}`} className={buttonClass("primary", "lg", "w-full")} data-testid="start-session">
             {isDugga ? sv.dugga.start : sv.deck.start}
             <ArrowRight size={18} aria-hidden />
@@ -146,8 +163,8 @@ export function SessionPanel({
         <span className="text-center text-sm text-muted" data-testid="start-info">
           {mode === "fsrs" && plan.newCardPlan
             ? nothingDue
-              ? moreNew > 0
-                ? sv.summary.doneTitle
+              ? offerExtra
+                ? sv.deck.extraInfo
                 : sv.deck.nothingDue
               : sv.deck.sessionPlan(sessionDue, finalReview ? selectionCount : sessionNew, estimateMinutes(sessionCards))
             : selectionCount === 0

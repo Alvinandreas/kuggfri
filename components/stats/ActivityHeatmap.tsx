@@ -4,6 +4,7 @@ import { useId, useMemo, useState, type KeyboardEvent } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { heatmapGrid, type HeatCell } from "@/lib/stats/my-stats";
 import { cx } from "@/components/ui/cx";
+import { useSvgTextScale } from "./useSvgTextScale";
 
 type Props = {
   /** Värde per dag, nyckel YYYY-MM-DD i lokal tid. */
@@ -57,6 +58,8 @@ export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatVa
 
   const W = LEFT + weeks * STEP - GAP;
   const H = TOP + 7 * STEP - GAP;
+  // Etiketterna ryms i marginalerna (LEFT, TOP) upp till ungefär 1,3 gånger grundstorleken.
+  const [svgRef, k] = useSvgTextScale(W, { max: 1.3 });
   const todayPos = (() => {
     for (let w = grid.weeks.length - 1; w >= 0; w--) {
       const d = grid.weeks[w]?.findIndex((c) => c.isToday) ?? -1;
@@ -130,18 +133,18 @@ export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatVa
         onMouseLeave={() => setActive(null)}
         className="relative rounded-md outline-offset-4"
       >
-        <svg viewBox={`0 0 ${W} ${H}`} aria-hidden className="h-auto w-full">
+        <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} overflow="visible" aria-hidden className="h-auto w-full">
           {[...months].map(([w, label]) => {
             // Månaden i en av de sista kolumnerna högerställs, så att den inte klipps vid kanten.
             const atEnd = w >= weeks - 2;
             return (
-              <text key={w} x={LEFT + w * STEP + (atEnd ? CELL : 0)} y={10} textAnchor={atEnd ? "end" : "start"} className="fill-muted" fontSize={10}>
+              <text key={w} x={LEFT + w * STEP + (atEnd ? CELL : 0)} y={10} textAnchor={atEnd ? "end" : "start"} className="fill-muted" fontSize={10 * k}>
                 {label}
               </text>
             );
           })}
           {[0, 2, 4].map((d) => (
-            <text key={d} x={0} y={TOP + d * STEP + CELL - 3} className="fill-muted" fontSize={10}>
+            <text key={d} x={0} y={TOP + d * STEP + CELL - 3} className="fill-muted" fontSize={10 * k}>
               {sv.myStats.weekdays[d]}
             </text>
           ))}

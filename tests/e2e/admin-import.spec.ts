@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, expectNoSeriousA11yViolations, login, registerStudent } from "./helpers";
+import { removeE2eDecks } from "./cleanup";
 
 /** Städar bort det importtestet lägger in i det riktiga decket, så att lokala databasen inte fylls på. */
 async function cleanupImportedCards() {
@@ -10,8 +11,15 @@ async function cleanupImportedCards() {
 }
 
 test.describe("admin", () => {
+  /** Kursen som skapa-testet lägger upp; tas bort efter testet även om det fallerar. */
+  let createdDeckSlug: string | null = null;
+
   test.afterEach(async () => {
     await cleanupImportedCards();
+    if (createdDeckSlug) {
+      await removeE2eDecks({ slug: createdDeckSlug });
+      createdDeckSlug = null;
+    }
   });
 
   test("6. admin importerar en CSV och korten dyker upp i decket", async ({ page }) => {
@@ -107,6 +115,7 @@ test.describe("admin", () => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck/ny");
     const slug = `e2e-deck-${Date.now()}`;
     const title = `E2E-deck ${Date.now()}`;
+    createdDeckSlug = slug;
     await page.getByTestId("deck-title").fill(title);
     await page.getByTestId("deck-slug").fill(slug);
     await page.getByTestId("deck-save").click();

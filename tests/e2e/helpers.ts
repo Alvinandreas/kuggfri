@@ -22,6 +22,8 @@ export async function expectNoSeriousA11yViolations(page: Page) {
   // genomskinlig och axe mäter för låg kontrast; spola fram så att det färdiga läget mäts.
   // Titeln strömmas in efter skelettet i dev-läge; axe ska mäta den färdiga sidan.
   await expect(page).toHaveTitle(/./);
+  // Block som strömmas in sent tonar in efter att sidan laddats; vänta tills inget laddas längre.
+  await page.waitForLoadState("networkidle");
   // Oändliga animationer (t.ex. laddningsskelett) går inte att spola fram och hoppas över.
   await page.evaluate(() =>
     document.getAnimations().forEach((a) => {

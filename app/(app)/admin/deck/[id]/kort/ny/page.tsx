@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { CardEditor } from "@/components/admin/CardEditor";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.admin.newCard };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.newCard };
+}
 
 export default async function NewCardPage({
   params,
@@ -16,6 +19,7 @@ export default async function NewCardPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ kategori?: string }>;
 }) {
+  const sv = await getT();
   const [{ id }, { kategori }] = await Promise.all([params, searchParams]);
   const data = await getDeckForAdmin(id);
   if (!data) notFound();

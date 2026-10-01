@@ -6,7 +6,7 @@ import { changedFields, contentOf, isPublished, restoreValues, versionFromRow, t
 import { LIMITS } from "@/lib/admin/limits";
 import { revalidateDeck } from "@/lib/cache/revalidate";
 import { parseOptions } from "@/lib/cards/kinds";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 
 /*
   Återställning av kortversioner. Samma åtkomst som övriga adminåtgärder: admin eller
@@ -65,6 +65,7 @@ async function newestVersionId(supabase: Supabase, deckId: string, cardId: strin
  * granskningsstatus blir alltid inaktivt.
  */
 export async function restoreCardVersionAction(deckId: string, cardId: string, versionId: number): Promise<ActionResult<RestoreResult>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     if (!isUuid(cardId) || !isVersionId(versionId)) return { ok: false, error: sv.errors.generic };
     const loaded = await load(supabase, deckId, cardId, versionId);
@@ -92,10 +93,11 @@ export async function rejectCorrectionAction(
   versionId: number,
   note: string,
 ): Promise<ActionResult<RestoreResult & { reviewedAt: string }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase, ctx }) => {
     if (!isUuid(cardId) || !isVersionId(versionId) || typeof note !== "string") return { ok: false, error: sv.errors.generic };
     const text = note.trim();
-    const long = tooLong(sv.admin.reviewRejectNote, text, LIMITS.reviewNote);
+    const long = tooLong(sv, sv.admin.reviewRejectNote, text, LIMITS.reviewNote);
     if (long) return long;
     const loaded = await load(supabase, deckId, cardId, versionId);
     if (!loaded) return { ok: false, error: sv.admin.historyNotFound };

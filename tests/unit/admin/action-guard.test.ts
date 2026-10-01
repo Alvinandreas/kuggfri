@@ -44,11 +44,11 @@ beforeEach(() => {
 });
 
 describe("fail", () => {
-  it("ger behörighetstexten för forbidden och det allmänna felet för allt annat", () => {
-    expect(fail(new Error("forbidden"))).toEqual({ ok: false, error: sv.common.forbiddenBody });
-    expect(fail(new Error("något annat"))).toEqual({ ok: false, error: sv.errors.generic });
-    expect(fail({ code: "23505", message: "duplicate" })).toEqual({ ok: false, error: sv.errors.generic });
-    expect(fail("forbidden")).toEqual({ ok: false, error: sv.common.forbiddenBody });
+  it("ger behörighetstexten för forbidden och det allmänna felet för allt annat", async () => {
+    await expect(fail(new Error("forbidden"))).resolves.toEqual({ ok: false, error: sv.common.forbiddenBody });
+    await expect(fail(new Error("något annat"))).resolves.toEqual({ ok: false, error: sv.errors.generic });
+    await expect(fail({ code: "23505", message: "duplicate" })).resolves.toEqual({ ok: false, error: sv.errors.generic });
+    await expect(fail("forbidden")).resolves.toEqual({ ok: false, error: sv.common.forbiddenBody });
   });
 });
 

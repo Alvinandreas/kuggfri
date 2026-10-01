@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 
 /** Webbappsmanifest: "Lägg till på hemskärmen" ger en riktig appikon och eget fönster. */
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const sv = await getT();
   return {
     name: sv.app.name,
     short_name: sv.app.name,
     description: sv.app.tagline,
-    lang: "sv",
+    lang: sv.meta.lang,
     start_url: "/",
     display: "standalone",
     background_color: "#f6f5f1",

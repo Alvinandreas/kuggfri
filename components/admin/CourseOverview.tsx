@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { DeckOverviewStats, DeckReportRow } from "@/lib/supabase/database.types";
 import { firstLine } from "@/lib/text/first-line";
 import { percent, percentText } from "@/lib/text/percent";
@@ -38,10 +38,11 @@ function ratingStep(avg: number): number {
 
 /** "3.7 / 5" med nämnaren nedtonad, så att talet är det man ser först. */
 function OutOfFive({ value }: { value: number | null }) {
+  const sv = useT();
   if (value === null) return <>–</>;
   return (
     <>
-      {formatDecimal(value, 1)}
+      {formatDecimal(value, 1, sv.meta.locale)}
       <span className="text-[0.55em] font-bold text-muted"> / 5</span>
     </>
   );
@@ -56,6 +57,7 @@ const th = "py-3 text-xs font-semibold text-subtle";
  * och anonymt.
  */
 export function CourseOverview({ deckId, stats, categories, openReports }: Props) {
+  const sv = useT();
   const colorIndex = categoryColorIndex(categories);
   const titleOf = new Map(categories.map((c) => [c.id, c.title] as const));
   const students = stats.students;
@@ -80,7 +82,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
           <StatBlock
             label={sv.admin.tileStudents}
             help={sv.admin.tileStudentsHelp}
-            value={formatCount(students)}
+            value={formatCount(students, sv.meta.locale)}
             sub={sv.admin.tileStudentsSub}
             testId="overview-students"
             className="anim-fade-up"
@@ -88,7 +90,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
           />
           <StatBlock
             label={sv.admin.tileActive}
-            value={formatCount(stats.active_7d)}
+            value={formatCount(stats.active_7d, sv.meta.locale)}
             sub={sv.admin.tileActiveSub(stats.reviews_7d)}
             className="anim-fade-up"
             style={{ ["--i" as string]: 2 }}
@@ -102,7 +104,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
           />
           <StatBlock
             label={sv.admin.tileReports}
-            value={formatCount(stats.open_reports)}
+            value={formatCount(stats.open_reports, sv.meta.locale)}
             sub={sv.admin.tileReportsSub}
             href={routes.admin.reports(deckId)}
             className="anim-fade-up"
@@ -146,18 +148,18 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                       return (
                         <tr key={c.category_id} className="transition-colors duration-150 hover:bg-surface-2">
                           <td className="py-3 pl-6 pr-4 sm:pl-7">
-                            <AreaLink deckId={deckId} areaId={c.category_id} title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" />
+                            <AreaLink deckId={deckId} areaId={c.category_id} title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" sv={sv} />
                           </td>
                           <td className="py-3 pr-4">
                             <div className="flex items-center gap-3">
                               <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
                                 <div className={`h-full rounded-full ${ratingFill[ratingStep(avg)] ?? "bg-rate-3"}`} style={{ width: `${(avg / 5) * 100}%` }} />
                               </div>
-                              <span className="w-14 shrink-0 text-right font-bold tabular-nums">{formatDecimal(avg, 1)} / 5</span>
+                              <span className="w-14 shrink-0 text-right font-bold tabular-nums">{formatDecimal(avg, 1, sv.meta.locale)} / 5</span>
                             </div>
                           </td>
-                          <td className="py-3 pr-4 text-right tabular-nums text-muted">{formatCount(c.ratings)}</td>
-                          <td className="py-3 pr-6 text-right tabular-nums sm:pr-7">{percent(c.low, c.ratings)} %</td>
+                          <td className="py-3 pr-4 text-right tabular-nums text-muted">{formatCount(c.ratings, sv.meta.locale)}</td>
+                          <td className="py-3 pr-6 text-right tabular-nums sm:pr-7">{sv.meta.pct(percent(c.low, c.ratings))}</td>
                         </tr>
                       );
                     })}
@@ -199,7 +201,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                         </td>
                         <td className="py-3 pr-4">
                           {c.category_id && titleOf.has(c.category_id) ? (
-                            <AreaLink deckId={deckId} areaId={c.category_id} title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" />
+                            <AreaLink deckId={deckId} areaId={c.category_id} title={titleOf.get(c.category_id) ?? ""} colorIndex={colorIndex.get(c.category_id) ?? 0} size="md" sv={sv} />
                           ) : (
                             <span className="text-muted">–</span>
                           )}
@@ -209,7 +211,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                             {percent(c.low, c.ratings)} %
                           </span>
                         </td>
-                        <td className="py-3 pr-6 text-right tabular-nums text-muted sm:pr-7">{formatCount(c.ratings)}</td>
+                        <td className="py-3 pr-6 text-right tabular-nums text-muted sm:pr-7">{formatCount(c.ratings, sv.meta.locale)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -224,7 +226,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
               <BarChart
                 title={sv.admin.weekly}
                 hideTitle
-                points={stats.weeks.map((w) => ({ key: w.start, label: `v.${w.week}`, value: w.students, detail: sv.admin.weeklyDetail(w.reviews) }))}
+                points={stats.weeks.map((w) => ({ key: w.start, label: sv.admin.weekShort(w.week), value: w.students, detail: sv.admin.weeklyDetail(w.reviews) }))}
                 formatValue={(v) => sv.admin.studentCount(v)}
               />
             </Panel>
@@ -240,7 +242,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                         <Link href={routes.admin.card(deckId, r.card_id)} className="min-w-0 truncate font-semibold underline-offset-2 hover:underline" title={firstLine(r.card_front)}>
                           {firstLine(r.card_front)}
                         </Link>
-                        <span className="text-xs text-muted">{formatDateTime(r.created_at)}</span>
+                        <span className="text-xs text-muted">{formatDateTime(r.created_at, sv.meta.locale)}</span>
                       </div>
                       <p className="mt-1 line-clamp-2 text-muted">{r.message}</p>
                     </li>
@@ -263,6 +265,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
  * har de kommit och hur skattar de sig. Visas på sidan Mer statistik.
  */
 export function CourseDistributions({ stats }: { stats: DeckOverviewStats }) {
+  const sv = useT();
   if (stats.students === 0) return null;
   const totalRatings = stats.rating_dist.reduce((s, r) => s + r.n, 0);
   return (
@@ -271,17 +274,17 @@ export function CourseDistributions({ stats }: { stats: DeckOverviewStats }) {
         <div className="lg:col-span-2">
           <Panel id="aktivering" title={sv.admin.activation} help={sv.admin.activationHelp}>
             <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3" data-testid="activation-tiles">
-              <StatBlock inset label={sv.admin.activationStarted} value={formatCount(stats.activation.started)} sub={sv.admin.activationStartedSub} />
+              <StatBlock inset label={sv.admin.activationStarted} value={formatCount(stats.activation.started, sv.meta.locale)} sub={sv.admin.activationStartedSub} />
               <StatBlock
                 inset
                 label={sv.admin.activationFirst}
-                value={percentText(stats.activation.first_session_20, stats.activation.started)}
+                value={percentText(stats.activation.first_session_20, stats.activation.started, "–", sv.meta.pct)}
                 sub={sv.admin.activationFirstSub}
               />
               <StatBlock
                 inset
                 label={sv.admin.activationReturned}
-                value={percentText(stats.activation.returned_3d, stats.activation.eligible)}
+                value={percentText(stats.activation.returned_3d, stats.activation.eligible, "–", sv.meta.pct)}
                 sub={sv.admin.activationReturnedSub(stats.activation.eligible)}
               />
             </dl>
@@ -307,7 +310,7 @@ export function CourseDistributions({ stats }: { stats: DeckOverviewStats }) {
             label: `${r.rating}`,
             value: r.n,
             colorClass: ratingFillSvg[r.rating] ?? "fill-chart-1",
-            detail: totalRatings === 0 ? undefined : percentText(r.n, totalRatings),
+            detail: totalRatings === 0 ? undefined : percentText(r.n, totalRatings, "–", sv.meta.pct),
           }))}
           formatValue={(v) => sv.stats.cards(v)}
         />

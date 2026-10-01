@@ -94,4 +94,5 @@ export const account = {
   resetAllTitle: "Allt, i alla kurser",
   resetAllHelp: "Progress och historik i alla kurser tas bort.",
   noDecks: "Det finns inga kurser att nollställa.",
+  deleteWord: "RADERA",
 } as const;

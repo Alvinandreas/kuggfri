@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { History, RotateCcw } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { changedFields, exactTime, isPublished, relativeTime, restoreValues, versionStatus, type CardVersion, type VersionContent, type VersionStatus } from "@/lib/admin/history";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -37,6 +37,7 @@ const statusTone: Record<VersionStatus, "neutral" | "strong" | "accent" | "dange
 };
 
 export function StatusBadge({ status }: { status: VersionStatus }) {
+  const sv = useT();
   return <Badge tone={statusTone[status]}>{sv.admin.historyStatus[status]}</Badge>;
 }
 
@@ -46,6 +47,7 @@ export function StatusBadge({ status }: { status: VersionStatus }) {
  * bekräftelse som visar vad som ändras).
  */
 export function CardHistory({ versions, count, error = false, onRetry, current, areaTitle, now, onRestore, defaultOpen = false }: Props) {
+  const sv = useT();
   const [confirming, setConfirming] = useState<{ version: CardVersion; n: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const total = versions?.length ?? count ?? 0;
@@ -107,7 +109,7 @@ export function CardHistory({ versions, count, error = false, onRetry, current, 
                       <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                         <span className="font-semibold">{sv.admin.historyVersion(n)}</span>
                         <StatusBadge status={versionStatus(v)} />
-                        {v.kind !== current.kind ? <KindBadge kind={v.kind} /> : null}
+                        {v.kind !== current.kind ? <KindBadge kind={v.kind} sv={sv} /> : null}
                         {v.category_id !== current.category_id ? <Badge tone="outline">{areaTitle(v.category_id)}</Badge> : null}
                       </div>
                       {same ? null : (
@@ -118,8 +120,8 @@ export function CardHistory({ versions, count, error = false, onRetry, current, 
                       )}
                     </div>
                     <p className="text-xs text-muted">
-                      <time dateTime={v.replaced_at} title={exactTime(v.replaced_at)} suppressHydrationWarning>
-                        {sv.admin.historyReplaced(relativeTime(v.replaced_at, now), v.author)}
+                      <time dateTime={v.replaced_at} title={exactTime(v.replaced_at, sv.meta.locale)} suppressHydrationWarning>
+                        {sv.admin.historyReplaced(relativeTime(v.replaced_at, now, sv), v.author)}
                       </time>
                     </p>
                     {same ? (

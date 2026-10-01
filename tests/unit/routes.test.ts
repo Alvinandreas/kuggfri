@@ -2,7 +2,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 import { routes } from "@/lib/routes";
-import { ADMIN_TABS } from "@/lib/admin/tabs";
+import { adminTabs } from "@/lib/admin/tabs";
+import { sv } from "@/lib/i18n/sv";
+
+const ADMIN_TABS = adminTabs(sv);
 
 /**
  * Adressbyggarna i lib/routes.ts ska ge exakt de strängar som appen alltid använt (e2e och

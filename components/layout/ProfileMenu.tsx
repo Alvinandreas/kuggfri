@@ -2,20 +2,34 @@
 
 import { useTransition } from "react";
 import { Info, LogOut, ShieldCheck, SunMoon, UserRound } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { signOutAction } from "@/lib/auth/actions";
 import { Avatar } from "@/components/ui/Avatar";
 import { Menu, MenuHeader, MenuItem, MenuRow, MenuSeparator, type MenuPlacement } from "@/components/ui/Menu";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
+import { LanguageToggle } from "@/components/admin/review/ReviewLanguage";
 import { routes } from "@/lib/routes";
 
 export type ShellUser = { name: string; email: string };
 
 /**
  * Profilknappen och dess meny: vem som är inloggad, konto, tema, integritet och
- * utloggning. "compact" visar bara avataren (mobilens toppfält).
+ * utloggning. "compact" visar bara avataren (mobilens toppfält). "showLanguage": reglaget English,
+ * bara för den som har adminåtkomst (admin eller examinator), så att språket går att byta
+ * tillbaka var som helst i tjänsten. Studenterna ser det aldrig.
  */
-export function ProfileMenu({ user, placement, compact = false }: { user: ShellUser; placement: MenuPlacement; compact?: boolean }) {
+export function ProfileMenu({
+  user,
+  placement,
+  compact = false,
+  showLanguage = false,
+}: {
+  user: ShellUser;
+  placement: MenuPlacement;
+  compact?: boolean;
+  showLanguage?: boolean;
+}) {
+  const sv = useT();
   const [pending, startTransition] = useTransition();
   return (
     <Menu
@@ -58,6 +72,7 @@ export function ProfileMenu({ user, placement, compact = false }: { user: ShellU
       <MenuRow label={sv.shell.theme} icon={<SunMoon size={18} />}>
         <ThemeSwitcher inMenu />
       </MenuRow>
+      {showLanguage ? <LanguageToggle className="mx-1.5 flex min-h-10 items-center px-3 py-1.5" /> : null}
       <MenuItem href={routes.privacy()} icon={<ShieldCheck size={18} />}>
         {sv.shell.privacy}
       </MenuItem>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Eye, KeyRound, Lock, LockOpen } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { listExams } from "@/lib/tentor/queries";
 import { formatDuration, formatExamDate, formatPoints, kindSummary } from "@/lib/tentor/session";
@@ -16,6 +16,7 @@ import { routes } from "@/lib/routes";
 type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   return { title: data ? `${sv.admin.tabExams}: ${data.deck.title}` : sv.admin.tabExams };
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
  * även utkast, med länkar till förhandsgranskningen och facitvyn.
  */
 export default async function AdminExamsPage({ params }: { params: Params }) {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
@@ -65,13 +67,13 @@ export default async function AdminExamsPage({ params }: { params: Params }) {
                     <Badge tone={e.status === "publicerad" ? "accent" : "outline"}>{sv.tenta.status[e.status]}</Badge>
                   </div>
                   <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
-                    {[formatExamDate(e.date), formatDuration(e.durationMinutes), sv.tenta.pointsLong(formatPoints(e.maxPoints)), sv.tenta.questionCount(e.questionCount)]
+                    {[formatExamDate(e.date, sv.meta.locale), formatDuration(e.durationMinutes, sv), sv.tenta.pointsLong(formatPoints(e.maxPoints, sv.meta.locale)), sv.tenta.questionCount(e.questionCount)]
                       .filter(Boolean)
                       .map((t) => (
                         <span key={t}>{t}</span>
                       ))}
                   </p>
-                  <p className="mt-0.5 text-sm text-subtle">{kindSummary(e.kinds)}</p>
+                  <p className="mt-0.5 text-sm text-subtle">{kindSummary(e.kinds, sv)}</p>
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">
                   <LinkButton href={routes.examAttempt(deck.slug, e.key, { fran: "admin" })} variant="outline" size="sm">

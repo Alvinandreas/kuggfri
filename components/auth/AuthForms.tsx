@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { MailCheck } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import {
   resendConfirmationAction,
   sendMagicLinkAction,
@@ -51,6 +51,7 @@ function FormHeading({ title, lead, level = 1 }: { title: string; lead?: string;
 
 /** Knapp som skickar bekräftelsemejlet igen till en adress som väntar på bekräftelse. */
 function ResendConfirmation({ email, next }: { email: string; next: string }) {
+  const sv = useT();
   const [state, action, pending] = useActionState((prev: AuthResult | null, fd: FormData) => run(resendConfirmationAction, prev, fd), null);
   return (
     <form action={action} className="grid gap-3">
@@ -69,6 +70,7 @@ function ResendConfirmation({ email, next }: { email: string; next: string }) {
  * adressen ska bekräftas. Adressen står med, så att ett stavfel syns direkt.
  */
 function CheckInbox({ email, next, level, onRestart }: { email: string; next: string; level: 1 | 2; onRestart: () => void }) {
+  const sv = useT();
   const H = level === 1 ? "h1" : "h2";
   return (
     <div className="grid gap-5" data-testid="check-inbox">
@@ -118,6 +120,7 @@ export function LoginFields({
   initialNotice?: string | null;
   heading?: ReactNode;
 }) {
+  const sv = useT();
   const [passwordState, passwordAction, passwordPending] = useActionState(
     (prev: AuthResult | null, fd: FormData) => run(signInWithPasswordAction, prev, fd),
     null,
@@ -189,6 +192,7 @@ export function LoginFields({
 }
 
 export function RegisterFields({ next, heading, level = 1 }: { next: string; heading?: ReactNode; level?: 1 | 2 }) {
+  const sv = useT();
   const [state, action, pending] = useActionState((prev: AuthResult | null, fd: FormData) => run(signUpAction, prev, fd), null);
   // "Börja om" från Kolla din inkorg visar formuläret igen utan att glömma svaret från servern.
   const [restarted, setRestarted] = useState(false);
@@ -224,6 +228,7 @@ export function RegisterFields({ next, heading, level = 1 }: { next: string; hea
 }
 
 export function LoginForm({ next, initialError = null, initialNotice = null }: { next: string; initialError?: string | null; initialNotice?: string | null }) {
+  const sv = useT();
   return (
     <AuthCard>
       <LoginFields next={next} initialError={initialError} initialNotice={initialNotice} />
@@ -238,6 +243,7 @@ export function LoginForm({ next, initialError = null, initialNotice = null }: {
 }
 
 export function RegisterForm({ next }: { next: string }) {
+  const sv = useT();
   return (
     <AuthCard>
       <RegisterFields next={next} />
@@ -252,6 +258,7 @@ export function RegisterForm({ next }: { next: string }) {
 }
 
 export function ForgotPasswordForm() {
+  const sv = useT();
   const [state, action, pending] = useActionState((prev: AuthResult | null, fd: FormData) => run(sendPasswordResetAction, prev, fd), null);
 
   return (
@@ -280,6 +287,7 @@ type Tab = "registrera" | "logga-in";
  * Fliken styrs lokalt (inget sidbyte), men följer ?flik= så att länkar kan välja den.
  */
 export function AuthPanel({ next, initialTab, hint }: { next: string; initialTab: Tab; hint?: string | null }) {
+  const sv = useT();
   const [tab, setTab] = useState<Tab>(initialTab);
   return (
     <AuthCard>

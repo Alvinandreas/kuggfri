@@ -1,5 +1,5 @@
 import { Check, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import type { ExamQuestion } from "@/lib/tentor/model";
 import { formatPoints } from "@/lib/tentor/session";
 import { Markdown } from "@/components/markdown/Markdown";
@@ -8,7 +8,8 @@ import { cx } from "@/components/ui/cx";
 import { inlineMarkdownKey } from "./markdownClasses";
 
 /** Facit för en uppgift i examinatorns facitvy: rätta alternativ, påståenden, par eller värde. */
-export function ExamKey({ q }: { q: ExamQuestion }) {
+export async function ExamKey({ q }: { q: ExamQuestion }) {
+  const sv = await getT();
   if (q.noKey) return <p className="text-sm font-semibold text-danger">{sv.tenta.noKey}</p>;
   switch (q.kind) {
     case "flerval":
@@ -56,10 +57,10 @@ export function ExamKey({ q }: { q: ExamQuestion }) {
     case "numerisk": {
       const k = q.numeric;
       if (!k) return null;
-      const tol = k.relative ? `${formatPoints(k.tolerance * 100)} %` : formatPoints(k.tolerance);
+      const tol = k.relative ? sv.meta.pct(formatPoints(k.tolerance * 100, sv.meta.locale)) : formatPoints(k.tolerance, sv.meta.locale);
       return (
         <p className="text-lg font-bold tabular-nums text-accent-ink">
-          {formatPoints(k.value)}
+          {formatPoints(k.value, sv.meta.locale)}
           {k.unit && k.unit !== "-" ? ` ${k.unit}` : ""} <span className="text-sm font-medium text-muted">{sv.tenta.tolerance(tol)}</span>
         </p>
       );

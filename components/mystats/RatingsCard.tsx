@@ -1,4 +1,5 @@
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
+import { formatDecimal } from "@/lib/format/number";
 import { ratingShares, type MyStats } from "@/lib/stats/my-stats";
 import { StatTile } from "@/components/stats/StatTile";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -9,6 +10,7 @@ const RATE_BG = ["bg-rate-1", "bg-rate-2", "bg-rate-3", "bg-rate-4", "bg-rate-5"
 
 /** Snittskattning, vändningar och fördelningen av alla skattningar, femmor överst. */
 export function RatingsCard({ stats, index, className }: { stats: MyStats; index: number; className?: string }) {
+  const sv = useT();
   const shares = ratingShares(stats.ratingCounts);
   return (
     <Card padding="lg" className={cx("anim-fade-up", className)} style={{ ["--i" as string]: index }} data-testid="mystats-ratings">
@@ -16,7 +18,7 @@ export function RatingsCard({ stats, index, className }: { stats: MyStats; index
       <dl className="mb-6 grid grid-cols-2 gap-3">
         <StatTile
           label={sv.myStats.avgRating}
-          value={stats.avgRating === null ? "–" : stats.avgRating.toFixed(1).replace(".", ",")}
+          value={formatDecimal(stats.avgRating, 1, sv.meta.locale)}
           sub={sv.myStats.avgRatingSub}
           tone="green"
         />

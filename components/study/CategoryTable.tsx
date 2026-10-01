@@ -1,6 +1,6 @@
 "use client";
 
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { StudyMode } from "@/lib/progress/types";
 import type { CategoryStats } from "@/lib/study/selection";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -32,6 +32,7 @@ type Props = {
  * namn och hur många kort den har. Hur det går per område visas på hemsidan.
  */
 export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSortMode, onToggle, onOnly, onSelectAll }: Props) {
+  const sv = useT();
   const filled = rows.filter((r) => r.stats.total > 0);
   const allSelected = filled.length > 0 && filled.every((r) => selected.has(r.id));
 

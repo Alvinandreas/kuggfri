@@ -1,10 +1,11 @@
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { LinkButton } from "@/components/ui/Button";
 import { FullPage, StatusMessage } from "@/components/layout/StatusMessage";
 import { routes } from "@/lib/routes";
 
 /** Okända adresser: ingen layout omger sidan, så den bär sin egen helsidesram. */
-export default function NotFound() {
+export default async function NotFound() {
+  const sv = await getT();
   return (
     <FullPage>
       <StatusMessage

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CheckCheck, ChevronLeft, ChevronRight, ClipboardCheck } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { choicesForPair, type Answer, type Answers, type StudentQuestion } from "@/lib/tentor/model";
 import { finishGradingAction, saveSelfGradesAction } from "@/lib/tentor/actions";
 import { formatPoints, halfSteps, step } from "@/lib/tentor/session";
@@ -40,6 +40,7 @@ type Props = {
 
 /** Studentens svar som det lämnades in, utan rätt eller fel (för uppgifter utan facit och skrivuppgifter). */
 function MyAnswer({ q, answer }: { q: StudentQuestion; answer: Answer | undefined }) {
+  const sv = useT();
   const none = <span className="text-muted">{sv.tenta.noAnswer}</span>;
   const box = "min-h-24 rounded-md bg-surface-2 px-4 py-3 text-[0.95rem]";
   switch (q.kind) {
@@ -99,6 +100,7 @@ function MyAnswer({ q, answer }: { q: StudentQuestion; answer: Answer | undefine
  * resultatet.
  */
 export function ExamGrading({ title, attemptId, questions, answers, initialGrades, preview, exitHref, studentViewDeck }: Props) {
+  const sv = useT();
   const router = useRouter();
   const [grades, setGrades] = useState<Record<string, number>>(initialGrades);
   const [current, setCurrent] = useState(0);
@@ -202,7 +204,7 @@ export function ExamGrading({ title, attemptId, questions, answers, initialGrade
                 {sv.tenta.question(q.id)}
               </h1>
             </div>
-            <span className="text-sm font-semibold text-muted">{sv.tenta.totalPoints(formatPoints(q.points))}</span>
+            <span className="text-sm font-semibold text-muted">{sv.tenta.totalPoints(formatPoints(q.points, sv.meta.locale))}</span>
           </div>
           <div className="px-5 py-6 sm:px-8">
             <ExamFigures images={q.images} size="md" className="mb-5" />

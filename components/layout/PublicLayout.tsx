@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { routes } from "@/lib/routes";
@@ -14,7 +14,8 @@ import { routes } from "@/lib/routes";
  * står kvar i fönstrets nederkant om formuläret är högre än fönstret, så att länkarna i den
  * alltid syns utan att man rullar. Ytan och skuggan i dukens färg döljer det som glider under.
  */
-export function PublicLayout({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+export async function PublicLayout({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+  const sv = await getT();
   return (
     <div className="relative flex min-h-dvh flex-col overflow-clip">
       {/* Svagt grönt sken bakom sidhuvudet: ger djup utan att bli en bild. */}

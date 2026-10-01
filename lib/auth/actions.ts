@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { getT } from "@/lib/i18n/server";
 import { safeNext } from "./safe-next";
 import { SIGNUP_NEXT_KEY } from "./signup-next";
 import { routes } from "@/lib/routes";
@@ -17,7 +18,7 @@ import { routes } from "@/lib/routes";
 export type AuthResult = { ok: true; message?: string; checkEmail?: string } | { ok: false; error: string; unconfirmedEmail?: string };
 
 /** Översätter Supabase Auth-fel till begripliga meddelanden och loggar orsaken (syns i Vercel-loggen). */
-function authErrorMessage(error: { message: string; code?: string }, fallback: string): string {
+function authErrorMessage(sv: Dict, error: { message: string; code?: string }, fallback: string): string {
   const code = (error.code ?? "").toLowerCase();
   const msg = error.message.toLowerCase();
   console.error("[auth]", error.code ?? "", error.message);
@@ -40,6 +41,7 @@ export async function signOutAction(): Promise<void> {
 }
 
 export async function signInWithPasswordAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const next = safeNext(formData.get("next"), routes.home());
@@ -50,13 +52,14 @@ export async function signInWithPasswordAction(formData: FormData): Promise<Auth
   if (error) {
     const code = (error.code ?? "").toLowerCase();
     if (code === "email_not_confirmed") return { ok: false, error: sv.auth.notConfirmed, unconfirmedEmail: email };
-    return { ok: false, error: authErrorMessage(error, sv.auth.invalidCredentials) };
+    return { ok: false, error: authErrorMessage(sv, error, sv.auth.invalidCredentials) };
   }
   revalidatePath("/", "layout");
   redirect(next);
 }
 
 export async function signUpAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const displayName = String(formData.get("display_name") ?? "").trim().slice(0, 80);
@@ -74,7 +77,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
       emailRedirectTo: `${await getRequestOrigin()}${routes.authConfirm({ next })}`,
     },
   });
-  if (error) return { ok: false, error: authErrorMessage(error, sv.auth.error) };
+  if (error) return { ok: false, error: authErrorMessage(sv, error, sv.auth.error) };
   // Med e-postbekräftelse avstängd finns en session direkt.
   if (data.session) {
     revalidatePath("/", "layout");
@@ -92,6 +95,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
  * inte är bekräftad). Svaret är detsamma oavsett om adressen har ett konto.
  */
 export async function resendConfirmationAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const email = String(formData.get("email") ?? "").trim();
   const next = safeNext(formData.get("next"), routes.home());
   if (!email) return { ok: false, error: sv.auth.invalidEmail };
@@ -107,13 +111,14 @@ export async function resendConfirmationAction(formData: FormData): Promise<Auth
       console.error("[auth]", error.code ?? "", error.message);
       return { ok: false, error: sv.auth.resendWait };
     }
-    const message = authErrorMessage(error, sv.auth.error);
+    const message = authErrorMessage(sv, error, sv.auth.error);
     if (message === sv.auth.rateLimited || message === sv.auth.invalidEmail) return { ok: false, error: message };
   }
   return { ok: true, message: sv.auth.resendSent };
 }
 
 export async function sendMagicLinkAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const email = String(formData.get("email") ?? "").trim();
   const next = safeNext(formData.get("next"), routes.home());
   if (!email) return { ok: false, error: sv.auth.error };
@@ -131,7 +136,7 @@ export async function sendMagicLinkAction(formData: FormData): Promise<AuthResul
   if (error && (error.code === "otp_disabled" || /signups not allowed/i.test(error.message))) {
     return { ok: true, message: sv.auth.magicLinkSent };
   }
-  if (error) return { ok: false, error: authErrorMessage(error, sv.auth.error) };
+  if (error) return { ok: false, error: authErrorMessage(sv, error, sv.auth.error) };
   return { ok: true, message: sv.auth.magicLinkSent };
 }
 
@@ -141,6 +146,7 @@ export async function sendMagicLinkAction(formData: FormData): Promise<AuthResul
  * Svaret är detsamma oavsett om adressen finns, så att konton inte kan listas.
  */
 export async function sendPasswordResetAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const email = String(formData.get("email") ?? "").trim();
   if (!email) return { ok: false, error: sv.auth.invalidEmail };
   const supabase = await createSupabaseServerClient();
@@ -148,13 +154,14 @@ export async function sendPasswordResetAction(formData: FormData): Promise<AuthR
     redirectTo: `${await getRequestOrigin()}${routes.authConfirm({ next: routes.account({ bytLosenord: true }) })}`,
   });
   if (error) {
-    const message = authErrorMessage(error, sv.auth.error);
+    const message = authErrorMessage(sv, error, sv.auth.error);
     if (message === sv.auth.rateLimited || message === sv.auth.invalidEmail) return { ok: false, error: message };
   }
   return { ok: true, message: sv.auth.forgotSent };
 }
 
 export async function updatePasswordAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const password = String(formData.get("password") ?? "");
   if (password.length < 8) return { ok: false, error: sv.auth.weakPassword };
   const supabase = await createSupabaseServerClient();
@@ -163,11 +170,12 @@ export async function updatePasswordAction(formData: FormData): Promise<AuthResu
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: sv.auth.error };
   const { error } = await supabase.auth.updateUser({ password });
-  if (error) return { ok: false, error: authErrorMessage(error, sv.errors.generic) };
+  if (error) return { ok: false, error: authErrorMessage(sv, error, sv.errors.generic) };
   return { ok: true, message: sv.account.passwordSaved };
 }
 
 export async function updateDisplayNameAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const displayName = String(formData.get("display_name") ?? "").trim().slice(0, 80);
   const supabase = await createSupabaseServerClient();
   const {
@@ -188,6 +196,7 @@ export async function updateDisplayNameAction(formData: FormData): Promise<AuthR
  * och bara digest_email: formuläret skickar inget annat, så inget annat skrivs.
  */
 export async function updateEmailPrefsAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -205,6 +214,7 @@ export async function updateEmailPrefsAction(formData: FormData): Promise<AuthRe
 }
 
 export async function deleteAccountAction(): Promise<AuthResult> {
+  const sv = await getT();
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

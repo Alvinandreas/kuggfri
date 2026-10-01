@@ -1,4 +1,4 @@
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { Answer, ExamQuestion } from "@/lib/tentor/model";
 import type { QuestionResult } from "@/lib/tentor/grade";
 import { formatPoints } from "@/lib/tentor/session";
@@ -8,6 +8,7 @@ import { TableReview } from "./TableReview";
 
 /** Studentens svar mot facit för de automatiskt rättade uppgiftstyperna (skrivuppgifter visas i resultatvyn). */
 export function AnswerReview({ q, answer, outcome }: { q: ExamQuestion; answer: Answer | undefined; outcome: QuestionResult["outcome"] }) {
+  const sv = useT();
   switch (q.kind) {
     case "flerval":
     case "flera":
@@ -30,7 +31,7 @@ export function AnswerReview({ q, answer, outcome }: { q: ExamQuestion; answer: 
       const mine = answer?.kind === "numerisk" && answer.value.trim() ? answer.value.trim() : null;
       const key = q.numeric;
       const unit = key?.unit && key.unit !== "-" ? ` ${key.unit}` : "";
-      const tol = key ? (key.relative ? `${formatPoints(key.tolerance * 100)} %` : formatPoints(key.tolerance)) : "";
+      const tol = key ? (key.relative ? sv.meta.pct(formatPoints(key.tolerance * 100, sv.meta.locale)) : formatPoints(key.tolerance, sv.meta.locale)) : "";
       const ok = outcome === "ratt";
       return (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -42,7 +43,7 @@ export function AnswerReview({ q, answer, outcome }: { q: ExamQuestion; answer: 
             <div className="rounded-md border border-accent px-4 py-3">
               <p className="text-sm font-semibold text-muted">{sv.tenta.correctAnswer}</p>
               <p className="mt-1 text-lg font-bold tabular-nums text-accent-ink">
-                {formatPoints(key.value)}
+                {formatPoints(key.value, sv.meta.locale)}
                 {unit} <span className="text-sm font-medium text-muted">{key.tolerance > 0 ? sv.tenta.tolerance(tol) : null}</span>
               </p>
             </div>

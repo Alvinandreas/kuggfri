@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Target, Trophy } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { RankedArea } from "@/lib/stats/my-stats";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { CategoryTag } from "@/components/ui/CategoryTag";
@@ -20,6 +20,7 @@ export type AreaItem = {
 
 /** Starkaste eller svagaste områdena: tagg, andel inlärda och en länk till kursen. */
 export function AreaCard({ kind, items, index }: { kind: "strongest" | "weakest"; items: RankedArea<AreaItem>[]; index: number }) {
+  const sv = useT();
   const strong = kind === "strongest";
   const Icon = strong ? Trophy : Target;
   return (
@@ -43,7 +44,7 @@ export function AreaCard({ kind, items, index }: { kind: "strongest" | "weakest"
               <Link href={a.href} className="block rounded-md px-3 py-3 transition-colors hover:bg-surface-2">
                 <div className="flex items-center justify-between gap-3">
                   <CategoryTag title={a.title} colorIndex={a.colorIndex} className="min-w-0" />
-                  <span className="shrink-0 text-sm font-bold tabular-nums">{Math.round(a.share * 100)} %</span>
+                  <span className="shrink-0 text-sm font-bold tabular-nums">{sv.meta.pct(Math.round(a.share * 100))}</span>
                 </div>
                 <ProgressBar value={a.share} label={`${sv.myStats.learned}: ${a.title}`} className="mt-2.5" />
                 <p className="mt-1.5 text-xs text-muted">

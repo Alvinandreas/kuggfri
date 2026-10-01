@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CircleCheckBig, LoaderCircle } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { hasLocalProgress } from "@/lib/progress/local-store";
 import { migrateLocalProgressToAccount } from "@/lib/progress/store";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -13,6 +13,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
  * flyttas den till kontot (senaste last_review vinner) och localStorage rensas.
  */
 export function ProgressMigrator({ userId }: { userId: string | null }) {
+  const sv = useT();
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "running" | "done">("idle");
   const [count, setCount] = useState(0);

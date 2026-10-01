@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 
 /** Svaret från en serveråtgärd som listorna i admin kör. */
 export type ActionResult = { ok: boolean; error?: string };
@@ -10,6 +10,7 @@ export type ActionResult = { ok: boolean; error?: string };
  * `pending` och `error` styr knappar och felbanner i komponenten som använder hooken.
  */
 export function useActionRunner() {
+  const sv = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { firstLine } from "@/lib/text/first-line";
 import { importCardsAction } from "@/lib/admin/actions";
 import { diffImport, type ExistingCard, type ExistingCategory } from "@/lib/import/diff";
@@ -23,6 +23,7 @@ function truncate(text: string, n = 120): string {
 }
 
 export function ImportPanel({ deckId, existingCards, existingCategories }: Props) {
+  const sv = useT();
   const router = useRouter();
   const [text, setText] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);

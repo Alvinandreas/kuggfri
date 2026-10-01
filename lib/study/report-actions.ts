@@ -2,7 +2,7 @@
 
 import { isUuid } from "@/lib/actions/result";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 
 export type ReportResult = { ok: true } | { ok: false; error: string };
 
@@ -15,6 +15,7 @@ const MAX_CONTACT = 200;
  * RLS släpper bara igenom kort i publicerade deck.
  */
 export async function reportCardAction(input: { cardId: string; message: string; contact?: string }): Promise<ReportResult> {
+  const sv = await getT();
   const message = (input.message ?? "").trim();
   const contact = (input.contact ?? "").trim().slice(0, MAX_CONTACT) || null;
   if (message.length < 3) return { ok: false, error: sv.report.tooShort };

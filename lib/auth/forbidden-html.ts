@@ -1,10 +1,10 @@
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
 import { routes } from "@/lib/routes";
 
 /** Minimal 403-sida som middleware kan svara med utan att rendera React. */
-export function forbiddenHtml(): string {
+export function forbiddenHtml(sv: Dict): string {
   return `<!doctype html>
-<html lang="sv">
+<html lang="${sv.meta.lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

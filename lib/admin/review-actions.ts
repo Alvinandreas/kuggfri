@@ -8,7 +8,7 @@ import { LIMITS } from "@/lib/admin/limits";
 import { NO_FLAG, approvalIssues, approvedPatch, cleanFlagNote, rejectedPatch } from "@/lib/admin/review";
 import { parseOptions, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { revalidateDeck } from "@/lib/cache/revalidate";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 
 /*
   Granskningen: godkänn, flagga, åtgärda en flagga, avvisa och redigera. Samma åtkomst som
@@ -26,6 +26,7 @@ import { sv } from "@/lib/i18n/sv";
  * text) hoppas över och rapporteras, så att inget trasigt kort når studenterna.
  */
 export async function approveCardsAction(deckId: string, ids: string[]): Promise<ActionResult<{ approved: string[]; skipped: string[]; reviewedAt: string }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase, ctx }) => {
     const clean = cleanIds(ids, LIMITS.bulkCards);
     if (!clean) return { ok: false, error: sv.errors.generic };
@@ -37,7 +38,7 @@ export async function approveCardsAction(deckId: string, ids: string[]): Promise
     const approved: string[] = [];
     const skipped: string[] = [];
     for (const row of rows ?? []) {
-      const issues = approvalIssues({ front: row.front, back: row.back, kind: row.kind, options: parseOptions(row.options) });
+      const issues = approvalIssues({ front: row.front, back: row.back, kind: row.kind, options: parseOptions(row.options) }, sv);
       (issues.length === 0 ? approved : skipped).push(row.id);
     }
     if (approved.length > 0) {
@@ -58,11 +59,12 @@ export async function approveCardsAction(deckId: string, ids: string[]): Promise
  * samlas under Flaggade tills flaggan åtgärdats. Anteckningen krävs och blir en rad.
  */
 export async function flagCardAction(deckId: string, id: string, note: string): Promise<ActionResult<{ flagNote: string; flaggedAt: string }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase, ctx }) => {
     if (!isUuid(id) || typeof note !== "string") return { ok: false, error: sv.errors.generic };
     const text = cleanFlagNote(note);
     if (!text) return { ok: false, error: sv.granskning.flagNoteRequired };
-    const long = tooLong(sv.granskning.flagNote, text, LIMITS.flagNote);
+    const long = tooLong(sv, sv.granskning.flagNote, text, LIMITS.flagNote);
     if (long) return long;
     const flaggedAt = new Date().toISOString();
     const { data, error } = await supabase
@@ -80,6 +82,7 @@ export async function flagCardAction(deckId: string, id: string, note: string): 
 
 /** Åtgärdad: tar bort flaggan. Kortet går tillbaka till sin flik (Att granska eller Granskade). */
 export async function resolveFlagAction(deckId: string, id: string): Promise<ActionResult> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     if (!isUuid(id)) return { ok: false, error: sv.errors.generic };
     const { error } = await supabase.from("cards").update(NO_FLAG).eq("deck_id", deckId).eq("id", id);
@@ -95,10 +98,11 @@ export async function resolveFlagAction(deckId: string, id: string): Promise<Act
  * rejectCorrectionAction, som återställer den publicerade versionen.)
  */
 export async function rejectCardAction(deckId: string, id: string, note: string): Promise<ActionResult<{ reviewedAt: string }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase, ctx }) => {
     if (!isUuid(id) || typeof note !== "string") return { ok: false, error: sv.errors.generic };
     const text = note.trim();
-    const long = tooLong(sv.admin.reviewRejectNote, text, LIMITS.reviewNote);
+    const long = tooLong(sv, sv.admin.reviewRejectNote, text, LIMITS.reviewNote);
     if (long) return long;
     const reviewedAt = new Date().toISOString();
     const { error } = await supabase
@@ -131,6 +135,7 @@ type ReviewSaved = { reviewedAt: string | null; kind: CardKind; options: CardOpt
  * granskning förblir inaktivt tills det godkänns. Godkännandet tar bort en eventuell flagga.
  */
 export async function saveReviewCardAction(deckId: string, input: ReviewEditInput, approve: boolean): Promise<ActionResult<ReviewSaved>> {
+  const sv = await getT();
   return editorAction<ReviewSaved>(deckId, async ({ supabase, ctx }) => {
     if (!input || !isUuid(input.id) || (input.category_id !== null && !isUuid(input.category_id))) return { ok: false, error: sv.errors.generic };
     const { data: row, error: readError } = await supabase.from("cards").select("is_active").eq("deck_id", deckId).eq("id", input.id).maybeSingle();
@@ -157,7 +162,7 @@ export async function saveReviewCardAction(deckId: string, input: ReviewEditInpu
     if (!saved.ok) return saved;
     if (!approve) return { ok: true, data: { reviewedAt: null, kind: normalized.kind, options: normalized.options } };
 
-    const issues = approvalIssues({ front: input.front.trim(), back: input.back.trim(), kind: normalized.kind, options: normalized.options });
+    const issues = approvalIssues({ front: input.front.trim(), back: input.back.trim(), kind: normalized.kind, options: normalized.options }, sv);
     if (issues.length > 0) return { ok: false, error: `${sv.granskning.cannotApprove} ${issues.join(" ")}` };
     const reviewedAt = new Date().toISOString();
     const { error } = await supabase
@@ -192,6 +197,7 @@ const isDate = (value: unknown): value is string => typeof value === "string" &&
  * flaggat kan bara återställas till ett uuid (eller null), och utan anteckning ingen flagga.
  */
 export async function restoreReviewAction(deckId: string, snapshots: ReviewSnapshot[]): Promise<ActionResult> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     if (!Array.isArray(snapshots) || snapshots.length > LIMITS.bulkCards) return { ok: false, error: sv.errors.generic };
     // Kort med samma läge (typiskt många utkast efter ett massgodkännande) återställs i ett anrop.

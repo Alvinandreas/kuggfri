@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
 import type { CardVersionRow } from "@/lib/supabase/database.types";
 import { versionFromRow, type CardVersion } from "./history";
@@ -31,7 +31,7 @@ function chunks<T>(list: readonly T[], size: number): T[][] {
  * "En redaktör". Ingen replaced_by betyder innehållsverktyget.
  */
 const authorResolver = cache(async (deckId: string): Promise<(id: string | null) => string> => {
-  const session = await getCurrentProfile();
+  const [session, sv] = await Promise.all([getCurrentProfile(), getT()]);
   const names = new Map<string, string>();
   const examiners = await getDeckExaminers(deckId).catch(() => []);
   for (const x of examiners) if (x.user_id) names.set(x.user_id, x.display_name || x.email);

@@ -2,7 +2,8 @@
 
 import { useActionState, useEffect, useState, type ReactNode } from "react";
 import { Download } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { useT } from "@/lib/i18n/client";
 import { deleteAccountAction, updateDisplayNameAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
@@ -19,7 +20,7 @@ import { ToggleRow } from "@/components/ui/Toggle";
 import { cx } from "@/components/ui/cx";
 import { routes } from "@/lib/routes";
 
-const DAILY_OPTIONS = DAILY_NEW_CHOICES.map((n) => ({ value: String(n), label: `${sv.deck.newCards(n)} per dag` }));
+const dailyOptions = (sv: Dict) => DAILY_NEW_CHOICES.map((n) => ({ value: String(n), label: sv.deck.perDayOption(sv.deck.newCards(n)) }));
 
 type DeckRef = { id: string; slug: string; title: string };
 type Props = {
@@ -61,6 +62,7 @@ function ResetRow({ title, help, children }: { title: string; help: string; chil
 }
 
 export function AccountPanel({ userId, email, displayName, decks, focusPassword = false, digestEmail = true, isExaminer = false }: Props) {
+  const sv = useT();
   const [nameState, nameAction, namePending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateDisplayNameAction(fd),
     null,
@@ -117,7 +119,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
   const dialog = (() => {
     switch (pending?.kind) {
       case "delete":
-        return { title: sv.account.deleteConfirmTitle, body: sv.account.deleteConfirm, danger: true, word: "RADERA" };
+        return { title: sv.account.deleteConfirmTitle, body: sv.account.deleteConfirm, danger: true, word: sv.account.deleteWord };
       case "resetAll":
         return { title: sv.deck.resetConfirmTitle, body: sv.deck.resetAllConfirm, danger: true, word: undefined };
       case "resetSchedule":
@@ -169,7 +171,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         <div className="-mt-2 grid gap-2">
           <div className="py-3">
             <p className="mb-1.5 font-semibold">{sv.deck.dailyGoal}</p>
-            <Select label={sv.deck.dailyGoal} value={String(prefs.dailyNew)} onChange={(v) => updatePrefs({ ...prefs, dailyNew: Number(v) })} options={DAILY_OPTIONS} data-testid="daily-new" />
+            <Select label={sv.deck.dailyGoal} value={String(prefs.dailyNew)} onChange={(v) => updatePrefs({ ...prefs, dailyNew: Number(v) })} options={dailyOptions(sv)} data-testid="daily-new" />
             <p className="mt-1.5 text-sm text-muted">{sv.deck.dailyGoalHelp}</p>
           </div>
           <div className="border-t border-line">

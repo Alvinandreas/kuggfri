@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BookOpen } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { StudyMode } from "@/lib/progress/types";
 import { useCardProgress } from "@/lib/progress/use-card-progress";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
@@ -51,6 +51,7 @@ type Props = {
  * komma igång, och passets inställningar.
  */
 export function DeckOverview({ deck, categories, cards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
+  const sv = useT();
   const store = useProgressStore(userId);
   const [pick, setPick] = useState<PickerMode>(initialMode);
   const mode = runMode(pick);
@@ -108,7 +109,7 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
   // Kort utan område får en egen rad ("Utan område") så att de aldrig försvinner ur urvalet.
   const tableCategories = useMemo(
     () => (cards.some((c) => c.category_id === null) ? [...categories, { id: UNCATEGORIZED_ID, title: sv.deck.uncategorized }] : categories),
-    [cards, categories],
+    [cards, categories, sv],
   );
   const colorIndex = useMemo(() => categoryColorIndex(tableCategories), [tableCategories]);
 

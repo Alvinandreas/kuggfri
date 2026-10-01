@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { decideAdminAccess } from "@/lib/auth/admin-gate";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
 import { safeNext } from "@/lib/auth/safe-next";
+import { dictionary } from "@/lib/i18n";
 
 describe("decideAdminAccess", () => {
   it("utloggad skickas till inloggning", () => {
@@ -30,7 +31,7 @@ describe("decideAdminAccess", () => {
 
 describe("forbiddenHtml", () => {
   it("är en svensk 403-sida utan indexering", () => {
-    const html = forbiddenHtml();
+    const html = forbiddenHtml(dictionary("sv"));
     expect(html).toContain("Åtkomst nekad");
     expect(html).toContain('lang="sv"');
     expect(html).toContain("noindex");

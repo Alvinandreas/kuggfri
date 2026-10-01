@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { moveItem, newOptionKey, type OptionDraft } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
 import { Button, IconButton } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { cx } from "@/components/ui/cx";
 
 /** Redigerbar lista med svarsalternativ: text, rätt/fel, flytta och ta bort. Används också i granskningen. */
 export function OptionsEditor({ items, onChange }: { items: OptionDraft[]; onChange: (next: OptionDraft[]) => void }) {
+  const sv = useT();
   const update = (key: string, patch: Partial<OptionDraft>) => onChange(items.map((o) => (o.key === key ? { ...o, ...patch } : o)));
   return (
     <fieldset className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2" data-testid="card-options">

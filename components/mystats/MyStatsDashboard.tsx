@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, ChartColumn } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { useCardProgress } from "@/lib/progress/use-card-progress";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
@@ -39,6 +39,7 @@ const HEATMAP_WEEKS = 20;
  * laddas i klienten med samma moduler som hemsidan, så siffrorna stämmer överens.
  */
 export function MyStatsDashboard({ userId, decks }: Props) {
+  const sv = useT();
   const store = useProgressStore(userId);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [scope, setScope] = useState<string>("all");
@@ -131,7 +132,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
       title: sv.myStats.perWeek,
       points: weeklyTotals(series).map((w) => ({ key: w.key, label: w.label, value: w.reviews, detail: sv.myStats.weekOf(w.label) })),
     };
-  }, [overview, days]);
+  }, [sv, overview, days]);
 
   const lead = loading
     ? sv.myStats.loading
@@ -211,7 +212,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
             <StatTile
               variant="card"
               label={sv.myStats.reviews}
-              value={mine.totalReviews.toLocaleString("sv-SE")}
+              value={mine.totalReviews.toLocaleString(sv.meta.locale)}
               sub={sv.myStats.reviewsSub(mine.sessions)}
               tone="teal"
             />
@@ -227,7 +228,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
               variant="card"
               label={sv.myStats.knowledge}
               help={sv.dashboard.knowledgeHelp}
-              value={`${Math.round(overview.knowledge.share * 100)} %`}
+              value={sv.meta.pct(Math.round(overview.knowledge.share * 100))}
               sub={sv.myStats.knowledgeSub}
               tone="violet"
             />

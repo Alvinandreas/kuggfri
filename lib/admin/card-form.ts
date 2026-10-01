@@ -5,7 +5,7 @@
  */
 import { isAutoGraded, isCardKind, parseOptions, trueFalseAnswer, trueFalseOptions, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { LIMITS } from "@/lib/admin/limits";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
 
 /** Ett alternativ i redigeraren. key håller React-listan stabil när raderna flyttas. */
 export type OptionDraft = { key: string; text: string; correct: boolean };
@@ -85,17 +85,17 @@ export function formOptions(form: CardFormState): CardOption[] | null {
 }
 
 /** Typens fel: för få alternativ, inget rätt svar, inget valt Sant/Falskt-svar. */
-export function kindIssues(form: CardFormState): string[] {
-  return validateKind(form.kind, formOptions(form));
+export function kindIssues(form: CardFormState, sv?: Dict): string[] {
+  return validateKind(form.kind, formOptions(form), sv);
 }
 
 /** "Obligatoriskt" en gång om något av fälten är tomt (bara blanksteg räknas som tomt). */
-export function requiredIssues(...values: string[]): string[] {
+export function requiredIssues(sv: Dict, ...values: string[]): string[] {
   return values.some((v) => !v.trim()) ? [sv.common.required] : [];
 }
 
 /** Meddelandet när man försöker spara med fel kvar. */
-export function fixErrorsMessage(issues: readonly string[]): string {
+export function fixErrorsMessage(sv: Dict, issues: readonly string[]): string {
   return `${sv.admin.fixErrors} ${issues.join(" ")}`;
 }
 

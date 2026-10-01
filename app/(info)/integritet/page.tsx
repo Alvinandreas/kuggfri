@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
+import { PrivacyEn } from "@/components/info/PrivacyEn";
 import { Card } from "@/components/ui/Card";
 import { CONTACTS } from "@/lib/contact";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.privacy.title };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.privacy.title };
+}
 
 /**
  * Integritetspolicy. Texten ska alltid beskriva exakt vad appen gör.
@@ -39,7 +43,10 @@ function Row({ what, why, basis, retention }: { what: string; why: string; basis
   );
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const sv = await getT();
+  // Engelska (reglaget English): samma policy, översatt i en egen komponent.
+  if (sv.meta.lang === "en") return <PrivacyEn />;
   return (
     <article className="mx-auto w-full max-w-[46rem] [&_code]:rounded-sm [&_code]:bg-surface-2 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]">
       <header className="anim-fade-up mb-8">
@@ -90,7 +97,7 @@ export default function PrivacyPage() {
             behandlingen som beskrivs här. Tjänsten är inte en del av Chalmers IT-miljö, och Chalmers är inte
             personuppgiftsansvarig. Frågor om dina uppgifter skickar du till{" "}
             <a href={`mailto:${CONTACTS.operator.email}`}>{CONTACTS.operator.email}</a> ({CONTACTS.operator.name}). Vi har
-            ingen utsedd dataskyddsombud, eftersom verksamheten inte kräver det.
+            inget utsett dataskyddsombud, eftersom verksamheten inte kräver det.
           </p>
         </section>
 

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { BookOpenText, CalendarClock, CircleCheckBig, GraduationCap, Target } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { planDeckSession } from "@/lib/study/deck-plan";
 import { estimateMinutes } from "@/lib/study/plan";
@@ -37,6 +37,7 @@ type Props = {
  * repetition och Dugga har ingen slutpunkt och förblir gråa.
  */
 export function CategoryFocusDialog({ open, onClose, deck, cards, category, stats, progress, reviews, dailyNew }: Props) {
+  const sv = useT();
   const plans = useMemo(() => {
     if (!category) return null;
     const base = { deck, cards, progress, reviews, selectedIds: [category.id], dailyNew };
@@ -68,7 +69,7 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
 
           <dl className="grid grid-cols-3 gap-3">
             <StatTile label={sv.focus.learned} value={`${stats?.learned ?? 0}`} sub={sv.focus.cardsOf(stats?.learned ?? 0, total)} tone="green" />
-            <StatTile label={sv.focus.known} value={`${percent(stats?.known ?? 0, total)} %`} sub={sv.focus.knownSub} tone="navy" />
+            <StatTile label={sv.focus.known} value={sv.meta.pct(percent(stats?.known ?? 0, total))} sub={sv.focus.knownSub} tone="navy" />
             <StatTile label={sv.focus.tricky} value={`${stats?.tricky ?? 0}`} sub={sv.focus.cardsOf(stats?.tricky ?? 0, total)} tone="teal" />
           </dl>
 
@@ -109,7 +110,7 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
                 meta={
                   trickyDone
                     ? `${sv.focus.trickyAreaDone}. ${sv.focus.trickyAreaDoneMeta}`
-                    : `${sv.deck.summaryTricky(plans.tricky.selectionCount)}, cirka ${estimateMinutes(plans.tricky.selectionCount)} min`
+                    : `${sv.deck.summaryTricky(plans.tricky.selectionCount)}, ${sv.quick.aboutMinutes(estimateMinutes(plans.tricky.selectionCount))}`
                 }
                 primary={trickyDone}
                 data-testid="focus-tricky"

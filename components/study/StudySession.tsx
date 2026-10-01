@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Timer, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { percent } from "@/lib/text/percent";
 import { previewIntervals, type ScheduleOptions } from "@/lib/fsrs/scheduler";
 import { canGoPrevious, currentCardId, goPrevious, rateCurrent, remaining, skipCurrent, summarize } from "@/lib/fsrs/session";
@@ -82,6 +82,7 @@ export function StudySession({
   onlyStarred,
   max = null,
 }: Props) {
+  const sv = useT();
   // Duggans regler är passets inställningar i duggaläget (tidtagning, märket i toppen).
   const dugga = mode === "exam" ? settings : null;
   const store = useProgressStore(userId);
@@ -161,7 +162,7 @@ export function StudySession({
       setAnnounce(next ? sv.study.flippedAnnounce : sv.study.front);
       return next;
     });
-  }, [card, cardKey]);
+  }, [card, cardKey, sv]);
 
   const [feedback, setFeedback] = useState<SelfRating | null>(null);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -186,7 +187,7 @@ export function StudySession({
       }, 960);
     },
     // setSession är en stabil setter (från useSessionQueue).
-    [session, card, flipped, store, progress, feedback, persistRating, setSession],
+    [session, card, flipped, store, progress, feedback, persistRating, setSession, sv],
   );
 
   const { quiz, quizSelected, quizResult, quizMulti, toggleQuizOption, continueQuiz, quizPrimary } = useQuizAnswer({
@@ -239,9 +240,9 @@ export function StudySession({
     const now = new Date();
     const dates = previewIntervals(card.id, progress[card.id], now, schedule);
     const result = {} as Record<SelfRating, string>;
-    for (const r of SELF_RATINGS) result[r] = formatRelative(dates[r], now);
+    for (const r of SELF_RATINGS) result[r] = formatRelative(sv, dates[r], now);
     return result;
-  }, [mode, flipped, card, progress, schedule]);
+  }, [mode, flipped, card, progress, schedule, sv]);
 
   const onSwipeLeft = useCallback(() => {
     if (canRate) rate(1);

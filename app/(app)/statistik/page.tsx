@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckBySlug, getPublishedDecks } from "@/lib/content/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { MyStatsDashboard } from "@/components/mystats/MyStatsDashboard";
 import type { HomeDeck } from "@/components/home/HomeDashboard";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: sv.myStats.title };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.myStats.title };
+}
 
 /** Min statistik: rekord, rytm, skattningar och milstolpar över alla publicerade kurser. */
 export default async function MyStatsPage() {

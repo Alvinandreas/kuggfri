@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getPublishedDecks } from "@/lib/content/queries";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardLink } from "@/components/ui/Card";
 import { routes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: sv.home.title };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.home.title };
+}
 
 export default async function CoursesPage() {
+  const sv = await getT();
   const decks = await getPublishedDecks();
   // Med en enda kurs finns inget att välja mellan: gå direkt till den.
   if (decks.length === 1 && decks[0]) redirect(routes.deck(decks[0].slug));

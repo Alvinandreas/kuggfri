@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { isPendingGrading, type ExamResult } from "@/lib/tentor/grade";
 import { withImageUrls } from "@/lib/tentor/images";
 import { forStudent } from "@/lib/tentor/model";
@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug, key } = await params;
   const ctx = await loadExamDeck(slug);
   const record = ctx ? await getExamRecord(ctx.deck.id, key, ctx.access).catch(() => null) : null;
+  const sv = await getT();
   return { title: record ? record.exam.title : sv.tenta.title };
 }
 
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
  * Gäller bara redaktörer. I redaktörens studentvy visas allt som för en student.
  */
 export default async function ExamPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {
+  const sv = await getT();
   const [{ slug, key }, query] = await Promise.all([params, searchParams]);
   const ctx = await loadExamDeck(slug);
   if (!ctx) notFound();
@@ -109,7 +111,7 @@ export default async function ExamPage({ params, searchParams }: { params: Param
         selfGrades={attempt.self_grades ?? {}}
         points={Number(attempt.points ?? 0)}
         grade={attempt.grade ?? "U"}
-        submittedWhen={formatAttemptTime(attempt.submitted_at)}
+        submittedWhen={formatAttemptTime(attempt.submitted_at, sv.meta.locale)}
         preview={preview}
         back={back}
         attemptSuffix={suffix}
@@ -125,7 +127,7 @@ export default async function ExamPage({ params, searchParams }: { params: Param
       exam={{
         key: exam.key,
         title: exam.title,
-        dateLabel: formatExamDate(exam.date),
+        dateLabel: formatExamDate(exam.date, sv.meta.locale),
         durationMinutes: exam.durationMinutes,
         maxPoints: exam.maxPoints,
         grades: exam.grades,
@@ -138,7 +140,7 @@ export default async function ExamPage({ params, searchParams }: { params: Param
       grading={overview.grading ? { id: overview.grading.id } : null}
       submitted={attempts
         .filter((a) => a.submitted_at && a.points !== null)
-        .map((a) => ({ id: a.id, when: formatAttemptTime(a.submitted_at!), points: Number(a.points ?? 0), grade: a.grade ?? "U" }))}
+        .map((a) => ({ id: a.id, when: formatAttemptTime(a.submitted_at!, sv.meta.locale), points: Number(a.points ?? 0), grade: a.grade ?? "U" }))}
       serverNow={Date.now()}
       preview={preview}
       back={back}

@@ -1,5 +1,5 @@
-import { sv } from "@/lib/i18n/sv";
-import { CARD_KINDS, CARD_KIND_DESCRIPTION, CARD_KIND_LABEL, type CardKind } from "@/lib/cards/kinds";
+import { useT } from "@/lib/i18n/client";
+import { CARD_KINDS, type CardKind } from "@/lib/cards/kinds";
 import { ChoiceCard } from "@/components/ui/Choice";
 import { Select } from "@/components/ui/Select";
 
@@ -10,7 +10,6 @@ import { Select } from "@/components/ui/Select";
  * så att React ger fälten efter dem samma id som förut.
  */
 
-const KIND_OPTIONS = CARD_KINDS.map((k) => ({ value: k, label: CARD_KIND_LABEL[k] }));
 
 /** Rubrik, rullgardin och en beskrivning av vald uppgiftstyp. compact: mindre beskrivning (granskningen). */
 export function KindSelect({
@@ -28,19 +27,22 @@ export function KindSelect({
   compact?: boolean;
   "data-testid": string;
 }) {
+  const sv = useT();
+  const kindOptions = CARD_KINDS.map((k) => ({ value: k, label: sv.cardKind.label[k] }));
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
         {label}
       </label>
-      <Select<CardKind> id={id} value={value} onChange={onChange} options={KIND_OPTIONS} data-testid={testId} />
-      <p className={compact ? "mt-1.5 text-xs text-muted" : "mt-1.5 text-sm text-muted"}>{CARD_KIND_DESCRIPTION[value]}</p>
+      <Select<CardKind> id={id} value={value} onChange={onChange} options={kindOptions} data-testid={testId} />
+      <p className={compact ? "mt-1.5 text-xs text-muted" : "mt-1.5 text-sm text-muted"}>{sv.cardKind.description[value]}</p>
     </div>
   );
 }
 
 /** Sant/Falskt-kortets rätta svar. */
 export function TrueFalseField({ name, legend, value, onChange }: { name: string; legend: string; value: boolean | null; onChange: (value: boolean) => void }) {
+  const sv = useT();
   return (
     <fieldset className="grid gap-2">
       <legend className="mb-1.5 text-sm font-semibold">{legend}</legend>

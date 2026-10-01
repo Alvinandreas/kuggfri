@@ -5,7 +5,7 @@ import { adminAction, editorAction, requireAdmin, requireEditor, runAction } fro
 import { cleanIds, fail, isUuid, tooLong, type ActionResult } from "@/lib/actions/result";
 import { normalizeKindInput } from "@/lib/admin/card-form";
 import { revalidateDeck, revalidateDeckRemoved, revalidateExaminers, revalidateReports } from "@/lib/cache/revalidate";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { diffImport } from "@/lib/import/diff";
 import type { ImportCard } from "@/lib/import/parse-import";
 import type { CardKind, CardOption } from "@/lib/cards/kinds";
@@ -42,6 +42,7 @@ export type DeckInput = {
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ id: string }>> {
+  const sv = await getT();
   return runAction(async () => {
     const { supabase, ctx } = input.id ? await requireEditor(input.id) : await requireAdmin();
     // Kursens adress ändras bara av global admin (Alvins beslut 29 sep); databasen spärrar
@@ -49,10 +50,10 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
     const slugLocked = !ctx.isAdmin;
     const slug = input.slug.trim().toLowerCase();
     const long =
-      tooLong(sv.admin.deckTitle, input.title.trim(), LIMITS.title) ??
-      tooLong(sv.admin.description, input.description, LIMITS.description) ??
-      tooLong(sv.admin.courseCode, input.course_code, LIMITS.courseCode) ??
-      tooLong(sv.admin.sourceCredit, input.source_credit, LIMITS.sourceCredit);
+      tooLong(sv, sv.admin.deckTitle, input.title.trim(), LIMITS.title) ??
+      tooLong(sv, sv.admin.description, input.description, LIMITS.description) ??
+      tooLong(sv, sv.admin.courseCode, input.course_code, LIMITS.courseCode) ??
+      tooLong(sv, sv.admin.sourceCredit, input.source_credit, LIMITS.sourceCredit);
     if (long) return long;
     const title = input.title.trim();
     if (!slugLocked && !SLUG_RE.test(slug)) return { ok: false, error: sv.admin.invalidSlug };
@@ -107,10 +108,11 @@ export async function deleteDeckAction(id: string): Promise<ActionResult> {
 // ---------------------------------------------------------------------------
 
 export async function createCategoryAction(deckId: string, title: string): Promise<ActionResult<{ id: string }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     const t = title.trim();
     if (!t) return { ok: false, error: sv.common.required };
-    const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
+    const long = tooLong(sv, sv.admin.categoryTitle, t, LIMITS.categoryTitle);
     if (long) return long;
     const { data: existing } = await supabase.from("categories").select("sort_order").eq("deck_id", deckId).order("sort_order", { ascending: false }).limit(1);
     const sort_order = (existing?.[0]?.sort_order ?? -1) + 1;
@@ -122,10 +124,11 @@ export async function createCategoryAction(deckId: string, title: string): Promi
 }
 
 export async function updateCategoryAction(id: string, deckId: string, title: string): Promise<ActionResult> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     const t = title.trim();
     if (!t) return { ok: false, error: sv.common.required };
-    const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
+    const long = tooLong(sv, sv.admin.categoryTitle, t, LIMITS.categoryTitle);
     if (long) return long;
     // Bind id:t till decket: RLS stoppar det redan, men frågan ska inte ens kunna träffa
     // en rad i en annan kurs om en policy någon gång skulle ändras.
@@ -159,6 +162,7 @@ export async function reorderCategoriesAction(deckId: string, orderedIds: string
  * samma deck; korten binds också till decket i själva uppdateringen.
  */
 export async function moveCardsToCategoryAction(deckId: string, ids: string[], categoryId: string | null): Promise<ActionResult<{ moved: number }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     const clean = cleanIds(ids, LIMITS.bulkCards);
     if (!clean) return { ok: false, error: sv.errors.generic };
@@ -181,6 +185,7 @@ export async function moveCardsToCategoryAction(deckId: string, ids: string[], c
  * området står tomt kvar, så inget går förlorat.
  */
 export async function mergeCategoryAction(deckId: string, fromId: string, intoId: string): Promise<ActionResult<{ moved: number }>> {
+  const sv = await getT();
   return editorAction(deckId, async ({ supabase }) => {
     if (!isUuid(fromId) || !isUuid(intoId) || fromId === intoId) return { ok: false, error: sv.errors.generic };
     const { data: found } = await supabase.from("categories").select("id").eq("deck_id", deckId).in("id", [fromId, intoId]);
@@ -220,16 +225,17 @@ export type CardInput = {
  * vad formuläret skickar.
  */
 export async function saveCardAction(input: CardInput): Promise<ActionResult<{ id: string }>> {
+  const sv = await getT();
   return runAction(async () => {
     const { supabase } = await requireEditor(input.deck_id);
     const front = input.front.trim();
     const back = input.back.trim();
     const source = (input.source ?? "").trim();
     const long =
-      tooLong(sv.admin.front, front, LIMITS.front) ??
-      tooLong(sv.admin.back, back, LIMITS.back) ??
-      tooLong(sv.admin.hint, input.hint.trim(), LIMITS.hint) ??
-      tooLong(sv.admin.sourceShort, source, LIMITS.source);
+      tooLong(sv, sv.admin.front, front, LIMITS.front) ??
+      tooLong(sv, sv.admin.back, back, LIMITS.back) ??
+      tooLong(sv, sv.admin.hint, input.hint.trim(), LIMITS.hint) ??
+      tooLong(sv, sv.admin.sourceShort, source, LIMITS.source);
     if (long) return long;
 
     let existing: { kind: CardKind; options: CardOption[] | null; review_status: string | null } | null = null;
@@ -307,6 +313,7 @@ export type ImportResult = { created: number; updated: number; newCategories: nu
  * klientens förhandsvisning är bara en visning av samma logik.
  */
 export async function importCardsAction(deckId: string, cards: ImportCard[]): Promise<ActionResult<ImportResult>> {
+  const sv = await getT();
   return runAction(async () => {
     // Antalet kontrolleras före åtkomsten.
     if (cards.length > MAX_IMPORT_CARDS) return { ok: false, error: sv.admin.importTooMany(MAX_IMPORT_CARDS) };
@@ -373,6 +380,7 @@ export async function deleteReportAction(id: string, deckId: string): Promise<Ac
 // ---------------------------------------------------------------------------
 
 export async function addExaminerAction(deckId: string, email: string): Promise<ActionResult<{ status: "added" | "exists" | "invited" }>> {
+  const sv = await getT();
   return adminAction(async ({ supabase }) => {
     const e = email.trim();
     if (!e) return { ok: false, error: sv.common.required };

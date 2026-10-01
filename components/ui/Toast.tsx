@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { cx } from "./cx";
 
 type Props = {
@@ -23,6 +23,7 @@ type Props = {
  * skärmläsare, tonar in underifrån och försvinner av sig själv efter en stund.
  */
 export function Toast({ message, id, action, onClose, duration = 8000, tone = "default" }: Props) {
+  const sv = useT();
   const visible = message !== null && message !== undefined && message !== false;
   // Senaste onClose utan att starta om nedräkningen vid varje rendering hos föräldern.
   const close = useRef(onClose);

@@ -314,4 +314,5 @@ export const admin = {
   sourceAll: "Alla källor",
   sourceOriginalHelp: "Originalkorten skrevs innan källor började anges.",
   sourceNoneHelp: "Kortet saknar källa. Lägg till en via Redigera.",
+  weekShort: (week: number) => `v.${week}`,
 } as const;

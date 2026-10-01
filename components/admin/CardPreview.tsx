@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
-import { CARD_KIND_LABEL, isAutoGraded, type CardKind, type CardOption } from "@/lib/cards/kinds";
+import { useT } from "@/lib/i18n/client";
+import { isAutoGraded, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { Markdown } from "@/components/markdown/Markdown";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { cx } from "@/components/ui/cx";
@@ -27,6 +27,7 @@ type Props = {
  * Samma markdown- och KaTeX-renderare som studievyn.
  */
 export function CardPreview({ front, back, hint, kind, options, area, compact = false, sideBySide = false }: Props) {
+  const sv = useT();
   const auto = isAutoGraded(kind);
   const sides = [
     { key: "front", label: kind === "sant-falskt" ? sv.admin.statement : kind === "begrepp" ? sv.admin.concept : sv.study.front, text: front },
@@ -51,7 +52,7 @@ export function CardPreview({ front, back, hint, kind, options, area, compact = 
           <div className="mb-4 flex items-center justify-between gap-3">
             {area ? <CategoryTag title={area.title} colorIndex={area.colorIndex} size={compact ? "md" : "lg"} className={compact ? "min-w-0 truncate" : undefined} /> : <span className="text-xs text-muted">{sv.admin.noCategory}</span>}
             <span className="shrink-0 text-xs uppercase tracking-wide text-muted">
-              {side.key === "front" ? CARD_KIND_LABEL[kind] : side.label}
+              {side.key === "front" ? sv.cardKind.label[kind] : side.label}
             </span>
           </div>
           <div className={cx("flex py-2", !compact && "flex-1", side.key === "front" && !auto && "text-center")}>
@@ -71,6 +72,7 @@ export function CardPreview({ front, back, hint, kind, options, area, compact = 
 }
 
 function OptionList({ options }: { options: readonly CardOption[] }) {
+  const sv = useT();
   if (options.length === 0) return <p className="mt-3 text-sm text-danger">{sv.admin.alternativesHelp}</p>;
   return (
     <ul className="mt-3 grid gap-2" aria-label={sv.admin.alternatives}>

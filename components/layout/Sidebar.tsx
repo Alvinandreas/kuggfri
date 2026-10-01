@@ -21,15 +21,15 @@ import {
   X,
   type LucideProps,
 } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { useT } from "@/lib/i18n/client";
 import type { AdminNavDeck } from "@/lib/admin/nav";
-import { ADMIN_TABS } from "@/lib/admin/tabs";
+import { adminTabs } from "@/lib/admin/tabs";
 import { routes } from "@/lib/routes";
 import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
 import { Logo } from "@/components/layout/Logo";
 import { ProfileMenu, type ShellUser } from "@/components/layout/ProfileMenu";
-import { useReviewT } from "@/components/admin/review/ReviewLanguage";
 
 type NavLink = {
   href: string;
@@ -142,14 +142,14 @@ function SectionLabel({ children }: { children: string }) {
  * alltid till den låsta kursen (Materialteknik, beslut 30 sep), och inget kursnamn står under
  * rubriken. Bara admin får Alla kurser (adminstartsidan, där Ny kurs finns) och designsystemet.
  */
-function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean, english: boolean): NavLink[] {
+function adminLinks(sv: Dict, deck: AdminNavDeck | null, isAdmin: boolean): NavLink[] {
   const links: NavLink[] = [];
   if (deck) {
-    for (const tab of ADMIN_TABS) {
+    for (const tab of adminTabs(sv)) {
       const badge = tab.counter ? deck[tab.counter.key] : undefined;
       links.push({
         href: tab.href(deck.id),
-        label: english ? tab.labelEn : tab.label,
+        label: tab.label,
         icon: tab.icon,
         exact: tab.exact,
         also: tab.also?.(deck.id),
@@ -167,7 +167,7 @@ function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean, english: boolea
  * Kursens två poster: Kurssidan (lägen, områden, pass) och Tentaläget, med lås när tentaläget
  * inte är öppet för studenterna och användaren inte är redaktör för kursen.
  */
-function courseLinks(course: SidebarProps["courses"][number], adminDeckIds: string[]): NavLink[] {
+function courseLinks(sv: Dict, course: SidebarProps["courses"][number], adminDeckIds: string[]): NavLink[] {
   const locked = !course.examModeOpen && !adminDeckIds.includes(course.id);
   return [
     { href: routes.deck(course.slug), label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [routes.study(course.slug)], testId: "nav-course-page" },
@@ -177,18 +177,17 @@ function courseLinks(course: SidebarProps["courses"][number], adminDeckIds: stri
 
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
 function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
+  const sv = useT();
   // Med flera kurser: Kurser, och kursens två poster när man är inne i en kurs.
   const inCourse = courses.find((c) => under(pathname, routes.deck(c.slug)));
   const study: NavLink[] = [
     { href: routes.home(), label: sv.shell.home, icon: House },
     { href: routes.myStats(), label: sv.shell.myStats, icon: ChartNoAxesColumn },
     ...(courses.length === 1 && courses[0]
-      ? courseLinks(courses[0], adminDeckIds)
-      : [{ href: routes.courses(), label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDeckIds) : [])]),
+      ? courseLinks(sv, courses[0], adminDeckIds)
+      : [{ href: routes.courses(), label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(sv, inCourse, adminDeckIds) : [])]),
   ];
-  // Adminposterna följer granskningens språkreglage (English), resten av menyn är alltid svensk.
-  const english = useReviewT().lang === "en";
-  const admin = adminLinks(adminDeck, isAdmin, english);
+  const admin = adminLinks(sv, adminDeck, isAdmin);
   return (
     <>
       {top}
@@ -201,7 +200,7 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
         </div>
         {admin.length > 0 ? (
           <>
-            <SectionLabel>{english ? "Administration" : sv.shell.sectionAdmin}</SectionLabel>
+            <SectionLabel>{sv.shell.sectionAdmin}</SectionLabel>
             <div className="space-y-0.5" data-testid="sidebar-admin">
               {admin.map((l) => (
                 <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
@@ -216,7 +215,7 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
         <NavItem link={{ href: routes.help(), label: sv.shell.help, icon: CircleHelp }} pathname={pathname} drawer={drawer} />
         <NavItem link={{ href: routes.about(), label: sv.shell.about, icon: Info }} pathname={pathname} drawer={drawer} />
         <NavItem link={{ href: routes.privacy(), label: sv.shell.privacy, icon: ShieldCheck }} pathname={pathname} drawer={drawer} />
-        <ProfileMenu user={user} placement="right-end" />
+        <ProfileMenu user={user} placement="right-end" showLanguage={isAdmin || adminDeck !== null || adminDeckIds.length > 0} />
       </div>
     </>
   );
@@ -227,6 +226,7 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
  * i kuggfri:sidebar och sätts före första målningen), toppfält med utdragbar meny på mobil.
  */
 export function Sidebar(props: SidebarProps) {
+  const sv = useT();
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -338,7 +338,7 @@ export function Sidebar(props: SidebarProps) {
         <Link href={routes.home()} aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
           <Logo variant="menu" height={30} decorative />
         </Link>
-        <ProfileMenu user={props.user} placement="bottom-end" compact />
+        <ProfileMenu user={props.user} placement="bottom-end" compact showLanguage={props.isAdmin || props.adminDeck !== null || props.adminDeckIds.length > 0} />
       </header>
 
       {drawerOpen ? (

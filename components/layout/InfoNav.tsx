@@ -1,14 +1,15 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { useT } from "@/lib/i18n/client";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { routes } from "@/lib/routes";
 
 const PAGES = [
-  { href: routes.help(), label: sv.shell.help },
-  { href: routes.about(), label: sv.shell.about },
-  { href: routes.privacy(), label: sv.shell.privacy },
+  { href: routes.help(), label: (sv: Dict) => sv.shell.help },
+  { href: routes.about(), label: (sv: Dict) => sv.shell.about },
+  { href: routes.privacy(), label: (sv: Dict) => sv.shell.privacy },
 ] as const;
 
 type Href = (typeof PAGES)[number]["href"];
@@ -22,11 +23,12 @@ function current(pathname: string): number {
 
 /** Flikar överst på informationssidorna: Hjälp, Om och Integritet. */
 export function InfoTabs() {
+  const sv = useT();
   const pathname = usePathname();
   const active = PAGES[current(pathname)]!.href;
   return (
     <nav aria-label={sv.shell.infoNav} className="mx-auto mb-8 flex max-w-3xl">
-      <SegmentedControl<Href> label={sv.shell.infoNav} value={active} size="sm" segments={PAGES.map((p) => ({ value: p.href, label: p.label, href: p.href }))} />
+      <SegmentedControl<Href> label={sv.shell.infoNav} value={active} size="sm" segments={PAGES.map((p) => ({ value: p.href, label: p.label(sv), href: p.href }))} />
     </nav>
   );
 }

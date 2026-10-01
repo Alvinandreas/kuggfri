@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { deleteReportAction, setReportStatusAction } from "@/lib/admin/actions";
 import type { AdminReport } from "@/lib/admin/queries";
 import { firstLine } from "@/lib/text/first-line";
@@ -17,6 +17,7 @@ import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { routes } from "@/lib/routes";
 
 export function ReportList({ deckId, reports }: { deckId: string; reports: AdminReport[] }) {
+  const sv = useT();
   const { pending, error, run } = useActionRunner();
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -45,7 +46,7 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
             >
               <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
                 <Badge tone={open ? "accent" : "neutral"}>{open ? sv.admin.reportStatusOpen : sv.admin.reportStatusResolved}</Badge>
-                <span className="text-muted">{formatDateTime(r.created_at)}</span>
+                <span className="text-muted">{formatDateTime(r.created_at, sv.meta.locale)}</span>
               </div>
               <p className="text-sm">
                 <span className="text-muted">{sv.admin.reportCard}: </span>

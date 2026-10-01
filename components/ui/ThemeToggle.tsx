@@ -1,13 +1,14 @@
 "use client";
 
 import { Monitor, Moon, Sun } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { useTheme, type Theme } from "@/lib/ui/theme";
 
 const ORDER: Theme[] = ["system", "light", "dark"];
 
 /** Kompakt knapp som stegar mellan systemets, ljust och mörkt läge (sajtens sidhuvud). */
 export function ThemeToggle() {
+  const sv = useT();
   const [theme, setTheme] = useTheme();
   const label = sv.theme[theme];
   const Icon = theme === "dark" ? Moon : theme === "light" ? Sun : Monitor;
@@ -30,6 +31,7 @@ export function ThemeToggle() {
  * menyposter (menuitemradio) så att piltangenterna i menyn når dem.
  */
 export function ThemeSwitcher({ className = "", inMenu = false }: { className?: string; inMenu?: boolean }) {
+  const sv = useT();
   const [theme, setTheme] = useTheme();
   const options: Array<{ value: Theme; Icon: typeof Sun }> = [
     { value: "system", Icon: Monitor },

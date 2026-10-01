@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { ImportPanel } from "@/components/admin/ImportPanel";
 import { Download } from "lucide-react";
 import { buttonClass } from "@/components/ui/Button";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.admin.importTitle };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.importTitle };
+}
 
 export default async function ImportPage({ params }: { params: Promise<{ id: string }> }) {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   if (!data) notFound();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { ActionResult } from "@/lib/admin/action-helpers";
 import type { ReviewCard } from "@/lib/admin/review";
 import type { ReviewSnapshot } from "@/lib/admin/review-actions";
@@ -19,6 +19,7 @@ export function patchList(list: ReviewCard[], id: string, fn: (c: ReviewCard) =>
  * och restoreLocal som återställer kortens granskningsläge lokalt.
  */
 export function useOptimisticDecisions(serverCards: ReviewCard[], serverNow: number, setStatus: Dispatch<SetStateAction<ReviewStatus | null>>) {
+  const sv = useT();
   const [cards, setCards] = useState(serverCards);
   const [now, setNow] = useState(serverNow);
   const inFlight = useRef(new Map<string, number>());

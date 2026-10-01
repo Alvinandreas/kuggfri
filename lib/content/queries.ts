@@ -4,6 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { CardRow, CategoryRow, Database, DeckRow } from "@/lib/supabase/database.types";
+import { getLang } from "@/lib/i18n/server";
+import { localizeCard, localizeCategory, localizeDeckRow } from "./localize";
 
 /**
  * Publikt innehåll (publicerade deck, kategorier, aktiva kort) cachas på servern i fem minuter
@@ -28,7 +30,7 @@ export type DeckWithContent = {
 };
 
 /** Publicerade deck med antal aktiva kort. Cachat; RLS ser till att opublicerade aldrig läcker. */
-export const getPublishedDecks = unstable_cache(
+const getPublishedDecksCached = unstable_cache(
   async (): Promise<DeckSummary[]> => {
     const supabase = publicClient();
     const [{ data: decks, error }, { data: counts }] = await Promise.all([
@@ -42,6 +44,12 @@ export const getPublishedDecks = unstable_cache(
   ["published-decks"],
   { tags: [CONTENT_TAG], revalidate: CONTENT_TTL_SECONDS },
 );
+
+/** Publicerade deck, med beskrivningen på engelska för den som slagit på English. */
+export async function getPublishedDecks(): Promise<DeckSummary[]> {
+  const [decks, lang] = await Promise.all([getPublishedDecksCached(), getLang()]);
+  return decks.map((d) => localizeDeckRow(d, lang));
+}
 
 type DeckClient = ReturnType<typeof publicClient> | Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
@@ -74,10 +82,21 @@ const getPublishedDeckBySlug = unstable_cache(async (slug: string) => loadDeckBy
  * Null om det inte finns eller inte får visas.
  */
 export async function getDeckBySlug(slug: string): Promise<DeckWithContent | null> {
-  const published = await getPublishedDeckBySlug(slug);
-  if (published) return published;
+  const [published, lang] = await Promise.all([getPublishedDeckBySlug(slug), getLang()]);
+  if (published) return localize(published, lang);
   const supabase = await createSupabaseServerClient();
-  return loadDeckBySlug(supabase, slug);
+  const data = await loadDeckBySlug(supabase, slug);
+  return data ? localize(data, lang) : null;
+}
+
+/** Innehållet på engelska för den som slagit på English (lib/content/localize.ts). */
+function localize(data: DeckWithContent, lang: Awaited<ReturnType<typeof getLang>>): DeckWithContent {
+  if (lang === "sv") return data;
+  return {
+    deck: localizeDeckRow(data.deck, lang),
+    categories: data.categories.map((c) => localizeCategory(c, lang)),
+    cards: data.cards.map((c) => localizeCard(c, lang)),
+  };
 }
 
 /**

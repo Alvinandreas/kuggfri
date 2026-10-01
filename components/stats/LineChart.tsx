@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, type PointerEvent } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { niceTicks } from "@/components/stats/BarChart";
 import { useSvgTextScale } from "./useSvgTextScale";
 
@@ -47,6 +47,7 @@ const PAD = { top: 12, right: 10, bottom: 26, left: 30 };
  * en tabellvy för skärmläsare.
  */
 export function LineChart({ labels, series, title, help, formatValue, area = false, hideTitle = false }: Props) {
+  const sv = useT();
   const [hover, setHover] = useState<number | null>(null);
   const titleId = useId();
   const [svgRef, k] = useSvgTextScale(W);

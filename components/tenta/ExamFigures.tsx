@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Maximize2, X, ZoomIn, ZoomOut } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
 
@@ -13,6 +13,7 @@ const TALL_RATIO = 1.5;
 type Size = keyof typeof HEIGHT;
 
 function Thumb({ src, alt, size, onOpen, label }: { src: string; alt: string; size: Size; onOpen: () => void; label: string }) {
+  const sv = useT();
   const [tall, setTall] = useState(false);
   const measure = useCallback((img: HTMLImageElement | null) => {
     if (img && img.complete && img.naturalWidth > 0) setTall(img.naturalHeight / img.naturalWidth > TALL_RATIO);
@@ -51,6 +52,7 @@ function Thumb({ src, alt, size, onOpen, label }: { src: string; alt: string; si
 
 /** Förstorad figur: hela skärmen, rullbar, zoom, bläddring mellan uppgiftens figurer. Esc stänger. */
 function Lightbox({ images, index, onIndex, onClose }: { images: string[]; index: number; onIndex: (i: number) => void; onClose: () => void }) {
+  const sv = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const [zoom, setZoom] = useState(false);
 
@@ -131,6 +133,7 @@ function Lightbox({ images, index, onIndex, onClose }: { images: string[]; index
  * (klick): höga tabeller visas beskurna med "Visa hela" och går att rulla och zooma i förstoringen.
  */
 export function ExamFigures({ images, size, className = "" }: { images: string[]; size: Size; className?: string }) {
+  const sv = useT();
   const [open, setOpen] = useState<number | null>(null);
   if (images.length === 0) return null;
   const many = images.length > 1;

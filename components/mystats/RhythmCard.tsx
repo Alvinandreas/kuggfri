@@ -1,5 +1,5 @@
 import { Moon, Sparkles, Sun, Sunrise, Sunset, type LucideIcon } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { favouriteIndex, favouriteTimeOfDay, TIMES_OF_DAY, type MyStats, type TimeOfDay } from "@/lib/stats/my-stats";
 import { percent } from "@/lib/text/percent";
 import { BarChart } from "@/components/stats/BarChart";
@@ -13,6 +13,7 @@ const ICONS: Record<TimeOfDay, LucideIcon> = { morning: Sunrise, day: Sun, eveni
  * för tiden på dygnet, där den vanligaste blir studentens "pluggtyp".
  */
 export function RhythmCard({ stats, index }: { stats: MyStats; index: number }) {
+  const sv = useT();
   const favDay = favouriteIndex(stats.weekdayCounts);
   const favTime = favouriteTimeOfDay(stats.timeOfDay);
   const points = stats.weekdayCounts.map((n, i) => ({

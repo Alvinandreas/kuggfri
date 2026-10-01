@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { setExamModeOpenAction } from "@/lib/tentor/actions";
 import { Card } from "@/components/ui/Card";
 import { FormMessage } from "@/components/ui/FormMessage";
@@ -10,6 +10,7 @@ import { ToggleRow } from "@/components/ui/Toggle";
 
 /** Reglaget i kursens inställningar: tentaläget öppet eller låst för studenterna. */
 export function ExamModeToggle({ deckId, open: initial }: { deckId: string; open: boolean }) {
+  const sv = useT();
   const router = useRouter();
   const [open, setOpen] = useState(initial);
   const [pending, startTransition] = useTransition();

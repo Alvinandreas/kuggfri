@@ -1,7 +1,7 @@
 "use client";
 
 import { Flag, Info, Volume2, VolumeX } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { useSoundEnabled } from "@/lib/ui/sound";
 import { IconButton } from "@/components/ui/Button";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -14,6 +14,7 @@ const TOUCH = "max-sm:h-11 max-sm:w-11";
  * knapp har en etikett som visas vid hovring och fokus.
  */
 export function SessionToolbar({ onInfo, onReport, canReport }: { onInfo: () => void; onReport: () => void; canReport: boolean }) {
+  const sv = useT();
   const [soundOn, setSoundOn] = useSoundEnabled();
   return (
     <div role="toolbar" aria-label={sv.session.toolbar} className="flex items-center justify-center gap-2">

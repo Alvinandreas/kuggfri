@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Flag, Lock, PenLine, Save } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { GradeLimit, QuestionKind } from "@/lib/tentor/model";
 import { startExamAttemptAction } from "@/lib/tentor/actions";
 import { deadlineMs, formatClock, formatDuration, formatPoints, kindSummary, timeLeftMs } from "@/lib/tentor/session";
@@ -59,6 +59,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 /** Tentans försättsblad: allt man får veta innan man vänder på pappret, och Starta tentan. */
 export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNow, preview, back, attemptSuffix, studentViewDeck }: Props) {
+  const sv = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -112,14 +113,14 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
         <div className="px-6 pb-7 pt-3 sm:px-9">
           <dl>
             {date ? <Row label={sv.tenta.coverDate}>{date}</Row> : null}
-            <Row label={sv.tenta.coverDuration}>{formatDuration(exam.durationMinutes)}</Row>
-            <Row label={sv.tenta.coverMaxPoints}>{sv.tenta.pointsLong(formatPoints(exam.maxPoints))}</Row>
+            <Row label={sv.tenta.coverDuration}>{formatDuration(exam.durationMinutes, sv)}</Row>
+            <Row label={sv.tenta.coverMaxPoints}>{sv.tenta.pointsLong(formatPoints(exam.maxPoints, sv.meta.locale))}</Row>
             {exam.grades.length > 0 ? (
               <Row label={sv.tenta.coverGrades}>
                 <span className="flex flex-wrap gap-x-4 gap-y-1">
                   {exam.grades.map((g) => (
                     <span key={g.grade} className="tabular-nums">
-                      {sv.tenta.gradeLimit(g.grade, formatPoints(g.min))}
+                      {sv.tenta.gradeLimit(g.grade, formatPoints(g.min, sv.meta.locale))}
                     </span>
                   ))}
                 </span>
@@ -128,7 +129,7 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
             <Row label={sv.tenta.coverAids}>{exam.aids ?? sv.tenta.noAids}</Row>
             <Row label={sv.tenta.coverQuestions}>
               {sv.tenta.questionCount(exam.questionCount)}
-              <span className="mt-0.5 block text-sm font-normal text-muted">{kindSummary(exam.kinds)}</span>
+              <span className="mt-0.5 block text-sm font-normal text-muted">{kindSummary(exam.kinds, sv)}</span>
             </Row>
             {exam.instructions ? <Row label={sv.tenta.coverInstructions}>{exam.instructions}</Row> : null}
           </dl>
@@ -202,7 +203,7 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
                     {sv.tenta.attemptRow(a.when)}
                   </span>
                   <span className="inline-flex items-center gap-3 text-sm">
-                    <span className="font-semibold tabular-nums">{sv.tenta.resultShort(formatPoints(a.points), formatPoints(exam.maxPoints), a.grade)}</span>
+                    <span className="font-semibold tabular-nums">{sv.tenta.resultShort(formatPoints(a.points, sv.meta.locale), formatPoints(exam.maxPoints, sv.meta.locale), a.grade)}</span>
                     <span className="font-semibold text-accent-ink">{sv.tenta.showResult}</span>
                   </span>
                 </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import {
   MODE_SETTINGS,
   ORDER_CHOICES,
@@ -15,19 +15,6 @@ import {
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { ToggleRow } from "@/components/ui/Toggle";
 import { cx } from "@/components/ui/cx";
-
-const ORDER_LABEL: Record<SessionOrder, string> = {
-  standard: sv.passSettings.orderStandard,
-  kurs: sv.passSettings.orderCourse,
-  slump: sv.passSettings.orderRandom,
-  omrade: sv.passSettings.byArea,
-};
-
-const KIND_LABEL: Record<KindFilter, string> = {
-  alla: sv.passSettings.kindsAll,
-  vand: sv.passSettings.kindsFlip,
-  flerval: sv.passSettings.kindsQuiz,
-};
 
 function Segment({ title, help, testId, children }: { title: string; help?: string; testId: string; children: ReactNode }) {
   return (
@@ -64,6 +51,18 @@ export function SessionSettingsFields({
   kindsOffered?: boolean;
   className?: string;
 }) {
+  const sv = useT();
+  const ORDER_LABEL: Record<SessionOrder, string> = {
+    standard: sv.passSettings.orderStandard,
+    kurs: sv.passSettings.orderCourse,
+    slump: sv.passSettings.orderRandom,
+    omrade: sv.passSettings.byArea,
+  };
+  const KIND_LABEL: Record<KindFilter, string> = {
+    alla: sv.passSettings.kindsAll,
+    vand: sv.passSettings.kindsFlip,
+    flerval: sv.passSettings.kindsQuiz,
+  };
   const keys = MODE_SETTINGS[mode];
   const set = (patch: Partial<SessionSettings>) => onChange({ ...value, ...patch });
   const t = sv.passSettings;

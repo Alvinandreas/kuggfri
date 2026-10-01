@@ -1,5 +1,5 @@
 import { CalendarCheck, Eye, Flame, Footprints, Mountain, Rocket, TrendingUp, Zap, type LucideIcon } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { Milestone, MilestoneKey } from "@/lib/stats/my-stats";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -19,6 +19,7 @@ const ICONS: Record<MilestoneKey, LucideIcon> = {
 
 /** Milstolpar som märken: upplåsta i grönt, låsta dämpade med hur långt det är kvar. */
 export function MilestonesCard({ milestones, index }: { milestones: Milestone[]; index: number }) {
+  const sv = useT();
   const unlocked = milestones.filter((m) => m.unlocked).length;
   return (
     <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: index }} data-testid="mystats-milestones">

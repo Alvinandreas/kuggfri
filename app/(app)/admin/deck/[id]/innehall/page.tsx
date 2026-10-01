@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getLang, getT } from "@/lib/i18n/server";
+import { areaName } from "@/lib/admin/display";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { contentMatrix } from "@/lib/admin/review";
 import { CategoryOverview, type CategoryCounts } from "@/components/admin/CategoryOverview";
@@ -12,6 +13,7 @@ import { routes } from "@/lib/routes";
 type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   return { title: data ? `${sv.admin.tabContent}: ${data.deck.title}` : sv.admin.tabContent };
@@ -19,6 +21,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 /** Innehållet: översikten område × uppgiftstyp, sedan områdena i deckets ordning med antal kort. */
 export default async function AdminContentPage({ params }: { params: Params }) {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
@@ -36,7 +39,11 @@ export default async function AdminContentPage({ params }: { params: Params }) {
       if (!card.is_active) bucket.inactive++;
     }
   }
-  const matrix = contentMatrix(cards, categories);
+  const lang = await getLang();
+  const matrix = contentMatrix(
+    cards,
+    categories.map((c) => ({ id: c.id, title: areaName(c, lang) })),
+  );
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">

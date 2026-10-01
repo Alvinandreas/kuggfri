@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { forbidden } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getAdminContext } from "@/lib/admin/access";
 import { DeckForm } from "@/components/admin/DeckForm";
 
-export const metadata: Metadata = { title: sv.admin.newDeck };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.newDeck };
+}
 
 /** Bara global admin kan skapa deck; en examinator får 403. */
 export default async function NewDeckPage() {
+  const sv = await getT();
   const ctx = await getAdminContext();
   if (!ctx?.isAdmin) forbidden();
   return (

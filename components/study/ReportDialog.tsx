@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { reportCardAction } from "@/lib/study/report-actions";
 import { Button } from "@/components/ui/Button";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
@@ -21,6 +21,7 @@ type Props = {
  * i studieläget är avstängda medan en dialog är öppen.
  */
 export function ReportDialog({ open, cardId, onClose }: Props) {
+  const sv = useT();
   const formId = useId();
   const doneRef = useRef<HTMLParagraphElement>(null);
   const [message, setMessage] = useState("");

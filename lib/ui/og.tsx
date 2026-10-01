@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
 
 /**
  * Delningsbilden som visas när någon klistrar in en Kuggfri-länk i en gruppchatt.
@@ -18,7 +18,7 @@ const MUTED = "#676259";
 const LINE = "#dedbd3";
 const ACCENT = "#1f7a4d";
 
-export function ogCard(input: { title: string; subtitle: string; badge?: string | null; footer?: string | null }): ReactElement {
+export function ogCard(input: { title: string; subtitle: string; badge?: string | null; footer?: string | null }, sv: Dict): ReactElement {
   return (
     <div
       style={{

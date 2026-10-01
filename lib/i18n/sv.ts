@@ -3,7 +3,7 @@
  * Texterna ligger per område i lib/i18n/sv/*.ts; här sätts de ihop till ett objekt i samma
  * ordning som förut, så att alla importerar { sv } härifrån.
  */
-import { app, common, errors, footer, nav, shell, theme, time } from "./sv/app";
+import { app, common, errors, footer, meta, nav, shell, sourceTags, theme, time } from "./sv/app";
 import { dashboard, home, invite, landing } from "./sv/home";
 import { help } from "./sv/help";
 import { about, privacy } from "./sv/info";
@@ -16,6 +16,8 @@ import { granskning } from "./sv/granskning";
 import { tenta } from "./sv/tenta";
 
 export const sv = {
+  meta,
+  sourceTags,
   app,
   nav,
   shell,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { BookOpen } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { AuthPanel } from "@/components/auth/AuthForms";
@@ -12,6 +12,7 @@ type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
+  const sv = await getT();
   const data = await getDeckBySlug(slug);
   if (!data) return { title: sv.landing.title };
   const description = data.deck.description ?? sv.deck.totalCards(data.cards.length);
@@ -31,6 +32,7 @@ export default async function CourseInvitePage({ params }: { params: Params }) {
   const data = await getDeckBySlug(slug);
   if (!data) notFound();
   const { deck, cards } = data;
+  const sv = await getT();
 
   return (
     <div className="grid items-center gap-10 py-4 lg:grow lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">

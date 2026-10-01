@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { forbidden, redirect } from "next/navigation";
 import { Plus, ShieldCheck } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { getAdminContext } from "@/lib/admin/access";
 import { routes } from "@/lib/routes";
@@ -16,6 +16,7 @@ const navLink =
  * utloggade skickas till inloggningen.
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const sv = await getT();
   const [user, ctx] = await Promise.all([getCurrentUser(), getAdminContext()]);
   if (!user) redirect(routes.login({ next: routes.admin.home() }));
   if (!ctx) forbidden();

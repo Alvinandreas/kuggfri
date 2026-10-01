@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
 import { tagBgClass } from "@/lib/ui/tag-colors";
 import { cx } from "@/components/ui/cx";
 import { routes } from "@/lib/routes";
@@ -16,6 +16,7 @@ export function AreaLink({
   colorIndex,
   size = "sm",
   className,
+  sv,
 }: {
   deckId: string;
   areaId: string;
@@ -23,6 +24,8 @@ export function AreaLink({
   colorIndex: number;
   size?: "sm" | "md";
   className?: string;
+  /** Ordlistan i det valda språket (komponenten används både från servern och klienten). */
+  sv: Dict;
 }) {
   return (
     <Link

@@ -12,8 +12,8 @@ import {
   Presentation,
   type LucideIcon,
 } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
-import { SOURCE_TAG_LABEL, cardSources, sourceTags, type SourceTag } from "@/lib/admin/sources";
+import type { Dict } from "@/lib/i18n";
+import { cardSources, sourceTags, type SourceTag } from "@/lib/admin/sources";
 import { cx } from "@/components/ui/cx";
 
 export const SOURCE_TAG_ICON: Record<SourceTag, LucideIcon> = {
@@ -34,10 +34,13 @@ export const SOURCE_TAG_ICON: Record<SourceTag, LucideIcon> = {
  * Källtypen som en liten kantad pill med ikon ("Föreläsning", "Quiz"). Kantad, så att den skiljer
  * sig från uppgiftstypens grå pill. Färgen följer texten runt omkring (fungerar på markerade rader).
  */
-/** Källtypernas namn och hjälptexter på ett annat språk (granskningen på engelska). */
+/**
+ * Källtypernas namn och hjälptexter på ett annat språk (granskningen på engelska). Utan labels
+ * används ordlistan (sv) från anroparen: getT() på servern, useT() i klienten.
+ */
 export type SourceLabels = { tags: Record<SourceTag, string>; originalHelp: string; sourceOriginalHelp: string; sourceNoneHelp: string };
 
-export function SourceBadge({ tag, className, labels }: { tag: SourceTag; className?: string; labels?: SourceLabels }) {
+export function SourceBadge({ tag, className, labels, sv }: { tag: SourceTag; className?: string; labels?: SourceLabels; sv: Dict }) {
   const Icon = SOURCE_TAG_ICON[tag];
   return (
     <span
@@ -51,7 +54,7 @@ export function SourceBadge({ tag, className, labels }: { tag: SourceTag; classN
       data-source-tag={tag}
     >
       <Icon size={12} aria-hidden className="shrink-0" />
-      {(labels?.tags ?? SOURCE_TAG_LABEL)[tag]}
+      {(labels?.tags ?? sv.sourceTags)[tag]}
     </span>
   );
 }
@@ -63,12 +66,14 @@ export function SourceBadges({
   max = 3,
   className,
   labels,
+  sv,
 }: {
   source: string | null;
   original?: boolean;
   max?: number;
   className?: string;
   labels?: SourceLabels;
+  sv: Dict;
 }) {
   const tags = sourceTags({ source, original });
   const shown = tags.slice(0, max);
@@ -76,10 +81,10 @@ export function SourceBadges({
   return (
     <span className={cx("inline-flex min-w-0 flex-wrap items-center gap-1", className)}>
       {shown.map((t) => (
-        <SourceBadge key={t} tag={t} labels={labels} />
+        <SourceBadge key={t} tag={t} labels={labels} sv={sv} />
       ))}
       {rest > 0 ? (
-        <span className="text-xs font-semibold text-muted" title={tags.slice(max).map((t) => (labels?.tags ?? SOURCE_TAG_LABEL)[t]).join(", ")}>
+        <span className="text-xs font-semibold text-muted" title={tags.slice(max).map((t) => (labels?.tags ?? sv.sourceTags)[t]).join(", ")}>
           +{rest}
         </span>
       ) : null}
@@ -92,13 +97,13 @@ export function SourceBadges({
  * ("Kapitel_08 Seghet och Brott" och under det "s. 7, 13, 14"). En eventuell motivering till en
  * rättelse visas inte (Alvins beslut 30 sep: examinatorerna har inte sett korten förut).
  */
-export function SourceList({ source, original, className, labels }: { source: string | null; original?: boolean; className?: string; labels?: SourceLabels }) {
+export function SourceList({ source, original, className, labels, sv }: { source: string | null; original?: boolean; className?: string; labels?: SourceLabels; sv: Dict }) {
   const { groups, missing } = cardSources({ source, original });
   return (
     <div className={cx("grid gap-3", className)} data-testid="source-list">
       {missing ? (
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
-          <SourceBadge tag={missing} labels={labels} />
+          <SourceBadge tag={missing} labels={labels} sv={sv} />
           <span>{missing === "original" ? (labels?.sourceOriginalHelp ?? sv.admin.sourceOriginalHelp) : (labels?.sourceNoneHelp ?? sv.admin.sourceNoneHelp)}</span>
         </div>
       ) : (
@@ -106,7 +111,7 @@ export function SourceList({ source, original, className, labels }: { source: st
           {groups.map((g) => (
             <li key={`${g.kind}-${g.document}`} className="grid grid-cols-[7.5rem_minmax(0,1fr)] items-start gap-3 max-sm:grid-cols-1 max-sm:gap-1">
               <span className="pt-px">
-                <SourceBadge tag={g.kind} labels={labels} />
+                <SourceBadge tag={g.kind} labels={labels} sv={sv} />
               </span>
               <span className="grid min-w-0 break-words leading-6">
                 <span className="font-medium text-fg">{g.document}</span>

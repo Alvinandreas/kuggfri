@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ChevronLeft, ChevronRight, Cloud, CloudOff, Eye, EyeOff, Flag, Send, Timer } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { Answer, Answers, StudentExam } from "@/lib/tentor/model";
 import { saveExamAnswersAction, submitExamAction } from "@/lib/tentor/actions";
 import {
@@ -54,6 +54,7 @@ const SAVE_DELAY_MS = 3000;
  * sparas direkt i webbläsaren och några sekunder senare på servern. Inget facit här.
  */
 export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswers, preview, exitHref, studentViewDeck }: Props) {
+  const sv = useT();
   const router = useRouter();
   const questions = exam.questions;
   const deadline = useMemo(() => deadlineMs(startedAt, exam.durationMinutes), [startedAt, exam.durationMinutes]);
@@ -185,7 +186,7 @@ export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswe
     submitted.current = false;
     setSubmitting(false);
     setSubmitError(res?.error ?? sv.errors.generic);
-  }, [attemptId, router]);
+  }, [attemptId, router, sv]);
 
   const left = now === null ? null : timeLeftMs(deadline, now);
 
@@ -299,7 +300,7 @@ export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswe
                   {sv.tenta.flaggedNote}
                 </span>
               ) : null}
-              <span className="font-semibold text-muted">{sv.tenta.totalPoints(formatPoints(q.points))}</span>
+              <span className="font-semibold text-muted">{sv.tenta.totalPoints(formatPoints(q.points, sv.meta.locale))}</span>
             </div>
           </div>
           <div className="px-5 py-6 sm:px-8">
@@ -426,6 +427,7 @@ export function ExamRunner({ exam, attemptId, startedAt, serverNow, initialAnswe
 }
 
 function JumpList({ ids, onJump }: { ids: string[]; onJump: (id: string) => void }) {
+  const sv = useT();
   return (
     <div className="mt-2 flex flex-wrap gap-1.5">
       {ids.map((id) => (

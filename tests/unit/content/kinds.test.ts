@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseCardFile, serializeCardFile } from "@/lib/content/markdown";
+import { sv } from "@/lib/i18n/sv";
 import { CARD_KINDS, autoRating, cardKindInstruction, isCorrectAnswer, trueFalseAnswer, validateKind } from "@/lib/cards/kinds";
 
 const FIL = `# Kristallstruktur
@@ -116,12 +117,12 @@ describe("rättning och skattning", () => {
   });
 
   it("ger varje uppgiftstyp en instruktion på kortet, och flera rätta alternativ en egen", () => {
-    for (const kind of CARD_KINDS) expect(cardKindInstruction(kind).trim()).not.toBe("");
-    expect(cardKindInstruction("sjalvskattning")).toBe("Självskattning");
-    expect(cardKindInstruction("begrepp")).toBe("Förklara begreppet");
+    for (const kind of CARD_KINDS) expect(cardKindInstruction(sv, kind).trim()).not.toBe("");
+    expect(cardKindInstruction(sv, "sjalvskattning")).toBe("Självskattning");
+    expect(cardKindInstruction(sv, "begrepp")).toBe("Förklara begreppet");
     const ett = [{ text: "FCC", correct: true }, { text: "BCC", correct: false }];
     const tva = [{ text: "FCC", correct: true }, { text: "HCP", correct: true }];
-    expect(cardKindInstruction("alternativ", ett)).toBe("Välj rätt alternativ");
-    expect(cardKindInstruction("alternativ", tva)).toBe("Välj alla rätta alternativ");
+    expect(cardKindInstruction(sv, "alternativ", ett)).toBe("Välj rätt alternativ");
+    expect(cardKindInstruction(sv, "alternativ", tva)).toBe("Välj alla rätta alternativ");
   });
 });

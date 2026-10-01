@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { formatDecimal } from "@/lib/format/number";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CircleCheckBig, Flame, GraduationCap, Target } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { courseConfig } from "@/lib/courses";
 import { estimateKnowledge } from "@/lib/fsrs/scheduler";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
@@ -70,6 +71,7 @@ function examStart(date: string | null, slug: string): Date | null {
  * klienten med samma moduler som decksidan, så siffrorna är alltid desamma på båda ställena.
  */
 export function HomeDashboard({ userId, firstName, decks }: Props) {
+  const sv = useT();
   const store = useProgressStore(userId);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [hour, setHour] = useState<number | null>(null);
@@ -230,7 +232,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
                   <p className="mt-1 text-sm text-muted">{[v.deck.course_code, sv.home.cards(v.deck.cards.length)].filter(Boolean).join(", ")}</p>
                   <div className="mt-5 flex items-center gap-3">
                     <ProgressBar value={v.knowledge} label={`${sv.dashboard.knowledge}: ${v.deck.title}`} />
-                    <span className="text-sm font-semibold tabular-nums">{Math.round(v.knowledge * 100)} %</span>
+                    <span className="text-sm font-semibold tabular-nums">{sv.meta.pct(Math.round(v.knowledge * 100))}</span>
                   </div>
                 </CardLink>
               </li>
@@ -244,6 +246,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
 
 /** Kursen i överblick: inlärd kunskap och fyra nyckeltal på en rad. */
 function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
+  const sv = useT();
   const { deck, exam, knowledge, stats } = view;
   const examFuture = exam !== null && exam.getTime() > Date.now();
   return (
@@ -273,7 +276,7 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
           ) : (
             <p className="text-6xl font-extrabold leading-none tracking-tight" data-testid="home-knowledge">
               {Math.round(knowledge * 100)}
-              <span className="text-3xl text-muted"> %</span>
+              <span className="text-3xl text-muted">{sv.meta.pctSuffix}</span>
             </p>
           )}
           <p className="mt-2 font-bold">{sv.dashboard.knowledge}</p>
@@ -294,7 +297,7 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
         </div>
       ) : (
         <dl className="mt-auto grid grid-cols-2 gap-3 pt-6 sm:grid-cols-4">
-          <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={`${percent(stats.learned, stats.totalCards)} % av ${stats.totalCards}`} tone="green" />
+          <StatTile label={sv.stats.learned} help={sv.stats.learnedHelp} value={`${stats.learned}`} sub={sv.stats.ofTotal(percent(stats.learned, stats.totalCards), stats.totalCards)} tone="green" />
           <StatTile
             label={sv.stats.streak}
             help={sv.stats.streakHelp}
@@ -310,7 +313,7 @@ function CourseCard({ view, loading }: { view: DeckView; loading: boolean }) {
           />
           <StatTile
             label={sv.dashboard.avg7}
-            value={stats.avg7 === null ? "–" : stats.avg7.toFixed(1).replace(".", ",")}
+            value={stats.avg7 === null ? "–" : formatDecimal(stats.avg7, 1, sv.meta.locale)}
             sub={stats.avg7 === null ? sv.dashboard.avg7None : sv.dashboard.avg7Sub}
             tone="violet"
           />
@@ -337,6 +340,7 @@ function KnowledgeCard({
   onHover: (i: number | null) => void;
   onSelect: (i: number) => void;
 }) {
+  const sv = useT();
   if (view.axes.length < 3) return null;
   return (
     <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 3 }} data-testid="home-radar">
@@ -365,6 +369,7 @@ function TodayCard({
   onQuick: (which: "tricky" | "dugga") => void;
   className?: string;
 }) {
+  const sv = useT();
   const { plan, stats, trickyPlan } = view;
   const done = !loading && plan.nothingDue;
   return (
@@ -399,7 +404,7 @@ function TodayCard({
         <>
           <p className="mt-2 text-4xl font-extrabold tracking-tight tabular-nums">{sv.stats.cards(plan.sessionCards)}</p>
           <p className="mt-1 text-sm text-muted" data-testid="home-today-plan">
-            {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)}, cirka {estimateMinutes(plan.sessionCards)} min
+            {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)}, {sv.quick.aboutMinutes(estimateMinutes(plan.sessionCards))}
           </p>
           {/* Till kurssidan, där läge och områden väljs; dagens pass är förvalt där. */}
           <LinkButton href={routes.deck(view.deck.slug)} size="lg" className="mt-5 w-full" data-testid="home-start">
@@ -415,7 +420,7 @@ function TodayCard({
               onClick={() => onQuick("tricky")}
               icon={Target}
               title={sv.deck.modeTricky}
-              meta={`${sv.stats.cards(trickyPlan.selectionCount)}, cirka ${estimateMinutes(trickyPlan.selectionCount)} min`}
+              meta={`${sv.stats.cards(trickyPlan.selectionCount)}, ${sv.quick.aboutMinutes(estimateMinutes(trickyPlan.selectionCount))}`}
               data-testid="home-tricky"
             />
           ) : null}

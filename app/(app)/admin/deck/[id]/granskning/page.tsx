@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { forbidden, notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { getHistoryMeta, type HistoryMeta } from "@/lib/admin/history-queries";
@@ -12,6 +12,7 @@ import { ReviewInbox } from "@/components/admin/ReviewInbox";
 type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   return { title: data ? `${sv.granskning.title}: ${data.deck.title}` : sv.granskning.title };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ChevronRight, FlagTriangleRight } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getCardForAdmin, getDeckForAdmin } from "@/lib/admin/queries";
 import { getCardHistory } from "@/lib/admin/history-queries";
 import { CardEditPanel } from "@/components/admin/CardEditPanel";
@@ -12,9 +12,13 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.admin.editCard };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.editCard };
+}
 
 export default async function EditCardPage({ params }: { params: Promise<{ id: string; cardId: string }> }) {
+  const sv = await getT();
   const { id, cardId } = await params;
   const [data, card] = await Promise.all([getDeckForAdmin(id), getCardForAdmin(cardId)]);
   if (!data || !card || card.deck_id !== data.deck.id) notFound();
@@ -42,7 +46,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
             {sv.admin.editCard}
             {index >= 0 ? <span className="ml-2 text-base font-medium tracking-normal text-muted">{sv.admin.cardPosition(index + 1, siblings.length)}</span> : null}
           </h2>
-          {card.original ? <OriginalBadge /> : null}
+          {card.original ? <OriginalBadge sv={sv} /> : null}
         </div>
         <div className="flex gap-2">
           {prev ? (
@@ -74,7 +78,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
       ) : null}
       <Card padding="md" data-testid="card-sources">
         <CardHeader title={sv.admin.sourcesTitle} as="h3" spacing="sm" />
-        <SourceList source={card.source} original={card.original} />
+        <SourceList source={card.source} original={card.original} sv={sv} />
       </Card>
       <CardEditPanel
         deckId={data.deck.id}

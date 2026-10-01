@@ -177,14 +177,14 @@ describe("validering", () => {
   });
 
   it("requiredIssues ger Obligatoriskt en gång om något fält är tomt eller bara blanksteg", () => {
-    expect(requiredIssues("a", "b")).toEqual([]);
-    expect(requiredIssues("  ")).toEqual([sv.common.required]);
-    expect(requiredIssues("", "")).toEqual([sv.common.required]);
-    expect(requiredIssues()).toEqual([]);
+    expect(requiredIssues(sv, "a", "b")).toEqual([]);
+    expect(requiredIssues(sv, "  ")).toEqual([sv.common.required]);
+    expect(requiredIssues(sv, "", "")).toEqual([sv.common.required]);
+    expect(requiredIssues(sv)).toEqual([]);
   });
 
   it("fixErrorsMessage sätter felen efter uppmaningen", () => {
-    expect(fixErrorsMessage(["A.", "B."])).toBe(`${sv.admin.fixErrors} A. B.`);
+    expect(fixErrorsMessage(sv, ["A.", "B."])).toBe(`${sv.admin.fixErrors} A. B.`);
   });
 });
 

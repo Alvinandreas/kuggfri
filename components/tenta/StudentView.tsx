@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { setStudentViewAction } from "@/lib/tentor/actions";
 import type { StudentView } from "@/lib/tentor/queries";
 import { Button } from "@/components/ui/Button";
@@ -16,6 +16,7 @@ import { routes } from "@/lib/routes";
  * respekterar för redaktörer) och går till tentaläget.
  */
 export function StudentViewButton({ deckId, slug, variant = "outline", className }: { deckId: string; slug: string; variant?: "outline" | "secondary"; className?: string }) {
+  const sv = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +49,7 @@ export function StudentViewButton({ deckId, slug, variant = "outline", className
  * ut för studenterna när det är öppet och när det är låst; Avsluta går tillbaka till redaktörens vy.
  */
 export function StudentViewBar({ deckId, mode, className }: { deckId: string; mode: StudentView; className?: string }) {
+  const sv = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);

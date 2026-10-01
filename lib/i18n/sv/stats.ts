@@ -114,6 +114,7 @@ export const stats = {
   seriesLearned: "Inlärda",
   day: "Dag",
   cards: (n: number) => (n === 1 ? "1 kort" : `${n} kort`),
+  ofTotal: (pct: number, total: number) => `${pct} % av ${total}`,
 } as const;
 
 export const focus = {

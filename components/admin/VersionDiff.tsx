@@ -1,15 +1,16 @@
 import { Check } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { useT } from "@/lib/i18n/client";
 import { diffText, type DiffPart } from "@/lib/admin/diff";
 import { changedFields, diffOptions, versionStatus, type ContentField, type OptionDiffRow, type VersionContent } from "@/lib/admin/history";
-import { CARD_KIND_LABEL, isAutoGraded } from "@/lib/cards/kinds";
+import { isAutoGraded } from "@/lib/cards/kinds";
 import { cx } from "@/components/ui/cx";
 
 const delClass = "rounded-sm bg-danger-soft px-0.5 text-danger line-through decoration-danger/70";
 const insClass = "rounded-sm bg-accent-soft px-0.5 text-accent-ink no-underline";
 
 /** Ett fälts namn i skillnaden. Fram- och baksidan heter som i redigeraren för kortets typ. */
-export function fieldLabel(field: ContentField, content: Pick<VersionContent, "kind">): string {
+export function fieldLabel(field: ContentField, content: Pick<VersionContent, "kind">, sv: Dict): string {
   switch (field) {
     case "status":
       return sv.admin.diffStatus;
@@ -32,6 +33,7 @@ export function fieldLabel(field: ContentField, content: Pick<VersionContent, "k
 
 /** Texten med borttaget och tillagt markerat. side = bara ena sidan (för sida vid sida). */
 export function DiffText({ parts, side }: { parts: readonly DiffPart[]; side?: "before" | "after" }) {
+  const sv = useT();
   const shown = parts.filter((p) => (side === "before" ? p.type !== "add" : side === "after" ? p.type !== "del" : true));
   if (shown.every((p) => !p.text)) return <span className="text-muted">{sv.admin.diffEmpty}</span>;
   return (
@@ -56,13 +58,14 @@ export function DiffText({ parts, side }: { parts: readonly DiffPart[]; side?: "
 }
 
 /** Ett enkelt värde (status, typ, område) före och efter. */
-function valueOf(field: "status" | "kind" | "category_id", c: VersionContent, areaTitle: (id: string | null) => string): string {
+function valueOf(field: "status" | "kind" | "category_id", c: VersionContent, areaTitle: (id: string | null) => string, sv: Dict): string {
   if (field === "status") return sv.admin.historyStatus[versionStatus(c)];
-  if (field === "kind") return CARD_KIND_LABEL[c.kind];
+  if (field === "kind") return sv.cardKind.label[c.kind];
   return areaTitle(c.category_id);
 }
 
 function OptionMarker({ correct, changed }: { correct: boolean; changed: boolean }) {
+  const sv = useT();
   return (
     <span
       className={cx(
@@ -79,6 +82,7 @@ function OptionMarker({ correct, changed }: { correct: boolean; changed: boolean
 
 /** Alternativen, antingen alla rader (inline) eller bara ena sidans. */
 function OptionsDiff({ rows, side }: { rows: readonly OptionDiffRow[]; side?: "before" | "after" }) {
+  const sv = useT();
   const shown = rows.filter((r) => (side === "before" ? r.before !== null : side === "after" ? r.after !== null : true));
   if (shown.length === 0) return <span className="text-muted">{sv.admin.diffEmpty}</span>;
   return (
@@ -138,7 +142,9 @@ type Props = {
 };
 
 /** Skillnaden mellan två versioner av ett kort, fält för fält. */
-export function VersionDiff({ before, after, areaTitle, mode = "inline", labels, showUnchanged = false, emptyText = sv.admin.historySame, ...rest }: Props) {
+export function VersionDiff({ before, after, areaTitle, mode = "inline", labels, showUnchanged = false, emptyText: emptyTextProp, ...rest }: Props) {
+  const sv = useT();
+  const emptyText = emptyTextProp ?? sv.admin.historySame;
   const fields = changedFields(before, after);
   const unchanged = showUnchanged ? (["front", "back", "category_id", "kind"] as const).filter((f) => !fields.includes(f)) : [];
   if (fields.length === 0) return <p className="text-sm text-muted" data-testid={rest["data-testid"]}>{emptyText}</p>;
@@ -152,7 +158,7 @@ export function VersionDiff({ before, after, areaTitle, mode = "inline", labels,
         </div>
       ) : null}
       {fields.map((field) => {
-        const label = fieldLabel(field, field === "front" || field === "back" ? after : before);
+        const label = fieldLabel(field, field === "front" || field === "back" ? after : before, sv);
         const text = field === "front" || field === "back" || field === "hint" || field === "source";
         const parts = text ? diffText(before[field] ?? "", after[field] ?? "") : null;
         const rows = field === "options" ? diffOptions(before.options, after.options) : null;
@@ -165,9 +171,9 @@ export function VersionDiff({ before, after, areaTitle, mode = "inline", labels,
             <OptionsDiff rows={rows} side={s} />
           ) : simple ? (
             s === "before" ? (
-              <del className={delClass}>{valueOf(simple, before, areaTitle)}</del>
+              <del className={delClass}>{valueOf(simple, before, areaTitle, sv)}</del>
             ) : (
-              <ins className={insClass}>{valueOf(simple, after, areaTitle)}</ins>
+              <ins className={insClass}>{valueOf(simple, after, areaTitle, sv)}</ins>
             )
           ) : null;
 
@@ -200,7 +206,7 @@ export function VersionDiff({ before, after, areaTitle, mode = "inline", labels,
         );
       })}
       {unchanged.length > 0 ? (
-        <p className="text-xs text-muted">{sv.admin.correctionUnchanged(unchanged.map((f) => fieldLabel(f, after).toLowerCase()).join(", "))}</p>
+        <p className="text-xs text-muted">{sv.admin.correctionUnchanged(unchanged.map((f) => fieldLabel(f, after, sv).toLowerCase()).join(", "))}</p>
       ) : null}
     </div>
   );

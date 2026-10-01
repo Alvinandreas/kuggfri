@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getLang, getT } from "@/lib/i18n/server";
+import { areaName, cardFront } from "@/lib/admin/display";
 import { getDeckForAdmin, getDeckOverviewStats, getDeckReports } from "@/lib/admin/queries";
 import { CourseOverview } from "@/components/admin/CourseOverview";
 
 type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   return { title: data ? `${sv.admin.overviewTitle}: ${data.deck.title}` : sv.admin.overviewTitle };
@@ -16,9 +18,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function AdminDeckPage({ params }: { params: Params }) {
   const { id } = await params;
   // getDeckForAdmin är memoiserad från layouten; de tre anropen beror bara på id.
-  const [data, stats, reports] = await Promise.all([getDeckForAdmin(id), getDeckOverviewStats(id), getDeckReports(id)]);
+  const [data, rawStats, rawReports, lang] = await Promise.all([getDeckForAdmin(id), getDeckOverviewStats(id), getDeckReports(id), getLang()]);
   if (!data) notFound();
   const { deck, categories, cards } = data;
+  // Med reglaget English: frågorna i tabellerna på engelska (redigerarna visar alltid svenskan).
+  const front = new Map(cards.map((c) => [c.id, cardFront(c, lang)] as const));
+  const stats = { ...rawStats, cards: rawStats.cards.map((c) => ({ ...c, front: front.get(c.card_id) ?? c.front })) };
+  const reports = rawReports.map((r) => ({ ...r, card_front: front.get(r.card_id) ?? r.card_front }));
   const counts = new Map<string, number>();
   for (const c of cards) if (c.category_id && c.is_active) counts.set(c.category_id, (counts.get(c.category_id) ?? 0) + 1);
 
@@ -26,7 +32,7 @@ export default async function AdminDeckPage({ params }: { params: Params }) {
     <CourseOverview
       deckId={deck.id}
       stats={stats}
-      categories={categories.map((c) => ({ id: c.id, title: c.title, cardCount: counts.get(c.id) ?? 0 }))}
+      categories={categories.map((c) => ({ id: c.id, title: areaName(c, lang), cardCount: counts.get(c.id) ?? 0 }))}
       openReports={reports.filter((r) => r.status === "open")}
     />
   );

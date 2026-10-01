@@ -199,4 +199,22 @@ export const tenta = {
   penaltyBadge: (p: string) => `Avdrag ${p} p per fel svar`,
   ownLists: "Egen lista per led",
   missingSolution: "Ingen lösning",
+  questionKindLabel: {
+    flerval: "Flerval",
+    flera: "Flera rätta",
+    "sant-falskt": "Sant/Falskt",
+    para: "Para ihop",
+    numerisk: "Numeriskt svar",
+    text: "Skrivuppgift",
+  },
+  kindNoun: {
+    flerval: ["flervalsfråga", "flervalsfrågor"],
+    flera: ["fråga med flera svar", "frågor med flera svar"],
+    "sant-falskt": ["sant/falskt-fråga", "sant/falskt-frågor"],
+    para: ["para ihop-uppgift", "para ihop-uppgifter"],
+    numerisk: ["räkneuppgift med svar", "räkneuppgifter med svar"],
+    text: ["skrivuppgift", "skrivuppgifter"],
+  },
+  hours: (n: number) => (n === 1 ? "1 timme" : `${n} timmar`),
+  minutes: (n: number) => (n === 1 ? "1 minut" : `${n} minuter`),
 } as const;

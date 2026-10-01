@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowUpRight, BookOpen, Plus } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getAdminContext } from "@/lib/admin/access";
 import { getAllDecksForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
@@ -9,9 +9,13 @@ import { LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.admin.decks };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.decks };
+}
 
 export default async function AdminDeckListPage() {
+  const sv = await getT();
   const [decks, ctx] = await Promise.all([getAllDecksForAdmin(), getAdminContext()]);
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">

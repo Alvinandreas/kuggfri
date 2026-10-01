@@ -14,7 +14,7 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, v
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, GripVertical } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { cx } from "@/components/ui/cx";
 
 /**
@@ -117,6 +117,7 @@ function SortableRow({
   linkTestId?: string;
   children: ReactNode;
 }) {
+  const sv = useT();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition };
   return (

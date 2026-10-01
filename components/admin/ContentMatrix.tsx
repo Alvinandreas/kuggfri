@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { sv } from "@/lib/i18n/sv";
-import { CARD_KINDS, CARD_KIND_LABEL } from "@/lib/cards/kinds";
+import type { Dict } from "@/lib/i18n";
+import { getT } from "@/lib/i18n/server";
+import { CARD_KINDS } from "@/lib/cards/kinds";
 import type { ContentMatrix as Matrix, MatrixRow } from "@/lib/admin/review";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Card, CardHeader } from "@/components/ui/Card";
@@ -18,7 +19,8 @@ const stickyCell = "sticky left-0 z-10 bg-surface transition-colors duration-150
  * tabellen över de svåraste områdena i Översikt: områdena som färgade taggar som leder till
  * områdets sida. Tabellen scrollar i sidled inom blocket på smala skärmar.
  */
-export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matrix }) {
+export async function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matrix }) {
+  const sv = await getT();
   const reviewHref = (areaId: string | null) => routes.admin.review(deckId, { omrade: areaId ?? "ingen" });
   const areaName = (row: MatrixRow) => row.title ?? sv.admin.uncategorized;
   const colorIndex = categoryColorIndex(matrix.rows.flatMap((r) => (r.areaId ? [{ id: r.areaId }] : [])));
@@ -35,7 +37,7 @@ export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matr
               </th>
               {CARD_KINDS.map((k) => (
                 <th key={k} scope="col" className={cx(th, "px-3 text-right")}>
-                  {CARD_KIND_LABEL[k]}
+                  {sv.cardKind.label[k]}
                 </th>
               ))}
               <th scope="col" className={cx(th, "px-3 text-right")}>
@@ -51,7 +53,7 @@ export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matr
               <tr key={row.areaId ?? "ingen"} className="group transition-colors duration-150 hover:bg-surface-2">
                 <th scope="row" className={cx(stickyCell, "max-w-[18rem] py-2.5 pl-6 pr-4 text-left font-medium sm:pl-7")}>
                   {row.areaId ? (
-                    <AreaLink deckId={deckId} areaId={row.areaId} title={areaName(row)} colorIndex={colorIndex.get(row.areaId) ?? 0} />
+                    <AreaLink deckId={deckId} areaId={row.areaId} title={areaName(row)} colorIndex={colorIndex.get(row.areaId) ?? 0} sv={sv} />
                   ) : (
                     <Link href={routes.admin.category(deckId, "ingen")} className="inline-flex rounded-full bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted ring-fg/25 transition-shadow duration-150 hover:ring-2">
                       {areaName(row)}
@@ -63,7 +65,7 @@ export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matr
                 ))}
                 <Cell value={row.active} strong />
                 <td className="py-2.5 pl-3 pr-6 text-right sm:pr-7">
-                  <DraftCount n={row.drafts} href={reviewHref(row.areaId)} label={sv.admin.matrixDraftsLink(row.drafts, areaName(row))} />
+                  <DraftCount n={row.drafts} href={reviewHref(row.areaId)} label={sv.admin.matrixDraftsLink(row.drafts, areaName(row))} sv={sv} />
                 </td>
               </tr>
             ))}
@@ -80,7 +82,7 @@ export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matr
               ))}
               <td className="px-3 py-3 text-right">{matrix.total.active}</td>
               <td className="py-3 pl-3 pr-6 text-right sm:pr-7">
-                <DraftCount n={matrix.total.drafts} href={routes.admin.review(deckId)} label={sv.admin.draftCount(matrix.total.drafts)} />
+                <DraftCount n={matrix.total.drafts} href={routes.admin.review(deckId)} label={sv.admin.draftCount(matrix.total.drafts)} sv={sv} />
               </td>
             </tr>
           </tfoot>
@@ -95,7 +97,7 @@ function Cell({ value, strong = false }: { value: number; strong?: boolean }) {
 }
 
 /** Utkasten som en pill som leder till granskningen, filtrerad på området. */
-function DraftCount({ n, href, label }: { n: number; href: string; label: string }) {
+function DraftCount({ n, href, label, sv }: { n: number; href: string; label: string; sv: Dict }) {
   if (n === 0)
     return (
       <span className="text-subtle/70" aria-label={sv.admin.matrixNoDrafts}>

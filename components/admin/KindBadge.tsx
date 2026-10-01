@@ -1,6 +1,6 @@
 import { Award, CheckCheck, CircleHelp, ListChecks, MessageSquareText, ToggleLeft, type LucideIcon } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
-import { CARD_KIND_LABEL, type CardKind } from "@/lib/cards/kinds";
+import type { Dict } from "@/lib/i18n";
+import type { CardKind } from "@/lib/cards/kinds";
 import { Badge } from "@/components/ui/Badge";
 
 export const KIND_ICON: Record<CardKind, LucideIcon> = {
@@ -10,10 +10,15 @@ export const KIND_ICON: Record<CardKind, LucideIcon> = {
   alternativ: ListChecks,
 };
 
+/*
+ * Komponenterna här används både från servern och klienten, så ordlistan (sv) kommer från
+ * anroparen: getT() på servern, useT() i klienten.
+ */
+
 /** Uppgiftstypen som en liten pill med ikon. compact = bara ikonen (namnet som title). label = namnet på ett annat språk. */
-export function KindBadge({ kind, compact = false, label }: { kind: CardKind; compact?: boolean; label?: string }) {
+export function KindBadge({ kind, compact = false, label, sv }: { kind: CardKind; compact?: boolean; label?: string; sv: Dict }) {
   const Icon = KIND_ICON[kind];
-  const name = label ?? CARD_KIND_LABEL[kind];
+  const name = label ?? sv.cardKind.label[kind];
   if (compact) {
     return (
       <span title={name} className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-2 text-muted">
@@ -31,7 +36,7 @@ export function KindBadge({ kind, compact = false, label }: { kind: CardKind; co
 }
 
 /** Utkast, ur rotation eller ogranskat. Granskade kort får ingen pill (null) om inte approved. */
-export function ReviewStatusBadge({ status, approved = false, unreviewed = false }: { status: "utkast" | "avvisad" | null; approved?: boolean; unreviewed?: boolean }) {
+export function ReviewStatusBadge({ status, approved = false, unreviewed = false, sv }: { status: "utkast" | "avvisad" | null; approved?: boolean; unreviewed?: boolean; sv: Dict }) {
   if (status === "utkast") return <Badge tone="strong">{sv.admin.statusDraft}</Badge>;
   if (status === "avvisad") return <Badge tone="danger">{sv.admin.statusRejected}</Badge>;
   if (unreviewed) return <Badge tone="outline">{sv.admin.statusUnreviewed}</Badge>;
@@ -46,7 +51,7 @@ export function ReviewStatusBadge({ status, approved = false, unreviewed = false
 }
 
 /** Kortet hör till den beprövade originaluppsättningen (sätts av innehållsverktyget). */
-export function OriginalBadge() {
+export function OriginalBadge({ sv }: { sv: Dict }) {
   return (
     <span title={sv.admin.originalHelp} className="inline-flex shrink-0" data-testid="original-badge">
       <Badge tone="outline">

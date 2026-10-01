@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, FolderInput, Trash2 } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { firstLine } from "@/lib/text/first-line";
 import { deleteCardAction, moveCardsToCategoryAction, reorderCardsAction } from "@/lib/admin/actions";
 import { mergeSubsetOrder } from "@/lib/admin/card-form";
-import { SOURCE_TAGS, SOURCE_TAG_LABEL, countBySourceTag, matchesSource, type SourceFilter } from "@/lib/admin/sources";
+import { SOURCE_TAGS, countBySourceTag, matchesSource, type SourceFilter } from "@/lib/admin/sources";
 import type { CardRow } from "@/lib/supabase/database.types";
 import { useActionRunner } from "@/lib/ui/use-action-runner";
 import { Badge } from "@/components/ui/Badge";
@@ -33,6 +33,7 @@ type Props = {
 };
 
 export function CardList({ deckId, cards, categories = [], currentCategoryId }: Props) {
+  const sv = useT();
   const { pending, error, handle } = useActionRunner();
   const [deleting, setDeleting] = useState<CardRow | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -129,7 +130,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
             label={sv.admin.sourceFilter}
             value={source}
             onChange={setSource}
-            options={[{ value: "alla", label: `${sv.admin.sourceAll} (${cards.length})` }, ...sourceOptions.map((t) => ({ value: t, label: `${SOURCE_TAG_LABEL[t]} (${sourceCounts[t]})` }))]}
+            options={[{ value: "alla", label: `${sv.admin.sourceAll} (${cards.length})` }, ...sourceOptions.map((t) => ({ value: t, label: `${sv.sourceTags[t]} (${sourceCounts[t]})` }))]}
             className="ml-auto min-w-44"
             data-testid="card-source-filter"
           />
@@ -154,13 +155,13 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
             <div className="min-w-0 flex-1">
               <p className="line-clamp-2 break-words font-semibold sm:line-clamp-1">{firstLine(card.front)}</p>
               <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-muted">
-                <KindBadge kind={card.kind} compact />
-                <ReviewStatusBadge status={card.review_status} unreviewed={card.review_status === null && card.is_active && !card.reviewed_at} />
-                <SourceBadges source={card.source} original={card.original} max={2} className="shrink-0 flex-nowrap max-sm:hidden" />
+                <KindBadge kind={card.kind} compact sv={sv} />
+                <ReviewStatusBadge status={card.review_status} unreviewed={card.review_status === null && card.is_active && !card.reviewed_at} sv={sv} />
+                <SourceBadges source={card.source} original={card.original} max={2} className="shrink-0 flex-nowrap max-sm:hidden" sv={sv} />
                 {card.is_active || card.review_status ? null : <Badge tone="outline">{sv.admin.inactive}</Badge>}
                 <span className="truncate">
                   {firstLine(card.back)}
-                  {card.hint ? `, ${sv.study.hint.toLocaleLowerCase("sv-SE")}` : ""}
+                  {card.hint ? `, ${sv.study.hint.toLocaleLowerCase(sv.meta.locale)}` : ""}
                 </span>
               </p>
             </div>

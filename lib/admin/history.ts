@@ -4,6 +4,7 @@
  * React eller Supabase.
  */
 import { diffSequence } from "@/lib/admin/diff";
+import { dictionary, type Dict } from "@/lib/i18n";
 import { stockholmDate, stockholmDateTime } from "@/lib/time/stockholm";
 import { DEFAULT_CARD_KIND, isCardKind, isReviewStatus, parseOptions, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import type { CardVersionRow } from "@/lib/supabase/database.types";
@@ -167,20 +168,20 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
 /** Svensk relativ tid: "nyss", "för 5 minuter sedan", "i går", "för 3 dagar sedan", annars datum. */
-export function relativeTime(iso: string, now: number): string {
+export function relativeTime(iso: string, now: number, sv: Dict = dictionary("sv")): string {
   const t = Date.parse(iso);
   if (!Number.isFinite(t)) return "";
   const diff = Math.max(0, now - t);
-  if (diff < MINUTE) return "nyss";
-  const rtf = new Intl.RelativeTimeFormat("sv", { numeric: "auto" });
+  if (diff < MINUTE) return sv.time.justNow;
+  const rtf = new Intl.RelativeTimeFormat(sv.meta.lang, { numeric: "auto" });
   if (diff < HOUR) return rtf.format(-Math.floor(diff / MINUTE), "minute");
   if (diff < DAY) return rtf.format(-Math.floor(diff / HOUR), "hour");
   const days = Math.floor(diff / DAY);
   if (days < 14) return rtf.format(-days, "day");
-  return stockholmDate(t);
+  return stockholmDate(t, sv.meta.locale);
 }
 
 /** Exakt tid i svensk tid, t.ex. till en title. */
-export function exactTime(iso: string): string {
-  return stockholmDateTime(iso);
+export function exactTime(iso: string, locale?: string): string {
+  return stockholmDateTime(iso, locale);
 }

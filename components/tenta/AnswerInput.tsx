@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import { RotateCcw } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { Answer, StudentQuestion } from "@/lib/tentor/model";
 import { choicesForPair, isAnswered } from "@/lib/tentor/model";
 import { formatPoints, wordCount } from "@/lib/tentor/session";
@@ -35,6 +35,7 @@ function OptionRow({ checked, children, control }: { checked: boolean; children:
 
 /** Rubriken över svarsdelen (Insperas "Välj ett alternativ:") och Rensa svaret. */
 function AnswerHead({ id, label, extra, onClear }: { id: string; label: string; extra?: React.ReactNode; onClear?: () => void }) {
+  const sv = useT();
   return (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
       <p id={id} className="flex items-center gap-2 text-[0.95rem] font-semibold">
@@ -53,12 +54,13 @@ function AnswerHead({ id, label, extra, onClear }: { id: string; label: string; 
 
 /** Poängregeln när uppgiften har minuspoäng, som i originalet: rätt ger sin andel, fel ger avdrag. */
 function PenaltyRule({ q }: { q: StudentQuestion }) {
+  const sv = useT();
   if (!q.penalty) return null;
   const parts = q.kind === "sant-falskt" ? (q.statements?.length ?? 0) : q.kind === "para" ? (q.pairs?.length ?? 0) : (q.correctCount ?? 0);
   if (parts === 0) return null;
   return (
     <p className="mb-3 rounded-md bg-surface-2 px-3 py-2 text-sm text-muted" data-testid="penalty-rule">
-      {sv.tenta.penaltyRule(formatPoints(q.points / parts), formatPoints(q.penalty))}
+      {sv.tenta.penaltyRule(formatPoints(q.points / parts, sv.meta.locale), formatPoints(q.penalty, sv.meta.locale))}
     </p>
   );
 }
@@ -68,6 +70,7 @@ function PenaltyRule({ q }: { q: StudentQuestion }) {
  * först i resultatet efter inlämningen.
  */
 export function AnswerInput({ q, answer, onChange }: Props) {
+  const sv = useT();
   const headId = useId();
   const clear = isAnswered(answer) ? () => onChange(undefined) : undefined;
 

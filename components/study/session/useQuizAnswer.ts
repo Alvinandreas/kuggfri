@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { rateCurrent, type SessionState } from "@/lib/fsrs/session";
 import type { ProgressMap, SelfRating, StudyMode } from "@/lib/progress/types";
 import type { ProgressStore } from "@/lib/progress/store";
@@ -26,6 +26,7 @@ type Options = {
  * så att ett nytt kort alltid börjar obesvarat.
  */
 export function useQuizAnswer({ card, cardKey, store, progress, mode, persistRating, setAnnounce, setSession }: Options) {
+  const sv = useT();
   const quiz = card !== null && isAutoGraded(card.kind) && card.options !== null && card.options.length >= 2;
   const [quizState, setQuizState] = useState<{ key: string; selected: number[]; result: QuizResult | null } | null>(null);
   const quizSelected = useMemo(() => (quizState && quizState.key === cardKey ? quizState.selected : []), [quizState, cardKey]);
@@ -47,7 +48,7 @@ export function useQuizAnswer({ card, cardKey, store, progress, mode, persistRat
       playRatingSound(rating);
     },
     // setAnnounce är en stabil setter från useState.
-    [card, cardKey, store, progress, quizResult, persistRating, setAnnounce],
+    [card, cardKey, store, progress, quizResult, persistRating, setAnnounce, sv],
   );
 
   const toggleQuizOption = useCallback(

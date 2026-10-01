@@ -1,11 +1,11 @@
 /**
- * Uppgiftstyper. Ren modul (bara texterna i sv.ts), delas av innehållspipelinen, admin och studievyerna.
+ * Uppgiftstyper. Ren modul (bara texterna i ordlistan), delas av innehållspipelinen, admin och studievyerna.
  *
  * Terminologi: ett kort hör till ett OMRÅDE (kursens ämnesindelning, tabellen categories) och
  * har en UPPGIFTSTYP (det här). Typen avgör hur kortet visas och rättas, området avgör var
  * kunskapen räknas (radarn, "Kan nu" per område).
  */
-import { sv } from "@/lib/i18n/sv";
+import { dictionary, type Dict } from "@/lib/i18n";
 import type { SelfRating } from "@/lib/progress/types";
 
 export const CARD_KINDS = ["sjalvskattning", "begrepp", "sant-falskt", "alternativ"] as const;
@@ -18,16 +18,19 @@ export type CardOption = { text: string; correct: boolean };
 export const REVIEW_STATUSES = ["utkast", "avvisad"] as const;
 export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
 
-/** Typens namn i admin och innehållsverktyget. Texterna ligger i lib/i18n/sv.ts (cardKind). */
-export const CARD_KIND_LABEL: Record<CardKind, string> = sv.cardKind.label;
+/**
+ * Typens namn på svenska, för innehållsverktyget och CSV. Texterna ligger i lib/i18n/sv.ts
+ * (cardKind). I vyerna: `sv.cardKind.label[k]` ur ordlistan i det valda språket.
+ */
+export const CARD_KIND_LABEL: Record<CardKind, string> = dictionary("sv").cardKind.label;
 
-export const CARD_KIND_DESCRIPTION: Record<CardKind, string> = sv.cardKind.description;
+export const CARD_KIND_DESCRIPTION: Record<CardKind, string> = dictionary("sv").cardKind.description;
 
 /**
  * Typen som uppmaning till studenten, överst på kortet: "Självskattning", "Förklara begreppet",
  * "Sant eller falskt", "Välj rätt alternativ" eller, med flera rätta, "Välj alla rätta alternativ".
  */
-export function cardKindInstruction(kind: CardKind, options: readonly CardOption[] | null = null): string {
+export function cardKindInstruction(sv: Dict, kind: CardKind, options: readonly CardOption[] | null = null): string {
   if (kind === "alternativ" && options && options.filter((o) => o.correct).length > 1) return sv.cardKind.instructionMulti;
   return sv.cardKind.instruction[kind];
 }
@@ -76,23 +79,23 @@ export function parseOptions(value: unknown): CardOption[] | null {
 }
 
 /** Problem med ett korts typ och alternativ, som meningar. Tom lista = giltigt. */
-export function validateKind(kind: CardKind, options: readonly CardOption[] | null): string[] {
+export function validateKind(kind: CardKind, options: readonly CardOption[] | null, sv: Dict = dictionary("sv")): string[] {
   const issues: string[] = [];
   if (!isAutoGraded(kind)) {
-    if (options && options.length > 0) issues.push(`Typen ${CARD_KIND_LABEL[kind]} har inga svarsalternativ.`);
+    if (options && options.length > 0) issues.push(sv.cardKind.issues.noOptions(sv.cardKind.label[kind]));
     return issues;
   }
   if (!options || options.length < 2) {
-    issues.push(kind === "sant-falskt" ? "Sant/Falskt-kortet saknar svar (svar: sant eller svar: falskt)." : "Alternativfrågan behöver minst två alternativ.");
+    issues.push(kind === "sant-falskt" ? sv.cardKind.issues.trueFalseMissing : sv.cardKind.issues.tooFewOptions);
     return issues;
   }
-  if (kind === "sant-falskt" && trueFalseAnswer(options) === null) issues.push("Sant/Falskt-kortet ska ha exakt alternativen Sant och Falskt.");
-  if (!options.some((o) => o.correct)) issues.push("Minst ett alternativ måste vara rätt.");
-  if (options.some((o) => !o.text.trim())) issues.push("Ett alternativ är tomt.");
+  if (kind === "sant-falskt" && trueFalseAnswer(options) === null) issues.push(sv.cardKind.issues.trueFalseShape);
+  if (!options.some((o) => o.correct)) issues.push(sv.cardKind.issues.noneCorrect);
+  if (options.some((o) => !o.text.trim())) issues.push(sv.cardKind.issues.emptyOption);
   const seen = new Set<string>();
   for (const o of options) {
     const k = o.text.trim().toLowerCase();
-    if (seen.has(k)) issues.push(`Alternativet ”${o.text}” finns två gånger.`);
+    if (seen.has(k)) issues.push(sv.cardKind.issues.duplicate(o.text));
     seen.add(k);
   }
   return issues;

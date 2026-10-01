@@ -1,15 +1,17 @@
 import { Check, CircleMinus, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { Markdown } from "@/components/markdown/Markdown";
 import { cx } from "@/components/ui/cx";
 import { inlineMarkdown } from "../markdownClasses";
 
 function Mark({ ok, blank }: { ok: boolean; blank?: boolean }) {
+  const sv = useT();
   if (blank) return <CircleMinus size={16} aria-label={sv.tenta.outcome.obesvarad} className="text-muted" />;
   return ok ? <Check size={16} strokeWidth={2.6} aria-label={sv.tenta.outcome.ratt} className="text-accent" /> : <X size={16} strokeWidth={2.6} aria-label={sv.tenta.outcome.fel} className="text-danger" />;
 }
 
 export function TableReview({ rows, head }: { rows: { prompt: string; mine: string | null; right: string; ok: boolean }[]; head: string }) {
+  const sv = useT();
   return (
     <div className="relative overflow-x-auto">
       <table className="w-full border-collapse text-left text-[0.95rem]">

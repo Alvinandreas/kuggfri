@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
-import { sv } from "@/lib/i18n/sv";
+import { getLang, getT } from "@/lib/i18n/server";
+import { LangProvider } from "@/lib/i18n/client";
 import { NONCE_HEADER } from "@/lib/security/headers";
 import { getSiteUrl } from "@/lib/supabase/env";
 
@@ -15,7 +16,9 @@ const figtree = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return {
   // Absolut bas för delningsbilderna: utan den blir og:image en relativ adress som
   // ingen chattklient kan hämta.
   metadataBase: new URL(getSiteUrl()),
@@ -29,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: sv.app.name,
-    locale: "sv_SE",
+    locale: sv.meta.ogLocale,
     title: sv.app.name,
     description: sv.app.tagline,
   },
@@ -51,7 +54,8 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   appleWebApp: { capable: true, title: sv.app.name, statusBarStyle: "default" },
-};
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -73,8 +77,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const headerList = await headers();
   // Nonce från middleware, så att temaskriptet släpps igenom av innehållspolicyn.
   const nonce = headerList.get(NONCE_HEADER) ?? undefined;
+  const lang = await getLang();
+  const sv = await getT();
   return (
-    <html lang="sv" className={figtree.variable} suppressHydrationWarning>
+    <html lang={lang} className={figtree.variable} suppressHydrationWarning>
       <head>
         {/* React skickar medvetet inte nonce till klienten, så attributet skiljer sig mellan
             server och klient. Skriptet har redan körts när hydreringen sker; varningen
@@ -88,7 +94,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         >
           {sv.app.skipToContent}
         </a>
-        {children}
+        <LangProvider lang={lang}>{children}</LangProvider>
       </body>
     </html>
   );

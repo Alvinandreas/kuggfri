@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { deleteDeckAction, saveDeckAction, setDeckPublishedAction } from "@/lib/admin/actions";
 import type { DeckRow } from "@/lib/supabase/database.types";
 import { Badge } from "@/components/ui/Badge";
@@ -19,6 +19,7 @@ import { routes } from "@/lib/routes";
  * publicera eller avpublicera kursen (servern och databasen spärrar också).
  */
 export function DeckForm({ deck, canDelete = true, canManage = true }: { deck?: DeckRow; canDelete?: boolean; canManage?: boolean }) {
+  const sv = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);

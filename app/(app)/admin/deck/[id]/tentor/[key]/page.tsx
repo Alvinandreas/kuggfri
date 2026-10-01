@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Eye } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckForAdmin } from "@/lib/admin/queries";
-import { QUESTION_KIND_LABEL } from "@/lib/tentor/model";
 import { withImageUrls } from "@/lib/tentor/images";
 import { getExam } from "@/lib/tentor/queries";
 import { formatDuration, formatExamDate, formatPoints, partOf } from "@/lib/tentor/session";
@@ -20,13 +19,17 @@ type Params = Promise<{ id: string; key: string }>;
 
 // Titeln avslöjar inget om tentan: layouten spärrar sidan för andra än redaktörer, men
 // metadata räknas fram oberoende av den.
-export const metadata: Metadata = { title: sv.admin.tabExams };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.tabExams };
+}
 
 /**
  * Facitvyn för examinatorn: varje uppgift med frågetext, facit, lösning, sida och tentans källa,
  * så att facit kan granskas snabbt mot svarsförslaget.
  */
 export default async function AdminExamKeyPage({ params }: { params: Params }) {
+  const sv = await getT();
   const { id, key } = await params;
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
@@ -50,7 +53,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
               <Badge tone={exam.status === "publicerad" ? "accent" : "outline"}>{sv.tenta.status[exam.status]}</Badge>
             </h2>
             <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
-              {[formatExamDate(exam.date), formatDuration(exam.durationMinutes), sv.tenta.pointsLong(formatPoints(exam.maxPoints)), exam.grades.map((g) => sv.tenta.gradeLimit(g.grade, formatPoints(g.min))).join(", ")]
+              {[formatExamDate(exam.date, sv.meta.locale), formatDuration(exam.durationMinutes, sv), sv.tenta.pointsLong(formatPoints(exam.maxPoints, sv.meta.locale)), exam.grades.map((g) => sv.tenta.gradeLimit(g.grade, formatPoints(g.min, sv.meta.locale))).join(", ")]
                 .filter(Boolean)
                 .map((t) => (
                   <span key={t}>{t}</span>
@@ -86,11 +89,11 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
                   {parts.get(q.id) ? <span className="text-sm text-subtle">{parts.get(q.id)}</span> : null}
                 </p>
                 <p className="flex flex-wrap items-center gap-1.5 text-sm">
-                  <Badge tone="neutral">{QUESTION_KIND_LABEL[q.kind]}</Badge>
+                  <Badge tone="neutral">{sv.tenta.questionKindLabel[q.kind]}</Badge>
                   {q.kind === "flera" ? <Badge tone="outline">{q.scoring === "delpoang" ? sv.tenta.scoringPartial : sv.tenta.scoringAll}</Badge> : null}
                   {q.noKey ? <Badge tone="danger">{sv.tenta.noKey}</Badge> : null}
-                  {q.penalty ? <Badge tone="outline">{sv.tenta.penaltyBadge(formatPoints(q.penalty))}</Badge> : null}
-                  <Badge tone="outline">{sv.tenta.points(formatPoints(q.points))}</Badge>
+                  {q.penalty ? <Badge tone="outline">{sv.tenta.penaltyBadge(formatPoints(q.penalty, sv.meta.locale))}</Badge> : null}
+                  <Badge tone="outline">{sv.tenta.points(formatPoints(q.points, sv.meta.locale))}</Badge>
                   {q.page ? <Badge tone="outline">{sv.tenta.page(q.page)}</Badge> : null}
                 </p>
               </div>

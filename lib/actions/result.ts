@@ -1,5 +1,6 @@
 import "server-only";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { getT } from "@/lib/i18n/server";
 
 /**
  * Serveråtgärdernas gemensamma resultat och indatakontroller. Ligger utanför "use server"-
@@ -9,12 +10,17 @@ import { sv } from "@/lib/i18n/sv";
 
 export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
 
-export function tooLong(field: string, value: string, max: number): ActionResult<never> | null {
+export function tooLong(sv: Dict, field: string, value: string, max: number): ActionResult<never> | null {
   return value.length > max ? { ok: false, error: sv.admin.tooLong(field, max) } : null;
 }
 
-/** Ett kastat fel som resultat: "forbidden" blir behörighetstexten, allt annat det allmänna felet. */
-export function fail(error: unknown): ActionResult<never> {
+/**
+ * Ett kastat fel som resultat: "forbidden" blir behörighetstexten, allt annat det allmänna felet.
+ * Async för att texten ska följa förfrågans språk; `return fail(e)` i en async-funktion fungerar
+ * som förut.
+ */
+export async function fail(error: unknown): Promise<ActionResult<never>> {
+  const sv = await getT();
   const message = error instanceof Error ? error.message : String(error);
   if (message === "forbidden") return { ok: false, error: sv.common.forbiddenBody };
   return { ok: false, error: sv.errors.generic };

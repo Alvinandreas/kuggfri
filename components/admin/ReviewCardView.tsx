@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, FlagTriangleRight, History, Info, Languages, MessageSquareWarning, Pencil, RotateCcw, Undo2, X } from "lucide-react";
 import { cardSources } from "@/lib/admin/sources";
+import { useT } from "@/lib/i18n/client";
 import { englishFace, translationState } from "@/lib/cards/translation";
 import { shouldIgnoreShortcut } from "@/lib/ui/keyboard";
 import { reviewTab, type ReviewArea, type ReviewCard, type ReviewTab } from "@/lib/admin/review";
@@ -71,6 +72,7 @@ const TYPING_SELECTOR = 'input, textarea, select, [contenteditable="true"], [rol
 export function ReviewCardView(props: Props) {
   const { card, position, total, areas, areaTitle, areaColor, reviewedLine, flaggedLine, issues, editing, status } = props;
   const t = useReviewT();
+  const sv = useT();
   const g = t.g;
   const [panel, setPanel] = useState<Panel>(null);
   const [showSwedish, setShowSwedish] = useState(false);
@@ -212,8 +214,8 @@ export function ReviewCardView(props: Props) {
       <div className="grid gap-2.5">
         <div className="flex flex-wrap items-center gap-2">
           {card.category_id ? <CategoryTag title={areaTitle(card.category_id)} colorIndex={areaColor(card.category_id)} /> : <Badge tone="outline">{g.noArea}</Badge>}
-          <KindBadge kind={card.kind} label={t.kind[card.kind]} />
-          <SourceBadges source={card.source} original={card.original} max={4} labels={sourceLabels} />
+          <KindBadge kind={card.kind} label={t.kind[card.kind]} sv={sv} />
+          <SourceBadges source={card.source} original={card.original} max={4} labels={sourceLabels} sv={sv} />
         </div>
         <p className="text-sm text-muted" data-testid="review-status-line">
           {reviewed
@@ -283,7 +285,7 @@ export function ReviewCardView(props: Props) {
                 </span>
               }
             >
-              <SourceList source={card.source} original={card.original} className="pb-2" labels={sourceLabels} />
+              <SourceList source={card.source} original={card.original} className="pb-2" labels={sourceLabels} sv={sv} />
             </Disclosure>
           </div>
 

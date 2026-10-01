@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { googleClientId } from "@/lib/auth/google";
 import { buttonClass } from "@/components/ui/Button";
 import { routes } from "@/lib/routes";
@@ -15,6 +15,7 @@ import { routes } from "@/lib/routes";
  * Visas bara när NEXT_PUBLIC_GOOGLE_CLIENT_ID är satt.
  */
 export function GoogleButton({ next }: { next: string }) {
+  const sv = useT();
   const [leaving, setLeaving] = useState(false);
   if (!googleClientId()) return null;
 

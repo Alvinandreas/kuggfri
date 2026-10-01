@@ -1,7 +1,7 @@
 /**
  * `npm run kuggfri -- engelska <kurs> [--mal prod] [--ja]`: synkar de engelska översättningarna
- * för granskningen (content/<kurs>/engelska.json) till cards.translation_en och
- * categories.title_en. Se lib/cards/translation.ts.
+ * (content/<kurs>/engelska.json) till cards.translation_en, categories.title_en och
+ * decks.description_en. Se lib/cards/translation.ts.
  *
  * Översättningen är ett hjälpmedel för examinatorer som inte läser svenska; den ingår inte i
  * innehållets konfliktmodell och filen vinner alltid. Varningar: kort utan översättning, och
@@ -66,9 +66,13 @@ export async function cmdEngelska(args: Args): Promise<void> {
       from jsonb_each_text(${sqlLiteral(JSON.stringify(file.areas))}::jsonb) as x(key, value)
       where g.deck_id = '${deck}'::uuid and g.key = x.key and g.title_en is distinct from x.value
       returning 1
+    ), d as (
+      update public.decks set description_en = ${file.deck?.description ? sqlLiteral(file.deck.description) : "null"}
+      where id = '${deck}'::uuid and description_en is distinct from ${file.deck?.description ? sqlLiteral(file.deck.description) : "null"}
+      returning 1
     )
-    select (select count(*) from c) as cards, (select count(*) from a) as areas;`;
-  const rows = query<{ cards: number; areas: number }>(target, sql);
-  say(`${C.green}Klart.${C.reset} kort: ${rows[0]?.cards ?? 0}, områden: ${rows[0]?.areas ?? 0}`);
+    select (select count(*) from c) as cards, (select count(*) from a) as areas, (select count(*) from d) as deck;`;
+  const rows = query<{ cards: number; areas: number; deck: number }>(target, sql);
+  say(`${C.green}Klart.${C.reset} kort: ${rows[0]?.cards ?? 0}, områden: ${rows[0]?.areas ?? 0}, kursbeskrivning: ${rows[0]?.deck ?? 0}`);
   say(dim("Översättningen syns i granskningen med reglaget English."));
 }

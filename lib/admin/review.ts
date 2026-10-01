@@ -21,6 +21,7 @@ import { CARD_KINDS, isAutoGraded, validateKind, type CardKind, type CardOption 
 import { matchesSource, type SourceFilter } from "@/lib/admin/sources";
 import { oneLine } from "@/lib/text/one-line";
 import type { CardTranslation } from "@/lib/supabase/database.types";
+import { dictionary, type Dict } from "@/lib/i18n";
 import { stockholmDayHeading, stockholmDayKey, stockholmRelativeDay, stockholmTime } from "@/lib/time/stockholm";
 
 /** Det granskningen behöver veta om ett kort. CardRow uppfyller typen (utom de valfria fälten). */
@@ -279,11 +280,11 @@ export function step(ids: readonly string[], currentId: string | null, delta: -1
 }
 
 /** Problem som hindrar att kortet godkänns: tomma sidor eller fel i typ och alternativ. */
-export function approvalIssues(card: Pick<ReviewCard, "front" | "back" | "kind" | "options">): string[] {
+export function approvalIssues(card: Pick<ReviewCard, "front" | "back" | "kind" | "options">, sv: Dict = dictionary("sv")): string[] {
   const issues: string[] = [];
-  if (!card.front.trim()) issues.push("Frågan är tom.");
-  if (!card.back.trim()) issues.push(isAutoGraded(card.kind) ? "Förklaringen är tom." : "Svaret är tomt.");
-  return [...issues, ...validateKind(card.kind, card.options)];
+  if (!card.front.trim()) issues.push(sv.cardKind.issues.emptyQuestion);
+  if (!card.back.trim()) issues.push(isAutoGraded(card.kind) ? sv.cardKind.issues.emptyExplanation : sv.cardKind.issues.emptyAnswer);
+  return [...issues, ...validateKind(card.kind, card.options, sv)];
 }
 
 /** En flaggas anteckning: en rad, utan omgivande blanksteg (samma form som i kortfilerna). */

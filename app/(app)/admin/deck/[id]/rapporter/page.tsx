@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getLang, getT } from "@/lib/i18n/server";
+import { cardFront } from "@/lib/admin/display";
 import { getDeckForAdmin, getDeckReports } from "@/lib/admin/queries";
 import { ReportList } from "@/components/admin/ReportList";
 
-export const metadata: Metadata = { title: sv.admin.reports };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.reports };
+}
 
 export default async function ReportsPage({ params }: { params: Promise<{ id: string }> }) {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
-  const reports = await getDeckReports(id);
+  const lang = await getLang();
+  const front = new Map(data.cards.map((c) => [c.id, cardFront(c, lang)] as const));
+  const reports = (await getDeckReports(id)).map((r) => ({ ...r, card_front: front.get(r.card_id) ?? r.card_front }));
   const open = reports.filter((r) => r.status === "open");
   const resolved = reports.filter((r) => r.status !== "open");
 

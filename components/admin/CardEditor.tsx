@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { saveCardAction } from "@/lib/admin/actions";
 import { fixErrorsMessage, savedCardFields } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
@@ -55,6 +55,7 @@ type Props = {
 
 /** Kortredigerare med uppgiftstyp, svarsalternativ och live-förhandsvisning (markdown och KaTeX). */
 export function CardEditor({ deckId, categories, card, initialCategoryId = null, backHref, onSaved, onCancel, initialKind, stacked = false }: Props) {
+  const sv = useT();
   const inline = onSaved !== undefined;
   const closeHref = backHref ?? routes.admin.content(deckId);
   const router = useRouter();
@@ -78,7 +79,7 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
     e.preventDefault();
     setAttempted(true);
     if (issues.length > 0) {
-      setMessage({ ok: false, text: fixErrorsMessage(issues) });
+      setMessage({ ok: false, text: fixErrorsMessage(sv, issues) });
       return;
     }
     startTransition(async () => {
@@ -130,7 +131,7 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
         <Card padding="lg" className="grid grid-cols-[minmax(0,1fr)] gap-5">
           {reviewStatus || !card ? (
             <div className="flex flex-wrap items-center gap-2 rounded-md bg-surface-2 px-4 py-3 text-sm text-muted" data-testid="card-review-notice">
-              <ReviewStatusBadge status={reviewStatus ?? "utkast"} />
+              <ReviewStatusBadge status={reviewStatus ?? "utkast"} sv={sv} />
               <span>{!card ? sv.admin.newCardNotice : reviewStatus === "utkast" ? sv.admin.draftNotice : sv.admin.rejectedNotice}</span>
             </div>
           ) : null}

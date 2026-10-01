@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { Button } from "./Button";
 import { Modal } from "./Modal";
 import { TextField } from "./TextField";
@@ -27,8 +27,8 @@ export function ConfirmDialog({
   open,
   title,
   body,
-  confirmLabel = sv.common.confirm,
-  cancelLabel = sv.common.cancel,
+  confirmLabel: confirmLabelProp,
+  cancelLabel: cancelLabelProp,
   danger = false,
   requireWord,
   requireWordLabel,
@@ -36,6 +36,9 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  const sv = useT();
+  const confirmLabel = confirmLabelProp ?? sv.common.confirm;
+  const cancelLabel = cancelLabelProp ?? sv.common.cancel;
   const [word, setWord] = useState("");
   useEffect(() => {
     if (open) setWord("");

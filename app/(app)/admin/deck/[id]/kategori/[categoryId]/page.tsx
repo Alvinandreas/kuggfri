@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getLang, getT } from "@/lib/i18n/server";
+import { areaName } from "@/lib/admin/display";
+import { localizeCard } from "@/lib/content/localize";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CardList } from "@/components/admin/CardList";
@@ -16,6 +18,7 @@ type Params = Promise<{ id: string; categoryId: string }>;
 const NONE = "ingen";
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { id, categoryId } = await params;
   const data = await getDeckForAdmin(id);
   const title = categoryId === NONE ? sv.admin.uncategorized : data?.categories.find((c) => c.id === categoryId)?.title;
@@ -23,6 +26,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function AdminCategoryPage({ params }: { params: Params }) {
+  const sv = await getT();
+  const lang = await getLang();
   const { id, categoryId } = await params;
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
@@ -51,7 +56,7 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
         <div className="min-w-0">
           <h2 className="text-xl font-bold tracking-tight">
             {category ? (
-              <CategoryTag title={category.title} colorIndex={colorIndex.get(category.id) ?? 0} size="lg" />
+              <CategoryTag title={areaName(category, lang)} colorIndex={colorIndex.get(category.id) ?? 0} size="lg" />
             ) : (
               sv.admin.uncategorized
             )}
@@ -74,7 +79,7 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
       </div>
 
       {cards.length > 0 ? <p className="text-sm text-muted">{sv.admin.categoryCardsHelp}</p> : null}
-      <CardList deckId={deck.id} cards={cards} categories={categories.map((c) => ({ id: c.id, title: c.title }))} currentCategoryId={category?.id ?? null} />
+      <CardList deckId={deck.id} cards={cards.map((c) => localizeCard(c, lang))} categories={categories.map((c) => ({ id: c.id, title: areaName(c, lang) }))} currentCategoryId={category?.id ?? null} />
     </div>
   );
 }

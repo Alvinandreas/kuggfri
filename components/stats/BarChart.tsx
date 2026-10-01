@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { useSvgTextScale } from "./useSvgTextScale";
 
 export type BarPoint = { key: string; label: string; value: number; /** Tailwind fill-klass för just den här stapeln. */ colorClass?: string; /** Extra rad i tooltipen. */ detail?: string };
@@ -26,6 +26,7 @@ const PAD = { top: 12, right: 8, bottom: 26, left: 30 };
  * hover-tooltip och en tabellvy för skärmläsare och den som föredrar siffror.
  */
 export function BarChart({ points, title, help, formatValue, hideTitle = false }: Props) {
+  const sv = useT();
   const [hover, setHover] = useState<number | null>(null);
   const titleId = useId();
   const [svgRef, k] = useSvgTextScale(W);

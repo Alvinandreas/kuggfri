@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { restoreCardVersionAction } from "@/lib/admin/history-actions";
 import { contentOf, type CardVersion } from "@/lib/admin/history";
 import type { CardRow } from "@/lib/supabase/database.types";
@@ -29,6 +29,7 @@ type ToastState = { id: number; text: string; undo?: () => void; tone?: "default
  * version laddar om sidan och startar om redigeraren med det nya innehållet; toasten har Ångra.
  */
 export function CardEditPanel({ deckId, categories, card, backHref, versions, now }: Props) {
+  const sv = useT();
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [editorKey, setEditorKey] = useState(0);
@@ -41,7 +42,7 @@ export function CardEditPanel({ deckId, categories, card, backHref, versions, no
     setEditorKey((k) => k + 1);
   }, [card.updated_at]);
 
-  const areaTitle = useCallback((id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? sv.admin.uncategorized) : sv.admin.uncategorized), [categories]);
+  const areaTitle = useCallback((id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? sv.admin.uncategorized) : sv.admin.uncategorized), [categories, sv]);
 
   const restore = useCallback(
     async (versionId: number, doneText: string, allowUndo: boolean) => {
@@ -68,7 +69,7 @@ export function CardEditPanel({ deckId, categories, card, backHref, versions, no
           : undefined,
       });
     },
-    [card.id, deckId, router],
+    [card.id, deckId, router, sv],
   );
 
   return (

@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { StatusMessage } from "@/components/layout/StatusMessage";
 import { routes } from "@/lib/routes";
 
 /** Felsida i sajtens stil i stället för Next.js råa "Application error". */
 export function ErrorContent({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const sv = useT();
   useEffect(() => {
     console.error(error);
   }, [error]);

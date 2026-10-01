@@ -1,6 +1,6 @@
 "use client";
 
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { SELF_RATINGS, type SelfRating } from "@/lib/progress/types";
 import { cx } from "@/components/ui/cx";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -25,6 +25,7 @@ export const ratingClass: Record<SelfRating, string> = {
 };
 
 export function RatingButtons({ disabled, onRate, intervals }: Props) {
+  const sv = useT();
   return (
     <fieldset className="grid gap-2" aria-label={sv.study.rateLabel}>
       <legend className="sr-only">{sv.study.rateLabel}</legend>

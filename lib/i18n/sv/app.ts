@@ -75,6 +75,7 @@ export const time = {
   inDays: (n: number) => `om ${n} dagar`,
   inMonths: (n: number) => (n === 1 ? "om en månad" : `om ${n} månader`),
   overdue: "förfallet",
+  justNow: "nyss",
 } as const;
 
 export const errors = {
@@ -82,4 +83,34 @@ export const errors = {
   pageTitle: "Något gick fel",
   pageBody: "Ett oväntat fel uppstod. Försök igen, eller gå till startsidan.",
   retry: "Försök igen",
+} as const;
+
+/** Språket: locale styr datum och tal (lib/time/stockholm, lib/format/number). */
+export const meta = {
+  lang: "sv",
+  locale: "sv-SE",
+  ogLocale: "sv_SE",
+  /** Ordet före klockslaget: "i dag kl. 14:32". */
+  at: "kl.",
+  language: "English",
+  languageHelp: "Visa tjänsten på engelska",
+  /** Procent: "42 %". */
+  pct: (n: number | string) => `${n} %`,
+  /** Procenttecknet för sig, efter ett stort tal: " %". */
+  pctSuffix: " %",
+} as const;
+
+/** Källtyperna på korten (lib/cards/sources) och märkningen när källa saknas. */
+export const sourceTags = {
+  forelasning: "Föreläsning",
+  tenta: "Tenta",
+  quiz: "Quiz",
+  ovning: "Övning",
+  labb: "Labb",
+  bok: "Bok",
+  ordlista: "Ordlista",
+  kursdokument: "Kursdokument",
+  ovrigt: "Övrigt",
+  original: "Originalkort",
+  ingen: "Ingen källa",
 } as const;

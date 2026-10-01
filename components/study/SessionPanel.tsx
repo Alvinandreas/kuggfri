@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, CircleCheckBig, Info, Star } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { StudyMode } from "@/lib/progress/types";
 import type { PickerMode } from "./ModePicker";
 import type { DeckPlan } from "@/lib/study/deck-plan";
@@ -13,15 +13,6 @@ import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { SessionSettingsFields } from "./SessionSettingsFields";
-
-const MODE_TITLES: Record<PickerMode, string> = {
-  starred: sv.deck.modeStarred,
-  fsrs: sv.deck.modeFsrs,
-  tricky: sv.deck.modeTricky,
-  free: sv.deck.modeFree,
-  random: sv.deck.modeRandom,
-  exam: sv.deck.modeExam,
-};
 
 type Props = {
   /** Valt läge på kurssidan (Stjärnmärkta körs som fri repetition). */
@@ -71,6 +62,15 @@ export function SessionPanel({
   starredCount,
   onShowStarred,
 }: Props) {
+  const sv = useT();
+  const MODE_TITLES: Record<PickerMode, string> = {
+    starred: sv.deck.modeStarred,
+    fsrs: sv.deck.modeFsrs,
+    tricky: sv.deck.modeTricky,
+    free: sv.deck.modeFree,
+    random: sv.deck.modeRandom,
+    exam: sv.deck.modeExam,
+  };
   const { selectionCount, nothingDue, canStart, finalReview, sessionDue, sessionNew, sessionCards, moreNew } = plan;
   // Dagens schemalagda pass är klart: erbjud Plugga vidare i stället för en död Starta-knapp.
   const offerExtra = mode === "fsrs" && nothingDue && plan.canExtra;
@@ -166,7 +166,7 @@ export function SessionPanel({
               ? isStarred
                 ? sv.deck.noStarred
                 : sv.deck.noCardsSelected
-              : `${sv.home.cards(selectionCount)}, cirka ${estimateMinutes(selectionCount)} min`}
+              : `${sv.home.cards(selectionCount)}, ${sv.quick.aboutMinutes(estimateMinutes(selectionCount))}`}
         </span>
         {mode === "fsrs" && nothingDue && moreNew > 0 ? (
           <Link href={`${plan.moreHref}${suffix}`} className={buttonClass("outline", "md", "w-full")} data-testid="start-more">

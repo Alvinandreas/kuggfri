@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CalendarClock, ChartNoAxesColumn, GraduationCap } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { safeNext } from "@/lib/auth/safe-next";
 import { first } from "@/lib/http/search-params";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { AuthPanel } from "@/components/auth/AuthForms";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: { absolute: `${sv.app.name} – ${sv.landing.title}` } };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: { absolute: `${sv.app.name} – ${sv.landing.title}` } };
+}
 
 const ICONS = [CalendarClock, GraduationCap, ChartNoAxesColumn];
 
@@ -29,6 +32,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
   const user = await getCurrentUser();
   if (user) redirect(next);
   const flik = first(query.flik);
+  const sv = await getT();
 
   return (
     <div className="grid items-center gap-10 py-4 lg:grow lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-x-16 lg:gap-y-0 lg:py-0">

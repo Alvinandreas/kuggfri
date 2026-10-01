@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Link2, QrCode } from "lucide-react";
 import { SITE_HOST } from "@/lib/contact";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { routes } from "@/lib/routes";
@@ -16,6 +16,7 @@ type Props = { slug: string };
  * ("Kopierat!", QR synlig) eftersom ingen annan del av sidan bryr sig om den.
  */
 export function ShareDeck({ slug }: Props) {
+  const sv = useT();
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
   const [qrSvg, setQrSvg] = useState<string | null>(null);

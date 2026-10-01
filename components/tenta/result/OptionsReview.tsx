@@ -1,4 +1,4 @@
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { Answer, ExamQuestion } from "@/lib/tentor/model";
 import { Markdown } from "@/components/markdown/Markdown";
 import { cx } from "@/components/ui/cx";
@@ -6,6 +6,7 @@ import { inlineMarkdown } from "../markdownClasses";
 import { Tag } from "./Tag";
 
 export function OptionsReview({ q, answer }: { q: ExamQuestion; answer: Answer | undefined }) {
+  const sv = useT();
   const chosen = new Set(answer?.kind === "flerval" ? (answer.choice === null ? [] : [answer.choice]) : answer?.kind === "flera" ? answer.choices : []);
   const showKey = !q.noKey;
   return (

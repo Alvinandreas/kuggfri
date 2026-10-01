@@ -53,8 +53,8 @@ export function englishFace(card: SwedishText & { translation_en?: CardTranslati
 /** En rad i content/<kurs>/engelska.json. */
 export type TranslationEntry = { front: string; back: string; hint?: string | null; options?: string[] | null; sv: string };
 
-/** Filens form: områdenas namn per områdesnyckel och korten per kortnyckel. */
-export type TranslationFile = { areas: Record<string, string>; cards: Record<string, TranslationEntry> };
+/** Filens form: kursens beskrivning, områdenas namn per områdesnyckel och korten per kortnyckel. */
+export type TranslationFile = { deck?: { description?: string | null }; areas: Record<string, string>; cards: Record<string, TranslationEntry> };
 
 /** Ett kort ur filen som det lagras i databasen. */
 export function toStored(entry: TranslationEntry): CardTranslation {

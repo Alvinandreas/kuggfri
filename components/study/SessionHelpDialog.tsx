@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Flag, Star, Volume2 } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { SELF_RATINGS } from "@/lib/progress/types";
 import { Kbd } from "@/components/ui/Kbd";
 import { Modal } from "@/components/ui/Modal";
@@ -21,6 +21,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 /** Instruktionerna bakom info-knappen i passet: vända, skatta, tangentbordet och knapparna. */
 export function SessionHelpDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const sv = useT();
   return (
     <Modal open={open} onClose={onClose} title={sv.session.helpTitle} size="md">
       <div className="grid gap-6 text-sm" data-testid="session-help">

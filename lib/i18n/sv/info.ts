@@ -31,6 +31,9 @@ export const about = {
   privacy: "Integritet",
   privacyBody:
     "Vi sparar bara ditt namn, din e-post och din studieprogress, inget annat. Loggar du in med Google använder vi bara ditt namn och din e-post därifrån. Allt står i integritetspolicyn.",
+  whoTitle: "Vem står bakom",
+  whoBody:
+    "Kuggfri byggs och drivs ideellt av en student vid Chalmers tekniska högskola. Tjänsten är inte en del av Chalmers IT-miljö. Hittar du ett fel i ett enskilt kort rapporterar du det direkt från kortet, så hamnar det hos kursens examinator. Annars når du oss här:",
 } as const;
 
 export const privacy = {

@@ -1,5 +1,5 @@
 import { forbidden, notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
@@ -13,6 +13,7 @@ type Params = Promise<{ id: string }>;
  * (Alvins beslut 30 sep). Åtkomsten avgörs här (admin eller examinator för just detta deck).
  */
 export default async function DeckLayout({ children, params }: { children: React.ReactNode; params: Params }) {
+  const sv = await getT();
   const { id } = await params;
   const ctx = await getAdminContext();
   if (!canEditDeck(ctx, id)) forbidden();

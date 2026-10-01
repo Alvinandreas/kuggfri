@@ -159,4 +159,5 @@ export const help = {
   /** Länkblocket på Om-sidan. */
   fromAbout: "Så använder du Kuggfri",
   fromAboutMeta: "Kom igång, lägena, skattningsskalan och vanliga frågor.",
+  keysTo: "till",
 } as const;

@@ -14,7 +14,7 @@ export function percent(part: number, whole: number): number {
  * Andelen som text, "42 %". Tom nämnare ger ett tankstreck: vi vet inte, till
  * skillnad från "0 %" som påstår att andelen faktiskt är noll.
  */
-export function percentText(part: number, whole: number, empty = "–"): string {
+export function percentText(part: number, whole: number, empty = "–", format: (n: number) => string = (n) => `${n} %`): string {
   if (!Number.isFinite(whole) || whole <= 0) return empty;
-  return `${percent(part, whole)} %`;
+  return format(percent(part, whole));
 }

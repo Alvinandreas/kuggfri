@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, useMemo, useState, type KeyboardEvent } from "react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { useT } from "@/lib/i18n/client";
 import { heatmapGrid, type HeatCell } from "@/lib/stats/my-stats";
 import { cx } from "@/components/ui/cx";
 import { useSvgTextScale } from "./useSvgTextScale";
@@ -31,7 +32,7 @@ const LEVEL_FILL = ["fill-surface-3", "fill-chart-1/25", "fill-chart-1/50", "fil
 const LEVEL_BG = ["bg-surface-3", "bg-chart-1/25", "bg-chart-1/50", "bg-chart-1/75", "bg-chart-1"] as const;
 
 /** Månadsetikett på kolumnen där en månad börjar; den första kolumnen får sin månad om ingen etikett ligger nära. */
-function monthLabels(weeks: HeatCell[][]): Map<number, string> {
+function monthLabels(sv: Dict, weeks: HeatCell[][]): Map<number, string> {
   const out = new Map<number, string>();
   weeks.forEach((col, w) => {
     const first = col.find((c) => c.date.getDate() === 1);
@@ -49,11 +50,13 @@ function monthLabels(weeks: HeatCell[][]): Map<number, string> {
  * färgstyrka efter antal. Hovring eller tangentbordsfokus visar dagen; piltangenterna flyttar
  * mellan dagarna. En tabell med de aktiva dagarna finns för skärmläsare.
  */
-export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatValue = sv.myStats.reviewsCount, hideTitle = false }: Props) {
+export function ActivityHeatmap({ counts, title, help, weeks = 20, now, formatValue: formatValueProp, hideTitle = false }: Props) {
+  const sv = useT();
+  const formatValue = formatValueProp ?? sv.myStats.reviewsCount;
   const titleId = useId();
   const hintId = useId();
   const grid = useMemo(() => heatmapGrid(counts, now ?? new Date(), weeks), [counts, now, weeks]);
-  const months = useMemo(() => monthLabels(grid.weeks), [grid.weeks]);
+  const months = useMemo(() => monthLabels(sv, grid.weeks), [sv, grid.weeks]);
   const [active, setActive] = useState<{ w: number; d: number } | null>(null);
 
   const W = LEFT + weeks * STEP - GAP;

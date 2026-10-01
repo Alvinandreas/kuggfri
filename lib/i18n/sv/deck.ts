@@ -85,4 +85,5 @@ export const deck = {
   examUpcomingHelp: "Schemat ser till att alla kort hinner repeteras före tentan och att inget kort skjuts förbi den.",
   examFinalHelp: "Slutrepetition: alla kort i urvalet, svagast först.",
   examCatchUp: (perDay: number) => `Ikappläge: ${perDay} nya kort per dag behövs för att hinna alla före tentan.`,
+  perDayOption: (cards: string) => `${cards} per dag`,
 } as const;

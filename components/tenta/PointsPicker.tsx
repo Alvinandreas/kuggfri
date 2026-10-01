@@ -1,6 +1,6 @@
 "use client";
 
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { formatPoints } from "@/lib/tentor/session";
 import { Select } from "@/components/ui/Select";
 import { cx } from "@/components/ui/cx";
@@ -26,13 +26,14 @@ export function PointsPicker({
   disabled?: boolean;
   size?: "sm" | "md";
 }) {
+  const sv = useT();
   if (values.length > 13) {
     return (
       <div className="max-w-[12rem]" data-testid={testId}>
         <Select
           value={value === undefined ? "" : String(value)}
           onChange={(s) => s !== "" && onChange(Number(s))}
-          options={[{ value: "", label: sv.tenta.choose }, ...values.map((v) => ({ value: String(v), label: formatPoints(v) }))]}
+          options={[{ value: "", label: sv.tenta.choose }, ...values.map((v) => ({ value: String(v), label: formatPoints(v, sv.meta.locale) }))]}
           label={label}
           size="sm"
         />
@@ -56,7 +57,7 @@ export function PointsPicker({
           )}
           data-testid={`${testId}-${v}`}
         >
-          {formatPoints(v)}
+          {formatPoints(v, sv.meta.locale)}
         </button>
       ))}
     </div>

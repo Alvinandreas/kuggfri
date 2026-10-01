@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { addExaminerAction, removeExaminerAction } from "@/lib/admin/actions";
 import type { DeckExaminer } from "@/lib/admin/queries";
 import { formatDateTime } from "@/lib/time/format";
@@ -16,6 +16,7 @@ import { TextField } from "@/components/ui/TextField";
 
 /** Admins verktyg för att ge och ta ifrån examinatorsrätt på ett deck. */
 export function ExaminerManager({ deckId, examiners }: { deckId: string; examiners: DeckExaminer[] }) {
+  const sv = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
@@ -64,7 +65,7 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
                       {sv.admin.examinerPending}
                     </Badge>
                   ) : null}
-                  <span className="block text-xs text-muted">{formatDateTime(x.created_at)}</span>
+                  <span className="block text-xs text-muted">{formatDateTime(x.created_at, sv.meta.locale)}</span>
                 </div>
               </div>
               <Button size="sm" variant="outline" disabled={pending} onClick={() => setRemoving(x)}>

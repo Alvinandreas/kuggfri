@@ -1,4 +1,7 @@
 {
+  "deck": {
+    "description": "Questions, concepts and exam problems from Materialteknik in Mechanical Engineering at Chalmers. The cards are based on the course material, cite their sources and are reviewed by the examiners."
+  },
   "areas": {
     "materialgrupper-och-egenskaper": "Material groups and properties",
     "materialvalsprocessen": "The materials selection process",

@@ -4,6 +4,7 @@
  * att den kan testas och användas både i klienten och i serveråtgärderna.
  */
 import { stockholmDateTime, stockholmLongDate } from "@/lib/time/stockholm";
+import { dictionary, type Dict } from "@/lib/i18n";
 import { QUESTION_KINDS, isAnswered, type Answer, type Answers, type QuestionKind } from "./model";
 
 // ---------------------------------------------------------------------------
@@ -37,11 +38,11 @@ export function formatClock(ms: number): string {
 }
 
 /** Skrivtiden i ord: 240 → "4 timmar", 90 → "1 timme 30 minuter", 45 → "45 minuter". */
-export function formatDuration(minutes: number): string {
+export function formatDuration(minutes: number, sv: Dict = dictionary("sv")): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  const hours = h === 1 ? "1 timme" : `${h} timmar`;
-  const mins = m === 1 ? "1 minut" : `${m} minuter`;
+  const hours = sv.tenta.hours(h);
+  const mins = sv.tenta.minutes(m);
   if (h === 0) return mins;
   return m === 0 ? hours : `${hours} ${mins}`;
 }
@@ -123,33 +124,23 @@ export function kindCounts(questions: readonly { kind: QuestionKind }[]): { kind
   return QUESTION_KINDS.map((kind) => ({ kind, count: questions.filter((q) => q.kind === kind).length })).filter((k) => k.count > 0);
 }
 
-/** Typerna i löptext, i singular och plural. */
-const KIND_NOUN: Record<QuestionKind, [string, string]> = {
-  flerval: ["flervalsfråga", "flervalsfrågor"],
-  flera: ["fråga med flera svar", "frågor med flera svar"],
-  "sant-falskt": ["sant/falskt-fråga", "sant/falskt-frågor"],
-  para: ["para ihop-uppgift", "para ihop-uppgifter"],
-  numerisk: ["räkneuppgift med svar", "räkneuppgifter med svar"],
-  text: ["skrivuppgift", "skrivuppgifter"],
-};
-
 /** "6 flervalsfrågor, 2 sant/falskt-frågor, 1 skrivuppgift" */
-export function kindSummary(counts: readonly { kind: QuestionKind; count: number }[]): string {
-  return counts.map(({ kind, count }) => `${count} ${KIND_NOUN[kind][count === 1 ? 0 : 1]}`).join(", ");
+export function kindSummary(counts: readonly { kind: QuestionKind; count: number }[], sv: Dict = dictionary("sv")): string {
+  return counts.map(({ kind, count }) => `${count} ${sv.tenta.kindNoun[kind][count === 1 ? 0 : 1]}`).join(", ");
 }
 
 /** Poäng med decimalkomma och högst två decimaler: 1.5 → "1,5". */
 export { formatPoints } from "@/lib/format/number";
 
-/** Tentans datum: "2024-10-31" → "31 oktober 2024". */
-export function formatExamDate(date: string | null): string | null {
+/** Tentans datum: "2024-10-31" → "31 oktober 2024" (locale: ordlistans meta.locale). */
+export function formatExamDate(date: string | null, locale?: string): string | null {
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
-  return stockholmLongDate(`${date}T12:00:00Z`);
+  return stockholmLongDate(`${date}T12:00:00Z`, locale);
 }
 
-/** Ett försöks tidpunkt i svensk tid: "29 sep. 2026 14:32". */
-export function formatAttemptTime(iso: string): string {
-  return stockholmDateTime(iso);
+/** Ett försöks tidpunkt i svensk tid: "29 sep. 2026 14:32" (locale: ordlistans meta.locale). */
+export function formatAttemptTime(iso: string, locale?: string): string {
+  return stockholmDateTime(iso, locale);
 }
 
 /** Ord i en text (ordräknaren under skrivuppgifter). */

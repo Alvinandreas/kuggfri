@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, ClipboardPen, Clock, ListChecks, Lock, LockOpen, Trophy } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import type { ExamSummary } from "@/lib/tentor/queries";
 import { attemptOverview, formatDuration, formatExamDate, formatPoints, kindSummary, type AttemptInfo } from "@/lib/tentor/session";
 import { Badge } from "@/components/ui/Badge";
@@ -12,7 +12,8 @@ import { routes } from "@/lib/routes";
 
 type Deck = { id: string; slug: string; title: string; course_code: string | null };
 
-function Header({ deck }: { deck: Deck }) {
+async function Header({ deck }: { deck: Deck }) {
+  const sv = await getT();
   return (
     <header className="anim-fade-up mb-8">
       <div className="flex min-w-0 items-start gap-4">
@@ -32,7 +33,8 @@ function Header({ deck }: { deck: Deck }) {
 }
 
 /** Låst för studenterna: lugn låsvy med vägen tillbaka till korten. Ingen lista. */
-export function ExamModeLocked({ deck, studentView = false }: { deck: Deck; studentView?: boolean }) {
+export async function ExamModeLocked({ deck, studentView = false }: { deck: Deck; studentView?: boolean }) {
+  const sv = await getT();
   return (
     <div>
       {studentView ? <StudentViewBar deckId={deck.id} mode="last" /> : null}
@@ -64,11 +66,12 @@ function Meta({ icon: Icon, children }: { icon: typeof Clock; children: React.Re
   );
 }
 
-function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; attempts: AttemptInfo[]; slug: string; now: number; showDraft: boolean }) {
+async function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; attempts: AttemptInfo[]; slug: string; now: number; showDraft: boolean }) {
+  const sv = await getT();
   const { inProgress, grading, latest, best, submitted } = attemptOverview(attempts, exam.durationMinutes, now);
   const href = routes.examAttempt(slug, exam.key);
-  const max = formatPoints(exam.maxPoints);
-  const date = formatExamDate(exam.date);
+  const max = formatPoints(exam.maxPoints, sv.meta.locale);
+  const date = formatExamDate(exam.date, sv.meta.locale);
   return (
     <li>
       <Card padding="none" className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-6" data-testid={`exam-row-${exam.key}`}>
@@ -84,19 +87,19 @@ function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; 
           </div>
           <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
             {date ? <Meta icon={CalendarDays}>{date}</Meta> : null}
-            <Meta icon={Clock}>{formatDuration(exam.durationMinutes)}</Meta>
+            <Meta icon={Clock}>{formatDuration(exam.durationMinutes, sv)}</Meta>
             <Meta icon={Trophy}>{sv.tenta.pointsLong(max)}</Meta>
             <Meta icon={ListChecks}>{sv.tenta.questionCount(exam.questionCount)}</Meta>
           </p>
-          <p className="mt-1.5 text-sm text-subtle">{kindSummary(exam.kinds)}</p>
+          <p className="mt-1.5 text-sm text-subtle">{kindSummary(exam.kinds, sv)}</p>
           {best && latest ? (
             <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm" data-testid="exam-row-result">
               <span className="font-semibold">
-                {sv.tenta.best}: {sv.tenta.resultShort(formatPoints(Number(best.points ?? 0)), max, best.grade ?? "U")}
+                {sv.tenta.best}: {sv.tenta.resultShort(formatPoints(Number(best.points ?? 0), sv.meta.locale), max, best.grade ?? "U")}
               </span>
               {latest.id !== best.id ? (
                 <span className="text-muted">
-                  {sv.tenta.latest}: {sv.tenta.resultShort(formatPoints(Number(latest.points ?? 0)), max, latest.grade ?? "U")}
+                  {sv.tenta.latest}: {sv.tenta.resultShort(formatPoints(Number(latest.points ?? 0), sv.meta.locale), max, latest.grade ?? "U")}
                 </span>
               ) : null}
               <span className="text-subtle">{sv.tenta.attemptsCount(submitted)}</span>
@@ -130,7 +133,7 @@ function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; 
 }
 
 /** Tentalägets startsida: tentorna, nyaste först, med studentens resultat. */
-export function ExamModeHome({
+export async function ExamModeHome({
   deck,
   exams,
   attempts,
@@ -150,6 +153,7 @@ export function ExamModeHome({
   studentsCanSee: boolean;
   now: number;
 }) {
+  const sv = await getT();
   return (
     <div>
       {studentView ? <StudentViewBar deckId={deck.id} mode="oppen" /> : null}

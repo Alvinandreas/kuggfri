@@ -4020,23 +4020,27 @@ create trigger cards_review_reset
 -- ---------------------------------------------------------------------------
 -- 2. Engelska för granskningen
 -- ---------------------------------------------------------------------------
--- Översättningen är ett hjälpmedel för en examinator som inte läser svenska. Den visas bara i
--- admin och är aldrig det som godkänns. sv är ett fingeravtryck av den svenska texten som
--- översattes, så att vyn kan säga till när kortet ändrats efteråt.
+-- Översättningen visas bara för den som slagit på reglaget English (admin och examinatorer; den
+-- polymerexaminatorn läser inte svenska) och är aldrig det som godkänns: studenterna ser alltid
+-- svenskan. sv är ett fingeravtryck av den svenska texten som översattes, så att granskningen kan
+-- säga till när kortet ändrats efteråt.
 --   translation_en: { "front": text, "back": text, "hint": text|null, "options": [text]|null, "sv": text }
 
 alter table public.cards add column translation_en jsonb;
 alter table public.categories add column title_en text;
+alter table public.decks add column description_en text;
 
 comment on column public.cards.translation_en is
   'Engelsk översättning för granskningen i admin (front, back, hint, options, sv = fingeravtryck av den svenska texten). Synkas med npm run kuggfri -- engelska.';
-comment on column public.categories.title_en is 'Områdets namn på engelska, för granskningen i admin.';
+comment on column public.categories.title_en is 'Områdets namn på engelska (reglaget English).';
+comment on column public.decks.description_en is 'Kursbeskrivningen på engelska (reglaget English).';
 
 -- ÅNGRA (se docs/ATERSTALLNING.md):
 -- drop trigger if exists cards_review_reset on public.cards;
 -- drop function if exists public.cards_review_reset();
 -- alter table public.cards drop column if exists translation_en;
 -- alter table public.categories drop column if exists title_en;
+-- alter table public.decks drop column if exists description_en;
 
 
 -- ===== supabase/seed.sql =====

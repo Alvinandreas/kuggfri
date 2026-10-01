@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ChevronRight, Combine, Pencil, Plus, Trash2 } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n/client";
+import { areaName } from "@/lib/admin/display";
 import { createCategoryAction, deleteCategoryAction, mergeCategoryAction, reorderCategoriesAction, updateCategoryAction } from "@/lib/admin/actions";
 import type { CategoryRow } from "@/lib/supabase/database.types";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
@@ -38,6 +40,10 @@ type Props = {
  * Klick på namnet öppnar områdets kortlista. Byt namn, slå ihop, ta bort och ordna om görs här.
  */
 export function CategoryOverview({ deckId, categories, counts, uncategorized }: Props) {
+  const sv = useT();
+  // Namnen visas i det valda språket; namnbytet redigerar alltid det svenska namnet.
+  const [lang] = useLang();
+  const name = (c: CategoryRow) => areaName(c, lang);
   const { pending, error, handle } = useActionRunner();
   const [newTitle, setNewTitle] = useState("");
   const [deleting, setDeleting] = useState<CategoryRow | null>(null);
@@ -54,11 +60,12 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
         label={sv.admin.categories}
         onReorder={(ids) => handle(reorderCategoriesAction(deckId, ids))}
         href={(c) => routes.admin.category(deckId, c.id)}
-        hrefLabel={(c) => c.title}
+        hrefLabel={(c) => name(c)}
         linkTestId="admin-category-link"
         renderItem={(c) => (
           <CategoryRowView
             category={c}
+            name={name(c)}
             colorIndex={colorIndex.get(c.id) ?? 0}
             counts={counts[c.id] ?? { total: 0, inactive: 0, drafts: 0, all: 0 }}
             pending={pending}
@@ -74,7 +81,7 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
           className="group flex min-h-14 items-center gap-3 rounded-lg border border-dashed border-line-strong px-4 py-2 transition-colors duration-150 hover:bg-surface-2"
         >
           <span className="font-semibold">{sv.admin.uncategorized}</span>
-          <span className="text-sm text-muted">{countLabel(uncategorized)}</span>
+          <span className="text-sm text-muted">{countLabel(uncategorized, sv)}</span>
           <ChevronRight size={17} aria-hidden className="ml-auto text-muted transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
       ) : null}
@@ -121,7 +128,7 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
         onConfirm={(into) => {
           const from = merging;
           if (!from) return;
-          handle(mergeCategoryAction(deckId, from.id, into.id), () => setToast({ id: Date.now(), text: sv.admin.mergeAreaDone(into.title) }));
+          handle(mergeCategoryAction(deckId, from.id, into.id), () => setToast({ id: Date.now(), text: sv.admin.mergeAreaDone(name(into)) }));
           setMerging(null);
         }}
       />
@@ -146,6 +153,9 @@ function MergeDialog({
   onCancel: () => void;
   onConfirm: (into: CategoryRow) => void;
 }) {
+  const sv = useT();
+  const [lang] = useLang();
+  const name = (c: CategoryRow) => areaName(c, lang);
   const targets = categories.filter((c) => c.id !== from?.id);
   const [intoId, setIntoId] = useState("");
   const into = targets.find((c) => c.id === intoId) ?? targets[0] ?? null;
@@ -154,7 +164,7 @@ function MergeDialog({
     <Modal
       open={from !== null}
       onClose={onCancel}
-      title={from ? sv.admin.mergeAreaTitle(from.title) : sv.admin.mergeArea}
+      title={from ? sv.admin.mergeAreaTitle(name(from)) : sv.admin.mergeArea}
       size="sm"
       locked={busy}
       footer={
@@ -174,9 +184,9 @@ function MergeDialog({
             <label htmlFor="sla-ihop-med" className="mb-1.5 block text-sm font-semibold">
               {sv.admin.mergeAreaInto}
             </label>
-            <Select id="sla-ihop-med" value={into.id} onChange={setIntoId} options={targets.map((c) => ({ value: c.id, label: c.title }))} />
+            <Select id="sla-ihop-med" value={into.id} onChange={setIntoId} options={targets.map((c) => ({ value: c.id, label: name(c) }))} />
           </div>
-          <p className="text-muted">{sv.admin.mergeAreaBody(n, from.title, into.title)}</p>
+          <p className="text-muted">{sv.admin.mergeAreaBody(n, name(from), name(into))}</p>
         </div>
       ) : (
         <p className="text-muted">{sv.admin.mergeAreaNoTarget}</p>
@@ -185,7 +195,7 @@ function MergeDialog({
   );
 }
 
-function countLabel(c: CategoryCounts): string {
+function countLabel(c: CategoryCounts, sv: Dict): string {
   const parts = [sv.admin.cardCount(c.total)];
   if (c.inactive > 0) parts.push(sv.admin.inactiveCount(c.inactive));
   if (c.drafts > 0) parts.push(sv.admin.draftCount(c.drafts));
@@ -194,6 +204,7 @@ function countLabel(c: CategoryCounts): string {
 
 function CategoryRowView({
   category,
+  name,
   colorIndex,
   counts,
   pending,
@@ -202,6 +213,8 @@ function CategoryRowView({
   onDelete,
 }: {
   category: CategoryRow;
+  /** Namnet som visas (engelska med reglaget English); namnbytet redigerar category.title. */
+  name: string;
   colorIndex: number;
   counts: CategoryCounts;
   pending: boolean;
@@ -210,6 +223,7 @@ function CategoryRowView({
   onMerge?: () => void;
   onDelete: () => void;
 }) {
+  const sv = useT();
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(category.title);
 
@@ -252,21 +266,21 @@ function CategoryRowView({
     <div className="flex min-h-9 items-center justify-between gap-2">
       {/* Smalt: namnet och antalen under varandra, så att inget trycks ihop bredvid knapparna. */}
       <div className="flex min-w-0 flex-1 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-x-3">
-        <CategoryTag title={category.title} colorIndex={colorIndex} size="md" className="min-w-0 max-w-full truncate" />
-        <span className="text-sm text-muted sm:shrink-0 sm:whitespace-nowrap">{countLabel(counts)}</span>
+        <CategoryTag title={name} colorIndex={colorIndex} size="md" className="min-w-0 max-w-full truncate" />
+        <span className="text-sm text-muted sm:shrink-0 sm:whitespace-nowrap">{countLabel(counts, sv)}</span>
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
-        <button type="button" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${category.title}`} title={sv.admin.rename} className={rowActionClass}>
+        <button type="button" onClick={() => setEditing(true)} disabled={pending} aria-label={`${sv.admin.rename}: ${name}`} title={sv.admin.rename} className={rowActionClass}>
           <Pencil size={15} aria-hidden className="sm:hidden" />
           <span className="hidden sm:inline">{sv.admin.rename}</span>
         </button>
         {onMerge ? (
-          <button type="button" onClick={onMerge} disabled={pending} aria-label={sv.admin.mergeAreaLabel(category.title)} title={sv.admin.mergeArea} className={rowActionClass}>
+          <button type="button" onClick={onMerge} disabled={pending} aria-label={sv.admin.mergeAreaLabel(name)} title={sv.admin.mergeArea} className={rowActionClass}>
             <Combine size={15} aria-hidden className="sm:hidden" />
             <span className="hidden sm:inline">{sv.admin.mergeArea}</span>
           </button>
         ) : null}
-        <button type="button" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${category.title}`} title={sv.common.delete} className={rowActionClass}>
+        <button type="button" onClick={onDelete} disabled={pending} aria-label={`${sv.admin.deleteCategory}: ${name}`} title={sv.common.delete} className={rowActionClass}>
           <Trash2 size={15} aria-hidden className="sm:hidden" />
           <span className="hidden sm:inline">{sv.common.delete}</span>
         </button>

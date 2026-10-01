@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { cardKindInstruction, type CardOption } from "@/lib/cards/kinds";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
@@ -47,10 +47,11 @@ export function QuizCard({
   selected,
   onToggle,
 }: Props) {
+  const sv = useT();
   const correctCount = options.filter((o) => o.correct).length;
   const multi = kind === "alternativ" && correctCount > 1;
   const answered = result !== null;
-  const kindLabel = cardKindInstruction(kind, options);
+  const kindLabel = cardKindInstruction(sv, kind, options);
   // Förklaringen tonar in först efter att facit hunnit synas.
   const [showExplanation, setShowExplanation] = useState(false);
   useEffect(() => {
@@ -123,7 +124,15 @@ export function QuizCard({
                       </span>
                     ) : null}
                     <span className={cx("min-w-0", kind === "alternativ" && "flex-1")}>
-                      {kind === "alternativ" ? <Markdown text={option.text} variant="body" className="[&_p]:m-0" /> : option.text}
+                      {kind === "alternativ" ? (
+                        <Markdown text={option.text} variant="body" className="[&_p]:m-0" />
+                      ) : option.text === "Sant" ? (
+                        sv.tenta.trueLabel
+                      ) : option.text === "Falskt" ? (
+                        sv.tenta.falseLabel
+                      ) : (
+                        option.text
+                      )}
                     </span>
                     {answered && state !== "dim" && state !== "idle" ? (
                       <span className="sr-only">

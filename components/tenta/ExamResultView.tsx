@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, CircleMinus, FlaskConical, PenLine, RotateCcw, Undo2, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { Answers, Exam } from "@/lib/tentor/model";
 import { gradeFor, hypotheticalTotal, type ExamResult, type QuestionResult } from "@/lib/tentor/grade";
 import { startExamAttemptAction } from "@/lib/tentor/actions";
@@ -71,6 +71,7 @@ function whatIfSteps(max: number, actual: number): number[] {
  * uppgifter och se hur totalen och betyget hade ändrats; inget sparas.
  */
 export function ExamResultView({ slug, exam, result, answers, selfGrades, points, grade, submittedWhen, preview, back, attemptSuffix, studentViewDeck }: Props) {
+  const sv = useT();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("alla");
@@ -138,12 +139,12 @@ export function ExamResultView({ slug, exam, result, answers, selfGrades, points
             <span className="inline-flex items-center gap-2">
               <GradeBadge grade={shownGrade} size="sm" />
               <span className="text-lg font-extrabold tabular-nums" data-testid="whatif-points">
-                {formatPoints(shownPoints)} / {formatPoints(exam.maxPoints)} p
+                {formatPoints(shownPoints, sv.meta.locale)} / {formatPoints(exam.maxPoints, sv.meta.locale)} p
               </span>
             </span>
             <span className="min-w-0 flex-1 basis-40 text-sm">
               <span className={cx("font-bold", hypo ? "text-accent-ink" : "text-muted")}>{hypo ? sv.tenta.whatIfBadge : sv.tenta.whatIf}</span>
-              <span className="block text-muted">{hypo ? `${sv.tenta.whatIfChanged(changed.length)}. ${sv.tenta.whatIfActual(formatPoints(points), grade)}` : sv.tenta.whatIfActual(formatPoints(points), grade)}</span>
+              <span className="block text-muted">{hypo ? `${sv.tenta.whatIfChanged(changed.length)}. ${sv.tenta.whatIfActual(formatPoints(points, sv.meta.locale), grade)}` : sv.tenta.whatIfActual(formatPoints(points, sv.meta.locale), grade)}</span>
             </span>
             <span className="flex gap-1.5">
               <Button variant="outline" size="sm" onClick={() => setOverrides({})} disabled={!hypo} data-testid="whatif-reset">
@@ -169,12 +170,12 @@ export function ExamResultView({ slug, exam, result, answers, selfGrades, points
             <p className="text-sm font-semibold text-muted">{hypo ? sv.tenta.whatIfBadge : sv.tenta.totalLabel}</p>
             <p className="mt-1 flex items-baseline gap-2">
               <span className="text-5xl font-extrabold tabular-nums tracking-tight sm:text-6xl" data-testid="result-points">
-                {formatPoints(shownPoints)}
+                {formatPoints(shownPoints, sv.meta.locale)}
               </span>
-              <span className="text-xl font-semibold text-muted">/ {formatPoints(exam.maxPoints)} p</span>
+              <span className="text-xl font-semibold text-muted">/ {formatPoints(exam.maxPoints, sv.meta.locale)} p</span>
             </p>
             {next ? (
-              <p className="mt-1.5 text-sm font-medium text-muted">{sv.tenta.toGrade(formatPoints(next.min - shownPoints), next.grade)}</p>
+              <p className="mt-1.5 text-sm font-medium text-muted">{sv.tenta.toGrade(formatPoints(next.min - shownPoints, sv.meta.locale), next.grade)}</p>
             ) : exam.grades.length > 0 ? (
               <p className="mt-1.5 text-sm font-medium text-accent-ink">{sv.tenta.topGrade}</p>
             ) : null}
@@ -189,14 +190,14 @@ export function ExamResultView({ slug, exam, result, answers, selfGrades, points
           <div className="rounded-md bg-surface-2 px-4 py-3">
             <dt className="text-sm font-semibold text-muted">{sv.tenta.autoLabel}</dt>
             <dd className="mt-0.5 text-lg font-bold tabular-nums" data-testid="result-auto">
-              {sv.tenta.ofMax(formatPoints(result.autoPoints), formatPoints(autoMax))}
+              {sv.tenta.ofMax(formatPoints(result.autoPoints, sv.meta.locale), formatPoints(autoMax, sv.meta.locale))}
             </dd>
           </div>
           {selfQuestions.length > 0 ? (
             <div className="rounded-md bg-surface-2 px-4 py-3">
               <dt className="text-sm font-semibold text-muted">{sv.tenta.selfLabel}</dt>
               <dd className="mt-0.5 text-lg font-bold tabular-nums" data-testid="result-self">
-                {sv.tenta.ofMax(formatPoints(selfSum), formatPoints(result.selfMax))}
+                {sv.tenta.ofMax(formatPoints(selfSum, sv.meta.locale), formatPoints(result.selfMax, sv.meta.locale))}
               </dd>
             </div>
           ) : null}
@@ -262,11 +263,11 @@ export function ExamResultView({ slug, exam, result, answers, selfGrades, points
                   </span>
                   <span className="text-sm font-semibold tabular-nums" data-testid={`result-${q.id}-points`}>
                     {differs ? (
-                      <s className="mr-2 font-medium text-muted" aria-label={sv.tenta.whatIfWas(formatPoints(actual))}>
-                        {formatPoints(actual)}/{formatPoints(r.max)}
+                      <s className="mr-2 font-medium text-muted" aria-label={sv.tenta.whatIfWas(formatPoints(actual, sv.meta.locale))}>
+                        {formatPoints(actual, sv.meta.locale)}/{formatPoints(r.max, sv.meta.locale)}
                       </s>
                     ) : null}
-                    {formatPoints(differs ? override! : actual)}/{formatPoints(r.max)} p
+                    {formatPoints(differs ? override! : actual, sv.meta.locale)}/{formatPoints(r.max, sv.meta.locale)} p
                   </span>
                 </div>
               </div>

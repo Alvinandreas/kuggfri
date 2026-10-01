@@ -1,83 +1,83 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useTransition } from "react";
 import { Languages } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
-import { adminEn, cardKindEn, granskningEn, sourceTagEn, type GranskningText } from "@/lib/i18n/en/granskning";
+import type { Dict, Lang } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n/client";
 import type { CardKind } from "@/lib/cards/kinds";
-import { CARD_KIND_LABEL } from "@/lib/cards/kinds";
-import { SOURCE_TAG_LABEL, type SourceTag } from "@/lib/admin/sources";
-import { createBrowserSetting } from "@/lib/ui/browser-setting";
+import type { SourceTag } from "@/lib/admin/sources";
 import { Toggle } from "@/components/ui/Toggle";
 
-export type ReviewLang = "sv" | "en";
+export type ReviewLang = Lang;
 
-/** Språket i granskningen sparas i webbläsaren: en examinator som läser engelska slipper slå på det varje gång. */
-const langSetting = createBrowserSetting<ReviewLang>(
-  "kuggfri:granskning-sprak:v1",
-  "sv",
-  (raw) => (raw === "en" ? "en" : "sv"),
-  (value) => (value === "sv" ? null : value),
-);
-
+/** Granskningens texter i det valda språket, i den form granskningens komponenter använder. */
 export type ReviewText = {
-  lang: ReviewLang;
-  g: GranskningText;
+  lang: Lang;
+  g: Dict["granskning"];
   kind: Record<CardKind, string>;
   source: Record<SourceTag, string>;
-  admin: typeof adminEn;
+  admin: {
+    alternativesHelp: string;
+    markdownHelp: string;
+    reviewSkipped: (n: number) => string;
+    original: string;
+    originalHelp: string;
+    sourceOriginalHelp: string;
+    sourceNoneHelp: string;
+    trueWord: string;
+    falseWord: string;
+  };
   common: { cancel: string; close: string; error: string };
 };
 
-const SV: ReviewText = {
-  lang: "sv",
-  g: sv.granskning,
-  kind: CARD_KIND_LABEL,
-  source: SOURCE_TAG_LABEL,
-  admin: {
-    alternativesHelp: sv.admin.alternativesHelp,
-    markdownHelp: sv.admin.markdownHelp,
-    reviewSkipped: sv.admin.reviewSkipped,
-    original: sv.admin.original,
-    originalHelp: sv.admin.originalHelp,
-    sourceOriginalHelp: sv.admin.sourceOriginalHelp,
-    sourceNoneHelp: sv.admin.sourceNoneHelp,
-    trueWord: "Sant",
-    falseWord: "Falskt",
-  },
-  common: { cancel: sv.common.cancel, close: sv.common.close, error: sv.errors.generic },
-};
-
-const EN: ReviewText = {
-  lang: "en",
-  g: granskningEn,
-  kind: cardKindEn,
-  source: sourceTagEn,
-  admin: adminEn,
-  common: { cancel: "Cancel", close: "Close", error: "Something went wrong. Please try again." },
-};
-
-/** Granskningens texter i det valda språket, och en funktion som byter språk. */
-export function useReviewText(): [ReviewText, (lang: ReviewLang) => void] {
-  const [lang, setLang] = langSetting.useSetting();
-  return [lang === "en" ? EN : SV, setLang];
+function reviewText(t: Dict): ReviewText {
+  return {
+    lang: t.meta.lang === "en" ? "en" : "sv",
+    g: t.granskning,
+    kind: t.cardKind.label,
+    source: t.sourceTags,
+    admin: {
+      alternativesHelp: t.admin.alternativesHelp,
+      markdownHelp: t.admin.markdownHelp,
+      reviewSkipped: t.admin.reviewSkipped,
+      original: t.admin.original,
+      originalHelp: t.admin.originalHelp,
+      sourceOriginalHelp: t.admin.sourceOriginalHelp,
+      sourceNoneHelp: t.admin.sourceNoneHelp,
+      trueWord: t.admin.trueLabel,
+      falseWord: t.admin.falseLabel,
+    },
+    common: { cancel: t.common.cancel, close: t.common.close, error: t.errors.generic },
+  };
 }
 
-/** Granskningens texter i det valda språket (för komponenter som inte byter språk själva). */
+/** Granskningens texter och en funktion som byter språk (det byter för hela tjänsten). */
+export function useReviewText(): [ReviewText, (lang: Lang) => void] {
+  const t = useT();
+  const [, setLang] = useLang();
+  return [reviewText(t), setLang];
+}
+
+/** Granskningens texter i det valda språket. */
 export function useReviewT(): ReviewText {
-  return useReviewText()[0];
+  return reviewText(useT());
 }
 
-/** Reglaget English: korten och granskningen på engelska. Bara i admin; studenterna ser alltid svenska. */
+/**
+ * Reglaget English: hela tjänsten på engelska för den som slår på det (bara den här
+ * webbläsaren). Visas för admin och examinatorer; studenterna ser alltid svenska.
+ */
 export function LanguageToggle({ className }: { className?: string }) {
-  const [t, setLang] = useReviewText();
+  const t = useT();
+  const [lang, setLang] = useLang();
+  const [pending, startTransition] = useTransition();
   const id = useId();
   return (
-    <div className={className} title={t.g.languageHelp} data-testid="review-language">
+    <div className={className} title={t.meta.languageHelp} data-testid="review-language">
       <span className="inline-flex items-center gap-2 text-sm font-semibold">
         <Languages size={16} aria-hidden className="text-muted" />
-        <span id={id}>{t.g.language}</span>
-        <Toggle checked={t.lang === "en"} onChange={(on) => setLang(on ? "en" : "sv")} labelledBy={id} />
+        <span id={id}>{t.meta.language}</span>
+        <Toggle checked={lang === "en"} disabled={pending} onChange={(on) => startTransition(() => setLang(on ? "en" : "sv"))} labelledBy={id} />
       </span>
     </div>
   );

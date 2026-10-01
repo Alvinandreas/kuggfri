@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { Lightbulb, Star } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { SelfRating } from "@/lib/progress/types";
 import { Markdown } from "@/components/markdown/Markdown";
 import { buttonClass, IconButton } from "@/components/ui/Button";
@@ -80,6 +80,7 @@ export function Flashcard({
   onSwipeLeft,
   onSwipeRight,
 }: Props) {
+  const sv = useT();
   const start = useRef<{ x: number; y: number; id: number } | null>(null);
   const swiped = useRef(false);
 
@@ -200,6 +201,7 @@ export function FaceHeader({
   starred: boolean;
   onToggleStar: () => void;
 }) {
+  const sv = useT();
   const rowRef = useRef<HTMLDivElement>(null);
   const tagMeasure = useRef<HTMLSpanElement>(null);
   const labelMeasure = useRef<HTMLSpanElement>(null);
@@ -297,6 +299,7 @@ const stampSize: Record<SelfRating, string> = {
 };
 
 function Stamp({ rating }: { rating: SelfRating }) {
+  const sv = useT();
   return (
     <div
       aria-hidden="true"

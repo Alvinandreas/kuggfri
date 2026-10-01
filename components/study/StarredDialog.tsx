@@ -1,7 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { useStars } from "@/lib/progress/stars";
 import { firstLine } from "@/lib/text/first-line";
 import { IconButton } from "@/components/ui/Button";
@@ -27,6 +27,7 @@ export function StarredDialog({
   categories: readonly { id: string; title: string }[];
   colorIndex: Map<string, number>;
 }) {
+  const sv = useT();
   const { stars, toggle } = useStars();
   const starred = cards.filter((c) => stars.has(c.id));
   const titleOf = new Map(categories.map((c) => [c.id, c.title] as const));

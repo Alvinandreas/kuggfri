@@ -3,14 +3,9 @@
  * Samma nycklar som lib/i18n/sv/granskning.ts; typen kontrollerar att inget saknas. Termerna
  * följer kursens engelska material ("exam", "lecture", "quiz").
  */
-import type { granskning as sv } from "@/lib/i18n/sv/granskning";
+import type { Dict } from "@/lib/i18n/types";
 
-type Widen<T> = { [K in keyof T]: T[K] extends (...args: infer A) => string ? (...args: A) => string : string };
-
-/** Granskningens texter, på svenska eller engelska. */
-export type GranskningText = Widen<typeof sv>;
-
-export const granskningEn: GranskningText = {
+export const granskning: Dict["granskning"] = {
   title: "Review",
   tabsLabel: "Review tabs",
   tabToReview: "To review",
@@ -18,7 +13,7 @@ export const granskningEn: GranskningText = {
   tabFlagged: "Flagged",
   tabRemoved: "Removed",
   tabHelpToReview: "Cards that nobody has approved yet, flagged ones included.",
-  tabHelpReviewed: "Reviewed cards, most recent first.",
+  tabHelpReviewed: "Approved cards, most recently reviewed first.",
   tabHelpFlagged: "All cards with a flag. They stay here until the flag is resolved.",
   tabHelpRemoved: "Cards removed from rotation. Students do not see them.",
   search: "Search the cards",
@@ -44,23 +39,23 @@ export const granskningEn: GranskningText = {
   today: "Today",
   yesterday: "Yesterday",
   originalGroup: "Original cards",
-  originalGroupHelp: "Cards that earlier cohorts have used.",
+  originalGroupHelp: "Cards that earlier cohorts have studied.",
   labelNew: "New card",
   labelCorrected: "Corrected original",
   labelOriginal: "Original card",
-  emptyToReview: "Everything has been reviewed",
+  emptyToReview: "Everything reviewed",
   emptyToReviewHelp: "New and changed cards appear here.",
   emptyReviewed: "No reviewed cards yet",
-  emptyReviewedHelp: "Reviewed cards appear here, most recent first.",
+  emptyReviewedHelp: "Approved cards appear here, most recently reviewed first.",
   emptyFlagged: "No flagged cards",
   emptyFlaggedHelp: "Cards you flag appear here.",
-  emptyRemoved: "No cards have been removed",
+  emptyRemoved: "No cards removed from rotation",
   emptyRemovedHelp: "Cards removed from rotation appear here.",
   noMatch: "No cards match the filter.",
   showAll: "Show all cards",
   startReview: "Start reviewing",
   startFlagged: "Review flagged",
-  backToList: "Back to the list",
+  backToList: "Back to list",
   position: (i: number, n: number) => `${i} of ${n}`,
   positionLabel: (i: number, n: number) => `Card ${i} of ${n}`,
   outsideFilter: "Outside the filter",
@@ -108,7 +103,7 @@ export const granskningEn: GranskningText = {
   approveBack: "Approve and put in rotation",
   unreviewed: (front: string) => `Marked as unreviewed: ${front}`,
   overviewTitle: "Review overview",
-  overviewSummary: (done: number, all: number, pct: number) => `${done} of ${all} cards reviewed (${pct} %)`,
+  overviewSummary: (done: number, all: number, pct: number) => `${done} of ${all} cards reviewed (${pct}%)`,
   overviewOf: (done: number, all: number) => `${done} of ${all}`,
   restoreOriginal: "Restore the original",
   changeFlag: "Change the note",
@@ -145,37 +140,3 @@ export const granskningEn: GranskningText = {
   showEnglish: "Show English",
 };
 
-/** Uppgiftstyperna och källtyperna på engelska (samma nycklar som på svenska). */
-export const cardKindEn = {
-  sjalvskattning: "Self-assessment",
-  begrepp: "Concept",
-  "sant-falskt": "True/False",
-  alternativ: "Multiple choice",
-} as const;
-
-export const sourceTagEn = {
-  forelasning: "Lecture",
-  tenta: "Exam",
-  quiz: "Quiz",
-  ovning: "Exercise",
-  labb: "Lab",
-  bok: "Book",
-  ordlista: "Glossary",
-  kursdokument: "Course document",
-  ovrigt: "Other",
-  original: "Original card",
-  ingen: "No source",
-} as const;
-
-/** De få adminrader som syns i granskningen. */
-export const adminEn = {
-  alternativesHelp: "Tick the correct answers. At least two options and at least one correct; several correct is fine.",
-  markdownHelp: "Markdown and KaTeX ($…$ for maths) are supported.",
-  reviewSkipped: (n: number) => (n === 1 ? "1 card was skipped because its type or options have errors." : `${n} cards were skipped because their type or options have errors.`),
-  original: "Original",
-  originalHelp: "Part of the proven original set used by earlier cohorts.",
-  sourceOriginalHelp: "The original cards were written before sources were recorded.",
-  sourceNoneHelp: "The card has no source. Add one via Edit.",
-  trueWord: "True",
-  falseWord: "False",
-};

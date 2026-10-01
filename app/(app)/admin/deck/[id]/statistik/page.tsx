@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Download } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getLang, getT } from "@/lib/i18n/server";
+import { areaName, cardFront } from "@/lib/admin/display";
 import { firstLine } from "@/lib/text/first-line";
 import { getDeckForAdmin, getDeckOverviewStats, getDeckStats } from "@/lib/admin/queries";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
@@ -14,16 +15,22 @@ import { formatCount, formatDecimal } from "@/lib/admin/format";
 import { routes } from "@/lib/routes";
 import { buttonClass } from "@/components/ui/Button";
 
-export const metadata: Metadata = { title: sv.admin.allCardsDetail };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.admin.allCardsDetail };
+}
 
 /** Mer statistik: fördelningarna från översikten och alla kort i detalj, lägst snitt först. */
 export default async function StatsPage({ params }: { params: Promise<{ id: string }> }) {
+  const sv = await getT();
   const { id } = await params;
-  const [data, stats, overview] = await Promise.all([getDeckForAdmin(id), getDeckStats(id), getDeckOverviewStats(id)]);
+  const [data, rawStats, overview, lang] = await Promise.all([getDeckForAdmin(id), getDeckStats(id), getDeckOverviewStats(id), getLang()]);
   if (!data) notFound();
+  const front = new Map(data.cards.map((c) => [c.id, cardFront(c, lang)] as const));
+  const stats = { ...rawStats, cards: rawStats.cards.map((c) => ({ ...c, front: front.get(c.card_id) ?? c.front })) };
   const colorIndex = categoryColorIndex(data.categories);
   const categoryOf = new Map(data.cards.map((c) => [c.id, c.category_id] as const));
-  const titleOf = new Map(data.categories.map((c) => [c.id, c.title] as const));
+  const titleOf = new Map(data.categories.map((c) => [c.id, areaName(c, lang)] as const));
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
@@ -55,9 +62,9 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
         <p className="mt-1 text-sm text-muted">{sv.admin.statsDetailHelp}</p>
       </div>
       <dl className="grid grid-cols-3 gap-3">
-        <StatBlock label={sv.admin.tileStudents} value={formatCount(stats.uniqueUsers)} testId="stats-users" />
-        <StatBlock label={sv.admin.statsReviews} value={formatCount(stats.totalReviews)} />
-        <StatBlock label={sv.admin.statsAvg} value={formatDecimal(stats.avgRating, 2)} />
+        <StatBlock label={sv.admin.tileStudents} value={formatCount(stats.uniqueUsers, sv.meta.locale)} testId="stats-users" />
+        <StatBlock label={sv.admin.statsReviews} value={formatCount(stats.totalReviews, sv.meta.locale)} />
+        <StatBlock label={sv.admin.statsAvg} value={formatDecimal(stats.avgRating, 2, sv.meta.locale)} />
       </dl>
       {stats.cards.every((c) => c.rating_count === 0) ? (
         <Card padding="lg" className="text-muted">
@@ -86,11 +93,11 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
                       </Link>
                     </td>
                     <td className="hidden py-2.5 pr-3 sm:table-cell">
-                      {cat && titleOf.has(cat) ? <AreaLink deckId={id} areaId={cat} title={titleOf.get(cat) ?? ""} colorIndex={colorIndex.get(cat) ?? 0} /> : <span className="text-muted">–</span>}
+                      {cat && titleOf.has(cat) ? <AreaLink deckId={id} areaId={cat} title={titleOf.get(cat) ?? ""} colorIndex={colorIndex.get(cat) ?? 0} sv={sv} /> : <span className="text-muted">–</span>}
                     </td>
-                    <td className="py-2.5 pr-3 text-right tabular-nums">{formatDecimal(c.avg_rating, 2)}</td>
-                    <td className="py-2.5 pr-3 text-right tabular-nums">{formatCount(c.rating_count)}</td>
-                    <td className="py-2.5 pr-5 text-right tabular-nums">{formatCount(c.total_reps)}</td>
+                    <td className="py-2.5 pr-3 text-right tabular-nums">{formatDecimal(c.avg_rating, 2, sv.meta.locale)}</td>
+                    <td className="py-2.5 pr-3 text-right tabular-nums">{formatCount(c.rating_count, sv.meta.locale)}</td>
+                    <td className="py-2.5 pr-5 text-right tabular-nums">{formatCount(c.total_reps, sv.meta.locale)}</td>
                   </tr>
                 );
               })}

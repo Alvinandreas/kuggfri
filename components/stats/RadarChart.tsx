@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { tagBgClass } from "@/lib/ui/tag-colors";
 import { percent } from "@/lib/text/percent";
 
@@ -54,6 +54,7 @@ function polar(angle: number, r: number): [number, number] {
  * axel och en tabellvy.
  */
 export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size = "md", hideTitle = false, onSelect }: Props) {
+  const sv = useT();
   const [hoverState, setHoverState] = useState<number | null>(null);
   const hover = hoverProp === undefined ? hoverState : hoverProp;
   const setHover = (i: number | null) => {
@@ -96,8 +97,8 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
               <td>
                 {i + 1}. {a.label}
               </td>
-              <td>{percent(a.partial, a.total)} %</td>
-              <td>{percent(a.learned, a.total)} %</td>
+              <td>{sv.meta.pct(percent(a.partial, a.total))}</td>
+              <td>{sv.meta.pct(percent(a.learned, a.total))}</td>
             </tr>
           ))}
         </tbody>
@@ -186,6 +187,7 @@ export function RadarChart({ axes, title, help, hover: hoverProp, onHover, size 
 
 /** Numrerad kategorilista som hör till radardiagrammet; läggs där det finns plats (t.ex. under båda diagrammen). */
 export function RadarLegend({ axes, hover, onHover }: { axes: RadarAxis[]; hover: number | null; onHover: (i: number | null) => void }) {
+  const sv = useT();
   return (
     <ol className="grid grid-cols-1 gap-x-4 gap-y-1 text-xs sm:grid-cols-2 lg:grid-cols-3" aria-label={sv.deck.selectionCategory}>
       {axes.map((a, i) => (
@@ -199,7 +201,7 @@ export function RadarLegend({ axes, hover, onHover }: { axes: RadarAxis[]; hover
           <span className="min-w-0 flex-1 truncate" title={a.label}>
             {a.label}
           </span>
-          <span className="shrink-0 tabular-nums text-muted">{percent(a.learned, a.total)} %</span>
+          <span className="shrink-0 tabular-nums text-muted">{sv.meta.pct(percent(a.learned, a.total))}</span>
         </li>
       ))}
     </ol>
@@ -224,6 +226,7 @@ export function RadarBars({
   /** Gör raderna till knappar som öppnar området. */
   onSelect?: (index: number) => void;
 }) {
+  const sv = useT();
   return (
     <ol className={`grid gap-x-6 gap-y-1 ${columns === 2 ? "sm:grid-cols-2" : ""}`} aria-label={sv.deck.selectionCategory} data-testid="radar-bars">
       {axes.map((a, i) => {
@@ -244,7 +247,7 @@ export function RadarBars({
               <span className="line-clamp-2 min-w-0 flex-1 font-medium leading-snug" title={a.label}>
                 {a.label}
               </span>
-              <span className="shrink-0 tabular-nums text-muted">{percent(a.learned, a.total)} %</span>
+              <span className="shrink-0 tabular-nums text-muted">{sv.meta.pct(percent(a.learned, a.total))}</span>
             </div>
             <div className="ml-[1.875rem] flex h-1.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
               <div className="h-full bg-chart-1 transition-[width] duration-700 ease-out" style={{ width: `${learned}%` }} />

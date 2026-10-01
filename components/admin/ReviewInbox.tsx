@@ -41,6 +41,7 @@ import { useOptimisticDecisions } from "./review/useOptimisticDecisions";
 import { useReviewDecisions } from "./review/useReviewDecisions";
 import { useReviewView, viewQuery } from "./review/useReviewView";
 import { useReviewT } from "./review/ReviewLanguage";
+import { useT } from "@/lib/i18n/client";
 import { ReviewBar, ReviewOverview, reviewedOf } from "./review/ReviewOverview";
 
 type Props = {
@@ -70,6 +71,7 @@ const TABS = ["att-granska", "granskade", "flaggade", "ur-rotation"] as const sa
  */
 export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, userId, now: serverNow }: Props) {
   const t = useReviewT();
+  const dict = useT();
   const g = t.g;
   const TAB_LABEL: Record<ReviewTab, string> = { "att-granska": g.tabToReview, granskade: g.tabReviewed, flaggade: g.tabFlagged, "ur-rotation": g.tabRemoved };
   const TAB_HELP: Record<ReviewTab, string> = { "att-granska": g.tabHelpToReview, granskade: g.tabHelpReviewed, flaggade: g.tabHelpFlagged, "ur-rotation": g.tabHelpRemoved };
@@ -272,7 +274,7 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
           areaColor={areaColor}
           reviewedLine={reviewedLine(current)}
           flaggedLine={flaggedLine(current)}
-          issues={approvalIssues(current)}
+          issues={approvalIssues(current, dict)}
           editing={editing}
           status={status}
           onCloseStatus={() => setStatus(null)}

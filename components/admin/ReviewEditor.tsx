@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { cardFormValues, fixErrorsMessage, requiredIssues } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
+import { useT } from "@/lib/i18n/client";
 import type { ReviewArea, ReviewCard } from "@/lib/admin/review";
 import type { CardKind, CardOption } from "@/lib/cards/kinds";
 import { Button } from "@/components/ui/Button";
@@ -44,6 +45,7 @@ type Props = {
  */
 export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Props) {
   const t = useReviewT();
+  const sv = useT();
   const formRef = useRef<HTMLFormElement>(null);
   const { form, setFront, setBack, setHint, setKind, setAlternatives, setTrueFalse, options, auto, kindIssues } = useCardForm(card);
   const { front, back, hint, kind, alternatives, trueFalse } = form;
@@ -53,12 +55,12 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
   const [error, setError] = useState<string | null>(null);
   const approveNext = useRef(canApprove);
 
-  const issues = [...requiredIssues(front), ...kindIssues];
+  const issues = [...requiredIssues(sv, front), ...kindIssues];
 
   async function submit(approve: boolean) {
     setAttempted(true);
     if (issues.length > 0 || !back.trim()) {
-      setError(fixErrorsMessage([...kindIssues, ...requiredIssues(front, back)]));
+      setError(fixErrorsMessage(sv, [...kindIssues, ...requiredIssues(sv, front, back)]));
       return;
     }
     setError(null);

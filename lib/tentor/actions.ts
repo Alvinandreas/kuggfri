@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { editorAction, runAction } from "@/lib/actions/guard";
 import { fail, isUuid, type ActionResult } from "@/lib/actions/result";
 import { revalidateExam, revalidateExamMode, revalidateExamPages } from "@/lib/cache/revalidate";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { gradeFor, isPendingGrading, totalWithSelfGrades, type ExamResult } from "./grade";
 import { attemptsAsServer, getExamRecord } from "./queries";
@@ -20,6 +20,7 @@ import { SUBMIT_GRACE_MS, attemptOverview, deadlineMs, sanitizeAnswers, sanitize
 /** Startar ett nytt försök, eller återupptar det pågående. */
 export async function startExamAttemptAction(slug: string, key: string): Promise<ActionResult<{ attemptId: string }>> {
   return runAction(async () => {
+    const sv = await getT();
     const ctx = await loadExamDeck(slug);
     if (!ctx) return { ok: false, error: sv.tenta.notAvailable };
     const record = await getExamRecord(ctx.deck.id, key, ctx.access);
@@ -39,6 +40,7 @@ export async function startExamAttemptAction(slug: string, key: string): Promise
 /** Sparar svaren löpande under tentan (webbläsaren skickar dem med några sekunders fördröjning). */
 export async function saveExamAnswersAction(attemptId: string, answers: unknown): Promise<ActionResult> {
   return runAction(async () => {
+    const sv = await getT();
     const ctx = await loadAttempt(attemptId);
     if (!ctx) return { ok: false, error: sv.tenta.notAvailable };
     if (ctx.attempt.submitted_at) return { ok: false, error: sv.tenta.alreadySubmitted };
@@ -59,6 +61,7 @@ export async function saveExamAnswersAction(attemptId: string, answers: unknown)
  */
 export async function submitExamAction(attemptId: string, answers: unknown): Promise<ActionResult<{ points: number | null; grade: string | null }>> {
   return runAction(async () => {
+    const sv = await getT();
     const ctx = await loadAttempt(attemptId);
     if (!ctx) return { ok: false, error: sv.tenta.notAvailable };
     const { attempt, exam } = ctx;
@@ -74,6 +77,7 @@ export async function submitExamAction(attemptId: string, answers: unknown): Pro
 
 /** Ett inlämnat försök i rättningsläget, med de självbedömda uppgifterna. */
 async function pendingAttempt(attemptId: string) {
+  const sv = await getT();
   const ctx = await loadAttempt(attemptId);
   if (!ctx) return { error: sv.tenta.notAvailable } as const;
   if (!ctx.attempt.submitted_at) return { error: sv.tenta.notSubmitted } as const;
@@ -105,6 +109,7 @@ export async function saveSelfGradesAction(attemptId: string, grades: unknown): 
  */
 export async function finishGradingAction(attemptId: string, grades: unknown): Promise<ActionResult<{ points: number; grade: string }>> {
   return runAction(async () => {
+    const sv = await getT();
     const p = await pendingAttempt(attemptId);
     if ("error" in p) return { ok: false, error: p.error! };
     const { ctx, result, selfGraded } = p;
@@ -131,6 +136,7 @@ export async function finishGradingAction(attemptId: string, grades: unknown): P
  * den ändrar ingenting för studenterna.
  */
 export async function setStudentViewAction(deckId: string, mode: "oppen" | "last" | null): Promise<ActionResult> {
+  const sv = await getT();
   if (!isUuid(deckId) || (mode !== null && mode !== "oppen" && mode !== "last")) return { ok: false, error: sv.errors.generic };
   return editorAction(deckId, async ({ supabase }) => {
     const { data } = await supabase.from("decks").select("slug").eq("id", deckId).maybeSingle();
@@ -144,6 +150,7 @@ export async function setStudentViewAction(deckId: string, mode: "oppen" | "last
 
 /** Öppnar eller låser tentaläget för studenterna (admin och kursens examinatorer). */
 export async function setExamModeOpenAction(deckId: string, open: boolean): Promise<ActionResult> {
+  const sv = await getT();
   if (!isUuid(deckId) || typeof open !== "boolean") return { ok: false, error: sv.errors.generic };
   return editorAction(deckId, async ({ supabase }) => {
     const { data, error } = await supabase.from("decks").update({ exam_mode_open: open }).eq("id", deckId).select("slug").single();

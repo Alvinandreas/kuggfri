@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen, LifeBuoy } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDecksForAbout } from "@/lib/content/queries";
 import { Logo } from "@/components/layout/Logo";
 import { ActionList, ActionRow } from "@/components/ui/ActionRow";
@@ -10,7 +10,10 @@ import { Card } from "@/components/ui/Card";
 import { ContactCards } from "@/components/layout/ContactCards";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.about.title };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.about.title };
+}
 
 /**
  * Om: vad tjänsten är, varför den finns, kurserna och vem som står bakom.
@@ -22,6 +25,7 @@ export const metadata: Metadata = { title: sv.about.title };
 const sectionClass = "prose-body [&_h2]:tracking-tight [&_a]:underline-offset-2";
 
 export default async function AboutPage() {
+  const sv = await getT();
   const decks = await getDecksForAbout();
   return (
     <article className="mx-auto w-full max-w-[46rem]">
@@ -78,12 +82,8 @@ export default async function AboutPage() {
 
         {/* Samma uppgifter som i integritetspolicyn: ändras det ena ska det andra följa med. */}
         <section className={sectionClass}>
-          <h2>Vem står bakom</h2>
-          <p>
-            Kuggfri byggs och drivs ideellt av en student vid Chalmers tekniska högskola. Tjänsten är inte en del av
-            Chalmers IT-miljö. Hittar du ett fel i ett enskilt kort rapporterar du det direkt från kortet, så
-            hamnar det hos kursens examinator. Annars når du oss här:
-          </p>
+          <h2>{sv.about.whoTitle}</h2>
+          <p>{sv.about.whoBody}</p>
         </section>
         <ContactCards />
 

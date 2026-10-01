@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { listExams, openForStudents } from "@/lib/tentor/queries";
 import { listMyAttempts, loadExamDeck } from "@/lib/tentor/server";
 import { ExamModeHome, ExamModeLocked } from "@/components/tenta/ExamModeHome";
@@ -8,6 +8,7 @@ import { ExamModeHome, ExamModeLocked } from "@/components/tenta/ExamModeHome";
 type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { slug } = await params;
   const ctx = await loadExamDeck(slug);
   return { title: ctx ? sv.tenta.pageTitle(ctx.deck.title) : sv.tenta.title };

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { IconButton } from "./Button";
 import { cx } from "./cx";
 
@@ -25,6 +25,7 @@ const widths = { sm: "w-[min(94vw,26rem)]", md: "w-[min(94vw,34rem)]", lg: "w-[m
  * återgår till knappen som öppnade den. Tonar och glider in (se .ui-modal i globals.css).
  */
 export function Modal({ open, onClose, title, children, footer, size = "md", locked = false }: Props) {
+  const sv = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 

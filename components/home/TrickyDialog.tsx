@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Target } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { planDeckSession } from "@/lib/study/deck-plan";
 import { estimateMinutes } from "@/lib/study/plan";
@@ -34,6 +34,7 @@ type Props = {
  * direkt. Områdena går att bocka ur; planeringen är densamma som på kurssidan.
  */
 export function TrickyDialog({ open, onClose, deck, cards, categories, categoryStats, progress, reviews, dailyNew }: Props) {
+  const sv = useT();
   const statsById = useMemo(() => new Map(categoryStats.map((s) => [s.categoryId, s] as const)), [categoryStats]);
   // Områden som har något klurigt att ta; de andra visas men går inte att välja.
   const selectable = useMemo(() => categories.filter((c) => (statsById.get(c.id)?.tricky ?? 0) > 0).map((c) => c.id), [categories, statsById]);

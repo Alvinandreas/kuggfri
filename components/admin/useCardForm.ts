@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { changeKind, formOptions, initialCardForm, type CardFormSource, type CardFormState, type OptionDraft } from "@/lib/admin/card-form";
 import { isAutoGraded, validateKind, type CardKind } from "@/lib/cards/kinds";
+import { useT } from "@/lib/i18n/client";
 
 /**
  * Kortredigerarnas gemensamma formulärtillstånd (kortsidan och granskningen): fråga, svar,
@@ -8,6 +9,7 @@ import { isAutoGraded, validateKind, type CardKind } from "@/lib/cards/kinds";
  * sparas, om typen rättas automatiskt och typens fel). Logiken finns i lib/admin/card-form.
  */
 export function useCardForm(card?: CardFormSource, initialKind?: CardKind) {
+  const sv = useT();
   const [form, setForm] = useState<CardFormState>(() => initialCardForm(card, initialKind));
   const setters = useMemo(
     () => ({
@@ -21,5 +23,5 @@ export function useCardForm(card?: CardFormSource, initialKind?: CardKind) {
     [],
   );
   const options = formOptions(form);
-  return { form, ...setters, options, auto: isAutoGraded(form.kind), kindIssues: validateKind(form.kind, options) };
+  return { form, ...setters, options, auto: isAutoGraded(form.kind), kindIssues: validateKind(form.kind, options, sv) };
 }

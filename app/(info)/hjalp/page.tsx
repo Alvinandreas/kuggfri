@@ -24,7 +24,8 @@ import {
   Volume2,
   type LucideProps,
 } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import type { Dict } from "@/lib/i18n";
+import { getT } from "@/lib/i18n/server";
 import { SELF_RATINGS, type SelfRating } from "@/lib/progress/types";
 import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { Badge } from "@/components/ui/Badge";
@@ -34,25 +35,26 @@ import { cx } from "@/components/ui/cx";
 import { ContactCards } from "@/components/layout/ContactCards";
 import { routes } from "@/lib/routes";
 
-export const metadata: Metadata = { title: sv.help.title };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.help.title };
+}
 
 type Icon = ComponentType<LucideProps>;
 
-const t = sv.help;
-
 /** Sidans avsnitt i ordning: ger både innehållsförteckningen och ankarna. */
 const SECTIONS = [
-  { id: "kom-igang", title: t.sections.start, icon: Rocket },
-  { id: "schemat", title: t.sections.schedule, icon: Route },
-  { id: "lagen", title: t.sections.modes, icon: Layers },
-  { id: "skattning", title: t.sections.rating, icon: Gauge },
-  { id: "tangentbord", title: t.sections.keys, icon: Keyboard },
-  { id: "under-passet", title: t.sections.session, icon: SlidersHorizontal },
-  { id: "hemsidan", title: t.sections.home, icon: Radar },
-  { id: "statistik", title: t.sections.stats, icon: ChartNoAxesColumn },
-  { id: "konto", title: t.sections.account, icon: UserRound },
-  { id: "fragor", title: t.sections.faq, icon: CircleHelp },
-  { id: "mer-hjalp", title: t.sections.more, icon: LifeBuoy },
+  { id: "kom-igang", key: "start", icon: Rocket },
+  { id: "schemat", key: "schedule", icon: Route },
+  { id: "lagen", key: "modes", icon: Layers },
+  { id: "skattning", key: "rating", icon: Gauge },
+  { id: "tangentbord", key: "keys", icon: Keyboard },
+  { id: "under-passet", key: "session", icon: SlidersHorizontal },
+  { id: "hemsidan", key: "home", icon: Radar },
+  { id: "statistik", key: "stats", icon: ChartNoAxesColumn },
+  { id: "konto", key: "account", icon: UserRound },
+  { id: "fragor", key: "faq", icon: CircleHelp },
+  { id: "mer-hjalp", key: "more", icon: LifeBuoy },
 ] as const;
 
 type SectionId = (typeof SECTIONS)[number]["id"];
@@ -61,13 +63,16 @@ type SectionId = (typeof SECTIONS)[number]["id"];
  * Lägena i samma ordning och med samma ikoner som på kursens sida (ModePicker). Sedan
  * 30 sep 2026 räknas varje skattning in i schemat i alla lägen, så alla får samma märke.
  */
-const MODES: ReadonlyArray<{ title: string; body: string; icon: Icon }> = [
-  { title: sv.deck.modeFsrs, body: t.modes.fsrs, icon: CalendarClock },
-  { title: sv.deck.modeTricky, body: t.modes.tricky, icon: Target },
-  { title: sv.deck.modeFree, body: t.modes.free, icon: BookOpenText },
-  { title: sv.deck.modeRandom, body: t.modes.random, icon: Shuffle },
-  { title: sv.deck.modeExam, body: t.modes.exam, icon: GraduationCap },
-];
+function modes(sv: Dict): ReadonlyArray<{ title: string; body: string; icon: Icon }> {
+  const t = sv.help;
+  return [
+    { title: sv.deck.modeFsrs, body: t.modes.fsrs, icon: CalendarClock },
+    { title: sv.deck.modeTricky, body: t.modes.tricky, icon: Target },
+    { title: sv.deck.modeFree, body: t.modes.free, icon: BookOpenText },
+    { title: sv.deck.modeRandom, body: t.modes.random, icon: Shuffle },
+    { title: sv.deck.modeExam, body: t.modes.exam, icon: GraduationCap },
+  ];
+}
 
 /**
  * Samma toner som skattningsknapparna (RatingButtons). Klasserna skrivs ut här i stället
@@ -81,12 +86,14 @@ const RATE_SWATCH: Record<SelfRating, string> = {
   5: "bg-rate-5/20 border-rate-5",
 };
 
-const SESSION_TOOLS: ReadonlyArray<{ icon: Icon; title: string; body: string }> = [
-  { icon: Info, ...t.sessionTools.info },
-  { icon: Volume2, ...t.sessionTools.sound },
-  { icon: Flag, ...t.sessionTools.report },
-  { icon: Star, ...t.sessionTools.star },
-];
+function sessionTools(t: Dict["help"]): ReadonlyArray<{ icon: Icon; title: string; body: string }> {
+  return [
+    { icon: Info, ...t.sessionTools.info },
+    { icon: Volume2, ...t.sessionTools.sound },
+    { icon: Flag, ...t.sessionTools.report },
+    { icon: Star, ...t.sessionTools.star },
+  ];
+}
 
 /** En tangent som den ser ut på tangentbordet. */
 function Kbd({ children }: { children: ReactNode }) {
@@ -112,7 +119,8 @@ function IconChip({ icon: Icon, tone = "accent" }: { icon: Icon; tone?: "accent"
   );
 }
 
-function HelpSection({ id, lead, children }: { id: SectionId; lead?: string; children: ReactNode }) {
+async function HelpSection({ id, lead, children }: { id: SectionId; lead?: string; children: ReactNode }) {
+  const t = (await getT()).help;
   const section = SECTIONS.find((s) => s.id === id)!;
   return (
     // scroll-mt: ankarlänkarna ska inte landa under mobilens toppmeny.
@@ -120,7 +128,7 @@ function HelpSection({ id, lead, children }: { id: SectionId; lead?: string; chi
       <div className="mb-4 flex items-center gap-3">
         <IconChip icon={section.icon} />
         <h2 id={`${id}-rubrik`} className="text-xl font-bold tracking-tight sm:text-2xl">
-          {section.title}
+          {t.sections[section.key]}
         </h2>
       </div>
       {lead ? <p className="mb-5 max-w-prose leading-relaxed text-muted">{lead}</p> : null}
@@ -129,7 +137,9 @@ function HelpSection({ id, lead, children }: { id: SectionId; lead?: string; chi
   );
 }
 
-export default function HelpPage() {
+export default async function HelpPage() {
+  const sv = await getT();
+  const t = sv.help;
   return (
     <article className="mx-auto w-full max-w-[46rem]">
       <header className="anim-fade-up mb-8">
@@ -148,7 +158,7 @@ export default function HelpPage() {
                 href={`#${s.id}`}
                 className="inline-flex items-center rounded-full bg-surface-2 px-3.5 py-1.5 text-sm font-medium text-fg transition-colors duration-150 hover:bg-surface-3"
               >
-                {s.title}
+                {t.sections[s.key]}
               </a>
             </li>
           ))}
@@ -192,7 +202,7 @@ export default function HelpPage() {
 
         <HelpSection id="lagen" lead={t.modesLead}>
           <ul className="grid gap-3 sm:grid-cols-2">
-            {MODES.map((m, i) => (
+            {modes(sv).map((m, i) => (
               <li key={m.title} className={cx(i === 0 && "sm:col-span-2")}>
                 <Card className="flex h-full gap-4">
                   <IconChip icon={m.icon} tone={i === 0 ? "accent" : "neutral"} />
@@ -246,7 +256,7 @@ export default function HelpPage() {
                       <span aria-hidden="true" className="text-muted">
                         –
                       </span>
-                      <span className="sr-only">till</span>
+                      <span className="sr-only">{sv.help.keysTo}</span>
                       <Kbd>5</Kbd>
                     </span>,
                     t.keys.rate,
@@ -265,7 +275,7 @@ export default function HelpPage() {
                       <span aria-hidden="true" className="text-muted">
                         –
                       </span>
-                      <span className="sr-only">till</span>
+                      <span className="sr-only">{sv.help.keysTo}</span>
                       <Kbd>9</Kbd>
                     </span>,
                     t.keys.pick,
@@ -284,7 +294,7 @@ export default function HelpPage() {
 
         <HelpSection id="under-passet" lead={t.sessionLead}>
           <ul className="grid gap-3 sm:grid-cols-2">
-            {SESSION_TOOLS.map((tool) => (
+            {sessionTools(t).map((tool) => (
               <li key={tool.title}>
                 <Card className="flex h-full gap-4">
                   <IconChip icon={tool.icon} tone="neutral" />

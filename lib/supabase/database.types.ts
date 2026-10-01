@@ -50,6 +50,8 @@ export type DeckRow = {
   slug: string;
   title: string;
   description: string | null;
+  /** Kursbeskrivningen på engelska (reglaget English). */
+  description_en?: string | null;
   course_code: string | null;
   source_credit: string | null;
   /** Tentadatum YYYY-MM-DD, valfritt. */

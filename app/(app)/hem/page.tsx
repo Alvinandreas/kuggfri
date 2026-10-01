@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getDeckBySlug, getPublishedDecks } from "@/lib/content/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { HomeDashboard, type HomeDeck } from "@/components/home/HomeDashboard";
 import { toHomeDeck } from "@/lib/content/view-models";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: sv.dashboard.title };
+export async function generateMetadata(): Promise<Metadata> {
+  const sv = await getT();
+  return { title: sv.dashboard.title };
+}
 
 /** Hemsidan för inloggade: hur plugget går, dagens pass och kurserna. */
 export default async function HomePage() {

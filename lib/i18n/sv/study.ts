@@ -65,6 +65,18 @@ export const cardKind = {
     "sant-falskt": "Ett påstående som är sant eller falskt. Rättas automatiskt.",
     alternativ: "Välj rätt svar bland alternativen, som på tentan. Ett eller flera kan vara rätt. Rättas automatiskt.",
   } as Record<"sjalvskattning" | "begrepp" | "sant-falskt" | "alternativ", string>,
+  issues: {
+    noOptions: (label: string) => `Typen ${label} har inga svarsalternativ.`,
+    trueFalseMissing: "Sant/Falskt-kortet saknar svar (svar: sant eller svar: falskt).",
+    tooFewOptions: "Alternativfrågan behöver minst två alternativ.",
+    trueFalseShape: "Sant/Falskt-kortet ska ha exakt alternativen Sant och Falskt.",
+    noneCorrect: "Minst ett alternativ måste vara rätt.",
+    emptyOption: "Ett alternativ är tomt.",
+    duplicate: (text: string) => `Alternativet ”${text}” finns två gånger.`,
+    emptyQuestion: "Frågan är tom.",
+    emptyAnswer: "Svaret är tomt.",
+    emptyExplanation: "Förklaringen är tom.",
+  },
 } as const;
 
 /** Automaträttade uppgiftstyper (Sant/Falskt, Alternativ) i passet. */
@@ -126,6 +138,7 @@ export const summary = {
   home: "Till hem",
   again: "Ett pass till",
   againExam: "Ny dugga",
+  tileKnownSub: (total: number) => `av ${total}`,
 } as const;
 
 export const session = {
@@ -204,6 +217,7 @@ export const quick = {
   duggaStartMeta: (n: number, minutes: number, hints: boolean) =>
     `${n === 1 ? "1 fråga" : `${n} frågor`}, cirka ${minutes} min, ${hints ? "med ledtrådar" : "utan ledtrådar"}`,
   onCoursePage: "Fler val på kurssidan",
+  aboutMinutes: (n: number) => `cirka ${n} min`,
 } as const;
 
 /** Inställningar under Ditt pass på kurssidan: olika för varje läge, styr passet. */

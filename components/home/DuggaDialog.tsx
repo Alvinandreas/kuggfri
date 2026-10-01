@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, GraduationCap } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { planDeckSession } from "@/lib/study/deck-plan";
 import { DEFAULT_DUGGA, duggaExamSize, duggaQuery, type DuggaSettings } from "@/lib/study/dugga";
@@ -30,6 +30,7 @@ type Props = {
  * reglerna som gäller just nu.
  */
 export function DuggaDialog({ open, onClose, deck, cards, progress, reviews, dailyNew }: Props) {
+  const sv = useT();
   const [dugga, setDugga] = useState<DuggaSettings>(DEFAULT_DUGGA);
 
   // Varje gång dialogen öppnas börjar den med standardreglerna, som på kurssidan.

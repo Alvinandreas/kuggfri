@@ -2,7 +2,8 @@
 
 import { BookOpenText, CalendarClock, GraduationCap, Shuffle, Star, Target, type LucideProps } from "lucide-react";
 import type { ComponentType } from "react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
+import type { Dict } from "@/lib/i18n";
 import type { StudyMode } from "@/lib/progress/types";
 import type { DeckPlan } from "@/lib/study/deck-plan";
 import { CardHeader } from "@/components/ui/Card";
@@ -11,14 +12,16 @@ import { OptionTile } from "@/components/ui/Choice";
 /** Lägena på kurssidan. "starred" är fri repetition av de stjärnmärkta korten. */
 export type PickerMode = StudyMode | "starred";
 
-const MODES: ReadonlyArray<{ value: PickerMode; title: string; short: string; icon: ComponentType<LucideProps> }> = [
-  { value: "fsrs", title: sv.deck.modeFsrs, short: sv.deck.modeFsrsShort, icon: CalendarClock },
-  { value: "tricky", title: sv.deck.modeTricky, short: sv.deck.modeTrickyShort, icon: Target },
-  { value: "free", title: sv.deck.modeFree, short: sv.deck.modeFreeShort, icon: BookOpenText },
-  { value: "random", title: sv.deck.modeRandom, short: sv.deck.modeRandomShort, icon: Shuffle },
-  { value: "exam", title: sv.deck.modeExam, short: sv.deck.modeExamShort, icon: GraduationCap },
-  { value: "starred", title: sv.deck.modeStarred, short: sv.deck.modeStarredShort, icon: Star },
-];
+function modes(sv: Dict): ReadonlyArray<{ value: PickerMode; title: string; short: string; icon: ComponentType<LucideProps> }> {
+  return [
+    { value: "fsrs", title: sv.deck.modeFsrs, short: sv.deck.modeFsrsShort, icon: CalendarClock },
+    { value: "tricky", title: sv.deck.modeTricky, short: sv.deck.modeTrickyShort, icon: Target },
+    { value: "free", title: sv.deck.modeFree, short: sv.deck.modeFreeShort, icon: BookOpenText },
+    { value: "random", title: sv.deck.modeRandom, short: sv.deck.modeRandomShort, icon: Shuffle },
+    { value: "exam", title: sv.deck.modeExam, short: sv.deck.modeExamShort, icon: GraduationCap },
+    { value: "starred", title: sv.deck.modeStarred, short: sv.deck.modeStarredShort, icon: Star },
+  ];
+}
 
 type Props = {
   mode: PickerMode;
@@ -29,7 +32,7 @@ type Props = {
   totalCards: number;
 };
 
-function meta(mode: PickerMode, plan: DeckPlan, progressReady: boolean, totalCards: number): string {
+function meta(sv: Dict, mode: PickerMode, plan: DeckPlan, progressReady: boolean, totalCards: number): string {
   if (!progressReady && (mode === "fsrs" || mode === "tricky")) return " ";
   switch (mode) {
     case "fsrs":
@@ -50,12 +53,13 @@ function meta(mode: PickerMode, plan: DeckPlan, progressReady: boolean, totalCar
 
 /** Lägena som stora rutor: vad passet blir, och hur mycket det innehåller just nu. */
 export function ModePicker({ mode, onMode, plans, progressReady, totalCards }: Props) {
+  const sv = useT();
   return (
     <section aria-labelledby="lage-rubrik" className="anim-fade-up" style={{ ["--i" as string]: 1 }}>
       <CardHeader id="lage-rubrik" title={sv.deck.chooseMode} spacing="sm" />
       <fieldset className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" data-testid="mode-picker">
         <legend className="sr-only">{sv.deck.chooseMode}</legend>
-        {MODES.map((m) => (
+        {modes(sv).map((m) => (
           <OptionTile
             key={m.value}
             name="mode"
@@ -65,7 +69,7 @@ export function ModePicker({ mode, onMode, plans, progressReady, totalCards }: P
             icon={m.icon}
             title={m.title}
             description={m.short}
-            meta={meta(m.value, plans[m.value], progressReady, totalCards)}
+            meta={meta(sv, m.value, plans[m.value], progressReady, totalCards)}
           />
         ))}
       </fieldset>

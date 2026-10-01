@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/supabase/server";
 import { parsePassQuery } from "@/lib/study/session-queue";
 import { toCategoryOption, toStudyCard } from "@/lib/content/view-models";
 import { StudySession } from "@/components/study/StudySession";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -13,6 +13,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const data = await getDeckBySlug(slug);
+  const sv = await getT();
   return { title: data ? sv.study.pageTitle(data.deck.title) : sv.deck.start };
 }
 

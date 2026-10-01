@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { sv } from "@/lib/i18n/sv";
+import { dictionary, type Dict } from "@/lib/i18n";
 
 type Props = {
   /** Höjd i px. Sidhuvudet använder 40, sidor som presenterar tjänsten 80. */
@@ -10,6 +10,8 @@ type Props = {
   decorative?: boolean;
   className?: string;
   priority?: boolean;
+  /** Ordlistan för alt-texten (anroparens språk); behövs bara när logotypen inte är dekorativ. */
+  sv?: Dict;
 };
 
 // Bildernas bredd/höjd (fylls i av scripts/verktyg/build-logo.py: se public/logo-*.png).
@@ -20,7 +22,7 @@ const RATIO = { full: 4196 / 2223, menu: 2.3062 };
  * vit på mörkt tema (originalet), mörkt bläck på ljust tema (annars syns den inte).
  * Båda renderas och temat väljer med CSS, så bytet sker utan blink.
  */
-export function Logo({ height = 40, variant = "full", decorative = false, className = "", priority = false }: Props) {
+export function Logo({ height = 40, variant = "full", decorative = false, className = "", priority = false, sv = dictionary("sv") }: Props) {
   const width = Math.round(height * RATIO[variant]);
   const alt = decorative ? "" : sv.app.name;
   const base = variant === "menu" ? "/logo-menu" : "/logo";

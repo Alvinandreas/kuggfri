@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sv } from "@/lib/i18n/sv";
+import { getT } from "@/lib/i18n/server";
 import { getAdminContext } from "@/lib/admin/access";
 import { getDeckExaminers, getDeckForAdmin } from "@/lib/admin/queries";
 import { DeckForm } from "@/components/admin/DeckForm";
@@ -10,12 +10,14 @@ import { ExamModeToggle } from "@/components/tenta/ExamModeToggle";
 type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const sv = await getT();
   const { id } = await params;
   const data = await getDeckForAdmin(id);
   return { title: data ? `${sv.admin.tabSettings}: ${data.deck.title}` : sv.admin.tabSettings };
 }
 
 export default async function AdminSettingsPage({ params }: { params: Params }) {
+  const sv = await getT();
   const { id } = await params;
   const [data, ctx] = await Promise.all([getDeckForAdmin(id), getAdminContext()]);
   if (!data) notFound();

@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight, Zap } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { useT } from "@/lib/i18n/client";
 import { firstLine } from "@/lib/text/first-line";
 import { percent } from "@/lib/text/percent";
 import type { SessionSummary as Summary } from "@/lib/fsrs/session";
@@ -40,6 +40,7 @@ const barClass: Record<1 | 2 | 3 | 4 | 5, string> = {
 };
 
 export function SessionSummary({ summary, cardsById, categories, colorIndex, mode, nextDue, today, deckSlug, onPrevious, duration = null, againHref = null }: Props) {
+  const sv = useT();
   const max = Math.max(1, ...SELF_RATINGS.map((r) => summary.distribution[r]));
   const categoryTitle = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.title ?? null) : null);
   const done = today?.done ?? false;
@@ -70,7 +71,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
           <Card padding="lg" className="mt-5 grid gap-1" data-testid="exam-result">
             <p className="text-5xl font-extrabold tracking-tight tabular-nums">
               {examPct}
-              <span className="text-2xl text-muted"> %</span>
+              <span className="text-2xl text-muted">{sv.meta.pctSuffix}</span>
             </p>
             <p className="mt-1 font-semibold">{sv.summary.examScore(examOk, summary.reviewed)}</p>
             {duration ? (
@@ -93,7 +94,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
             sub={today.freezeUsedRecently ? sv.summary.freezeUsed : sv.summary.freezesLeft(today.freezesLeft)}
             tone="navy"
           />
-          <StatTile label={sv.summary.tileKnown} help={sv.summary.tileKnownHelp} value={`${today.known}`} sub={`av ${today.total}`} tone="green" />
+          <StatTile label={sv.summary.tileKnown} help={sv.summary.tileKnownHelp} value={`${today.known}`} sub={sv.summary.tileKnownSub(today.total)} tone="green" />
         </dl>
       ) : null}
 
@@ -200,7 +201,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
             {sv.summary.nextDue}
           </h2>
           <p className="mt-2 text-muted" data-testid="next-due">
-            {nextDue ? sv.summary.nextDueCount(nextDue.count, formatRelative(nextDue.date)) : sv.summary.nextDueNone}
+            {nextDue ? sv.summary.nextDueCount(nextDue.count, formatRelative(sv, nextDue.date)) : sv.summary.nextDueNone}
             {/* Övriga lägen räknas också in i schemat: säg det, så att ingen tror att passet var bortkastat. */}
             {mode === "fsrs" ? null : (
               <>

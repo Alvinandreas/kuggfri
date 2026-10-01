@@ -61,13 +61,6 @@ flagga: Rättelse av originalkortet: det sa att man brukar utöka mängden mater
 
 Materialvalet måste ofta förfinas och förbättras i flera steg innan man hittar en bra lösning. Det är bra att först börja med materialgrupperna och sedan begränsa sig. I CES (Granta EduPack) börjar man med nivå 1 för att hitta materialgrupper och går sedan vidare till nivå 2 och 3.
 
-## Vad har lastfall för inverkan på materialindexet?
-key: vad-har-lastfall-for-inverkan-pa
-original: ja
-aktiv: nej
-
-Lastfallet bestämmer vilket materialindex som är bäst lämpat för situationen. Materialindexet beskriver i sin tur hur bra ett material presterar i det aktuella lastfallet och kan därför med fördel användas för att rangordna en mängd material.
-
 ## Vad är ett lastfall och varför är det viktigt i materialvalsprocessen?
 key: vad-ar-ett-lastfall-och-varfor-ar-det
 original: ja

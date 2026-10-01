@@ -2,16 +2,14 @@
  * Ren logik för granskningen och innehållsöversikten i admin. Inga beroenden på React eller
  * Supabase, så allt här kan enhetstestas.
  *
- * Granskningen är en inkorg med fyra flikar. Från 1 okt (Alvins beslut) är alla kort i rotation
- * från början och examinatorerna granskar samtliga; tjänsten öppnas för studenterna först när
- * inget kort är ogranskat:
+ * Granskningen är en inkorg med fyra flikar (Alvins beslut 1 okt). Varje kort har exakt ett
+ * granskningsläge, och flaggan är en egen dimension ovanpå:
  * - Att granska: kort i rotation som ingen examinator godkänt ännu (aktiva, utan status, utan
- *   granskningsdatum), och utkast utanför rotation (nya kort efter lanseringen). Inte flaggade.
+ *   granskningsdatum), och utkast utanför rotation (nya kort efter lanseringen).
  * - Granskade: kort i rotation som en examinator godkänt, senast granskade först.
- * - Flaggade: kort med en flagga (utom de som tagits ur rotation). En flagga är en anteckning om
- *   ett misstänkt fel; kortet står bara här tills flaggan åtgärdats.
- * - Ur rotation: kort som tagits ur rotation i granskningen (status avvisad). De kan sättas
- *   tillbaka.
+ * - Ur rotation: kort som tagits ur rotation i granskningen (status avvisad).
+ * - Flaggade: alla kort med en flagga, oavsett läge (utom ur rotation). Ett flaggat kort står
+ *   alltså både här och under sitt läge; fliken är ett sätt att gå igenom flaggorna för sig.
  *
  * Godkännandet är granskningsdatumet: ändras ett korts innehåll utan att det godkänns i samma
  * uppdatering nollställs datumet av databasen (triggern cards_review_reset), så att kortet
@@ -71,13 +69,21 @@ export function isReviewTab(value: unknown): value is ReviewTab {
 
 type TabFields = Pick<ReviewCard, "review_status" | "is_active" | "flag_note" | "reviewed_at">;
 
-/** Fliken kortet står under, eller null om det inte hör till granskningen (inaktiverat utanför granskningen). */
-export function reviewTab(card: TabFields): ReviewTab | null {
+export type ReviewState = Exclude<ReviewTab, "flaggade">;
+
+/** Kortets granskningsläge, eller null om det inte hör till granskningen (inaktiverat utanför den). */
+export function reviewTab(card: TabFields): ReviewState | null {
   if (card.review_status === "avvisad") return "ur-rotation";
-  if (card.flag_note) return "flaggade";
   if (card.review_status === "utkast") return "att-granska";
   if (card.review_status === null && card.is_active) return card.reviewed_at ? "granskade" : "att-granska";
   return null;
+}
+
+/** Står kortet under fliken? Ett flaggat kort står både under Flaggade och under sitt läge. */
+export function inTab(card: TabFields, tab: ReviewTab): boolean {
+  const state = reviewTab(card);
+  if (tab === "flaggade") return Boolean(card.flag_note) && state !== null && state !== "ur-rotation";
+  return state === tab;
 }
 
 /** Ett kort i rotation som ingen examinator godkänt ännu. */
@@ -93,10 +99,7 @@ export function reviewRelevant<C extends TabFields>(cards: readonly C[]): C[] {
 /** Antal kort under varje flik. */
 export function countByTab(cards: readonly TabFields[]): Record<ReviewTab, number> {
   const out: Record<ReviewTab, number> = { "att-granska": 0, granskade: 0, flaggade: 0, "ur-rotation": 0 };
-  for (const c of cards) {
-    const tab = reviewTab(c);
-    if (tab) out[tab]++;
-  }
+  for (const c of cards) for (const tab of REVIEW_TABS) if (inTab(c, tab)) out[tab]++;
   return out;
 }
 
@@ -173,7 +176,7 @@ export function orderByArea<C extends Pick<ReviewCard, "category_id" | "sort_ord
  */
 export function reviewList<C extends ReviewCard>(cards: readonly C[], tab: ReviewTab, filter: ReviewFilter, areas: readonly ReviewArea[]): C[] {
   const ordered = orderByArea(
-    cards.filter((c) => reviewTab(c) === tab && matchesReviewFilter(c, filter)),
+    cards.filter((c) => inTab(c, tab) && matchesReviewFilter(c, filter)),
     areas,
   );
   if (tab !== "granskade") return ordered;
@@ -380,7 +383,7 @@ export type ReviewProgressRow = {
   approved: number;
   /** Väntar på granskning (fliken Att granska). */
   toReview: number;
-  /** Flaggade: en fråga att ta ställning till. */
+  /** Flaggade (ingår också i sitt läge ovan). */
   flagged: number;
   /** Tagna ur rotation i granskningen. */
   removed: number;
@@ -391,10 +394,9 @@ export type ReviewProgress = {
   total: Omit<ReviewProgressRow, "areaId" | "title" | "title_en">;
 };
 
-const PROGRESS_KEY: Record<ReviewTab, keyof ReviewProgress["total"]> = {
+const PROGRESS_KEY: Record<ReviewState, "approved" | "toReview" | "removed"> = {
   granskade: "approved",
   "att-granska": "toReview",
-  flaggade: "flagged",
   "ur-rotation": "removed",
 };
 
@@ -408,10 +410,14 @@ export function reviewProgress(cards: readonly (TabFields & Pick<ReviewCard, "ca
   const total = empty();
   for (const c of cards) {
     const row = c.category_id === null ? undefined : rows.get(c.category_id);
-    const tab = reviewTab(c);
-    if (!row || !tab) continue;
-    row[PROGRESS_KEY[tab]]++;
-    total[PROGRESS_KEY[tab]]++;
+    const state = reviewTab(c);
+    if (!row || !state) continue;
+    row[PROGRESS_KEY[state]]++;
+    total[PROGRESS_KEY[state]]++;
+    if (inTab(c, "flaggade")) {
+      row.flagged++;
+      total.flagged++;
+    }
   }
   return { rows: areas.map((a) => rows.get(a.id)!), total };
 }

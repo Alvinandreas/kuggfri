@@ -60,10 +60,13 @@ export function ReviewRow({
           </span>
           <span className="inline-flex items-center gap-1">{tags.map((tag) => t.source[tag]).join(", ")}</span>
         </span>
-        {tab === "flaggade" && card.flag_note ? (
+        {card.flag_note && tab !== "ur-rotation" ? (
           <span className="mt-1.5 flex items-start gap-1.5 text-sm">
             <FlagTriangleRight size={14} aria-hidden className="mt-0.5 shrink-0 text-chart-3" />
-            <span className="line-clamp-2 break-words">{card.flag_note}</span>
+            <span className="line-clamp-2 break-words">
+              {tab === "flaggade" ? null : <span className="font-semibold">{t.g.flaggedBadge}: </span>}
+              {card.flag_note}
+            </span>
           </span>
         ) : null}
       </span>

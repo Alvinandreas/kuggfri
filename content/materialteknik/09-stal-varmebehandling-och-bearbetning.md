@@ -34,13 +34,6 @@ original: ja
 
 Kan fås vid snabbkylning av stål från austenitområdet. Det är utöver det en metastabil fas med tetragonal struktur = distorderad BCC.
 
-## Vad är ett TTT-diagram och vad används det till?
-key: vad-ar-ett-ttt-diagram-och-vad-anvands
-original: ja
-aktiv: nej
-
-TTT-diagram står för Time Temperature Transformation- diagram och används för att bestämma tid och temperatur för värmebehandlingar.
-
 ## Varför legerar man stål? Nämn minst två anledningar.
 key: varfor-legerar-man-stal-namn-minst-tva
 original: ja
@@ -213,25 +206,6 @@ stål som skall maskinbearbetas och därefter härdas.
 2. Snabbkylning → martensit
 3. Anlöpning → anlöpt martensit = ferrit med mycket små cementitpartiklar
 Kolhalten avgör andelen cementit. Temperatur och tid för anlöpningen avgör storleken på cementitpartiklarna. Används när hårdhet och sträckgräns är viktigt.
-
-## Nämn minst två produktionsmässiga anledningar till att man legerar stål.
-key: namn-minst-tva-produktionsmassiga
-original: ja
-aktiv: nej
-
-Stål legeras bland annat för att:
-
-* Öka hållfastheten – Genom att tillsätta legeringsämnen som nickel eller krom kan stålets styrka och hållfasthet förbättras.
-
-* Förbättra korrosionsbeständigheten – Krom och nickel ökar stålets motståndskraft mot rost och korrosion, vilket är särskilt viktigt för rostfria stål.
-
-* Förbättra hårdheten och slitstyrkan – Tillsatser som kol, mangan och vanadin gör stålet hårdare och mer motståndskraftigt mot slitage, vilket är fördelaktigt i verktygsstål.
-
-* Höja duktiliteten och segheten – Vissa legeringsämnen, som nickel, kan öka segheten och duktiliteten, vilket gör stålet mindre sprött vid låga temperaturer.
-
-* Förbättra värmebeständigheten – Legeringar med ämnen som molybden och volfram hjälper stålet att behålla sina egenskaper vid höga temperaturer, vilket är viktigt för verktygsstål och höglegerat stål.
-
-* Förbättra härdbarheten – Legeringar med ämnen som krom och molybden ökar stålets förmåga att härdas djupt, vilket gör att materialet får en jämn hårdhet vid härdning.
 
 ## TTT-diagram
 key: ttt-diagram

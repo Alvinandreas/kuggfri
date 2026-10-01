@@ -29,6 +29,8 @@ originalkorten. Alla kort är i rotation från början; ett kort som inte hålle
 - [x] Demostudenter lokalt (`scripts/verktyg/demo-studenter.cjs`), aldrig mot produktionen
 - [x] Alla 405 kort i rotation som ogranskade; flikarna Att granska, Granskade, Flaggade, Ur rotation;
       Ta ur rotation, Återställ originalet, Sätt tillbaka; ändrat innehåll granskas igen (trigger)
+- [x] Alla kort under Att granska, också de flaggade; Flaggade är en egen genomgång av flaggorna.
+      De 9 inaktiverade dubbletterna bland originalkorten raderade (finns kvar i arkivet); kursen har 405 kort
 - [x] Engelska i granskningen: reglaget English, alla 405 kort och 14 områden översatta
       (`content/materialteknik/engelska.json`), polymertermerna ur Rolands eget material och
       oberoende kontrollerade; anteckningar om möjliga fel i `docs/OVERSATTNING-ANTECKNINGAR.md`

@@ -15,6 +15,7 @@ import {
   matchesReviewFilter,
   relativeDay,
   reviewList,
+  inTab,
   reviewProgress,
   reviewTab,
   step,
@@ -93,14 +94,14 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
 
   const current = view.cardId ? (cards.find((c) => c.id === view.cardId) ?? null) : null;
   // Ett öppet kort visas under sin egen flik (t.ex. en länk till ett kort som hunnit granskas).
-  const tab: ReviewTab = (current && reviewTab(current)) || view.tab;
+  const tab: ReviewTab = current && !inTab(current, view.tab) ? (reviewTab(current) ?? view.tab) : view.tab;
   const filter = view.filter;
   const counts = useMemo(() => countByTab(cards), [cards]);
   const list = useMemo(() => reviewList(cards, tab, filter, areas), [cards, tab, filter, areas]);
   const listIds = useMemo(() => list.map((c) => c.id), [list]);
   const position = current ? listIds.indexOf(current.id) : -1;
-  const inTab = useMemo(() => cards.filter((c) => reviewTab(c) === tab), [cards, tab]);
-  const sourceCounts = useMemo(() => countBySourceTag(inTab.filter((c) => matchesReviewFilter(c, { ...filter, source: "alla" }))), [inTab, filter]);
+  const tabCards = useMemo(() => cards.filter((c) => inTab(c, tab)), [cards, tab]);
+  const sourceCounts = useMemo(() => countBySourceTag(tabCards.filter((c) => matchesReviewFilter(c, { ...filter, source: "alla" }))), [tabCards, filter]);
 
   // Adressen pekar på ett kort som inte finns (borttaget, eller från en annan kurs): tillbaka till listan.
   useEffect(() => {

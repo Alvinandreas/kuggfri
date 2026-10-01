@@ -5,7 +5,7 @@ import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, Flag
 import { cardSources } from "@/lib/admin/sources";
 import { englishFace, translationState } from "@/lib/cards/translation";
 import { shouldIgnoreShortcut } from "@/lib/ui/keyboard";
-import type { ReviewArea, ReviewCard, ReviewTab } from "@/lib/admin/review";
+import { reviewTab, type ReviewArea, type ReviewCard, type ReviewTab } from "@/lib/admin/review";
 import { Badge } from "@/components/ui/Badge";
 import { Button, IconButton } from "@/components/ui/Button";
 import { CategoryTag } from "@/components/ui/CategoryTag";
@@ -69,15 +69,18 @@ const TYPING_SELECTOR = 'input, textarea, select, [contenteditable="true"], [rol
  * Esc tillbaka till listan, Ctrl+Z ångra.
  */
 export function ReviewCardView(props: Props) {
-  const { card, tab, position, total, areas, areaTitle, areaColor, reviewedLine, flaggedLine, issues, editing, status } = props;
+  const { card, position, total, areas, areaTitle, areaColor, reviewedLine, flaggedLine, issues, editing, status } = props;
   const t = useReviewT();
   const g = t.g;
   const [panel, setPanel] = useState<Panel>(null);
   const [showSwedish, setShowSwedish] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const flagged = card.flag_note !== null && card.flag_note !== "";
-  const removed = tab === "ur-rotation";
-  const reviewed = tab === "granskade";
+  // Knapparna följer kortets eget läge, inte fliken: ett flaggat kort under Flaggade kan vara
+  // ogranskat eller granskat.
+  const state = reviewTab(card);
+  const removed = state === "ur-rotation";
+  const reviewed = state === "granskade";
   const canApprove = !reviewed;
   const correcting = !removed && typeof card.published_version_id === "number";
   const english = t.lang === "en" && !showSwedish;
@@ -181,7 +184,7 @@ export function ReviewCardView(props: Props) {
         </div>
       </div>
 
-      {tab === "att-granska" && !editing ? (
+      {state === "att-granska" && !editing ? (
         <p className="flex gap-2.5 rounded-md bg-surface-2 px-4 py-3 text-sm" data-testid="review-instruction">
           <Info size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
           <span>
@@ -213,7 +216,7 @@ export function ReviewCardView(props: Props) {
           <SourceBadges source={card.source} original={card.original} max={4} labels={sourceLabels} />
         </div>
         <p className="text-sm text-muted" data-testid="review-status-line">
-          {tab === "granskade"
+          {reviewed
             ? (reviewedLine ?? g.statusOriginal)
             : removed
               ? g.statusRemoved
@@ -310,7 +313,7 @@ export function ReviewCardView(props: Props) {
                   {canApprove ? (
                     <Button onClick={props.onApprove} disabled={issues.length > 0} aria-keyshortcuts="G" className="flex-1 @2xl:flex-none" data-testid="review-approve">
                       <Check size={17} aria-hidden />
-                      {removed ? g.approveBack : g.approve}
+                      {removed ? g.approveBack : flagged ? g.approveResolve : g.approve}
                       <KeyHint>G</KeyHint>
                     </Button>
                   ) : null}
@@ -321,7 +324,7 @@ export function ReviewCardView(props: Props) {
                       <KeyHint>O</KeyHint>
                     </Button>
                   ) : null}
-                  {tab === "flaggade" ? (
+                  {flagged && !removed ? (
                     <Button variant="outline" onClick={props.onResolve} title={g.resolveHelp} className="flex-1 @2xl:flex-none" data-testid="review-resolve">
                       <CheckCheck size={17} aria-hidden />
                       {g.resolve}
@@ -332,7 +335,7 @@ export function ReviewCardView(props: Props) {
                     {g.edit}
                     <KeyHint>R</KeyHint>
                   </Button>
-                  {tab === "att-granska" || reviewed ? (
+                  {!flagged && !removed ? (
                     <Button
                       variant="secondary"
                       onClick={() => setPanel({ type: "flag", note: "", edit: false })}

@@ -127,14 +127,6 @@ vägledning – kan användas i materialindex
 * Bör titta på totala miljöbelastningen under
 livscykeln
 
-## CO₂-foot print
-key: co-foot-print
-typ: begrepp
-original: ja
-aktiv: nej
-
-Den mängd CO₂ som bildas vid produktion av ett kilo material.
-
 ## Miljöegenskaper: vilka påståenden är sanna?
 key: quiz-miljoegenskaper-vad-ar-sant-tva-ratta
 typ: alternativ

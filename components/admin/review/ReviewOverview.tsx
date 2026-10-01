@@ -7,18 +7,18 @@ import { tagBgClass } from "@/lib/ui/tag-colors";
 import { cx } from "@/components/ui/cx";
 import { useReviewT } from "./ReviewLanguage";
 
+/** Stapeln visar läget (varje kort har exakt ett); flaggade räknas för sig, de ingår i läget. */
 const SEGMENTS = [
   { key: "approved", fill: "bg-accent" },
   { key: "toReview", fill: "bg-chart-3/70" },
-  { key: "flagged", fill: "bg-rate-1" },
   { key: "removed", fill: "bg-line-strong" },
 ] as const;
 
-type Counts = Pick<ReviewProgressRow, "approved" | "toReview" | "flagged" | "removed">;
+type Counts = Pick<ReviewProgressRow, "approved" | "toReview" | "removed">;
 
-const sum = (c: Counts) => c.approved + c.toReview + c.flagged + c.removed;
+const sum = (c: Counts) => c.approved + c.toReview + c.removed;
 
-/** Staplad stapel: godkända, att granska, flaggade och ur rotation, som andelar av områdets kort. */
+/** Staplad stapel: granskade, att granska och ur rotation, som andelar av områdets kort. */
 function StackedBar({ counts, tall = false }: { counts: Counts; tall?: boolean }) {
   const total = sum(counts);
   return (
@@ -45,7 +45,7 @@ export function ReviewOverview({
 }) {
   const t = useReviewT();
   const g = t.g;
-  const label: Record<(typeof SEGMENTS)[number]["key"], string> = { approved: g.tabReviewed, toReview: g.tabToReview, flagged: g.tabFlagged, removed: g.tabRemoved };
+  const label: Record<(typeof SEGMENTS)[number]["key"], string> = { approved: g.tabReviewed, toReview: g.tabToReview, removed: g.tabRemoved };
   const nameOf = (row: ReviewProgressRow) => (t.lang === "en" && row.title_en ? row.title_en : row.title);
   const { total } = progress;
   const all = sum(total);
@@ -68,6 +68,10 @@ export function ReviewOverview({
               {label[s.key]} <span className="font-semibold tabular-nums text-fg">{total[s.key]}</span>
             </li>
           ))}
+          <li className="inline-flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-rate-1" aria-hidden="true" />
+            {g.tabFlagged} <span className="font-semibold tabular-nums text-fg">{total.flagged}</span>
+          </li>
         </ul>
       </div>
 

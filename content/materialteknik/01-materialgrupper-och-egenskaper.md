@@ -212,14 +212,6 @@ utvinning, framställning,
 produkttillverkning,
 användning och skrotning
 
-## Keram
-key: keram
-typ: begrepp
-original: ja
-aktiv: nej
-
-Ett material som är uppbyggt av en metall och en icke-metall (minst).
-
 ## Adhesiv förslitning
 key: adhesiv-forslitning
 typ: begrepp

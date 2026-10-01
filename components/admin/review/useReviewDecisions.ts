@@ -20,6 +20,7 @@ import {
   cleanFlagNote,
   nextAfterDecision,
   rejectedPatch,
+  inTab,
   reviewList,
   reviewTab,
   type ReviewArea,
@@ -78,11 +79,11 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
    * Sätter de nya korten och, om kortet lämnar listan, går vidare till nästa kort i samma lista
    * (eller tillbaka till listan när inget kort är kvar).
    */
-  function commit(next: ReviewCard[], card: ReviewCard, at: number) {
+  function commit(next: ReviewCard[], card: ReviewCard, at: number, advance = false) {
     setCards(next);
     setNow(at);
     const after = reviewList(next, tab, filter, areas).map((c) => c.id);
-    if (after.includes(card.id)) return;
+    if (after.includes(card.id) && !advance) return;
     navigate({ tab, cardId: nextAfterDecision(listIds, after, card.id) }, "replace");
   }
 
@@ -93,7 +94,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
     const first = snaps[0];
     if (first) {
       const restored = { ...latestCards.current.find((c) => c.id === first.id)!, ...first };
-      navigate({ tab: reviewTab(restored) ?? tab, cardId: first.id }, "replace");
+      navigate({ tab: inTab(restored, tab) ? tab : (reviewTab(restored) ?? tab), cardId: first.id }, "replace");
     }
     void run(
       snaps.map((s) => s.id),
@@ -114,7 +115,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       card,
       at,
     );
-    setStatus({ id: at, text: t.g.approved(label(card)), undo: () => undoDecision(snaps) });
+    setStatus({ id: at, text: card.flag_note ? t.g.approvedResolved(label(card)) : t.g.approved(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => approveCardsAction(deckId, [card.id]), () => restoreLocal(snaps)).then((data) => {
       if (!data || data.skipped.length === 0) return;
       restoreLocal(snaps);
@@ -132,6 +133,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       patchList(cards, card.id, (c) => ({ ...c, flag_note: text, flagged_at: new Date(at).toISOString(), flagged_by: userId })),
       card,
       at,
+      !changing,
     );
     setStatus({ id: at, text: changing ? t.g.flagUpdated : t.g.flagged(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => flagCardAction(deckId, card.id, text), () => restoreLocal(snaps));
@@ -184,7 +186,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
           void pending.then((data) => {
             if (!data) return;
             setCards((prev) => patchList(prev, before.id, () => before));
-            navigate({ tab: reviewTab(before) ?? tab, cardId: before.id }, "replace");
+            navigate({ tab: inTab(before, tab) ? tab : (reviewTab(before) ?? tab), cardId: before.id }, "replace");
             void run(
               [before.id],
               async (): Promise<ActionResult> => {

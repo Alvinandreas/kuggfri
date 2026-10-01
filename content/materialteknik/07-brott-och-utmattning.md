@@ -35,15 +35,6 @@ Brottsegheten $K_{1c}$ bestäms med prov som har en skarp spricka, t.ex. CT-prov
 
 Slagprovning (Charpy) med en anvisad provstav mäter i stället slagseghet, energin för att slå av staven. Den gör det möjligt att jämföra materials seghet och bestämma omslagstemperaturen, men ger inget sätt att uttrycka seghet som en materialegenskap.
 
-## Brottseghet
-key: brottseghet
-typ: begrepp
-original: ja
-aktiv: nej
-
-Ett mått på materialets seghet, hur mycket energi som behövs för att driva en
-spricka. Brott fås när spänningsintensiteten vid sprickspetsen är högre än brottsegheten.
-
 ## Högcykelutmattning
 key: hogcykelutmattning
 typ: begrepp

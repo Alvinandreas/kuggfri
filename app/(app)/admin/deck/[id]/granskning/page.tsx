@@ -33,7 +33,7 @@ export default async function ReviewPage({ params }: { params: Params }) {
   if (!data) notFound();
 
   const relevant = reviewRelevant(data.cards);
-  const pending = relevant.filter((c) => reviewTab(c) === "att-granska" || (c.flag_note && !c.reviewed_at));
+  const pending = relevant.filter((c) => reviewTab(c) === "att-granska");
   const supabase = await createSupabaseServerClient();
   const [history, names] = await Promise.all([
     getHistoryMeta(

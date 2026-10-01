@@ -48,13 +48,6 @@ begränsas t.ex. av:
 
 * Sprödhet
 
-## Beskriv vad ett materials specifika värmekapacitet innebär för materialet.
-key: beskriv-vad-ett-materials-specifika
-original: ja
-aktiv: nej
-
-Värmekapacitet är ett mått på hur mycket energi som krävs för att höja temperaturen i ett material.
-
 ## Vad är termisk utvidgning respektive termiska spänningar?
 key: vad-ar-termisk-utvidgning-respektive
 original: ja
@@ -130,24 +123,6 @@ Ficks lagar beskriver hur diffusion beter sig i ett material. Proportionalitetsk
 Fick's 1:a lag beskriver hur flödet (J) är proportionellt mot den partiella derivatan av koncentrationen och Fick's 2:a beskriver hur den partiella derivatan av koncentrationen med avseende på tiden är proportionell mot andraderivatan av koncentrationen.
 
 Första lagen används vid stationärt tillstånd (steady state), när koncentrationsprofilen inte ändras med tiden; den andra behövs när koncentrationen ändras med tiden (icke-stationärt).
-
-## Vad är krypning? Vad finns det för olika typer av krypning?
-key: vad-ar-krypning-vad-finns-det-for-olika
-original: ja
-aktiv: nej
-
-* Krypning sker vid över cirka ½ av smälttemperaturen
-* Ger plastisk (permanent) deformation
-* Två typer:
-  - Diffusionskrypning
-  - Dislokationskrypning
-
-* Primär krypning = snabb deformation tills dislokationer möter hinder
-* Steady-state = krypning med konstant töjningshastighet
-* Tertiär krypning = Skador i materialet
-
-* Kryphastigheten beror på krypningsmekanism men är allmänt exponentiellt beroende av temperaturen
-* Spänningen kan ändra krypmekanism
 
 ## Beskriv närmare vad diffusionskrypning är.
 key: beskriv-narmare-vad-diffusionskrypning
@@ -231,14 +206,6 @@ typ: begrepp
 original: ja
 
 Ett mått på hur snabbt atomer rör sig (diffunderar) i ett material. Beror på temperaturen och vilka atomer som diffunderar, och i vilket material.
-
-## Krypning (metaller)
-key: krypning-metaller
-typ: begrepp
-original: ja
-aktiv: nej
-
-Plastisk deformation som beror på tid, temperatur och last.
 
 ## Krypning i metaller sker vid temperaturer över ungefär halva smälttemperaturen, räknat i kelvin.
 key: ja-nej-krypning-ar-ett-fenomen-som-bara

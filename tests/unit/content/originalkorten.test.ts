@@ -40,10 +40,28 @@ describe("originalkorten", () => {
     expect(new Set(kort.map((k) => k.key)).size).toBe(144);
   });
 
-  it("varje originalkort finns kvar i kursen och är märkt original", () => {
+  /**
+   * Nio dubbletter som inaktiverades 28 sep (andra kort täcker samma sak) raderades ur kursen
+   * 1 okt 2026 på Alvins beslut; de finns kvar i arkivet. Inga andra originalkort får försvinna.
+   */
+  const RADERADE_DUBBLETTER = [
+    "keram",
+    "vad-har-lastfall-for-inverkan-pa",
+    "brottseghet",
+    "beskriv-vad-ett-materials-specifika",
+    "vad-ar-krypning-vad-finns-det-for-olika",
+    "krypning-metaller",
+    "vad-ar-ett-ttt-diagram-och-vad-anvands",
+    "namn-minst-tva-produktionsmassiga",
+    "co-foot-print",
+  ];
+
+  it("varje originalkort finns kvar i kursen och är märkt original (utom de raderade dubbletterna)", () => {
     const { course } = loadCourse(ROOT, "materialteknik");
     const idag = new Map(course.categories.flatMap((c) => c.cards).map((k) => [k.key, k] as const));
-    const saknas = arkiveradeKort().filter((k) => !idag.has(k.key)).map((k) => k.key);
+    const saknas = arkiveradeKort()
+      .filter((k) => !idag.has(k.key) && !RADERADE_DUBBLETTER.includes(k.key!))
+      .map((k) => k.key);
     const omärkta = arkiveradeKort().filter((k) => idag.has(k.key) && !idag.get(k.key)!.original).map((k) => k.key);
     expect(saknas).toEqual([]);
     expect(omärkta).toEqual([]);

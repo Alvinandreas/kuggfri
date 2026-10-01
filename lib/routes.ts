@@ -73,6 +73,8 @@ export const routes = {
 
   admin: {
     home: () => "/admin",
+    /** Admininställningar (bara global admin): t.ex. dolda flikar i sidomenyn. */
+    globalSettings: () => "/admin/installningar",
     /** Alla kurser. */
     decks: () => "/admin/deck",
     newDeck: () => "/admin/deck/ny",

@@ -30,8 +30,11 @@ import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
 import { Logo } from "@/components/layout/Logo";
 import { ProfileMenu, type ShellUser } from "@/components/layout/ProfileMenu";
+import type { SidebarTabKey } from "@/lib/admin/sidebar-tabs";
 
 type NavLink = {
+  /** Nyckeln som Admininställningar döljer posten med. */
+  tabKey?: SidebarTabKey;
   href: string;
   label: string;
   icon: ComponentType<LucideProps>;
@@ -65,6 +68,8 @@ export type SidebarProps = {
    * i stället för på Kurser. examModeOpen: tentaläget öppet för studenterna.
    */
   courses: { id: string; slug: string; title: string; examModeOpen: boolean }[];
+  /** Flikar som global admin dolt under Admininställningar (lib/admin/sidebar-tabs.ts). */
+  hiddenTabs?: SidebarTabKey[];
 };
 
 const SIDEBAR_KEY = "kuggfri:sidebar";
@@ -148,6 +153,7 @@ function adminLinks(sv: Dict, deck: AdminNavDeck | null, isAdmin: boolean): NavL
     for (const tab of adminTabs(sv)) {
       const badge = tab.counter ? deck[tab.counter.key] : undefined;
       links.push({
+        tabKey: tab.key,
         href: tab.href(deck.id),
         label: tab.label,
         icon: tab.icon,
@@ -158,8 +164,8 @@ function adminLinks(sv: Dict, deck: AdminNavDeck | null, isAdmin: boolean): NavL
       });
     }
   }
-  if (isAdmin) links.push({ href: routes.admin.decks(), label: sv.shell.allCourses, icon: LayoutList, exact: true, also: [routes.admin.newDeck()] });
-  if (isAdmin) links.push({ href: routes.designSystem(), label: sv.shell.designSystem, icon: Palette });
+  if (isAdmin) links.push({ tabKey: "alla-kurser", href: routes.admin.decks(), label: sv.shell.allCourses, icon: LayoutList, exact: true, also: [routes.admin.newDeck()] });
+  if (isAdmin) links.push({ tabKey: "designsystem", href: routes.designSystem(), label: sv.shell.designSystem, icon: Palette });
   return links;
 }
 
@@ -170,34 +176,48 @@ function adminLinks(sv: Dict, deck: AdminNavDeck | null, isAdmin: boolean): NavL
 function courseLinks(sv: Dict, course: SidebarProps["courses"][number], adminDeckIds: string[]): NavLink[] {
   const locked = !course.examModeOpen && !adminDeckIds.includes(course.id);
   return [
-    { href: routes.deck(course.slug), label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [routes.study(course.slug)], testId: "nav-course-page" },
-    { href: routes.exam(course.slug), label: sv.shell.examMode, icon: ClipboardPen, locked, lockedLabel: sv.shell.examModeLocked, testId: "nav-exam-mode" },
+    { tabKey: "kurssidan", href: routes.deck(course.slug), label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [routes.study(course.slug)], testId: "nav-course-page" },
+    { tabKey: "tentalaget", href: routes.exam(course.slug), label: sv.shell.examMode, icon: ClipboardPen, locked, lockedLabel: sv.shell.examModeLocked, testId: "nav-exam-mode" },
   ];
 }
 
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
-function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
+function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, hiddenTabs, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
   const sv = useT();
+  // Flikar som global admin dolt under Admininställningar syns inte för någon.
+  const hidden = new Set(hiddenTabs ?? []);
+  const visible = (l: NavLink) => !l.tabKey || !hidden.has(l.tabKey);
   // Med flera kurser: Kurser, och kursens två poster när man är inne i en kurs.
   const inCourse = courses.find((c) => under(pathname, routes.deck(c.slug)));
-  const study: NavLink[] = [
-    { href: routes.home(), label: sv.shell.home, icon: House },
-    { href: routes.myStats(), label: sv.shell.myStats, icon: ChartNoAxesColumn },
+  const studyLinks: NavLink[] = [
+    { tabKey: "hem", href: routes.home(), label: sv.shell.home, icon: House },
+    { tabKey: "statistik", href: routes.myStats(), label: sv.shell.myStats, icon: ChartNoAxesColumn },
     ...(courses.length === 1 && courses[0]
       ? courseLinks(sv, courses[0], adminDeckIds)
-      : [{ href: routes.courses(), label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(sv, inCourse, adminDeckIds) : [])]),
+      : [{ tabKey: "kurser" as const, href: routes.courses(), label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(sv, inCourse, adminDeckIds) : [])]),
   ];
-  const admin = adminLinks(sv, adminDeck, isAdmin);
+  const study = studyLinks.filter(visible);
+  const admin = adminLinks(sv, adminDeck, isAdmin).filter(visible);
+  const infoLinks: NavLink[] = [
+    { tabKey: "hjalp", href: routes.help(), label: sv.shell.help, icon: CircleHelp },
+    { tabKey: "om", href: routes.about(), label: sv.shell.about, icon: Info },
+    { tabKey: "integritet", href: routes.privacy(), label: sv.shell.privacy, icon: ShieldCheck },
+  ];
+  const info = infoLinks.filter(visible);
   return (
     <>
       {top}
       <nav aria-label={sv.shell.mainNav} className="flex-1 overflow-y-auto px-3 pb-3">
-        <SectionLabel>{sv.shell.sectionStudy}</SectionLabel>
-        <div className="space-y-0.5">
-          {study.map((l) => (
-            <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
-          ))}
-        </div>
+        {study.length > 0 ? (
+          <>
+            <SectionLabel>{sv.shell.sectionStudy}</SectionLabel>
+            <div className="space-y-0.5">
+              {study.map((l) => (
+                <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
+              ))}
+            </div>
+          </>
+        ) : null}
         {admin.length > 0 ? (
           <>
             <SectionLabel>{sv.shell.sectionAdmin}</SectionLabel>
@@ -212,10 +232,10 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
       {/* Avgränsad från listan ovanför: på låga skärmar rullar listan, och utan kant såg den
           avklippta sista posten ut att ligga under Hjälp. */}
       <div className="space-y-0.5 border-t border-line px-3 pb-4 pt-2">
-        <NavItem link={{ href: routes.help(), label: sv.shell.help, icon: CircleHelp }} pathname={pathname} drawer={drawer} />
-        <NavItem link={{ href: routes.about(), label: sv.shell.about, icon: Info }} pathname={pathname} drawer={drawer} />
-        <NavItem link={{ href: routes.privacy(), label: sv.shell.privacy, icon: ShieldCheck }} pathname={pathname} drawer={drawer} />
-        <ProfileMenu user={user} placement="right-end" showLanguage={isAdmin || adminDeck !== null || adminDeckIds.length > 0} />
+        {info.map((l) => (
+          <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
+        ))}
+        <ProfileMenu user={user} placement="right-end" showLanguage={isAdmin || adminDeck !== null || adminDeckIds.length > 0} showAdminSettings={isAdmin} />
       </div>
     </>
   );
@@ -338,7 +358,7 @@ export function Sidebar(props: SidebarProps) {
         <Link href={routes.home()} aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
           <Logo variant="menu" height={30} decorative />
         </Link>
-        <ProfileMenu user={props.user} placement="bottom-end" compact showLanguage={props.isAdmin || props.adminDeck !== null || props.adminDeckIds.length > 0} />
+        <ProfileMenu user={props.user} placement="bottom-end" compact showLanguage={props.isAdmin || props.adminDeck !== null || props.adminDeckIds.length > 0} showAdminSettings={props.isAdmin} />
       </header>
 
       {drawerOpen ? (

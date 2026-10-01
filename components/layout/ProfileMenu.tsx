@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { Info, LogOut, ShieldCheck, SunMoon, UserRound } from "lucide-react";
+import { Info, LogOut, Settings2, ShieldCheck, SunMoon, UserRound } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { signOutAction } from "@/lib/auth/actions";
 import { Avatar } from "@/components/ui/Avatar";
@@ -16,18 +16,21 @@ export type ShellUser = { name: string; email: string };
  * Profilknappen och dess meny: vem som är inloggad, konto, tema, integritet och
  * utloggning. "compact" visar bara avataren (mobilens toppfält). "showLanguage": reglaget English,
  * bara för den som har adminåtkomst (admin eller examinator), så att språket går att byta
- * tillbaka var som helst i tjänsten. Studenterna ser det aldrig.
+ * tillbaka var som helst i tjänsten. Studenterna ser det aldrig. "showAdminSettings": länken till
+ * Admininställningar (bara global admin); den finns alltid här, så att den inte kan döljas bort.
  */
 export function ProfileMenu({
   user,
   placement,
   compact = false,
   showLanguage = false,
+  showAdminSettings = false,
 }: {
   user: ShellUser;
   placement: MenuPlacement;
   compact?: boolean;
   showLanguage?: boolean;
+  showAdminSettings?: boolean;
 }) {
   const sv = useT();
   const [pending, startTransition] = useTransition();
@@ -73,6 +76,11 @@ export function ProfileMenu({
         <ThemeSwitcher inMenu />
       </MenuRow>
       {showLanguage ? <LanguageToggle className="mx-1.5 flex min-h-10 items-center px-3 py-1.5" /> : null}
+      {showAdminSettings ? (
+        <MenuItem href={routes.admin.globalSettings()} icon={<Settings2 size={18} />}>
+          {sv.admin.globalSettings}
+        </MenuItem>
+      ) : null}
       <MenuItem href={routes.privacy()} icon={<ShieldCheck size={18} />}>
         {sv.shell.privacy}
       </MenuItem>

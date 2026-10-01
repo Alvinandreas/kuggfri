@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { forbidden, redirect } from "next/navigation";
-import { Plus, ShieldCheck } from "lucide-react";
+import { Plus, Settings2, ShieldCheck } from "lucide-react";
 import { getT } from "@/lib/i18n/server";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { getAdminContext } from "@/lib/admin/access";
@@ -41,6 +41,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href={routes.admin.newDeck()} className={navLink}>
                 <Plus size={16} aria-hidden />
                 {sv.admin.newDeck}
+              </Link>
+              <Link href={routes.admin.globalSettings()} className={navLink}>
+                <Settings2 size={16} aria-hidden />
+                {sv.admin.globalSettings}
               </Link>
             </>
           ) : null}

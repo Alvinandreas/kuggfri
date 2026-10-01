@@ -1,11 +1,14 @@
 import { ClipboardCheck, Flag, Layers, LayoutDashboard, ScrollText, Settings2, Upload, type LucideIcon } from "lucide-react";
 import type { Dict } from "@/lib/i18n";
 import { routes } from "@/lib/routes";
+import type { SidebarTabKey } from "@/lib/admin/sidebar-tabs";
 
 /** Räknarna en adminflik kan visa; lib/admin/nav.ts hämtar dem för den låsta kursen. */
 export type AdminTabCounter = "pendingDrafts" | "openReports";
 
 export type AdminTab = {
+  /** Nyckeln som Admininställningar döljer fliken med (lib/admin/sidebar-tabs.ts). */
+  key: SidebarTabKey;
   label: string;
   icon: LucideIcon;
   href: (deckId: string) => string;
@@ -23,11 +26,11 @@ export type AdminTab = {
  * hämtar räknarna som flikarna visar.
  */
 export const adminTabs = (sv: Dict): readonly AdminTab[] => [
-  { label: sv.admin.tabOverview, icon: LayoutDashboard, href: routes.admin.deck, exact: true, also: (id) => [routes.admin.stats(id)] },
-  { label: sv.admin.tabContent, icon: Layers, href: routes.admin.content, also: (id) => [routes.admin.categoryPrefix(id), routes.admin.cardPrefix(id)] },
-  { label: sv.admin.tabReview, icon: ClipboardCheck, href: (id) => routes.admin.review(id), counter: { key: "pendingDrafts", label: sv.shell.pendingDrafts } },
-  { label: sv.admin.tabExams, icon: ScrollText, href: routes.admin.exams },
-  { label: sv.admin.tabReports, icon: Flag, href: routes.admin.reports, counter: { key: "openReports", label: sv.shell.openReports } },
-  { label: sv.admin.tabImport, icon: Upload, href: routes.admin.import },
-  { label: sv.admin.tabSettings, icon: Settings2, href: routes.admin.settings },
+  { key: "oversikt", label: sv.admin.tabOverview, icon: LayoutDashboard, href: routes.admin.deck, exact: true, also: (id) => [routes.admin.stats(id)] },
+  { key: "innehall", label: sv.admin.tabContent, icon: Layers, href: routes.admin.content, also: (id) => [routes.admin.categoryPrefix(id), routes.admin.cardPrefix(id)] },
+  { key: "granskning", label: sv.admin.tabReview, icon: ClipboardCheck, href: (id) => routes.admin.review(id), counter: { key: "pendingDrafts", label: sv.shell.pendingDrafts } },
+  { key: "tentor", label: sv.admin.tabExams, icon: ScrollText, href: routes.admin.exams },
+  { key: "felrapporter", label: sv.admin.tabReports, icon: Flag, href: routes.admin.reports, counter: { key: "openReports", label: sv.shell.openReports } },
+  { key: "importera", label: sv.admin.tabImport, icon: Upload, href: routes.admin.import },
+  { key: "installningar", label: sv.admin.tabSettings, icon: Settings2, href: routes.admin.settings },
 ];

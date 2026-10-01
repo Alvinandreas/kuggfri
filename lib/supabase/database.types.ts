@@ -116,6 +116,14 @@ export type CategoryRow = {
 /** Engelsk översättning av ett kort för granskningen i admin (lib/cards/translation.ts). */
 export type CardTranslation = { front: string; back: string; hint: string | null; options: string[] | null; sv: string };
 
+/** En global inställning (tabellen app_settings), t.ex. dolda flikar i sidomenyn. */
+export type AppSettingRow = {
+  key: string;
+  value: unknown;
+  updated_at: string;
+  updated_by: string | null;
+};
+
 export type CardRow = {
   id: string;
   deck_id: string;
@@ -322,6 +330,12 @@ export type Database = {
           "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original" | "flag_note" | "flagged_at" | "flagged_by" | "translation_en"
         >;
         Update: Partial<CardRow>;
+        Relationships: [];
+      };
+      app_settings: {
+        Row: AppSettingRow;
+        Insert: Optional<AppSettingRow, "updated_at" | "updated_by">;
+        Update: Partial<AppSettingRow>;
         Relationships: [];
       };
       exams: {

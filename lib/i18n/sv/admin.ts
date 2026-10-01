@@ -315,4 +315,10 @@ export const admin = {
   sourceOriginalHelp: "Originalkorten skrevs innan källor började anges.",
   sourceNoneHelp: "Kortet saknar källa. Lägg till en via Redigera.",
   weekShort: (week: number) => `v.${week}`,
+  globalSettings: "Admininställningar",
+  sidebarTitle: "Sidomenyn",
+  sidebarHelp: "Dolda flikar visas inte i sidomenyn för någon. Sidorna nås fortfarande via sin adress.",
+  sidebarGroupInfo: "Längst ner",
+  sidebarHiddenCount: (n: number) => (n === 0 ? "Alla flikar visas." : n === 1 ? "1 flik är dold." : `${n} flikar är dolda.`),
+  sidebarSaved: "Sidomenyn är uppdaterad.",
 } as const;

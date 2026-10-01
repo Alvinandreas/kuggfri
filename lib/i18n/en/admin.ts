@@ -316,4 +316,10 @@ export const admin: Dict["admin"] = {
   sourceOriginalHelp: "The original cards were written before sources were recorded.",
   sourceNoneHelp: "The card has no source. Add one via Edit.",
   weekShort: (week: number) => `wk ${week}`,
+  globalSettings: "Admin settings",
+  sidebarTitle: "Sidebar",
+  sidebarHelp: "Hidden tabs are not shown in the sidebar to anyone. The pages can still be reached by their address.",
+  sidebarGroupInfo: "Bottom",
+  sidebarHiddenCount: (n: number) => (n === 0 ? "All tabs are shown." : n === 1 ? "1 tab is hidden." : `${n} tabs are hidden.`),
+  sidebarSaved: "The sidebar has been updated.",
 };

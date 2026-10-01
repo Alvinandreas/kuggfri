@@ -26,7 +26,6 @@ original: ja
 ## Vad kännetecknar Titan?
 key: vad-kannetecknar-titan
 original: ja
-status: utkast
 källa: Rättelse: "Titan är den enda metallen som är biokompatibel" är en överdrift; tentasvaren anger bara att titan är biokompatibelt; Canvas, Fö 13 Aluminium och andra metaller, s. 13; Canvas, Fö 13 Aluminium och andra metaller, s. 14; Canvas, Svar Materialteknik 2019-10-26, s. 2; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 (korrigerad), uppgift 5
 flagga: Rättelse av originalkortet: "Titan är den enda metallen som är biokompatibel" (ordagrant Fö 13 Aluminium och andra metaller s. 13) är ändrat till "biokompatibelt", som i tentasvaren 2019 uppg. 5b och 2021 uppg. 5. Kortet anger också titanets densitet till 4,1 kg/dm³ som på samma bild, men värdet brukar anges till ca 4,5 kg/dm³. Godkänns rättelsen, och stämmer densiteten på bilden?
 
@@ -77,7 +76,6 @@ Stål är bra, men i vissa situationer väljs andra material för att deras spec
 key: aldring
 typ: begrepp
 original: ja
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 27; Canvas, GLU 02 Fasdiagram, s. 1; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 18; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 19; Canvas, Short_dictionary_ v2026, s. 1; Canvas, Short_dictionary_ v2026, s. 10
 
 Sista steget i utskiljningshärdning, t.ex. av värmebehandlingsbara aluminiumlegeringar:
@@ -98,7 +96,6 @@ Vanligtvis legeringar med Ni-bas som har excellenta högtemperaturegenskaper, ox
 ## Vad stämmer för magnesium?
 key: quiz-magnesium-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 4; Canvas, Fö 13 Aluminium och andra metaller, s. 11; Canvas, Fö 13 Aluminium och andra metaller, s. 12; Canvas, Fö 13 Aluminium och andra metaller, s. 7; Canvas, Fö 13 Aluminium och andra metaller, s. 8; Canvas, Fö 12 Stål, s. 2; Canvas, Svar Materialteknik 2019-10-26, s. 2
 
 - [ ] Det har många glidsystem för dislokationsrörelse och får därmed låg sträckgräns.
@@ -111,7 +108,6 @@ Magnesium har HCP-struktur med få glidsystem, vilket ger begränsad plastisk fo
 ## Vad stämmer för aluminium?
 key: quiz-aluminium-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 6; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Kapitel_03 Materialval, s. 45; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 4; Canvas, Svarsförslag Tentamen MTT085 25-01, s. 6
 flagga: Quizens alternativ "korroderar inte" är preciserat till "skyddas mot korrosion av ett oxidskikt (Al2O3)", och skämtalternativet med ett påhittat legeringsnamn är ersatt med den felaktiga "HCP-struktur" (Fö 13 Aluminium s. 3). Godkänns ändringarna, och ska Quiz vecka 4 fråga 6 ändras?
 
@@ -127,7 +123,6 @@ Quizens fjärde alternativ var ett påhittat legeringsnamn och har ersatts, och 
 ## Indelning och legering av aluminium: vilka påståenden är sanna?
 key: quiz-indelning-och-legering-av-aluminium-2
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 7; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 5; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 12; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 31; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 43; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 45; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Fö 13 Aluminium och andra metaller, s. 9
 flagga: Quizens rätta alternativ "Enda sättet att höja sträckgränsen på ren aluminium är att deformationshärda" är för starkt, eftersom även finare korn ger högre sträckgräns (GLU_5-8 s. 5); kortet säger nu "härdas i praktiken genom deformationshärdning" (Kapitel_06 s. 43, tabell 6.1). Godkänns uppmjukningen, och ska Quiz vecka 4 fråga 7 ändras?
 
@@ -143,7 +138,6 @@ Quizens formulering "Enda sättet att höja sträckgränsen på ren aluminium ä
 ## Vilka smideslegeringar av aluminium är värmebehandlingsbara, dvs. kan utskiljningshärdas?
 key: al-varmebehandlingsbara-legeringar
 typ: alternativ
-status: utkast
 källa: Canvas, Fö 13 Aluminium och andra metaller, s. 4; Canvas, Fö 13 Aluminium och andra metaller, s. 7; Canvas, Fö 13 Aluminium och andra metaller, s. 8; Canvas, Övning 7 m lösningar, s. 5
 
 - [x] Serierna 2xxx, 6xxx och 7xxx
@@ -156,7 +150,6 @@ Aluminiumlegeringar delas in i smideslegeringar och gjutlegeringar. Av smidesleg
 ## Vid åldring av en värmebehandlingsbar aluminiumlegering: vilket tillstånd ger högst sträckgräns?
 key: al-toppaldrat
 typ: alternativ
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 27; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 19
 
 - [ ] Underåldrat
@@ -170,7 +163,6 @@ Toppåldrat material är så starkt som legeringen kan bli, med måttlig seghet 
 key: titan-anvandningstemperatur
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Fo 13 Aluminium och andra metaller, s. 7, 8, 9, 12, 14
 
 Sant. Enligt föreläsningens data går titanlegeringar att använda upp till knappt 500 °C (487 °C), jämfört med ca 150–200 °C för aluminiumlegeringarna och ca 190 °C för magnesiumlegeringarna. Bland titanlegeringarnas användningsområden nämner föreläsningen kompressorn i jetmotorer, trots att titan är dyrt.
@@ -178,7 +170,6 @@ Sant. Enligt föreläsningens data går titanlegeringar att använda upp till kn
 ## Vilka par av metall och typisk tillämpning stämmer enligt kursen?
 key: metaller-tillampningar-ti-mg-cu
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 13 Aluminium och andra metaller, s. 11, 12, 13, 14, 15
 
 - [x] Titanlegeringar: kemisk industri, värmeväxlare, implantat och kompressorn i jetmotorer
@@ -191,7 +182,6 @@ Titan har utmärkt hållfasthet och korrosionsskydd och är biokompatibelt, men 
 ## Vilka påståenden om magnesiumlegeringar stämmer?
 key: magnesium-egenskaper-begransningar
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 13 Aluminium och andra metaller, s. 7, 8, 9, 11, 12
 
 - [x] Deras E-modul (ca 42–47 GPa) är lägre än aluminiumlegeringarnas (ca 68–76 GPa).
@@ -203,7 +193,6 @@ Magnesium har låg densitet (1,8 kg/dm³), god gjutbarhet och god maskinbarhet. 
 
 ## Utskiljningshärdning av en Al–4 % Cu-legering görs i tre steg. Vad åstadkommer upplösningsbehandlingen, snabbkylningen och åldringen var för sig?
 key: al-cu-utskiljningshardning-steg
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26, 27; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 18, 19; Canvas, Exempel fasdiagram, s. 7; Canvas, Fo 13 Aluminium och andra metaller, s. 5; Canvas, Ovning 7 m losningar, s. 5
 flagga: Kortet anger solvus för Al med 4 % Cu till ca 500 °C, ett värde som är avläst i diagrammet i Exempel fasdiagram s. 7 och inte står i text någonstans; upplösningsbehandlingen anges som i kursens exempel, 540 till 548 °C. Stämmer avläsningen?
 

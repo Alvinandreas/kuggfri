@@ -20,7 +20,6 @@ Miljöbelastning:
 ## Hur återanvändningsbara är egentligen metaller? Vad finns det för utmaningar med det?
 key: hur-ateranvandningsbara-ar-egentligen
 original: ja
-status: utkast
 källa: Rättelse: kortet sa att metall från skrot alltid har samma egenskaper som metall från mineral, men kursen säger att återvunnen metall kan ge lika bra material (och kortet räknar själv upp legeringsproblemen); energisiffrorna 1/10 för Al och 1/3 för stål går inte att belägga i kursmaterialet och är strukna; Canvas, Fo 13 Hallbarhet, s. 21; Canvas, Fo 12 Stal, s. 12; Canvas, Kapitel_03 Materialval, s. 45
 flagga: Rättelse av originalkortet: "har samma egenskaper" som metall från malm är ändrat till "kan ge lika bra material" (Fö 13 Hållbarhet s. 21), och energisiffrorna 1/10 för Al och 1/3 för stål är strukna eftersom de inte finns i kursmaterialets text. Raderna "Koppar och tenn förstör stål", "Fe försprödar Al" och "Bly, kadmium och kvicksilver är ofta oönskat i legeringar" står kvar utan källa (Fö 13 Hållbarhet s. 2 nämner bly och kadmium bara som hälsovådliga). Godkänns rättelsen, och ska de tre raderna beläggas eller strykas?
 
@@ -41,7 +40,6 @@ legeringar
 ## Hur bra är aluminium sett ur ett hållbarhetsperspektiv?
 key: hur-bra-ar-aluminium-sett-ur-ett
 original: ja
-status: utkast
 källa: Rättelse: kortet sa att aluminium är det vanligaste grundämnet i jordskorpan, vilket inte stämmer och inte står i kursmaterialet; Canvas, Fö 13 Hållbarhet, s. 13; Canvas, Fö 13 Hållbarhet, s. 17; Canvas, Kapitel_03 Materialval, s. 45; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 5
 flagga: Rättelse av originalkortet: "Det vanligaste grundämnet i jordskorpan" (det är syre) är ersatt med att Al finns i god tillgång (Fö 13 Hållbarhet s. 13), och raderna om 8 till 14 % Si och Fe-förorening är strukna eftersom de saknas i materialet. Kortet förklarar också den låga energin vid omsmältning med att Al har lägre smälttemperatur än stål (Kapitel_03 s. 45), men Kapitel_12 s. 8 säger att det krävs ungefär lika mycket energi att smälta om 1 kg stål som 1 kg aluminium. Godkänns rättelsen, och vilken förklaring ska kortet ge?
 
@@ -117,7 +115,6 @@ jordartsmetaller, platina-gruppen, fissionsämne (U, Th, Pu), W, Ta, Nb, Ga, In
 ## Sammanfatta lite kort hur metaller lämpar sig för återvinning.
 key: sammanfatta-lite-kort-hur-metaller
 original: ja
-status: utkast
 källa: Rättelse: "Ger lika bra material" var ett absolut påstående; föreläsningen säger "Kan ge lika bra material", eftersom föroreningar och legeringsämnen kan ställa till problem; Canvas, Fo 13 Hallbarhet, s. 21
 flagga: Rättelse av originalkortet: "Ger lika bra material" är ändrat till "Kan ge lika bra material", ordagrant Fö 13 Hållbarhet s. 21. Svarsförslaget till tentan 2025-10-30 uppg. 6c säger dock att återvinning alltid ger förluster och kvalitetsnedgång, medan tentan 2022 uppg. 5b säger att i princip inga egenskaper försämras. Godkänns rättelsen, och vilken linje ska korten följa?
 
@@ -141,7 +138,6 @@ Den mängd CO₂ som bildas vid produktion av ett kilo material.
 ## Miljöegenskaper: vilka påståenden är sanna?
 key: quiz-miljoegenskaper-vad-ar-sant-tva-ratta
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 6; Canvas, Fö 13 Hållbarhet, s. 6; Canvas, Fö 13 Hållbarhet, s. 11; Canvas, Fö 13 Hållbarhet, s. 13; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 5; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 (korrigerad), formelbladet
 
 - [x] CO₂-avtryck (CO₂ footprint) och inbäddad energi (embodied energy) kan ge vägledning i materialvalet.
@@ -154,7 +150,6 @@ CO₂-avtryck och inbäddad energi kan användas i materialindex, genom att dens
 ## I kursens eco audit-exempel med krockbarriärer: vilken livscykelfas dominerar för ett fast vägräcke respektive en barriär monterad på en bil?
 key: hallb-eco-audit-vagracken
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 43; Canvas, Kapitel_03 Materialval, s. 46
 
 - [x] Vägräcket: materialproduktionen. Bilens barriär: användningen.
@@ -167,7 +162,6 @@ Eco audit visar i vilken livscykelfas mest resurser används, och därmed vad ma
 ## Hur tar man hänsyn till CO₂-avtrycket i ett materialindex för en lätt och stark balk, $\sigma_y^{2/3}/\rho$?
 key: hallb-co2-i-materialindex
 typ: alternativ
-status: utkast
 källa: Canvas, Tentamen Materialteknik mrd svar 2021-10-23 (korrigerad), formelbladet; Canvas, Kapitel_03 Materialval, s. 46; Canvas, Fö 13 Hållbarhet, s. 6
 
 - [x] Densiteten $\rho$ ersätts med $CO_2\,\rho$ (CO₂-avtryck per kg gånger densitet)
@@ -181,7 +175,6 @@ För att minimera CO₂-utsläpp eller inbäddad energi i stället för massa er
 key: hallb-hoghallfast-mindre-material
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Fö 13 Hållbarhet, s. 17
 
 Sant. Föreläsningen nämner höghållfasta metaller, som ger mindre material, tillsammans med bättre design, förbättrade tillverkningsmetoder, lätta metaller och kompositer när låg vikt behövs och återvunnen metall som sätt att konstruera miljövänligare med metaller.
@@ -189,7 +182,6 @@ Sant. Föreläsningen nämner höghållfasta metaller, som ger mindre material, 
 ## Bionedbrytbar respektive biobaserad plast
 key: plast-bionedbrytbar-biobaserad
 typ: begrepp
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 20, 21, 22
 
 **Bionedbrytbar:** plasten bryts ned av mikroorganismer till bland annat koldioxid, vatten och ny biomassa (utan syre även metan). För att räknas som fullständigt bionedbrytbar enligt den europeiska standarden EN 13432 ska minst 90 % ha brutits ned på mindre än 6 månader.
@@ -201,7 +193,6 @@ De två egenskaperna är oberoende av varandra: råvaran avgör inte om plasten 
 ## Vilka exempel är rätt placerade i indelningen efter råvara (biobaserad eller fossil) och bionedbrytbarhet?
 key: plast-bio-indelning-exempel
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 22, 23, 24, 25
 
 - [x] PLA: biobaserad och bionedbrytbar
@@ -214,7 +205,6 @@ Kursens fyrfältsdiagram har råvaran på ena axeln och bionedbrytbarheten på d
 ## Vilka påståenden om återvinning av metaller stämmer enligt kursen?
 key: hallb-atervinning-ensam-racker-inte
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 13 Hallbarhet, s. 7, 8, 21
 flagga: Det felaktiga alternativet "Metaller förlorar alltid sina egenskaper när de återvinns" följer Fö 13 Hållbarhet s. 21 ("kan ge lika bra material"), men svarsförslaget till tentan 2025-10-30 uppg. 6c säger att det alltid uppstår förluster och kvalitetsnedgång vid återvinning, så en student som läst svarsförslaget kan välja alternativet. Är alternativet entydigt fel?
 
@@ -227,7 +217,6 @@ En modell för cirkulär ekonomi fungerar inte enbart, eftersom efterfrågan på
 
 ## Enligt kursen finns inga hållbara material. Hur kan en produkt ändå göras mer hållbar?
 key: hallbara-produkter-kombination
-status: utkast
 källa: Canvas, Fo 13 Hallbarhet, s. 6, 18, 21, 22
 
 Genom en kombination av rätt materialval, bra design, rätt tillverkningsmetod och rätt återvinning, alltså bra ingenjörsarbete. I materialvalet tar man med resursförbrukning, energiförbrukning och CO₂-utsläpp över hela kedjan (materialtillverkning, produkttillverkning, användning, skrotning och återvinning), t.ex. med materialindex för CO₂-avtryck och inbäddad energi, och väljer återvinningsbara material. Dessutom: refabricering, återbruk och återvinning, och värdefulla produkter med lång livslängd.

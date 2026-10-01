@@ -12,10 +12,29 @@ produktionen bakom underhållsgrinden. Listan städades 29 sep: allt som var öp
 
 ## Inför lanseringen
 
-**Tidsplan:** möte med Johan (examinator) och Roland Kádár (polymerdelen) **onsdag 30 sep kl 10:00**.
-De granskar innehållet och kommer med synpunkter. Hinner ändringarna och deras godkännanden bli klara
-onsdag kväll lanserar vi då, annars torsdag 1 okt. Alvin granskar inte allt innehåll själv; Johan och
-Roland gör den granskningen. Frågorna till Johan tas på mötet i stället för i mejl.
+**Tidsplan:** mötet med kursledningen, Johan (examinator) och Roland Kádár (polymerdelen) flyttades
+från onsdag 30 sep till **fredag 2 okt**. Agendan nedan (under "Onsdag 30 sep") gäller fortfarande.
+Alvin granskar inte allt innehåll själv; Johan och Roland gör den granskningen.
+
+**Ny granskningsmodell (Alvins beslut 1 okt):** examinatorerna granskar samtliga kort, också
+originalkorten. Alla kort är i rotation från början; ett kort som inte håller tas ur rotation.
+**Lanseringsspärr: kursen öppnas för studenterna först när panelen Granskningen i Översikt visar
+0 kort kvar** (alla godkända eller tagna ur rotation, inga flaggade kvar).
+
+### Torsdag 1 okt: inför mötet (lokalt, väntar på Alvins verifiering på 3001)
+
+- [x] Textputs (granskningslistan visar KaTeX läsbart, startsidan, kursbeskrivningen, skattningstexter)
+- [x] Panelen Granskningen i Översikt, per område med länk till granskningen
+- [x] Statistiken som CSV (per område och per kort) under Mer statistik
+- [x] Demostudenter lokalt (`scripts/verktyg/demo-studenter.cjs`), aldrig mot produktionen
+- [x] Alla 405 kort i rotation som ogranskade; flikarna Att granska, Granskade, Flaggade, Ur rotation;
+      Ta ur rotation, Återställ originalet, Sätt tillbaka; ändrat innehåll granskas igen (trigger)
+- [x] Engelska i granskningen: reglaget English, alla 405 kort och 14 områden översatta
+      (`content/materialteknik/engelska.json`), polymertermerna ur Rolands eget material och
+      oberoende kontrollerade; anteckningar om möjliga fel i `docs/OVERSATTNING-ANTECKNINGAR.md`
+- [?] Alvin verifierar på 3001, sedan push: `supabase db push` (migration 20261001000100),
+      `apply --mal prod`, `engelska materialteknik --mal prod`, `git push`
+- [ ] Mötesunderlag och granskningsguide (på engelska för Roland)
 
 ### Tisdag 29 sep: allt användare och admin möter ska vara polerat
 

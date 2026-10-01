@@ -9,7 +9,6 @@ Största förekommande defekten i en komponent ger störst spänning vilket inne
 ## Vad har temperatur för inverkan på ett materials brottseghet?
 key: vad-har-temperatur-for-inverkan-pa-ett
 original: ja
-status: utkast
 källa: Rättelse: kortet sa att alla material blir sprödare när temperaturen sjunker, men metaller med FCC-struktur förblir duktila; Canvas, Kapitel_08 Seghet och Brott, s. 31; Canvas, Kapitel_08 Seghet och Brott, s. 37; Canvas, Fö 9 Brott och brottseghet, s. 3
 flagga: Rättelse av originalkortet: det sa att materialen generellt blir sprödare när temperaturen sjunker, men metaller med FCC-struktur förblir duktila. Texten följer nu Kapitel_08 s. 31 (vissa metaller och alla polymerer blir spröda, sträckgränsen ökar, den plastiska zonen krymper). Godkänns rättelsen?
 
@@ -20,7 +19,6 @@ Vid låga temperaturer blir vissa metaller och alla polymerer spröda. När temp
 ## Vad är skillnaden mellan ett segt- respektive sprött brott?
 key: vad-ar-skillnaden-mellan-ett-segt
 original: ja
-status: utkast
 källa: Rättelse: "deformeras plastiskt under en längre tid" var missvisande, det är mängden plastisk deformation och inte tiden som skiljer brotten åt; Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 1; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28
 flagga: Rättelse av originalkortet: det sa att ett segt material deformeras plastiskt "under en längre tid", men det är mängden plastisk deformation och inte tiden som skiljer brotten åt (Kapitel_08 s. 27, 28). Den nya baksidan följer nästan ordagrant svarsförslaget till tentan 2025-10-30 uppg. 4 (t.ex. "relativt jämn och glänsande med kornig struktur"). Godkänns rättelsen, eller ska baksidan skrivas om med egna ord?
 
@@ -30,7 +28,6 @@ flagga: Rättelse av originalkortet: det sa att ett segt material deformeras pla
 ## Vad använder man för typ av test för att undersöka ett materials brottseghet?
 key: vad-anvander-man-for-typ-av-test-for
 original: ja
-status: utkast
 källa: Rättelse: kortet sa att brottseghet bestäms med slagprovning, men slagprovning mäter slagseghet; Canvas, Kapitel_08 Seghet och Brott, s. 8; Canvas, Kapitel_08 Seghet och Brott, s. 16; Canvas, Kapitel_08 Seghet och Brott, s. 21
 flagga: Rättelse av originalkortet: det sa att brottseghet bestäms med slagprovning, men slagprovning ger slagseghet och inte seghet som materialegenskap (Kapitel_08 s. 8). Nu står CT- och SENB-prov med skarp spricka och plant töjningstillstånd (Kapitel_08 s. 16, 21), sidor som är märkta "Känna till, inga detaljfrågor på tentan". Godkänns rättelsen, och är detaljnivån rimlig?
 
@@ -67,7 +64,6 @@ key: ja-nej-omslagstemperatur-finns-hos
 typ: sant-falskt
 svar: sant
 original: ja
-status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Kapitel_08 Seghet och Brott, s. 31; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 18; Canvas, Fö 13 Aluminium och andra metaller, s. 3; Canvas, Short_dictionary_ v2026, s. 2
 flagga: Originalkortet (tentan 2020-10-24 uppg. 1e, facit ja) sa "rostfritt stål"; påståendet är nu preciserat till "vanligt (ferritiskt) stål" och "austenitiskt rostfritt stål", eftersom bara FCC-metaller förblir duktila (Kapitel_08 s. 31) och ferritiska och martensitiska rostfria stål har omslagstemperatur. Källraden saknar "Rättelse:". Godkänns preciseringen?
 
@@ -80,7 +76,6 @@ key: ja-nej-utmattningsgransen-ar-antalet
 typ: sant-falskt
 svar: falskt
 original: ja
-status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 6
 
 ![S–N-kurva med draghållfastheten och utmattningsgränsen vid tio miljoner cykler](/kort/materialteknik/s-n-kurva.svg)
@@ -90,7 +85,6 @@ Falskt. Utmattningsgränsen är en spänningsamplitud, inte ett antal cykler: un
 ## Vad visar en S–N-kurva?
 key: sn-kurva-axlar
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5, 15
 
 - [x] Spänningsamplituden mot antalet cykler till brott, med antalet cykler i logaritmisk skala.
@@ -107,7 +101,6 @@ key: ja-nej-sproda-brott-foljer-alltid
 typ: sant-falskt
 svar: falskt
 original: ja
-status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 9 Brott och brottseghet, s. 16; Canvas, Svar Materialteknik 2019-10-26, s. 2; Canvas, Kapitel_08 Seghet och Brott, s. 32
 
 Falskt. En spröd brottyta kan vara både interkristallin (längs korngränserna) och transkristallin (genom kornen). Ett sprött klyvbrott följer atomplanen. Brott längs korngränserna uppstår när korngränserna har försvagats, t.ex. av föroreningar som samlats där eller av kemiskt angrepp.
@@ -130,7 +123,6 @@ Ett brott som föregås av mycket plasticering. Lång töjning innan brott sker 
 ## Brott hos metaller: vilka påståenden är sanna?
 key: quiz-brott-hos-metaller-2-rattta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Kapitel_08 Seghet och Brott, s. 18; Canvas, Kapitel_08 Seghet och Brott, s. 37; Canvas, Fö 9 Brott och brottseghet, s. 7; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1f
 flagga: Quizens rätta alternativ "Segt brott fås när spänningsintensitetsfaktorn är större än brottsegheten" är omskrivet till "En spricka växer när spänningsintensitetsfaktorn överskrider brottsegheten", eftersom villkoret gäller sprickväxt i allmänhet och inte specifikt segt brott (Kapitel_08 s. 14). Godkänns omskrivningen, och ska Quiz vecka 3 fråga 7 ändras?
 
@@ -146,7 +138,6 @@ I quizen stod "Segt brott fås när spänningsintensitetsfaktorn är större än
 ## Brott i metaller och spröda material: vilka påståenden är sanna?
 key: quiz-brott-2-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 10; Canvas, Kapitel_08 Seghet och Brott, s. 15; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28; Canvas, Kapitel_08 Seghet och Brott, s. 32; Canvas, Fö 9 Brott och brottseghet, s. 15
 flagga: Det rätta alternativet är omskrivet till "I metaller går brottet bara undantagsvis längs korngränserna", men "bara undantagsvis" står inte i kursen: Kapitel_08 s. 32 säger att föroreningar normalt samlas i korngränserna, och Fö 9 Brott och brottseghet s. 16 visar interkristallint brott som en av två vanliga spröda brottytor. Håller examinatorn med, eller ska det stå t.ex. "främst när korngränserna har försvagats"?
 
@@ -160,7 +151,6 @@ Kursen delar in brott i spröda och sega brott, inte elastiska och plastiska. Et
 ## Vad menas med seghet (toughness) i kursen?
 key: brott-seghet-definition
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_08 Seghet och Brott, s. 7; Canvas, Kapitel_08 Seghet och Brott, s. 2
 
 - [ ] Ett materials motstånd mot plastisk deformation
@@ -173,7 +163,6 @@ Seghet är motståndet mot spricktillväxt. Motståndet mot plastisk deformation
 ## Hur beräknas spänningsintensitetsfaktorn $K_1$ för en spricka med längden $c$ i en plåt under dragspänningen $\sigma$?
 key: brott-spanningsintensitetsfaktor
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_08 Seghet och Brott, s. 13; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Fö 9 Brott och brottseghet, s. 9
 
 - [x] $K_1 = Y\sigma\sqrt{\pi c}$
@@ -186,7 +175,6 @@ Den lokala spänningen framför sprickspetsen skalar med $\sigma\sqrt{\pi c}$, s
 ## Omslagstemperatur
 key: brott-omslagstemperatur
 typ: begrepp
-status: utkast
 källa: Canvas, Short_dictionary_ v2026, s. 4; Canvas, Svar Materialteknik 2019-10-26, s. 2; Canvas, Kapitel_08 Seghet och Brott, s. 10; Canvas, Kapitel_08 Seghet och Brott, s. 31
 
 Den temperatur där ett material går från segt (duktilt) till sprött brottbeteende, duktilt/sprött omslag (ductile-to-brittle transition). Under omslagstemperaturen blir materialet sprött. Den bestäms med slagprovning. Vissa metaller, t.ex. vanligt (ferritiskt) stål, och alla polymerer har en omslagstemperatur, medan metaller med FCC-struktur förblir duktila även vid de lägsta temperaturerna.
@@ -194,7 +182,6 @@ Den temperatur där ett material går från segt (duktilt) till sprött brottbet
 ## Lågcykelutmattning
 key: utm-lagcykelutmattning
 typ: begrepp
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 3; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 6; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 7
 
 Utmattning där spänningsnivåerna varierar över sträckgränsen men under draghållfastheten, så att materialet deformeras både elastiskt och plastiskt i varje cykel (hysteresloop). Livslängden är kort räknat i antal cykler, den vänstra delen av livslängdsdiagrammet. Lågcykelutmattning provas oftast töjningsstyrt, och livslängden beskrivs av Coffins lag.
@@ -202,7 +189,6 @@ Utmattning där spänningsnivåerna varierar över sträckgränsen men under dra
 ## Vilken lag beskriver utmattningslivslängden vid högcykelutmattning (HCF)?
 key: utm-basquin-hcf
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 6; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 11; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15
 
 - [x] Basquins lag, $\Delta\sigma\,N_f^{\,b} = C_1$
@@ -215,7 +201,6 @@ Basquins lag beskriver högcykelutmattning, där spänningarna ligger under str�
 ## En komponent följer Basquins lag med $b = 0{,}1$ och håller 200 000 cykler vid spänningsamplituden 100 MPa (medelspänning noll). Ungefär hur många cykler håller den om amplituden ökas till 120 MPa?
 key: utm-exempel-basquin-livslangd
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 8; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 5, 6
 
 - [ ] 1 240 000 cykler
@@ -230,7 +215,6 @@ Spänningsintervallet är dubbla amplituden, alltså 200 respektive 240 MPa (att
 ## Vad beskriver Paris lag, $dc/dN = A\,\Delta K^m$?
 key: utm-paris-lag
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 14; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15; Canvas, Läsanvisningar Kapitel 9, s. 1
 
 - [x] Hur mycket en utmattningsspricka växer per cykel som funktion av det cykliska spänningsintensitetsintervallet
@@ -244,7 +228,6 @@ Paris lag beskriver spricktillväxten per cykel, $dc/dN$, som funktion av $\Delt
 key: utm-palmgren-miner
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 11
 
 Sant. När den cykliska spänningsamplituden ändras beräknas livslängden med Palmgren-Miners regel för linjär skadeackumulering, $\sum_{i=1}^{n} N_i/N_{f,i} = 1$. Här är $N_i$ antalet cykler med amplitud $i$ och $N_{f,i}$ livslängden om hela belastningen hade haft den amplituden.
@@ -252,7 +235,6 @@ Sant. När den cykliska spänningsamplituden ändras beräknas livslängden med 
 ## Hur påverkar en medelspänning i drag utmattningslivslängden, enligt Goodmans regel?
 key: utm-goodman-medelspanning
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 4; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 9; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 10
 flagga: Kortet anger ca 11 550 cykler för exempel 9.2, men utan avrundning blir det ca 11 260 (200 000 gånger 0,75^10); 11 550 fås bara om det korrigerade spänningsintervallet avrundas till 266 MPa. Står 11 550 på bilden i Kapitel_09 Utmattning s. 10, eller ska siffran ändras till ca 11 300?
 
@@ -266,7 +248,6 @@ Enligt Goodmans regel, $\Delta\sigma_{\sigma_m} = \Delta\sigma_{\sigma_m=0}\left
 ## Vilka åtgärder ger bättre utmattningsegenskaper hos en metallkomponent?
 key: utm-battre-utmattningsegenskaper
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 39; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 37; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 10; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 28
 
 - [x] Liten kornstorlek
@@ -280,14 +261,12 @@ Goda utmattningsegenskaper fås med liten kornstorlek, små inneslutningar och p
 key: utm-initiering-vid-ytan
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 28; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 29
 
 Sant. I ytliga korn med lämplig orientering bildas persistenta glidband (PSB) med mycket dislokationsaktivitet, som ger intrusioner och extrusioner i ytan. Atmosfär och oxidation skapar svaga zoner, och lokala spänningskoncentrationer gör att sprickan startar där. Sprickor kan initieras inne i materialet när ytan är jämn och har tryckrestspänningar, eller när det finns stora inre defekter som inneslutningar och porer.
 
 ## Beskriv de tre stadierna i ett utmattningsbrott och hur brottytan ser ut.
 key: utm-tre-stadier-brottyta
-status: utkast
 källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 28; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 30; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 32; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 33; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15
 
 1. **Initiering:** oftast som en skjuvspricka i ytliga korn med lämplig orientering (glidband), där ytan eller en spänningskoncentration hjälper till.
@@ -297,7 +276,6 @@ källa: Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 28; Canvas, 2026-09-23 Kapi
 ## Vilka kännetecken hör till ett sprött brott?
 key: brott-sprott-brottyta-kannetecken
 typ: alternativ
-status: utkast
 källa: Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 1; Canvas, Kapitel_08 Seghet och Brott, s. 27; Canvas, Kapitel_08 Seghet och Brott, s. 28
 flagga: Kortet är i stort sett tentan 2025-10-30 uppg. 4 omgjord till flerval: de rätta alternativen är svarsförslagets meningar om sprött brott och de felaktiga dess meningar om segt brott (Svarsförslag uppgift 4-6 IMS085 251030 s. 1), och brottytornas utseende står inte på Kapitel_08 s. 27, 28. Ska kortet skrivas om utifrån föreläsningen, eller tas bort?
 
@@ -311,7 +289,6 @@ Ett sprött brott sker utan nämnvärd plastisk deformation och ger en relativt 
 ## Vad innebär ett högt värde på Weibullmodulen $m$ för en keram?
 key: brott-weibullmodul
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_08 Seghet och Brott, s. 34; Canvas, Kapitel_08 Seghet och Brott, s. 35
 
 - [x] Liten spridning i brottspänning och större säkerhet för överlevnad under referensspänningen
@@ -324,7 +301,6 @@ Weibullmodulen styr hur känslig brottsannolikheten är för spänningen: låga 
 ## Ett CT-prov ($K_{1c} = 25\ \text{MPa}\sqrt{\text{m}}$, $w = 50$ mm, $b = 20$ mm, sprickan $c = 10$ mm) följer $K_{1c} = 1{,}64\,\dfrac{F^*}{bw}\sqrt{\pi c}$. Vilken last $F^*$ krävs för brott?
 key: brott-exempel-ct-prov-last
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_08 Seghet och Brott, s. 17; Canvas, Kapitel_08 Seghet och Brott, s. 14
 
 - [ ] 50 kN
@@ -338,7 +314,6 @@ $F^* = \dfrac{K_{1c}\,b\,w}{1{,}64\sqrt{\pi c}} = \dfrac{25\cdot 10^6 \cdot 0{,}
 key: vad-ar-brottseghet
 typ: begrepp
 original: ja
-status: utkast
 källa: Rättelse: brottvillkoret var omvänt (kortet sa att brott sker när K1c > K1, så stod det också på en bild 2025); Canvas, Kapitel_08 Seghet och Brott, s. 7; Canvas, Kapitel_08 Seghet och Brott, s. 14; Canvas, Fö 9 Brott och brottseghet, s. 7; Canvas, Fö 9 Brott och brottseghet, s. 10; Canvas, Kapitel_08 Seghet och Brott, s. 13; Canvas, Kapitel_08 Seghet och Brott, s. 18; Canvas, 2026-09-23 Kapitel_09 Utmattning, s. 15
 flagga: Rättelse av originalkortet: brottvillkoret var omvänt, "Brott när K1c > K1", som det står på Fö 9 Brott och brottseghet 2025 s. 7. Kortet säger nu att sprickan växer när K1 överskrider K1c (Fö 9 s. 10, Kapitel_08 s. 14), med tillägget "vid statisk last" eftersom en utmattningsspricka kan växa under K1c. Godkänns rättelsen, och ska bilden Fö 9 s. 7 rättas i Canvas?
 

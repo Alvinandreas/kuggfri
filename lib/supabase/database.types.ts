@@ -107,7 +107,12 @@ export type CategoryRow = {
   key: string | null;
   /** Innehållshash vid senaste synk från fil. */
   source_hash: string | null;
+  /** Områdets namn på engelska, för granskningen i admin. */
+  title_en: string | null;
 };
+
+/** Engelsk översättning av ett kort för granskningen i admin (lib/cards/translation.ts). */
+export type CardTranslation = { front: string; back: string; hint: string | null; options: string[] | null; sv: string };
 
 export type CardRow = {
   id: string;
@@ -126,7 +131,10 @@ export type CardRow = {
   kind: "sjalvskattning" | "begrepp" | "sant-falskt" | "alternativ";
   /** Svarsalternativ för sant-falskt och alternativ: [{ text, correct }]. */
   options: { text: string; correct: boolean }[] | null;
-  /** null = vanligt kort, utkast = väntar på granskning, avvisad = avvisat förslag. */
+  /**
+   * null = i rotation (ogranskat tills reviewed_at är satt), utkast = nytt kort utanför rotation
+   * som väntar på granskning, avvisad = taget ur rotation i granskningen.
+   */
   review_status: "utkast" | "avvisad" | null;
   review_note: string | null;
   reviewed_by: string | null;
@@ -140,6 +148,8 @@ export type CardRow = {
   flagged_at: string | null;
   /** Vem som flaggade; null = Kuggfris källgranskning (innehållsverktyget). */
   flagged_by: string | null;
+  /** Engelsk översättning för granskningen i admin; visas aldrig för studenter. */
+  translation_en: CardTranslation | null;
   created_at: string;
   updated_at: string;
 };
@@ -299,7 +309,7 @@ export type Database = {
       };
       categories: {
         Row: CategoryRow;
-        Insert: Optional<CategoryRow, "id" | "sort_order" | "key" | "source_hash">;
+        Insert: Optional<CategoryRow, "id" | "sort_order" | "key" | "source_hash" | "title_en">;
         Update: Partial<CategoryRow>;
         Relationships: [];
       };
@@ -307,7 +317,7 @@ export type Database = {
         Row: CardRow;
         Insert: Optional<
           CardRow,
-          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original" | "flag_note" | "flagged_at" | "flagged_by"
+          "id" | "category_id" | "hint" | "sort_order" | "is_active" | "key" | "source_hash" | "created_at" | "updated_at" | "kind" | "options" | "review_status" | "review_note" | "reviewed_by" | "reviewed_at" | "source" | "original" | "flag_note" | "flagged_at" | "flagged_by" | "translation_en"
         >;
         Update: Partial<CardRow>;
         Relationships: [];

@@ -5,7 +5,7 @@ import { getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { getHistoryMeta, type HistoryMeta } from "@/lib/admin/history-queries";
 import { differsFromPublished } from "@/lib/admin/history";
-import { reviewRelevant, type ReviewCard } from "@/lib/admin/review";
+import { reviewRelevant, reviewTab, type ReviewCard } from "@/lib/admin/review";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ReviewInbox } from "@/components/admin/ReviewInbox";
 
@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
  * Flik, öppet kort, filter och sökning står i adressen (?flik=, ?kort=, ?omrade=, ?typ=, ?kalla=,
  * ?ursprung=, ?sok=) och läses av klienten, så att vyerna går att länka och bakåtknappen fungerar.
  *
- * För utkast som ändrar ett tidigare publicerat kort (rättade originalkort) hämtas den senast
- * publicerade versionen, som Avvisa återställer. Granskarnas namn hämtas med
+ * För kort under Att granska som ändrar ett tidigare publicerat kort (rättade originalkort) hämtas
+ * den senast publicerade versionen, som Återställ originalet går tillbaka till. Granskarnas namn hämtas med
  * deck_reviewer_names (profiler är annars bara läsbara för sin ägare).
  */
 export default async function ReviewPage({ params }: { params: Params }) {
@@ -33,12 +33,12 @@ export default async function ReviewPage({ params }: { params: Params }) {
   if (!data) notFound();
 
   const relevant = reviewRelevant(data.cards);
-  const drafts = relevant.filter((c) => c.review_status === "utkast");
+  const pending = relevant.filter((c) => reviewTab(c) === "att-granska" || (c.flag_note && !c.reviewed_at));
   const supabase = await createSupabaseServerClient();
   const [history, names] = await Promise.all([
     getHistoryMeta(
       data.deck.id,
-      drafts.map((c) => c.id),
+      pending.map((c) => c.id),
     ).catch((): HistoryMeta => ({ counts: {}, published: {} })),
     supabase.rpc("deck_reviewer_names", { p_deck_id: data.deck.id }).then(
       ({ data: rows }) => rows ?? [],
@@ -47,7 +47,7 @@ export default async function ReviewPage({ params }: { params: Params }) {
   ]);
 
   const cards: ReviewCard[] = relevant.map((c) => {
-    const published = c.review_status === "utkast" ? history.published[c.id] : undefined;
+    const published = c.review_status !== "avvisad" && !c.reviewed_at ? history.published[c.id] : undefined;
     return {
       id: c.id,
       category_id: c.category_id,
@@ -68,6 +68,7 @@ export default async function ReviewPage({ params }: { params: Params }) {
       flag_note: c.flag_note,
       flagged_at: c.flagged_at,
       flagged_by: c.flagged_by,
+      translation_en: c.translation_en ?? null,
       // Bara versioner som skiljer sig från kortet räknas (ett godkännande som ångrats lämnar en
       // publicerad version med samma innehåll i historiken).
       published_version_id: published && differsFromPublished(published, c) ? published.id : null,
@@ -79,7 +80,7 @@ export default async function ReviewPage({ params }: { params: Params }) {
   return (
     <ReviewInbox
       deckId={data.deck.id}
-      areas={data.categories.map((c) => ({ id: c.id, title: c.title }))}
+      areas={data.categories.map((c) => ({ id: c.id, title: c.title, title_en: c.title_en ?? null }))}
       cards={cards}
       reviewerNames={reviewerNames}
       userId={ctx.userId}

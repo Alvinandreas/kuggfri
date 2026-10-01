@@ -130,9 +130,11 @@ En automaträttad fråga läggs aldrig tillbaka i kön i samma pass. I en dugga 
 
 Övriga egenskaper:
 
-- `status: utkast` — ett förslag som väntar på granskning (examinator eller admin, fliken
-  Granskning i admin). Ett utkast är aldrig aktivt och kan inte läsas av studenter, inte ens via
-  API:t. `status: avvisad` = avvisat förslag som ligger kvar så att det inte föreslås igen.
+- `status: utkast` — ett nytt kort utanför rotation som väntar på granskning (examinator eller
+  admin, fliken Granskning i admin). Ett utkast är aldrig aktivt och kan inte läsas av studenter,
+  inte ens via API:t. Används för kort som tillkommer efter lanseringen; sedan 1 okt 2026 ligger
+  alla Materialtekniks kort i rotation (se Granskningen nedan). `status: avvisad` = taget ur
+  rotation i granskningen; kortet ligger kvar och kan sättas tillbaka.
 - `källa: …` — var innehållet kommer ifrån, t.ex. `Canvas, Tentamen MTT085 24-10, uppgift 3`.
 - `flagga: …` — kortet är flaggat: en anteckning (en rad) om vad som behöver åtgärdas, t.ex.
   `flagga: Svaret blandar ihop duktilitet och seghet.` Flaggade kort samlas under Granskning,
@@ -161,11 +163,24 @@ Saknas förklaring skriver verktyget in rätt svar som baksida (databasen kräve
 räknas in i innehållshashen bara när de avviker från standardvärdet (för `flagga:` null), så kort
 från före 28 sep och 30 sep ser inte ändrade ut.
 
-Granskningen (30 sep 2026, Alvins beslut): alla kort som inte är oförändrade originalkort ska
-granskas av en examinator innan studenterna ser dem. Nya kort, oavsett om de skrivs i filerna
-(`status: utkast`) eller skapas eller importeras i admin, börjar som utkast under Granskning,
-fliken Att granska. Godkänn sätter kortet i rotation (aktivt, `status` tas bort) och sparar vem
-som granskade och när; kortet syns sedan överst under Granskade.
+Granskningen (Alvins beslut 1 okt 2026, ersätter 30 sep): examinatorerna granskar **samtliga**
+kort, också originalkorten. Alla kort är i rotation från början, och ett kort som inte håller tas
+ur rotation (`status: avvisad`). Godkännandet är granskningsdatumet (`reviewed_at`): ett kort i
+rotation utan datum är ogranskat och står under Att granska. Ändras ett korts fråga, svar, ledtråd,
+typ eller alternativ utan att det godkänns i samma steg nollställer databasen datumet (triggern
+`cards_review_reset`), så att kortet granskas igen; det gäller både `apply` och admin. **Kursen
+öppnas för studenterna först när inget kort är ogranskat** (panelen Granskningen i Översikt visar
+läget per område). Nya kort efter lanseringen kan fortfarande börja som utkast utanför rotation.
+
+Engelska för granskningen (1 okt 2026): polymerexaminatorn läser inte svenska, så varje kort har
+en engelsk översättning i `content/<kurs>/engelska.json` (`areas`: områdesnyckel → namn, `cards`:
+kortnyckel → `{front, back, hint, options, sv}`). `sv` är ett fingeravtryck av den svenska texten
+som översattes (`lib/cards/translation.ts`); granskningen säger till när kortet ändrats sedan dess.
+Synka med `npm run kuggfri -- engelska <kurs> [--mal prod]`. Översättningen visas bara i admin
+(reglaget English i granskningen) och är aldrig det som godkänns. Polymerområdenas termer följer
+Rolands eget material (termlistan togs fram ur hans slides, anteckningar, Osswald och tentorna);
+översättningens anteckningar om möjliga fel finns i `docs/OVERSATTNING-ANTECKNINGAR.md`. Ändras
+ett kort ska översättningen göras om för just det kortet.
 
 Verktyg för områden (`scripts/omraden.ts`), alla rör bara filerna: `omraden` (översikt område ×
 uppgiftstyp), `nytt-omrade`, `byt-namn-omrade`, `flytta <kort,…> --till <område>`, `byt-typ`,

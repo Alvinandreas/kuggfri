@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, FlagTriangleRight, Info, MessageSquareWarning, Pencil, RotateCcw, X } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
+import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, FlagTriangleRight, History, Info, Languages, MessageSquareWarning, Pencil, RotateCcw, Undo2, X } from "lucide-react";
 import { cardSources } from "@/lib/admin/sources";
+import { englishFace, translationState } from "@/lib/cards/translation";
 import { shouldIgnoreShortcut } from "@/lib/ui/keyboard";
 import type { ReviewArea, ReviewCard, ReviewTab } from "@/lib/admin/review";
 import { Badge } from "@/components/ui/Badge";
@@ -17,11 +17,12 @@ import { KindBadge } from "./KindBadge";
 import { ReviewCardFace } from "./ReviewCardFace";
 import { ReviewEditor, type ReviewEdit } from "./ReviewEditor";
 import { SourceBadges, SourceList } from "./SourceBadges";
+import { useReviewT } from "./review/ReviewLanguage";
 
 /** Senaste beslutet eller felet, med Ångra när det går. */
 export type ReviewStatus = { id: number; text: string; undo?: () => void; tone?: "default" | "danger" };
 
-type Panel = { type: "flag"; note: string; edit: boolean } | { type: "reject"; note: string } | null;
+type Panel = { type: "flag"; note: string; edit: boolean } | { type: "reject"; note: string; mode: "remove" | "restore" } | null;
 
 type Props = {
   card: ReviewCard;
@@ -46,7 +47,10 @@ type Props = {
   onEdit: (open: boolean) => void;
   onSave: (edit: ReviewEdit, approve: boolean) => Promise<string | null>;
   onFlag: (note: string) => void;
-  onReject: (note: string) => void;
+  /** Ta ur rotation, eller (restore) återställ originalet för ett rättat originalkort. */
+  onReject: (note: string, mode: "remove" | "restore") => void;
+  /** Sätt tillbaka ett kort som tagits ur rotation. */
+  onPutBack: () => void;
 };
 
 /** Tangenter räknas inte medan man skriver eller står i en lista, meny eller dialog. */
@@ -57,22 +61,33 @@ const TYPING_SELECTOR = 'input, textarea, select, [contenteditable="true"], [rol
  * kort instruktion (Att granska) eller flaggans anteckning (Flaggade), kortets område, typ och
  * källor, och kortet som studenten ser det, tydligt uppdelat i Fråga och Svar. Åtgärderna står
  * i en fast rad i nederkant: Godkänn (går direkt till nästa kort), Redigera, Flagga och en meny
- * med Avvisa. Kortkommandon: G godkänn, R redigera, F flagga, J/K eller pilarna nästa och
- * föregående, Esc tillbaka till listan, Ctrl+Z ångra.
+ * med Ta ur rotation (och Återställ originalet för rättade originalkort). Under Ur rotation:
+ * Sätt tillbaka. Med reglaget English visas kortet på engelska, med en rad som säger att det är
+ * en översättning (och om kortet ändrats sedan dess). Kortkommandon: G godkänn, R redigera,
+ * F flagga, J/K eller pilarna nästa och föregående, Esc tillbaka till listan, Ctrl+Z ångra.
  */
 export function ReviewCardView(props: Props) {
   const { card, tab, position, total, areas, areaTitle, areaColor, reviewedLine, flaggedLine, issues, editing, status } = props;
+  const t = useReviewT();
+  const g = t.g;
   const [panel, setPanel] = useState<Panel>(null);
+  const [showSwedish, setShowSwedish] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const flagged = card.flag_note !== null && card.flag_note !== "";
-  const canApprove = tab !== "granskade";
-  const correcting = card.review_status === "utkast" && typeof card.published_version_id === "number";
+  const removed = tab === "ur-rotation";
+  const canApprove = tab === "att-granska" || tab === "flaggade";
+  const correcting = !removed && typeof card.published_version_id === "number";
+  const english = t.lang === "en" && !showSwedish;
+  const translation = t.lang === "en" ? translationState(card) : null;
+  const face = (english ? englishFace(card) : null) ?? card;
+  const sourceLabels = { tags: t.source, originalHelp: t.admin.originalHelp, sourceOriginalHelp: t.admin.sourceOriginalHelp, sourceNoneHelp: t.admin.sourceNoneHelp };
   const sources = cardSources(card);
   const sourceCount = sources.groups.length;
 
   // Nytt kort: stäng paneler och flytta fokus till rubriken (skärmläsare hör vilket kort det är).
   useEffect(() => {
     setPanel(null);
+    setShowSwedish(false);
     headingRef.current?.focus({ preventScroll: true });
   }, [card.id]);
 
@@ -103,7 +118,7 @@ export function ReviewCardView(props: Props) {
     } else if (key === "r") {
       e.preventDefault();
       props.onEdit(true);
-    } else if (key === "f") {
+    } else if (key === "f" && !removed) {
       e.preventDefault();
       setPanel({ type: "flag", note: flagged ? (card.flag_note ?? "") : "", edit: flagged });
     }
@@ -125,10 +140,10 @@ export function ReviewCardView(props: Props) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Button variant="ghost" size="sm" onClick={props.onBack} className="-ml-3" data-testid="review-back">
           <ArrowLeft size={16} aria-hidden />
-          {sv.granskning.backToList}
+          {g.backToList}
         </Button>
         <div className="flex items-center gap-1">
-          <IconButton label={sv.granskning.prev} variant="outline" size="sm" onClick={() => props.onStep(-1)} disabled={!hasPosition || position <= 0} aria-keyshortcuts="K ArrowLeft" data-testid="review-prev">
+          <IconButton label={g.prev} variant="outline" size="sm" onClick={() => props.onStep(-1)} disabled={!hasPosition || position <= 0} aria-keyshortcuts="K ArrowLeft" data-testid="review-prev">
             <ChevronLeft size={17} aria-hidden />
           </IconButton>
           <h2
@@ -138,13 +153,13 @@ export function ReviewCardView(props: Props) {
             className="min-w-20 px-2 text-center text-sm font-semibold tabular-nums"
             // Rubriken får fokus när kortet byts (för skärmläsare), men ska inte se markerad ut.
             style={{ outline: "none" }}
-            aria-label={hasPosition ? sv.granskning.positionLabel(position + 1, total) : sv.granskning.outsideFilter}
+            aria-label={hasPosition ? g.positionLabel(position + 1, total) : g.outsideFilter}
             data-testid="review-position"
           >
-            {hasPosition ? sv.granskning.position(position + 1, total) : sv.granskning.outsideFilter}
+            {hasPosition ? g.position(position + 1, total) : g.outsideFilter}
           </h2>
           <IconButton
-            label={sv.granskning.next}
+            label={g.next}
             variant="outline"
             size="sm"
             onClick={() => props.onStep(1)}
@@ -161,7 +176,7 @@ export function ReviewCardView(props: Props) {
         <p className="flex gap-2.5 rounded-md bg-surface-2 px-4 py-3 text-sm" data-testid="review-instruction">
           <Info size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
           <span>
-            {sv.granskning.instruction} <span className="text-muted">{sv.granskning.instructionApprove}</span>
+            {g.instruction} <span className="text-muted">{g.instructionApprove}</span>
           </span>
         </p>
       ) : null}
@@ -176,7 +191,7 @@ export function ReviewCardView(props: Props) {
           {!editing ? (
             <Button variant="ghost" size="sm" className="-mr-2 -mt-1 shrink-0 hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })} data-testid="review-flag-change">
               <Pencil size={14} aria-hidden />
-              <span className="max-sm:sr-only">{sv.granskning.changeFlag}</span>
+              <span className="max-sm:sr-only">{g.changeFlag}</span>
             </Button>
           ) : null}
         </div>
@@ -184,26 +199,30 @@ export function ReviewCardView(props: Props) {
 
       <div className="grid gap-2.5">
         <div className="flex flex-wrap items-center gap-2">
-          {card.category_id ? <CategoryTag title={areaTitle(card.category_id)} colorIndex={areaColor(card.category_id)} /> : <Badge tone="outline">{sv.granskning.noArea}</Badge>}
-          <KindBadge kind={card.kind} />
-          <SourceBadges source={card.source} original={card.original} max={4} />
+          {card.category_id ? <CategoryTag title={areaTitle(card.category_id)} colorIndex={areaColor(card.category_id)} /> : <Badge tone="outline">{g.noArea}</Badge>}
+          <KindBadge kind={card.kind} label={t.kind[card.kind]} />
+          <SourceBadges source={card.source} original={card.original} max={4} labels={sourceLabels} />
         </div>
         <p className="text-sm text-muted" data-testid="review-status-line">
           {tab === "granskade"
-            ? (reviewedLine ?? sv.granskning.statusOriginal)
-            : card.review_status === "utkast"
-              ? correcting || card.original
-                ? sv.granskning.statusCorrected
-                : sv.granskning.statusNew
-              : reviewedLine ?? (card.original ? sv.granskning.statusOriginal : null)}
+            ? (reviewedLine ?? g.statusOriginal)
+            : removed
+              ? g.statusRemoved
+              : card.review_status === "utkast"
+                ? g.statusDraft
+                : correcting
+                  ? g.statusCorrected
+                  : card.original
+                    ? g.statusOriginal
+                    : g.statusNew}
         </p>
       </div>
 
-      {card.review_note && card.review_status === "utkast" && !editing ? (
+      {card.review_note && card.review_status !== null && !editing ? (
         <div className="flex gap-3 rounded-md bg-surface-2 px-4 py-3 text-sm">
           <MessageSquareWarning size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <p className="font-semibold">{sv.granskning.statusRejectedBefore}</p>
+            <p className="font-semibold">{g.statusRejectedBefore}</p>
             <p className="whitespace-pre-wrap break-words text-muted">{card.review_note}</p>
           </div>
         </div>
@@ -211,7 +230,7 @@ export function ReviewCardView(props: Props) {
 
       {issues.length > 0 && canApprove && !editing ? (
         <div role="note" className="rounded-md bg-danger-soft px-4 py-3 text-sm text-danger" data-testid="review-issues">
-          <p className="font-semibold">{sv.granskning.cannotApprove}</p>
+          <p className="font-semibold">{g.cannotApprove}</p>
           <ul className="mt-1 list-disc pl-5">
             {issues.map((i) => (
               <li key={i}>{i}</li>
@@ -224,20 +243,35 @@ export function ReviewCardView(props: Props) {
         <ReviewEditor key={card.id} card={card} areas={areas} canApprove={canApprove || flagged} onSave={props.onSave} onCancel={() => props.onEdit(false)} />
       ) : (
         <>
-          <div className="anim-fade-in" key={card.id}>
-            <ReviewCardFace front={card.front} back={card.back} hint={card.hint} kind={card.kind} options={card.options} />
+          {translation ? (
+            <div className="flex flex-wrap items-start gap-x-3 gap-y-1 rounded-md bg-surface-2 px-4 py-3 text-sm" data-testid="review-translation-note">
+              <Languages size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
+              <p className="min-w-0 flex-1">
+                {translation === "missing" ? g.translationMissing : g.translationNote}
+                {translation === "stale" ? <span className="mt-1 block font-semibold text-danger">{g.translationStale}</span> : null}
+              </p>
+              {translation !== "missing" ? (
+                <button type="button" onClick={() => setShowSwedish((v) => !v)} className="shrink-0 font-semibold text-accent underline-offset-2 hover:underline" data-testid="review-translation-switch">
+                  {showSwedish ? g.showEnglish : g.showSwedish}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="anim-fade-in" key={`${card.id}-${english ? "en" : "sv"}`} lang={english && translation !== "missing" ? "en" : "sv"}>
+            <ReviewCardFace front={face.front} back={face.back} hint={face.hint} kind={card.kind} options={face.options ? [...face.options] : null} />
           </div>
 
           <div className="rounded-lg border border-line bg-surface px-4 py-1 dark:border-transparent" data-testid="review-sources">
             <Disclosure
               summary={
                 <span className="flex items-center gap-2 text-sm">
-                  {sv.granskning.sources}
+                  {g.sources}
                   <span className="font-medium text-muted tabular-nums">{sourceCount > 0 ? sourceCount : null}</span>
                 </span>
               }
             >
-              <SourceList source={card.source} original={card.original} className="pb-2" />
+              <SourceList source={card.source} original={card.original} className="pb-2" labels={sourceLabels} />
             </Disclosure>
           </div>
 
@@ -247,12 +281,12 @@ export function ReviewCardView(props: Props) {
               {panel?.type === "flag" ? (
                 <NotePanel
                   key="flagga"
-                  label={sv.granskning.flagNote}
-                  help={sv.granskning.flagNoteHelp}
+                  label={g.flagNote}
+                  help={g.flagNoteHelp}
                   value={panel.note}
                   onChange={(note) => setPanel({ ...panel, note })}
                   required
-                  confirm={panel.edit ? sv.granskning.flagSave : sv.granskning.flagConfirm}
+                  confirm={panel.edit ? g.flagSave : g.flagConfirm}
                   confirmIcon={<FlagTriangleRight size={16} aria-hidden />}
                   onConfirm={() => {
                     if (!panel.note.trim()) return;
@@ -264,50 +298,48 @@ export function ReviewCardView(props: Props) {
                 />
               ) : panel?.type === "reject" ? (
                 <NotePanel
-                  key="avvisa"
-                  label={sv.granskning.rejectNote}
-                  help={
-                    correcting
-                      ? sv.granskning.rejectHelpCorrection
-                      : card.review_status === null
-                        ? sv.granskning.rejectHelpActive
-                        : card.original
-                          ? sv.granskning.rejectHelpOriginal
-                          : sv.granskning.rejectHelpNew
-                  }
+                  key={`avvisa-${panel.mode}`}
+                  label={g.rejectNote}
+                  help={panel.mode === "restore" ? g.rejectHelpCorrection : card.original ? g.rejectHelpOriginal : card.review_status === null ? g.rejectHelpActive : g.rejectHelpNew}
                   value={panel.note}
                   onChange={(note) => setPanel({ ...panel, note })}
-                  confirm={sv.granskning.rejectConfirm}
-                  confirmIcon={<X size={16} aria-hidden />}
-                  danger
+                  confirm={panel.mode === "restore" ? g.restoreConfirm : g.rejectConfirm}
+                  confirmIcon={panel.mode === "restore" ? <History size={16} aria-hidden /> : <X size={16} aria-hidden />}
+                  danger={panel.mode === "remove"}
                   onConfirm={() => {
-                    props.onReject(panel.note);
+                    props.onReject(panel.note, panel.mode);
                     setPanel(null);
                   }}
                   onCancel={() => setPanel(null)}
                   testId="review-reject-panel"
                 />
               ) : (
-                <div role="group" aria-label={sv.granskning.actions} className="flex flex-wrap items-center gap-2">
+                <div role="group" aria-label={g.actions} className="flex flex-wrap items-center gap-2">
+                  {removed ? (
+                    <Button onClick={props.onPutBack} title={g.putBackHelp} className="flex-1 @2xl:flex-none" data-testid="review-put-back">
+                      <Undo2 size={17} aria-hidden />
+                      {g.putBack}
+                    </Button>
+                  ) : null}
                   {canApprove ? (
                     <Button onClick={props.onApprove} disabled={issues.length > 0} aria-keyshortcuts="G" className="flex-1 @2xl:flex-none" data-testid="review-approve">
                       <Check size={17} aria-hidden />
-                      {sv.granskning.approve}
+                      {g.approve}
                       <KeyHint>G</KeyHint>
                     </Button>
                   ) : null}
                   {tab === "flaggade" ? (
-                    <Button variant="outline" onClick={props.onResolve} title={sv.granskning.resolveHelp} className="flex-1 @2xl:flex-none" data-testid="review-resolve">
+                    <Button variant="outline" onClick={props.onResolve} title={g.resolveHelp} className="flex-1 @2xl:flex-none" data-testid="review-resolve">
                       <CheckCheck size={17} aria-hidden />
-                      {sv.granskning.resolve}
+                      {g.resolve}
                     </Button>
                   ) : null}
                   <Button variant="secondary" onClick={() => props.onEdit(true)} aria-keyshortcuts="R" className="flex-1 @2xl:flex-none" data-testid="review-edit">
                     <Pencil size={16} aria-hidden />
-                    {sv.granskning.edit}
+                    {g.edit}
                     <KeyHint>R</KeyHint>
                   </Button>
-                  {tab !== "flaggade" ? (
+                  {tab !== "flaggade" && !removed ? (
                     <Button
                       variant="secondary"
                       onClick={() => setPanel({ type: "flag", note: "", edit: false })}
@@ -316,20 +348,21 @@ export function ReviewCardView(props: Props) {
                       data-testid="review-flag"
                     >
                       <FlagTriangleRight size={16} aria-hidden />
-                      {sv.granskning.flag}
+                      {g.flag}
                       <KeyHint>F</KeyHint>
                     </Button>
                   ) : null}
+                  {removed ? null : (
                   <Menu
-                    label={sv.granskning.more}
+                    label={g.more}
                     placement="top-end"
                     width="15rem"
                     trigger={(t) => (
                       <button
                         {...t}
                         type="button"
-                        aria-label={sv.granskning.more}
-                        title={sv.granskning.more}
+                        aria-label={g.more}
+                        title={g.more}
                         className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
                         data-testid="review-more"
                       >
@@ -339,13 +372,19 @@ export function ReviewCardView(props: Props) {
                   >
                     {flagged ? (
                       <MenuItem icon={<Pencil size={16} />} onSelect={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })}>
-                        {sv.granskning.changeFlag}
+                        {g.changeFlag}
                       </MenuItem>
                     ) : null}
-                    <MenuItem icon={<X size={16} />} tone="danger" onSelect={() => setPanel({ type: "reject", note: "" })}>
-                      {sv.granskning.reject}
+                    {correcting ? (
+                      <MenuItem icon={<History size={16} />} onSelect={() => setPanel({ type: "reject", note: "", mode: "restore" })}>
+                        {g.restoreOriginal}
+                      </MenuItem>
+                    ) : null}
+                    <MenuItem icon={<X size={16} />} tone="danger" onSelect={() => setPanel({ type: "reject", note: "", mode: "remove" })}>
+                      {g.reject}
                     </MenuItem>
                   </Menu>
+                  )}
                 </div>
               )}
             </div>
@@ -382,6 +421,7 @@ function NotePanel({
   onCancel: () => void;
   testId: string;
 }) {
+  const t = useReviewT();
   const empty = required && !value.trim();
   return (
     <div className="anim-fade-up grid gap-3 p-1.5" data-testid={testId}>
@@ -411,7 +451,7 @@ function NotePanel({
           {confirm}
         </Button>
         <Button variant="ghost" onClick={onCancel}>
-          {sv.common.cancel}
+          {t.common.cancel}
         </Button>
       </div>
     </div>
@@ -429,6 +469,7 @@ function KeyHint({ children }: { children: ReactNode }) {
 
 /** Senaste beslutet eller felet, i åtgärdsraden (skymmer inget), med Ångra när det går. */
 function StatusLine({ status, onClose }: { status: ReviewStatus; onClose: () => void }) {
+  const t = useReviewT();
   return (
     <div
       role={status.tone === "danger" ? "alert" : "status"}
@@ -447,14 +488,14 @@ function StatusLine({ status, onClose }: { status: ReviewStatus; onClose: () => 
           data-testid="review-undo"
         >
           <RotateCcw size={14} aria-hidden />
-          {sv.granskning.undo}
+          {t.g.undo}
           <span className="hidden text-xs font-medium text-muted sm:inline">Ctrl Z</span>
         </button>
       ) : null}
       <button
         type="button"
         onClick={onClose}
-        aria-label={sv.common.close}
+        aria-label={t.common.close}
         className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-3 hover:text-fg"
       >
         <X size={14} aria-hidden />

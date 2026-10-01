@@ -71,4 +71,36 @@ test.describe("granskning", { tag: "@desktop" }, () => {
     await page.goBack();
     await expect(page).not.toHaveURL(/flik=/);
   });
+
+  test("ta ur rotation och sätt tillbaka, och granskningen på engelska", async ({ page }) => {
+    await openReview(page);
+    const toReview = await count(page, "att-granska");
+    const removed = await count(page, "ur-rotation");
+    test.skip(toReview < 2, "kräver minst två kort att granska");
+
+    await page.getByTestId("review-start").click();
+    const view = page.getByTestId("review-card-view");
+    const first = await view.getAttribute("data-card-id");
+
+    // Ta ur rotation (i menyn): kortet hamnar under Ur rotation.
+    await page.getByTestId("review-more").click();
+    await page.getByRole("menuitem", { name: "Ta ur rotation" }).click();
+    await page.getByTestId("review-reject-panel-confirm").click();
+    await expect(view).not.toHaveAttribute("data-card-id", first ?? "");
+    await expect(page.getByTestId("review-count-ur-rotation")).toHaveText(String(removed + 1));
+
+    // Sätt tillbaka: i rotation igen och ogranskat.
+    await page.getByTestId("review-tab-ur-rotation").click();
+    await page.locator(`[data-review-row="${first}"]`).click();
+    await page.getByTestId("review-put-back").click();
+    await expect(page.getByTestId("review-count-ur-rotation")).toHaveText(String(removed));
+    await expect(page.getByTestId("review-count-att-granska")).toHaveText(String(toReview));
+
+    // Reglaget English: flikar och knappar på engelska, och tillbaka.
+    const toggle = page.getByTestId("review-language").getByRole("switch");
+    await toggle.click();
+    await expect(page.getByTestId("review-tab-att-granska")).toContainText("To review");
+    await toggle.click();
+    await expect(page.getByTestId("review-tab-att-granska")).toContainText("Att granska");
+  });
 });

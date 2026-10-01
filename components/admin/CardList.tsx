@@ -155,7 +155,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
               <p className="line-clamp-2 break-words font-semibold sm:line-clamp-1">{firstLine(card.front)}</p>
               <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-muted">
                 <KindBadge kind={card.kind} compact />
-                <ReviewStatusBadge status={card.review_status} />
+                <ReviewStatusBadge status={card.review_status} unreviewed={card.review_status === null && card.is_active && !card.reviewed_at} />
                 <SourceBadges source={card.source} original={card.original} max={2} className="shrink-0 flex-nowrap max-sm:hidden" />
                 {card.is_active || card.review_status ? null : <Badge tone="outline">{sv.admin.inactive}</Badge>}
                 <span className="truncate">

@@ -73,8 +73,8 @@ describe("rejectedPatch", () => {
     expect(rejectedPatch(USER, AT, "").review_note).toBeNull();
   });
 
-  it("ett avvisat kort hör inte till någon flik", () => {
-    expect(reviewTab({ ...card, ...rejectedPatch(USER, AT, "") })).toBeNull();
+  it("ett kort som tagits ur rotation står under Ur rotation", () => {
+    expect(reviewTab({ ...card, ...rejectedPatch(USER, AT, "") })).toBe("ur-rotation");
   });
 });
 

@@ -10,7 +10,6 @@ Stål är järn legerat med kol som beroende på kolhalt och tillverkningsförh�
 ## Beskriv vad en anlöpning är.
 key: beskriv-vad-en-anlopning-ar
 original: ja
-status: utkast
 källa: Rättelse: kortet angav fel temperatur (precis under ca 910 °C) och fel produkt (perlit + cementit); anlöpning sker vid måttlig temperatur och ger ferrit med fina cementitpartiklar; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 25; Canvas, Lab_PM_M2_v2026, s. 11; Canvas, Lab_PM_M2_v2026, s. 13; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, Fö 12 Stål, s. 16; Canvas, Fö 12 Stål, s. 22; Canvas, Fö 12 Stål, s. 23; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 22; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 23
 flagga: Rättelse av originalkortet: anlöpning angavs ske precis under ca 910 °C och ge "perlit + cementit". Nu står måttlig temperatur under den eutektoida, ca 723 °C (727 °C i labb-PM:et), med exemplen ca 200 till 650 °C, och ferrit med mycket små cementitpartiklar (Fö 12 Stål s. 16, GLU_5-8 s. 25), men Fö 12 Stål s. 22, som står bland källorna, skriver fortfarande "perlit + cementit". Godkänns rättelsen, och ska bilden Fö 12 s. 22 rättas?
 
@@ -23,7 +22,6 @@ Anlöpning görs efter martensithärdning, eftersom martensiten är mycket hård
 ## Vilken inverkan har kolhalten på stålets egenskaper?
 key: vilken-inverkan-har-kolhalten-pa
 original: ja
-status: utkast
 källa: Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 18; Canvas, Fö 12 Stål, s. 25; Canvas, Fö 12 Stål, s. 26; Canvas, Övning 7 m lösningar, s. 5
 
 Kolet bildar cementit ($\text{Fe}_3\text{C}$), en mycket hård fas. Vid långsam kylning ger 0 % C bara ferrit, under 0,8 % C ferrit och perlit, 0,8 % C bara perlit och över 0,8 % C perlit och cementit. Mer kol ger alltså mindre ferrit och mer cementit, och stålet blir hårdare och starkare men mindre duktilt. I härdade stål ger mer kol fler karbider, med samma effekt.
@@ -46,7 +44,6 @@ TTT-diagram står för Time Temperature Transformation- diagram och används fö
 ## Varför legerar man stål? Nämn minst två anledningar.
 key: varfor-legerar-man-stal-namn-minst-tva
 original: ja
-status: utkast
 källa: Canvas, Fö 12 Stål, s. 24; Canvas, Fö 12 Stål, s. 27; Canvas, Fö 12 Stål, s. 28; Canvas, Övning 7 m lösningar, s. 5
 
 Stål legeras för att:
@@ -94,7 +91,6 @@ Legeras med Cr för att få ett kromoxidskikt på ytan → korrosionsskydd
 key: vad-innebar-kalldeformation
 typ: begrepp
 original: ja
-status: utkast
 källa: Rättelse: kortet likställde kallbearbetning (processen) med deformationshärdning (härdningsmekanismen som processen ger); Canvas, Fo 12 Stal, s. 4, 13; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 36
 flagga: Rättelse av originalkortet: det sa att kallbearbetning "även är känt som deformationshärdning" och likställde alltså processen med härdningsmekanismen. Nu står "även kallat kalldeformation", och deformationshärdningen beskrivs som följden av den högre dislokationstätheten (Fö 12 Stål s. 4, Kapitel_06 s. 36). Godkänns rättelsen?
 
@@ -241,7 +237,6 @@ Stål legeras bland annat för att:
 key: ttt-diagram
 typ: begrepp
 original: ja
-status: utkast
 källa: Canvas, Fö 12 Stål, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21
 
 TTT-diagram (time, temperature, transformation) visar hur lång tid det tar för instabil austenit att omvandlas, t.ex. till perlit, vid olika temperaturer. Ur diagrammet kan man därför avläsa hur snabbt man måste kyla från austenitområdet för att undvika perlit och i stället bilda martensit. Diagrammet är olika för olika stål och används för att bestämma tid och temperatur för värmebehandlingar.
@@ -267,7 +262,6 @@ key: ja-nej-nar-ett-material-varmvalsas-sa
 typ: sant-falskt
 svar: falskt
 original: ja
-status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 4; Canvas, Fö 12 Stål, s. 5; Canvas, Fö 12 Stål, s. 6
 
 Falskt. Varmbearbetning sker över rekristallisationstemperaturen, så plastisk deformation och rekristallisation sker samtidigt. Deformationen höjer därför inte sträckgränsen, och stora deformationer är möjliga. Det är vid kallbearbetning som dislokationsdensiteten och därmed sträckgränsen ökar (deformationshärdning).
@@ -277,7 +271,6 @@ key: ja-nej-i-stal-bildar-kol-cementit-men-i
 typ: sant-falskt
 svar: falskt
 original: ja
-status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 12 Stål, s. 17; Canvas, Fö 12 Stål, s. 29; Canvas, Lab_PM_M2_v2026, s. 12; Canvas, Övning 7 m lösningar, s. 5
 flagga: Tentan 2020-10-24 uppg. 1j ("I stål bildar kol cementit, men i gjutjärn förekommer kolet som ren grafit", facit ja) är omskriven till "I grått gjutjärn och segjärn förekommer allt kol som ren grafit" med facit falskt, eftersom Fö 12 Stål s. 29 anger perlit och grafit. Men svaret beror på grundmassan: i ferritiskt gråjärn och segjärn finns i praktiken allt kol som grafit, så frågan prövar mest ordet "allt". Håller examinatorn med om facit falskt, eller ska påståendet formuleras om så att det blir entydigt?
 
@@ -288,7 +281,6 @@ Tentan 2020 hade påståendet "I stål bildar kol cementit, men i gjutjärn för
 ## TTT-diagram: vilka påståenden är sanna?
 key: quiz-ttt-diagram-tva-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 9; Canvas, Fö 12 Stål, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21; Canvas, Lab_PM_M2_v2026, s. 13
 
 - [x] Ur TTT-diagrammet kan man läsa hur lång tid det tar för instabil austenit att omvandlas till perlit.
@@ -301,7 +293,6 @@ TTT står för time, temperature, transformation. Diagrammet visar tiden för om
 ## TTT-diagram för stål: vilka påståenden är sanna?
 key: quiz-ttt-diagram-for-stal-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 8; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21; Canvas, Fö 12 Stål, s. 2; Canvas, GLU 02 Fasdiagram, s. 8; Canvas, Lab_PM_M2_v2026, s. 13
 
 - [x] Ett TTT-diagram för stål visar tiden för instabil austenit att omvandlas till perlit.
@@ -314,7 +305,6 @@ TTT-diagrammet visar omvandlingstiden för instabil austenit och därmed den kyl
 ## Kall- och varmbearbetning: vilka påståenden är sanna?
 key: quiz-kall-och-varmbearbetning-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 10; Canvas, Fö 12 Stål, s. 4; Canvas, Fö 12 Stål, s. 5; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 36; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 43
 
 - [x] Rekristallisation innebär att nya korn med få dislokationer bildas när ett kallbearbetat material värms upp.
@@ -329,7 +319,6 @@ I quizen stod "brottgränsen" och "dislokationsfria korn"; föreläsningen talar
 ## Normalisering
 key: stal-normalisering
 typ: begrepp
-status: utkast
 källa: Canvas, Short_dictionary_ v2026, s. 10; Canvas, Fö 12 Stål, s. 15; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1h
 flagga: Kortet säger att normalisering ger en mikrostruktur "lämplig för konstruktioner där styvheten är viktig", som på Fö 12 Stål s. 15, men enligt Kapitel_04 s. 12 påverkar värmebehandling inte E-modulen i metaller (och tentan 2020 uppg. 1a har facit nej på att värmebehandling ökar E-modulen). Menar bilden styrka eller seghet, och ska bisatsen strykas eller förtydligas?
 
@@ -338,7 +327,6 @@ Värmebehandling av stål: austenitisering följd av långsam kylning i luft. Ma
 ## Varför ökar legeringsämnen stålets härdbarhet?
 key: stal-hardbarhet-legering
 typ: alternativ
-status: utkast
 källa: Canvas, Fö 12 Stål, s. 24; Canvas, Fö 12 Stål, s. 26; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 20; Canvas, Fö 5 Fasdiagram och mikrostruktur 2, s. 21; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
 
 - [x] Stora legeringsatomer fördröjer bildningen av perlit, så det finns mer tid att bilda martensit vid kylningen
@@ -351,7 +339,6 @@ Martensit bildas när stål kyls så snabbt från austenitområdet att kolet int
 ## Vad stämmer för gråjärn och segjärn?
 key: stal-gjutjarn-gra-och-seg
 typ: alternativ
-status: utkast
 källa: Canvas, Fö 12 Stål, s. 29; Canvas, Övning 7 m lösningar, s. 5
 
 - [x] Mikrostrukturen består av perlit och grafit
@@ -365,7 +352,6 @@ Gjutjärn har 2 till 4 % C. I de vanliga typerna gråjärn och segjärn består 
 key: martensit-samma-kolhalt-som-austenit
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 13; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 23, 25
 
 Sant. Vid snabbkylningen hinner kolet inte diffundera och bilda cementit, så austeniten omvandlas diffusionslöst till martensit med samma kolhalt men en annan gitterstruktur (bct, som liknar ferritens bcc). Det tvångslösta kolet gör martensiten mycket hård. Austenit är den enda fas som kan omvandlas till martensit, så ferrit eller cementit som redan finns när kylningen börjar finns kvar.
@@ -373,7 +359,6 @@ Sant. Vid snabbkylningen hinner kolet inte diffundera och bilda cementit, så au
 ## Ett stål med 0,2 % C hålls strax över 723 °C tills jämvikt har ställt in sig och snabbkyls sedan. Vilken struktur får det? (Austeniten har då ca 0,8 % C; ferritens kolhalt kan försummas.)
 key: stal-02-tvafas-snabbkylning
 typ: alternativ
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 13; Canvas, GLU 02 Fasdiagram, s. 17, 19; Canvas, Fo 12 Stal, s. 17
 
 - [x] Ca 75 % ferrit och 25 % martensit med ca 0,8 % C
@@ -388,7 +373,6 @@ Strax över 723 °C ligger stålet i tvåfasområdet ferrit + austenit. Hävstå
 ## Ett verktygsstål med 1,1 % C hålls strax över 723 °C och snabbkyls. Vilka faser finns efteråt? (Austeniten har då ca 0,8 % C; cementit har 6,67 % C.)
 key: stal-11-cementit-och-martensit
 typ: alternativ
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 12, 13; Canvas, Fo 12 Stal, s. 17, 18; Canvas, GLU 02 Fasdiagram, s. 17
 flagga: Kolhalten byttes efter granskningen från 1,2 till 1,1 % C för att inte ge samma svar som tentan 2023 uppg. 3b, men 1,1 % C är legeringen i tentan 2016-10-29 uppg. 4b, där svarsförslaget får samma fördelning 95/5 med samma hävstångsregel. Ändringen har inte granskats oberoende. Duger kortet, eller ska kolhalten bytas igen?
 
@@ -402,7 +386,6 @@ Strax över 723 °C ligger ett övereutektoidiskt stål i tvåfasområdet austen
 ## Ett stål med 0,45 % C härdas till 100 % martensit och anlöps sedan. Ungefär hur stor andel cementit innehåller det efter anlöpningen? (Cementit har 6,67 % C; ferritens kolhalt kan försummas.)
 key: anlopning-andel-cementit
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 12 Stal, s. 16, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 24, 25; Canvas, Lab_PM_M2_v2026, s. 14; Canvas, GLU 02 Fasdiagram, s. 17
 flagga: Kortet räknar andelen cementit i anlöpt martensit med hävstångsregeln mellan ferrit och cementit (0,45/6,67, ca 7 %), som facit till tentan 2020-10-24 uppg. 4b. Facit till 2023-10-23 uppg. 3c anger inga andelar, och Fö 12 Stål s. 16 säger bara att kolhalten avgör andelen cementit. Är det en beräkning kursen förväntar sig?
 
@@ -416,7 +399,6 @@ Anlöpt martensit är ferrit med mycket små cementitpartiklar, och kolhalten av
 ## Ett eutektoidiskt stål kyls snabbt från austenitområdet till en temperatur där perlit bildas, hålls där tills ungefär en fjärdedel av austeniten har omvandlats och snabbkyls sedan till rumstemperatur. Vilken struktur får det?
 key: ttt-avbruten-perlitomvandling
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 12 Stal, s. 20; Canvas, Lab_PM_M2_v2026, s. 13, 14; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20, 21
 
 - [x] Ca 25 % perlit och 75 % martensit
@@ -429,7 +411,6 @@ TTT-diagrammet visar hur lång tid det tar för instabil austenit att omvandlas 
 ## Två prov av samma eutektoida stål har värmebehandlats olika: det ena har mjukglödgats och det andra normaliserats. Vilka påståenden stämmer?
 key: mjukglodgat-normaliserat-jamforelse
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 12 Stal, s. 15; Canvas, Lab_PM_M2_v2026, s. 11, 12; Canvas, GLU 02 Fasdiagram, s. 17, 19
 flagga: Kortet gäller samma situation som tentan 2024-10-31 uppg. 4c och 4d (eutektoid stål, mjukglödgat mot normaliserat, samma andel ferrit), och två av alternativen motsvarar tentans alternativ i 4d. Ligger kortet för nära tentan?
 
@@ -443,7 +424,6 @@ Båda behandlingarna ger jämviktsfaserna ferrit och cementit, och vid samma kol
 ## Samma stål med medelhög kolhalt värmebehandlas på tre sätt: mjukglödgning, normalisering och härdning följd av anlöpning. Vilken ordning gäller för sträckgränsen, från lägst till högst?
 key: stal-varmebehandling-strackgrans-ordning
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 12 Stal, s. 15, 16, 23; Canvas, Ovning 7 m losningar, s. 5; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 46
 
 - [x] Mjukglödgat < normaliserat < härdat och anlöpt

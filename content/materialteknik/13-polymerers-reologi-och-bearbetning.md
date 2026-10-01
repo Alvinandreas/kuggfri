@@ -3,7 +3,6 @@
 ## Vilka påståenden om smältflödesindex (melt flow index, MFI) stämmer?
 key: quiz-the-melt-flow-index-smaltflodesindex
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 5; Canvas, MTT085 PM 3, s. 7; Canvas, 2025 MTT085 Fö17, s. 23
 
 - [x] Det anges i gram per 10 minuter.
@@ -16,7 +15,6 @@ MFI är massan polymer i gram som en kolv belastad med en standardiserad vikt pr
 ## Vilka påståenden om extrudering stämmer?
 key: quiz-extrusion-extrudering-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 6; Canvas, MTT085 Polymeric materials L4-5, s. 2; Canvas, MTT085 Polymeric materials L4-5, s. 4
 
 - [x] Det är grundprocessen för fiberspinning.
@@ -29,7 +27,6 @@ Fiberspinning är en sekundär formning som kopplas till extrudering: smältan e
 ## Vilka påståenden om skjuvförtunning (shear thinning) stämmer?
 key: quiz-shear-thinning-skjuvtunning-tva-ratta
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 7; Canvas, MTT085 PM 3, s. 6; Canvas, 2025 MTT085 Fö17, s. 19
 
 - [x] Den orsakas av att polymerkedjorna gradvis orienteras i flödesriktningen, sträcks ut och trasslas ur.
@@ -44,7 +41,6 @@ Viskositetsfunktionen har tre områden i ordning efter ökande skjuvhastighet: n
 ## Vilka påståenden om skjuvhastigheten vid polymerbearbetning stämmer?
 key: quiz-during-polymer-processing-vid
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 8; Canvas, MTT085 PM 3, s. 6; Canvas, 2025 MTT085 Fö17, s. 9; Canvas, 2025 MTT085 Fö17, s. 22; Canvas, 2025 MTT085 Fö17, s. 28
 
 - [x] Höga skjuvhastigheter ger starkare molekylorientering i flödesriktningen.
@@ -57,7 +53,6 @@ Små eller långsamma deformationer ändrar inte kedjornas orientering, medan st
 ## Vilka påståenden om extrudatsvällning (die swell) stämmer?
 key: quiz-die-swelling-formsprutningssvallning
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 9; Canvas, 2025 MTT085 Fö17, s. 26-27; Canvas, MTT085 PM 3, s. 7-8
 
 - [x] Den är en viskoelastisk effekt som uppstår när en polymersmälta lämnar munstycket.
@@ -70,7 +65,6 @@ I munstycket utsätts smältan för skjuvflöde i det skjuvförtunnande området
 ## Vilka påståenden om viskositetsfunktionen för en polymersmälta stämmer?
 key: quiz-the-viscosity-function-of-a-polymer
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö15-18, fråga 10; Canvas, MTT085 PM 3, s. 6; Canvas, 2025 MTT085 Fö17, s. 19; Canvas, 2025 MTT085 Fö17, s. 22
 
 - [x] Den har tre huvudområden: en nollskjuvplatå, ett skjuvförtunnande område och en platå vid oändlig skjuvhastighet.
@@ -85,7 +79,6 @@ Viskositetsfunktionen ritas som viskositet mot skjuvhastighet i log-log-skala. P
 ## Vilka påståenden om formsprutningscykeln stämmer?
 key: quiz-the-injection-molding-cycle
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 1; Canvas, MTT085 Polymeric materials L4-5, s. 6-7; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 7
 
 - [x] Den domineras av stelningstiden.
@@ -98,7 +91,6 @@ Cykeln börjar när formen stängs; sedan sprutas smältan in, eftertryck läggs
 ## Vilka påståenden om en enskruvsextruder stämmer?
 key: quiz-a-single-screw-extruder-en
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 2; Canvas, MTT085 Polymeric materials L4-5, s. 2-5; Canvas, Svarsförslag Tentamen MTT085 24-01, s. 3
 flagga: Quizens distraktor "kopplad till en formsprutningsform via fördelningskanaler och ingöt" byttes ut eftersom plasticeringsenheten i en formsprutningsmaskin är en sorts enskruvsextruder (L4-5 s. 6). Den nya distraktorn "Trycket byggs upp i inmatningszonen vid tratten" följer L4-5 s. 3, men kursboken säger att friktionen ger en tryckökning redan i inmatningszonen och att den står för tryckuppbyggnaden i extrudrar med spårad inmatning (Osswald 05142_06a-3 s. 8, 9). Är distraktorn entydigt fel, eller ska den bytas?
 
@@ -114,7 +106,6 @@ I doseringszonen byggs det tryck upp som pressar smältan genom munstycket i ext
 ## Vilka påståenden om formsprutningsmaskiner stämmer?
 key: quiz-injection-molding-machines
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 3; Canvas, MTT085 Polymeric materials L4-5, s. 6; Canvas, 2025 MTT085 Fö18, s. 36; Canvas, 2025 MTT085 Fö19, s. 7
 
 - [ ] De arbetar kontinuerligt utan cykel.
@@ -127,7 +118,6 @@ En formsprutningsmaskin består av insprutningsenhet, plasticeringsenhet, form o
 ## Vad står pVT-diagram för, och vad visar de?
 key: quiz-p-v-t-diagrams-refer-to-p-v-t-diagram
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 5; Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, 2025 MTT085 Fö19, s. 8-9
 
 - [x] Tryck, volym och temperatur (pressure-volume-temperature).
@@ -142,7 +132,6 @@ Ett pVT-diagram visar specifik volym (volym per massa, alltså inversen av densi
 ## Vilka påståenden om extrudering som process stämmer?
 key: quiz-extrusion-extrudering
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 6; Canvas, MTT085 Polymeric materials L4-5, s. 2-3; Canvas, MTT085 Polymeric materials L4-5, s. 5-6; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 - [x] Den bygger på att trycket byggs upp i doseringszonen så att polymeren pressas genom munstycket.
@@ -155,7 +144,6 @@ Principen för extrudering är att en smälta pumpas genom ett munstycke, och tr
 ## Vilka påståenden om formsprutning stämmer?
 key: quiz-injection-moulding-formsprutning
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 7; Canvas, MTT085 Polymeric materials L4-5, s. 1; Canvas, MTT085 Polymeric materials L4-5, s. 6; Canvas, 05142_06b-4, s. 23; Canvas, 05142_06b-4, s. 26; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 - [x] Den arbetar enligt formsprutningscykeln.
@@ -168,7 +156,6 @@ Formsprutning passar för massproducerade detaljer med komplexa former och är m
 ## Vilka påståenden om film casting stämmer?
 key: quiz-film-casting-filmcasting
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 8; Canvas, MTT085 Polymeric materials L4-5, s. 4-5; Canvas, 2025 MTT085 Fö18, s. 23
 
 - [ ] Syftet är att framkalla extrudatsvällning (die swell).
@@ -181,7 +168,6 @@ Vid film casting extruderas smältan genom ett spaltmunstycke (slit die) och dra
 ## Vilka delar ingår i en formsprutningsform?
 key: quiz-the-components-of-a-mold-for-injection
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 9; Canvas, MTT085 Polymeric materials L4-5, s. 7; Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, 2025 MTT085 Fö18, s. 40
 
 - [ ] Skruvens doseringszon
@@ -194,7 +180,6 @@ Formen består av sprue och fördelningskanaler (runners), ingöt (gate), formka
 ## Vilka påståenden om stelningen efter bearbetning stämmer?
 key: quiz-during-solidification-under-stelning
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fö19-21, fråga 10; Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, MTT085 Tutorials-Part 3-5, s. 2; Canvas, 2025 MTT085 Fö19, s. 6-9
 
 - [x] Polymerkedjornas orientering kan frysas in.
@@ -207,7 +192,6 @@ Bearbetning kan låsa in strukturer som inte är i jämvikt, t.ex. flödesinduce
 ## Viskositet
 key: reo-viskositet
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 1-3; Canvas, 2025 MTT085 Fö17, s. 8-10; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 7
 
 En vätskas motstånd mot flöde. Newtons viskositetslag: $\sigma = \eta\dot{\gamma}$, dvs. skjuvspänningen $\sigma$ är proportionell mot skjuvhastigheten $\dot{\gamma}$, och proportionalitetskonstanten $\eta$ är (skjuv)viskositeten. Enheten är Pa s. För en newtonsk vätska beror $\eta$ bara av temperatur och tryck; för en polymersmälta beror den också av skjuvhastigheten.
@@ -215,7 +199,6 @@ En vätskas motstånd mot flöde. Newtons viskositetslag: $\sigma = \eta\dot{\ga
 ## Skjuvhastighet (shear rate)
 key: reo-skjuvhastighet
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 1-2; Canvas, 2025 MTT085 Fö17, s. 7-9
 
 Hur snabbt ett material deformeras i skjuvning, $\dot{\gamma} = \dfrac{d\gamma}{dt}$. I enkel skjuvning mellan två plattor på avståndet $h$, där den övre rör sig med hastigheten $v$ och den undre står still, är $\dot{\gamma} = v/h$. Enheten är 1/s. Man använder skjuvhastigheten i stället för skjuvtöjningen som mått på flödet, eftersom töjningen växer obegränsat så länge vätskan flyter.
@@ -223,7 +206,6 @@ Hur snabbt ett material deformeras i skjuvning, $\dot{\gamma} = \dfrac{d\gamma}{
 ## Skjuvförtunning (shear thinning)
 key: reo-skjuvfortunning
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 5-6; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 korrigerad, s. 1
 
 ![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
@@ -233,7 +215,6 @@ Att viskositeten hos en polymersmälta minskar när skjuvhastigheten ökar. Orsa
 ## Svetslinje (weld line)
 key: reo-svetslinje
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 8; Canvas, 2025 MTT085 Fö18, s. 41; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 Linjen i en formsprutad detalj där två eller flera flödesfronter möts, när detaljens form gör att smältflödet delas i kaviteten. Svetslinjen är en svag punkt i detaljen, så man måste tänka på var den hamnar. För låg insprutningstemperatur kan ge svaga svetslinjer.
@@ -241,7 +222,6 @@ Linjen i en formsprutad detalj där två eller flera flödesfronter möts, när 
 ## Eftertryck (holding pressure)
 key: reo-eftertryck
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 6; Canvas, 05142_06b-4, s. 24; Canvas, Tentamen Materialteknik med svar 2013-08-20, s. 8
 
 Det tryck som hålls på smältan vid formsprutning efter att kaviteten fyllts, för att motverka krympningen när materialet stelnar. Eftertrycket hålls tills ingötet har stelnat; därefter fortsätter detaljen att kylas utan förhöjt tryck.
@@ -249,14 +229,12 @@ Det tryck som hålls på smältan vid formsprutning efter att kaviteten fyllts, 
 ## Shish-kebab-struktur
 key: reo-shish-kebab
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, 2025 MTT085 Fö19, s. 14
 
 En speciell kristallstruktur i delkristallina polymerer, vanligast i isotaktisk polypropen och polyeten: en fibrillär kärna (shish) som omväxlar med lameller av veckade kedjor (kebab). Den bildas när smältan skjuvas samtidigt som den kyls, t.ex. vid formsprutning, och ger betydligt bättre mekaniska egenskaper än motsvarande jämviktsstruktur med sfäruliter.
 
 ## Varför är en polymersmälta viskoelastisk?
 key: reo-varfor-viskoelastisk-smalta
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 4-5; Canvas, 2025 MTT085 Fö17, s. 24-25
 
 - **Elastisk del:** kedjorna kan sträckas av flödet men har en föredragen konformation som de återgår till när flödet upphör. De lagrar alltså energi under flödet.
@@ -266,7 +244,6 @@ När flödet stoppas återtar kedjorna sin föredragna konformation men flyttar 
 
 ## Beskriv viskositetsfunktionen för en polymersmälta och vad kedjorna gör i varje område
 key: reo-viskositetsfunktionens-omraden
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 5-6; Canvas, 2025 MTT085 Fö17, s. 19; Canvas, Svar Materialteknik 2018-10-27, s. 3
 
 ![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
@@ -279,7 +256,6 @@ Viskositet mot skjuvhastighet i log-log-skala, med tre områden:
 
 ## Vad händer med polymeren i enskruvsextruderns tre zoner?
 key: reo-extruderns-zoner
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 2-3; Canvas, 05142_06a-3, s. 7; Canvas, MTT085 Tutorials-Part 3-5, s. 2; Canvas, Tentamen Materialteknik mrd svar 2021-10-23 korrigerad, s. 1
 
 ![Enskruvsextruder med tratt, cylinder, skruv, munstycke och de tre zonerna](/kort/materialteknik/enskruvsextruder.svg)
@@ -292,7 +268,6 @@ Granulatet matas genom tratten in i cylindern.
 
 ## Beskriv formsprutningscykelns steg i ordning
 key: reo-formsprutningscykelns-steg
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 6-7; Canvas, 05142_06b-4, s. 24-25; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 1. Formen stängs (här börjar cykeln).
@@ -305,14 +280,12 @@ $t_{\text{cykel}} = t_{\text{stängning}} + t_{\text{kylning}} + t_{\text{utstö
 
 ## Hur påverkar godstjockleken cykeltiden vid formsprutning, och varför?
 key: reo-kyltid-och-godstjocklek
-status: utkast
 källa: Canvas, MTT085 Tutorials-Part 3-5, s. 2-3; Canvas, 05142_06b-4, s. 25
 
 Kyltiden dominerar cykeln (ungefär 80 %), och den ökar ungefär med kvadraten på godstjockleken. Dubbel tjocklek ger alltså ungefär fyra gånger så lång kyltid och därmed mycket längre cykel. Orsaken är plastens låga värmeledningsförmåga (låg termisk diffusivitet), som gör att värmen leds ut långsamt ur detaljen.
 
 ## Beskriv filmblåsning (film blowing)
 key: reo-filmblasning
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 5-6; Canvas, MTT085 Tutorials-Part 3-5, s. 2; Canvas, Tentamen Materialteknik med svar 2013-08-20, s. 8
 flagga: Baksidan följer svarsförslaget till tentan 2013-08-20 uppg. 10c nära (uppblåsning, filmen stelnar före klämvalsarna, klämvalsarna håller övertrycket och drar filmen), även om samma innehåll finns i L4-5 s. 5, 6 och Tutorials Part 3-5 s. 2. Ligger baksidan för nära facit, eller får den stå kvar?
 
@@ -322,7 +295,6 @@ Filmblåsning är en sekundär formning efter extrudering. Smältan pressas geno
 key: reo-sf-smalta-amorf
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 4; Canvas, 2025 MTT085 Fö17, s. 17; Canvas, 2025 MTT085 Fö17, s. 28
 
 Sant. Oavsett om polymeren är amorf eller delkristallin i fast tillstånd har den i smältan en oordnad, slumpmässig molekylorientering, dvs. den är amorf.
@@ -331,7 +303,6 @@ Sant. Oavsett om polymeren är amorf eller delkristallin i fast tillstånd har d
 key: reo-sf-viskositet-temperatur
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 6; Canvas, 2024 MTT085 Fö17, s. 27; Canvas, 2025 MTT085 Fö17, s. 22
 flagga: Kortet skriver η ∝ 1/T från 2024 Fö17 s. 27, men temperaturberoendet är exponentiellt (Arrhenius, eller WLF för amorfa; Osswald kap. 5 s. 4, 11), och bilden visar bara riktningen. Att viskositeten sjunker när temperaturen höjs är belagt (PM 3 s. 6). Ska proportionalitetstecknet strykas?
 
@@ -341,7 +312,6 @@ Falskt. Viskositeten minskar när temperaturen höjs ($\eta \propto 1/T$ på fö
 key: reo-sf-viskositet-molekylvikt
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2024 MTT085 Fö17, s. 27; Canvas, MTT085 Tutorials-Part 3-5, s. 3
 flagga: Kortet skriver η ∝ Mw som på föreläsningsbilden 2024 Fö17 s. 27 (bilden finns inte i 2025 års material), men kursboken (Osswald kap. 3 s. 5, fig. 3.7) visar att nollskjuvviskositeten över en kritisk molekylvikt växer ungefär som Mw upphöjt till 3,4. Räcker det att kortet säger att viskositeten ökar kraftigt med molekylvikten, utan proportionalitetstecknet?
 
@@ -351,7 +321,6 @@ Sant. Viskositeten ökar med molekylvikten ($\eta \propto M_w$ på föreläsning
 key: reo-sf-nollskjuv-orientering
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 6; Canvas, 2025 MTT085 Fö17, s. 28; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 6
 
 ![Viskositetsfunktionen för en polymersmälta i log-log-skala med nollskjuvplatå, skjuvförtunnande område och platå vid höga skjuvhastigheter](/kort/materialteknik/viskositetsfunktion.svg)
@@ -362,7 +331,6 @@ Falskt. Vid små eller långsamma deformationer hinner kedjornas termiska rörel
 key: reo-sf-delkristallin-krymper-mer
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2025 MTT085 Fö19, s. 7, 9; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 ![pVT-diagram: amorf polymer med knäck vid Tg och delkristallin polymer med språng vid Tm](/kort/materialteknik/pvt-amorf-delkristallin.svg)
@@ -373,7 +341,6 @@ Sant. Amorfa termoplaster förtätas minst vid stelning, eftersom kedjorna inte 
 key: reo-sf-snabbkylning-kristallinitet
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, 2025 MTT085 Fö19, s. 9; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 Falskt. Snabb avkylning sänker kristalliniteten, eftersom mikrostrukturen fryses innan kedjorna hunnit ordna sig helt i kristaller.
@@ -381,7 +348,6 @@ Falskt. Snabb avkylning sänker kristalliniteten, eftersom mikrostrukturen fryse
 ## Vilka produkter tillverkas typiskt genom extrudering, med eller utan sekundär formning?
 key: reo-alt-produkt-extrudering
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 4-5; Canvas, Tentamen Materialteknik med svar 2016-10-29, s. 7; Canvas, 05142_06b-4, s. 23
 
 - [x] Rör
@@ -394,7 +360,6 @@ Extrudering ger produkter med en viss tvärsnittsprofil, t.ex. rör, slangar, fi
 ## Vilka par av processfel och orsak stämmer för formsprutning?
 key: reo-alt-processfonster
 typ: alternativ
-status: utkast
 källa: Canvas, 05142_06b-4, s. 26; Canvas, MTT085 Tutorials-Part 3-5, s. 2
 
 - [x] För låg smälttemperatur ger kortskott (ofylld kavitet).
@@ -407,7 +372,6 @@ Processfönstret (molding diagram) begränsas av smälttemperatur och eftertryck
 ## Vilka påståenden om formsprutningsformens kanaler stämmer?
 key: reo-alt-formens-kanaler
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 6-7; Canvas, 2025 MTT085 Fö18, s. 40
 
 - [x] Sprue förbinder cylindern med formen.
@@ -420,7 +384,6 @@ Smältan går från cylindern genom sprue och fördelas via fördelningskanalern
 ## Vilket område i viskositetsfunktionen är det skjuvförtunnande? ![Viskositet mot skjuvhastighet i log-log-skala, uppdelad i områdena A, B och C från låg till hög skjuvhastighet](/kort/materialteknik/viskositetsfunktion-fraga.svg)
 key: reo-viskositet-omrade-skjuvfortunnande
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 5-6
 
 - [x] B
@@ -434,7 +397,6 @@ B är det skjuvförtunnande området, där viskositeten minskar med ökande skju
 ## Vilket område i viskositetsfunktionen motsvarar nollskjuvviskositeten $\eta_0$? ![Viskositet mot skjuvhastighet i log-log-skala, uppdelad i områdena A, B och C från låg till hög skjuvhastighet](/kort/materialteknik/viskositetsfunktion-fraga.svg)
 key: reo-viskositet-omrade-nollskjuv
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 3, s. 5-6
 
 - [x] A
@@ -448,7 +410,6 @@ Nollskjuvviskositeten är platån vid låga skjuvhastigheter (A). Där är spän
 ## I vilken zon i en enskruvsextruder smälter granulatet?
 key: reo-extruder-smaltzon
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 2-3
 
 - [x] Smält- eller övergångszonen (transition zone)
@@ -463,7 +424,6 @@ Granulatet smälter och homogeniseras i smält- eller övergångszonen, i cylind
 ## I ett pVT-diagram gör kurvan ett språng i specifik volym vid en viss temperatur. Vilken typ av polymer och vilken temperatur gäller det?
 key: reo-pvt-sprang
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 9-10; Canvas, 2025 MTT085 Fö19, s. 8-9
 
 - [x] En delkristallin polymer, vid smälttemperaturen $T_m$
@@ -478,7 +438,6 @@ För en delkristallin polymer sjunker den specifika volymen språngvis vid $T_m$
 ## När formen öppnas efter ett formsprutningsskott stöts ett sammanhängande plaststycke ut. Vilka delar av stycket är inloppssystem, som skiljs bort från produkten?
 key: reo-formsprutning-produkt-ingotssystem
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, 2025 MTT085 Fo18, s. 40
 
 - [x] Plasten som har stelnat i sprue
@@ -491,7 +450,6 @@ Smältan går från cylindern genom sprue, fördelas i fördelningskanalerna och
 
 ## Vilka är formsprutningsmaskinens fyra huvudenheter, och vad gör var och en?
 key: reo-formsprutningsmaskinens-enheter-uppgift
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, MTT085 Tutorials-Part 3-5, s. 1, 2; Canvas, 2025 MTT085 Fo18, s. 36, 40; Canvas, 05142_06b-4, s. 26
 
 * **Plasticeringsenhet:** en sorts enskruvsextruder. Granulatet matas från tratten in i den uppvärmda cylindern, där den roterande skruven smälter det (värmeledning från cylindern och värme från friktion och flöde) och samlar en bestämd mängd smälta framför skruvspetsen.
@@ -503,7 +461,6 @@ källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, MTT085 Tutoria
 key: reo-sf-total-kyltid-eftertryck
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 6, 7; Canvas, MTT085 Tutorials-Part 3-5, s. 1, 2
 
 Falskt. Smältan börjar stelna mot den relativt kalla formen redan medan eftertrycket ligger på; eftertrycket motverkar krympningen och hålls tills ingötet har stelnat. Därefter fortsätter stelningen utan förhöjt tryck tills detaljen är tillräckligt styv för att stötas ut. Den totala kyltiden omfattar alltså både tiden med eftertryck och tiden därefter, och den utgör ungefär 80 % av cykeltiden.
@@ -512,7 +469,6 @@ Falskt. Smältan börjar stelna mot den relativt kalla formen redan medan eftert
 key: reo-sf-tryck-hojer-tg-tm
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L4-5, s. 9; Canvas, 2025 MTT085 Fo19, s. 8, 9
 
 Sant. Högt tryck pressar molekylerna närmare varandra, så det krävs mer termisk energi för att frigöra dem så att de kan flyta. I ett pVT-diagram flyttas därför knäcken vid Tg (amorfa termoplaster) och språnget vid Tm (delkristallina termoplaster) till högre temperatur när trycket ökar.

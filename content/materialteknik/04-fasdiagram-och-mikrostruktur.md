@@ -9,7 +9,6 @@ Ett fasdiagram visar vilka faser som är stabila vid vilka specifika temperature
 ## Vad är Ferrit och när uppstår det?
 key: vad-ar-ferrit-och-nar-uppstar-det
 original: ja
-status: utkast
 källa: Rättelse: temperaturen följer nu 2026 års material och δ-ferriten nämns, så att "upp till 910 °C" inte läses som enda BCC-området; Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_M2_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
 flagga: Rättelse av originalkortet: "rent järn upp till 910 °C" (Fö 4 2025 s. 14) är ändrat till ca 913 °C (GLU 02 s. 4), och δ-ferriten över ca 1394 °C är tillagd efter Lab-PM:ets fasdiagram, som visar 912 °C (Lab_PM_M2_v2026 s. 4); kortet förklarar själv skillnaden. Godkänns rättelsen, och ska korten ange 910, 912 eller 913 °C?
 
@@ -24,7 +23,6 @@ Figuren följer Lab-PM:ets fasdiagram (912 °C); GLU 02 anger 913 °C.
 ## Vad är Austenit och när uppstår det?
 key: vad-ar-austenit-och-nar-uppstar-det
 original: ja
-status: utkast
 källa: Rättelse: "upp över 910 °C" gällde inte över ca 1394 °C, där rent järn blir delta-ferrit (BCC); Canvas, GLU 02 Fasdiagram, s. 4; Canvas, Lab_PM_M2_v2026, s. 4; Canvas, Fo 4 Fasdiagram, s. 14
 flagga: Rättelse av originalkortet: "rent järn upp över 910 °C" gällde inte över ca 1394 °C där järnet blir δ-ferrit, så kortet anger nu austenit mellan ca 913 °C (GLU 02 s. 4) och ca 1394 °C (Lab_PM_M2_v2026 s. 4); lösligheten ca 2,1 % C står kvar från Fö 4 s. 14. Figuren visar 912 °C. Godkänns rättelsen och temperaturen?
 
@@ -52,7 +50,6 @@ Ett tillstånd i ett lokalt energiminimum. För att uppnå tillståndet med läg
 key: intermetall
 typ: begrepp
 original: ja
-status: utkast
 källa: Rättelse: definitionen var otydlig och saknade att fasen har (nära) stökiometrisk sammansättning; Canvas, GLU 02 Fasdiagram, s. 18, 21; Canvas, Fo 4 Fasdiagram, s. 13
 flagga: Rättelse av originalkortet: definitionen har fått tillägget att fasen har exakt eller nära stökiometrisk sammansättning och att faser med bredare intervall kallas intermediära (GLU 02 s. 18). Fö 4 Fasdiagram 2025 s. 13 använder i stället intermediär fas som samlingsnamn och säger att en intermetallisk fas kan ha ett intervall, och cementitkortet kallar den stökiometriska Fe3C för intermediär fas. Vilken definition ska gälla?
 
@@ -71,7 +68,6 @@ key: ja-nej-perlit-bildas-vid-en-eutektisk
 typ: sant-falskt
 svar: falskt
 original: ja
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 17; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Lab_PM_M2_v2026, s. 10
 flagga: Originalkortet angav den eutektoida temperaturen till ca 727 °C, men omskrivningen till sant/falskt säger ca 0,8 % C och ca 723 °C som GLU 02 s. 19, medan Lab_PM_M2_v2026 s. 11 använder 0,77 % C och 727 °C. Påståendet och facit (falskt) är i övrigt entydiga. Vilka värden ska Fe-C-korten använda?
 
@@ -104,7 +100,6 @@ En del av materialet med homogena fysikaliska och kemiska egenskaper
 ## Vilka påståenden om Gibbs fria energi är sanna?
 key: quiz-vad-galler-for-gibbs-fria-energi-tva
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 4; Canvas, GLU 02 Fasdiagram, s. 4, 5
 
 - [ ] Gibbs fria energi är summan av atomernas kinetiska energi.
@@ -117,7 +112,6 @@ Gibbs fria energi är entalpi minus temperatur gånger entropi, $G = H - TS$. En
 ## Jämvikt och stabilitet: vilka påståenden är sanna?
 key: quiz-jamvikt-och-stabilitet-tva-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 5; Canvas, GLU 02 Fasdiagram, s. 5, 6; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 23, 26; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20
 
 - [x] Man kan använda Gibbs fria energi för att avgöra om materialet är i ett stabilt tillstånd.
@@ -130,7 +124,6 @@ Den stabila fasen är den med lägst Gibbs fria energi. En metastabil fas har in
 ## Fasdiagram: vilka påståenden är sanna?
 key: quiz-fasdiagram-tva-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 6; Canvas, GLU 02 Fasdiagram, s. 8, 14, 22; Canvas, Lab_PM_M2_v2026, s. 4, 6
 flagga: Quizens rätta alternativ "Två enfasområden har alltid ett tvåfasområde mellan sig" och "Ett fasdiagram visar bara stabila faser" är omskrivna utan "alltid" och "bara"; det första gäller nu bara binära diagram, eftersom järnets unära diagram (Lab_PM_M2_v2026 s. 4) saknar tvåfasområden. Godkänns omskrivningen, och ska Quiz vecka 2 fråga 6 ändras?
 
@@ -144,7 +137,6 @@ I ett binärt fasdiagram skiljs enfasområdena åt av tvåfasområden, även mel
 ## Ståls fasdiagram: vilka påståenden är sanna?
 key: quiz-stals-fasdiagram-vad-ar-sant-tva-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 7; Canvas, GLU 02 Fasdiagram, s. 4, 16, 19, 20; Canvas, Fo 4 Fasdiagram, s. 14; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15; Canvas, Short_dictionary_ v2026, s. 2, 6
 flagga: Quizens felaktiga alternativ "Om man löser in kol i ferrit så bildas austenit" kan läsas som sant (vid ca 850 °C är rent järn ferrit men ett stål med 0,3 % C austenit, GLU_5-8 s. 15) och är utbytt mot "Austenit är ferrit med inlöst kol". Godkänns bytet, och ska Quiz vecka 2 fråga 7 ändras?
 
@@ -160,7 +152,6 @@ Faserna i Fe-C-diagrammet är ferrit, austenit och cementit; martensit är en me
 ## Eutektiska och eutektoida reaktioner: vilka påståenden är sanna?
 key: quiz-eutektiska-och-eutektoida-reaktioner
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 8; Canvas, GLU 02 Fasdiagram, s. 19, 20; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 2, 17; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 20
 flagga: Quizens rätta alternativ "Eutektoida reaktioner kräver diffusion, annars händer inget" stämmer inte bokstavligt, eftersom det bildas martensit vid snabbkylning; kortet säger nu "utan diffusion sker ingen eutektoid reaktion". Godkänns omskrivningen, och ska Quiz vecka 2 fråga 8 ändras?
 
@@ -174,7 +165,6 @@ Trefasreaktioner sker vid konstant temperatur och koncentration: den eutektiska 
 ## Fasdiagram: vilka påståenden om löslighet och hävstångsregeln är sanna?
 key: quiz-fasdiagram-vad-ar-sant-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 10; Canvas, GLU 02 Fasdiagram, s. 10, 13, 14, 16; Canvas, Fo 4 Fasdiagram, s. 8, 9; Canvas, Lab_PM_M2_v2026, s. 6
 
 - [x] Ett fasdiagram med obegränsad löslighet har bara en fast fas.
@@ -189,7 +179,6 @@ Vid obegränsad löslighet, t.ex. Cu-Ni, finns en enda fast fas vid alla sammans
 ## Pb-40 % Sn svalnar långsamt från smälta. Hur stor andel är primär $\alpha$ respektive eutektikum strax under 183 °C? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: havstang-pbsn-40-strukturbestandsdelar
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 15, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10, 11
 
 - [x] Ca 50 % primär $\alpha$ och 50 % eutektikum
@@ -202,7 +191,6 @@ Strax ovanför 183 °C består legeringen av Pb-rik fas $\alpha$ (18,3 % Sn) och
 ## Pb-40 % Sn strax under 183 °C: hur stora är andelarna av faserna $\alpha$ och $\beta$? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: havstang-pbsn-40-faser
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 17
 
 - [x] Ca 73 % $\alpha$ och 27 % $\beta$
@@ -214,7 +202,6 @@ Strax under 183 °C finns två faser: $\alpha$ med 18,3 % Sn och $\beta$ med 97,
 
 ## Hur använder man hävstångsregeln i ett tvåfasområde?
 key: havstangsregeln-metod
-status: utkast
 källa: Canvas, Fo 4 Fasdiagram, s. 8, 9; Canvas, GLU 02 Fasdiagram, s. 16, 17; Canvas, Short_dictionary_ v2026, s. 14
 
 1. Dra en horisontell linje (förbindelselinje) vid aktuell temperatur genom legeringens sammansättning $C$ ut till tvåfasområdets gränser.
@@ -228,7 +215,6 @@ Det är linjär interpolation: vid $C = C_\alpha$ är andelen $\beta$ 0 % och vi
 ## Segring
 key: segring
 typ: begrepp
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 13; Canvas, Lab_PM_M2_v2026, s. 6
 
 Koncentrationsskillnader i kornen som uppstår vid stelningen, eftersom diffusionen är för begränsad för att jämna ut sammansättningen. Förekommer nästan alltid vid gjutning i praktiken.
@@ -236,7 +222,6 @@ Koncentrationsskillnader i kornen som uppstår vid stelningen, eftersom diffusio
 ## Kärnbildning
 key: karnbildning
 typ: begrepp
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 5
 
 Att nya kristaller bildas i smältan och sedan tillväxer. Kärnbildningen sker lättare på fasta partiklar och ytor, och vid gjutning tillsätts därför små partiklar för att få en finkornigare kornstruktur. Kornen växer tills de möts och bildar materialets kornstruktur och korngränser.
@@ -245,7 +230,6 @@ Att nya kristaller bildas i smältan och sedan tillväxer. Kärnbildningen sker 
 key: ren-metall-stelningstemperatur
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 9; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 2, 4; Canvas, Lab_PM_M2_v2026, s. 5
 
 En ren metall har en distinkt smälttemperatur. När den stelnar bildas värme, och avsvalningskurvan får en platå tills allt har stelnat. En legering stelnar däremot i regel inom ett temperaturintervall, där smälta och fasta kristaller finns i jämvikt i ett tvåfasområde.
@@ -254,7 +238,6 @@ En ren metall har en distinkt smälttemperatur. När den stelnar bildas värme, 
 key: eutektoidiskt-stal-faser-strukturbestandsdel
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 10, 11, 12; Canvas, GLU 02 Fasdiagram, s. 19, 20
 flagga: Kortet och figuren anger den eutektoida punkten till ca 0,8 % C och 723 °C och hänvisar till Lab_PM_M2_v2026 s. 10 till 12, men labb-PM:et använder 0,77 % C och 727 °C (GLU 02 s. 19 har 0,8 % och 723 °C). Samma värden finns på alla Fe-C-kort, och studenterna möter båda på labben. Ska korten nämna labb-PM:ets värden, som ferrit- och austenitkorten gör för 912/913 °C?
 
@@ -265,7 +248,6 @@ Under den eutektoida temperaturen består stålet av faserna ferrit och cementit
 ## Vilka strukturbeståndsdelar har ett undereutektoidiskt stål (under ca 0,8 % C) efter långsam svalning?
 key: undereutektoidiskt-stal-strukturbestandsdelar
 typ: alternativ
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18, 23; Canvas, Lab_PM_M2_v2026, s. 12
 
 - [x] Primär ferrit och perlit
@@ -281,14 +263,12 @@ Vid långsam svalning bildas först primär (proeutektoid) ferrit, och vid den e
 key: tvafasomrade-fasernas-sammansattning
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, Fo 4 Fasdiagram, s. 8, 9; Canvas, GLU 02 Fasdiagram, s. 17
 
 I ett tvåfasområde läser man av fasernas koncentrationer vid områdets gränser, längs en horisontell linje vid aktuell temperatur, och de skiljer sig från legeringens sammansättning. Det är bara i ett enfasområde som fasen har samma koncentration som legeringen.
 
 ## Beskriv hur en Pb-40 % Sn-legering stelnar och svalnar långsamt från smälta till rumstemperatur.
 key: stelning-pbsn-40
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10, 11; Canvas, Fo 5 Fasdiagram och mikrostruktur 2, s. 8; Canvas, GLU 02 Fasdiagram, s. 14
 
 ![Fasdiagrammet för Pb–Sn med eutektisk punkt vid 61,9 % Sn och 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
@@ -302,7 +282,6 @@ Resultatet är primär $\alpha$ (med $\beta$-utskiljningar) och eutektikum, unge
 ## Vilken fas är stabil i rent järn vid 1000 °C?
 key: jarn-fas-vid-1000
 typ: alternativ
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 4; Canvas, GLU 02 Fasdiagram, s. 4, 19
 
 - [x] Austenit ($\gamma$-järn, FCC)
@@ -318,7 +297,6 @@ I rent järn är austenit stabil mellan ca 912 °C och 1394 °C, så vid 1000 °
 key: jarn-bcc-rumstemp-och-nara-smaltpunkten
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 3, 4; Canvas, GLU 02 Fasdiagram, s. 19
 
 ![Järns unära fasdiagram med ferrit, austenit, delta-ferrit, smälta och ånga](/kort/materialteknik/jarn-unart-fasdiagram.svg)
@@ -328,7 +306,6 @@ Sant. Vid rumstemperatur är rent järn ferrit ($\alpha$-järn, BCC). Mellan 139
 ## En Pb–Sn-legering med 40 % Sn hålls vid 200 °C. Vilka faser finns? ![Fasdiagrammet för Pb–Sn med enfas- och tvåfasområden kring den eutektiska linjen vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: pbsn-40-vid-200
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 15; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10
 
 - [x] Pb-rik fast fas ($\alpha$) och smälta (L)
@@ -341,7 +318,6 @@ Punkten 40 % Sn, 200 °C ligger ovanför den eutektiska linjen vid 183 °C men u
 ## Ett stål med 0,3 % C svalnar långsamt från austenitområdet. Vad händer mellan ca 820 °C och ca 723 °C?
 key: stal-03-primar-ferrit
 typ: alternativ
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18; Canvas, GLU 02 Fasdiagram, s. 19
 
 - [x] Primär (proeutektoid) ferrit bildas ur austeniten.
@@ -356,7 +332,6 @@ Mellan ca 820 °C och 723 °C ligger stålet i tvåfasområdet $\alpha$ + $\gamm
 ## Binärt fasdiagram
 key: binart-fasdiagram
 typ: begrepp
-status: utkast
 källa: Canvas, Fo 4 Fasdiagram, s. 8; Canvas, GLU 02 Fasdiagram, s. 10, 14; Canvas, Lab_PM_M2_v2026, s. 5, 7
 
 Ett fasdiagram för ett system av två ämnen (komponenter), t.ex. Cu–Ni eller Pb–Sn. Det visar vilka faser som är stabila vid jämvikt vid olika temperaturer (y-axeln) och sammansättningar (x-axeln, halten av det ena ämnet). Enfasområdena skiljs åt av tvåfasområden. I Cu–Ni, med obegränsad löslighet, finns en enda fast fas. I Pb–Sn, med begränsad löslighet, finns två fasta faser och en eutektisk punkt.
@@ -365,7 +340,6 @@ Ett fasdiagram för ett system av två ämnen (komponenter), t.ex. Cu–Ni eller
 key: eutektisk-sammansattning-lagst-smalttemperatur
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 15; Canvas, Lab_PM_M2_v2026, s. 7, 8, 9
 flagga: Kortet anger den eutektiska temperaturen i Al-Si till ca 577 °C som Lab_PM_M2_v2026 s. 9, men bilden i Exempel fasdiagram s. 8 visar enligt granskningen 557 °C. Stämmer 577 °C, och ska bilden i Exempel fasdiagram rättas?
 
@@ -375,7 +349,6 @@ Sant. Likviduslinjerna sjunker från rent Pb (327 °C) och rent Sn (232 °C) och
 
 ## Hur ser avsvalningskurvan ut när en ren metall, en legering som stelnar till en enda fas och en legering med primär fas och eutektikum stelnar?
 key: avsvalningskurvor-former
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 2, 3, 4, 9, 10; Canvas, Lab_PM_M2_v2026, s. 5, 7, 8
 
 När en fas bildas frigörs värme, som bromsar avsvalningen. I ett enfasområde styrs kurvan bara av värmeledningen.
@@ -389,7 +362,6 @@ När en fas bildas frigörs värme, som bromsar avsvalningen. I ett enfasområde
 ## En Pb–Sn-legering svalnar långsamt från smälta. Avsvalningskurvan har först en knick och sedan en platå vid 183 °C. Vilken sammansättning kan legeringen ha? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: avsvalningskurva-pbsn-knick-plata
 typ: alternativ
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9, 10; Canvas, Lab_PM_M2_v2026, s. 7, 8; Canvas, GLU 02 Fasdiagram, s. 14
 
 - [x] Pb–30 % Sn
@@ -402,7 +374,6 @@ Knicken visar att primär $\alpha$ börjar bildas när temperaturen når likvidu
 ## Ett stål med 0,35 % C svalnar långsamt från austenitområdet. Ungefär hur stor andel perlit och primär ferrit får det? (Perlit bildas ur austenit med 0,8 % C; ferritens kolhalt kan försummas.)
 key: havstang-stal-035-andel-perlit
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 16, 17, 19; Canvas, Fo 12 Stal, s. 17, 18; Canvas, Lab_PM_M2_v2026, s. 12
 flagga: Kortet räknar rätt med hävstångsregeln (0,35 % C ger ca 56 % primär ferrit), men GLU_5-8 s. 15 säger att ett stål med 0,3 % C får "ca 30 %" primär ferrit, medan hävstångsregeln ger ca 63 %. Studenter som jämför kortet med bilden får olika svar. Är siffran på bilden fel, och ska den rättas i Canvas?
 
@@ -419,7 +390,6 @@ Strax ovanför den eutektoida temperaturen (ca 723 °C) består stålet av prim�
 key: stal-austenit-blir-perlit-andel
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 17, 19; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 15, 18; Canvas, Lab_PM_M2_v2026, s. 11, 12
 
 Sant. I tvåfasområdet ferrit + austenit bildas primär ferrit, och vid den eutektoida temperaturen omvandlas den kvarvarande austeniten, som då har ca 0,8 % C, till perlit. Andelen austenit strax ovanför den eutektoida temperaturen, räknad med hävstångsregeln, blir alltså andelen perlit. Högre upp i tvåfasområdet har austeniten lägre kolhalt och andelen austenit är större; där läser man av austenitens kolhalt vid tvåfasområdets gräns vid den aktuella temperaturen.
@@ -427,7 +397,6 @@ Sant. I tvåfasområdet ferrit + austenit bildas primär ferrit, och vid den eut
 ## Ett stål med 1,3 % C svalnar långsamt. Ungefär hur stora andelar perlit och cementit har det vid rumstemperatur? (Perlit 0,8 % C, cementit 6,67 % C.)
 key: fe-c-andel-perlit-overeutektoid
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 12 Stal, s. 17, 18; Canvas, GLU 02 Fasdiagram, s. 16, 17, 19; Canvas, Lab_PM_M2_v2026, s. 11, 12
 
 - [x] Ca 91 % perlit och 9 % cementit
@@ -440,7 +409,6 @@ Ett övereutektoidiskt stål består av perlit och cementit, som ligger i gräns
 ## Vad bildas när smälta med 4,3 % C svalnar genom den eutektiska punkten i Fe–C-diagrammet (ca 1147 °C)?
 key: fe-c-eutektisk-reaktion
 typ: alternativ
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 9; Canvas, GLU 02 Fasdiagram, s. 19, 20
 
 - [x] Austenit och cementit, i ett eutektikum
@@ -453,7 +421,6 @@ Den eutektiska reaktionen i Fe–C är smälta → austenit + cementit ($L \to \
 ## En Pb–30 % Sn-legering svalnar långsamt genom tvåfasområdet $\alpha$ + L ned mot 183 °C. Vad händer?
 key: pbsn-stelning-sammansattning-andre
 typ: alternativ
-status: utkast
 källa: Canvas, Lab_PM_M2_v2026, s. 6, 7; Canvas, GLU 02 Fasdiagram, s. 14, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 10
 
 - [x] Smältans Sn-halt följer likviduslinjen och ökar mot 61,9 % Sn.
@@ -468,7 +435,6 @@ I ett tvåfasområde läser man av fasernas koncentrationer vid områdets gräns
 ## Pb–70 % Sn svalnar långsamt från smälta. Ungefär hur stor andel primär $\beta$ respektive eutektikum finns strax under 183 °C? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: havstang-pbsn-70-strukturbestandsdelar
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 15, 17; Canvas, Lab_PM_M2_v2026, s. 7, 8
 
 - [x] Ca 23 % primär $\beta$ och 77 % eutektikum
@@ -482,7 +448,6 @@ Legeringen ligger på Sn-sidan om den eutektiska punkten, så först bildas den 
 key: pbsn-strukturbestandsdelar-under-eutektisk
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9, 10; Canvas, Lab_PM_M2_v2026, s. 7, 8; Canvas, GLU 02 Fasdiagram, s. 13, 14
 flagga: Kortet säger att andelen eutektikum inte ändras när en Pb-Sn-legering svalnar från 183 °C till rumstemperatur. GLU_5-8 s. 10 beskriver bara att Sn-rik fas skiljs ut i den Pb-rika fasen, och att andelen eutektikum är oförändrad står uttryckligen bara i svarsförslaget till tentan 24-10 uppg. 3c. Räcker det som belägg?
 
@@ -491,7 +456,6 @@ Sant. Strukturbeståndsdelarna, primär $\alpha$ och eutektikum, bildas vid stel
 ## Hur stor andel av själva eutektikumet i Pb–Sn är $\beta$-fas strax under 183 °C, när eutektikumet just har bildats? ![Fasdiagrammet för Pb–Sn med 18,3 %, 61,9 % och 97,8 % Sn vid 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)
 key: havstang-faser-i-eutektikum
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 02 Fasdiagram, s. 14, 15, 16, 17; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9
 
 - [x] Ca 55 %
@@ -504,7 +468,6 @@ Eutektikumet har sammansättningen 61,9 % Sn och består av $\alpha$ (18,3 % Sn)
 ## Ungefär vilken är den högsta Cu-halt en Al–Cu-legering kan ha om all Cu ska kunna lösas i $\alpha$ vid upplösningsbehandlingen? ![Al-hörnet av fasdiagrammet Al–Cu med aluminiumfasen (Al), eutektisk linje vid 548 °C och fasen θ = CuAl₂](/kort/materialteknik/al-cu-alhornet.svg)
 key: al-cu-max-halt-utskiljningshardning
 typ: alternativ
-status: utkast
 källa: Canvas, Exempel fasdiagram, s. 7; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, GLU 02 Fasdiagram, s. 13; Canvas, Lab_PM_M2_v2026, s. 7
 flagga: Svaret "knappt 6 % Cu" och figuren al-cu-alhornet.svg bygger på en avläsning av Exempel fasdiagram s. 7, där maxlösligheten inte står utskriven, medan svarsförslaget till tentan 2025-01 uppg. 8c säger "under 5,5 % Cu". Kortet prövar samma kunskap som 25-01 uppg. 8c och 24-08 uppg. 3a men med egen formulering. Stämmer avläsningen, och ligger kortet tillräckligt långt från tentorna?
 
@@ -518,7 +481,6 @@ Upplösningsbehandlingen kräver att legeringen blir en enda fas, $\alpha$, så 
 ## En Al–3 % Cu-legering har svalnat långsamt till rumstemperatur. Ungefär hur stor viktandel $\theta$ (CuAl₂) har den? ($\alpha$ har då nästan 0 % Cu och $\theta$ ca 54 % Cu.)
 key: al-cu-havstang-andel-theta
 typ: alternativ
-status: utkast
 källa: Canvas, Exempel fasdiagram, s. 7; Canvas, GLU 02 Fasdiagram, s. 16, 17, 21
 flagga: Kortet räknar med att θ (CuAl2) har ca 54 % Cu, ett värde som är avläst i Exempel fasdiagram s. 7 där det inte står utskrivet; svaret blir ca 6 % θ och räkningen stämmer. Stämmer avläsningen?
 

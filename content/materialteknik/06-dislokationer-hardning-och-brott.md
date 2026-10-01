@@ -116,7 +116,6 @@ key: ja-nej-malet-med-utskiljningshardning
 typ: sant-falskt
 svar: falskt
 original: ja
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 30, 33, 35; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 26; Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2
 
 Utskiljningshärdning skapar små, jämnt fördelade partiklar av en annan fas som hindrar dislokationernas rörelse. När dislokationerna får svårare att röra sig ökar sträckgränsen och hårdheten. Dislokationerna finns kvar; det är deras rörelse som bromsas.
@@ -124,7 +123,6 @@ Utskiljningshärdning skapar små, jämnt fördelade partiklar av en annan fas s
 ## Sträckgräns: vilka påståenden är sanna?
 key: quiz-strackgrans-vad-ar-sant-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 7; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 3, 6; Canvas, Fo 8 Plasticitet, s. 3; Canvas, Fo 7 Styvhet, s. 9
 
 - [x] Vid belastning under sträckgränsen beter sig ett material elastiskt.
@@ -137,7 +135,6 @@ Under sträckgränsen är deformationen elastisk och materialet återgår till s
 ## Sträckgräns: vilka påståenden är rätt?
 key: quiz-strackgrans-vad-ar-ratt-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 3; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 3, 31, 36; Canvas, Kapitel_03 Materialval, s. 15; Canvas, Fo 8 Plasticitet, s. 11, 15
 
 - [x] Ett hårt material som belastas under sträckgränsen beter sig elastiskt.
@@ -150,7 +147,6 @@ Under sträckgränsen är deformationen elastisk, oavsett hur hårt materialet �
 ## Dislokationer: vilka påståenden är rätt?
 key: quiz-dislokationer-vad-ar-ratt-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 4; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 16, 20, 30; Canvas, Kapitel_04 Elastisk deformation, s. 12; Canvas, Fo 8 Plasticitet, s. 9
 flagga: Quizens rätta alternativ "måste den röra sig på ett atomplan som är nära 45 grader" är för starkt: Fö 8 Plasticitet s. 9 säger att dislokationerna rör sig "lättast" nära 45 grader, och Kapitel_06 s. 20 att glidning sker när skjuvspänningen på glidsystemet blir tillräckligt hög. Kortet har skrivit om alternativet till "rör sig lättast" och behållit det som rätt. Godkänns omskrivningen, och ska Quiz vecka 3 fråga 4 ändras?
 
@@ -164,7 +160,6 @@ Dislokationer ger plastisk, inte elastisk, deformation, och genom att försvåra
 ## Härdningsmekanismer: vilka påståenden är rätt?
 key: quiz-hardningsmekanismer-vad-ar-ratt-2-ratta
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 5; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 14, 15, 33, 35, 36; Canvas, Fo 8 Plasticitet, s. 13, 15, 17; Canvas, Fo 12 Stal, s. 5; Canvas, Svarsforslag Tentamen MTT085 25-01, s. 7
 flagga: Quizens två felaktiga alternativ kunde läsas som sanna ("värmebehandling låser dislokationerna och sträckgränsen ökar" stämmer för utskiljningshärdning, Kapitel_06 s. 35; "färre kristalldefekter ger högre hållfasthet" stämmer i gränsen mot ideal hållfasthet, Kapitel_06 s. 14, 15) och är utbytta mot entydigt felaktiga om rekristallisation och grova korn. Godkänns bytet, och ska Quiz vecka 3 fråga 5 ändras?
 
@@ -178,7 +173,6 @@ Deformationshärdning kräver bara plastisk deformation (dislokationerna blir fl
 ## Kristallstörningar (kristalldefekter): vilka påståenden är rätt?
 key: quiz-kristalstorningar-kristalldefekter-vad
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 6; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 16, 17; Canvas, Fo 8 Plasticitet, s. 5, 11; Canvas, Kapitel_04 Elastisk deformation, s. 12, 26
 
 - [ ] Porer och sprickor är exempel på kristalldefekter.
@@ -191,7 +185,6 @@ Kristalldefekter är avvikelser från den perfekta kristallen: vakanser, lösta 
 ## Duktilitet
 key: duktilitet
 typ: begrepp
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 3, 24; Canvas, Kapitel_08 Seghet och Brott, s. 2; Canvas, Short_dictionary_ v2026, s. 4
 
 Ett mått på formbarhet, dvs. hur formbart materialet är. I dragprov mäts den som brottförlängning (t.ex. 20 %) eller areakontraktion. Rörliga dislokationer är viktiga för metallers formbarhet och duktilitet, och starkare legeringar tenderar att ha lägre duktilitet.
@@ -199,7 +192,6 @@ Ett mått på formbarhet, dvs. hur formbart materialet är. I dragprov mäts den
 ## Glidsystem
 key: glidsystem
 typ: begrepp
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 20, 28
 
 Kombinationen av ett glidplan och en glidriktning, där dislokationer rör sig. Glidplanen och glidriktningarna korrelerar med de mest tätpackade planen och de tätpackade riktningarna i dem. Ett korn börjar deformeras plastiskt när skjuvspänningen på ett glidsystem, $\tau = \sigma\cos\lambda\cos\varphi$, blir tillräckligt hög.
@@ -208,7 +200,6 @@ Kombinationen av ett glidplan och en glidriktning, där dislokationer rör sig. 
 key: skruvdislokation-burgers-vektor
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 18, 19, 22, 23, 24
 
 I en skruvdislokation förskjuts kristallens övre del parallellt med snittkanten, och Burgers vektor är parallell med dislokationslinjen. En kantdislokation kan ses som kanten av ett extra halvplan av atomer, och där är förskjutningen vinkelrät mot dislokationslinjen. Verkliga dislokationer växlar mellan de två typerna längs linjen.
@@ -216,7 +207,6 @@ I en skruvdislokation förskjuts kristallens övre del parallellt med snittkante
 ## Vilken härdningsmekanism bygger på att dislokationstätheten ökar vid plastisk deformation?
 key: hardning-okad-dislokationstathet
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 31, 33, 36, 37, 40
 
 - [x] Deformationshärdning
@@ -228,7 +218,6 @@ Vid plastisk deformation (t.ex. kallvalsning eller smide) skapas fler dislokatio
 
 ## Varför når metaller inte den ideala hållfastheten, dvs. den spänning som krävs för att bryta alla bindningar i ett plan samtidigt?
 key: ideal-hallfasthet-dislokationer
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 13, 14, 15, 27
 
 Därför att metaller innehåller dislokationer. För att en dislokation ska röra sig behöver bara bindningarna längs dislokationslinjen brytas, vilket är betydligt lättare än att bryta alla bindningar i glidplanet på en gång. Glidförskjutningen per dislokation är mycket liten, men när enormt många dislokationer passerar genom kristallen på flera glidplan deformeras materialet makroskopiskt redan vid en spänning långt under den ideala hållfastheten. (I keramer är förklaringen i stället att de inte kan skapa rörliga dislokationer och därför inte deformeras plastiskt; spänningarna kan inte fördelas till en större volym, och spänningskoncentrationer ger höga lokala spänningar.)
@@ -236,7 +225,6 @@ Därför att metaller innehåller dislokationer. För att en dislokation ska rö
 ## Hårdhet
 key: hardhet
 typ: begrepp
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 6; Canvas, Fo 8 Plasticitet, s. 3; Canvas, Short_dictionary_ v2026, s. 7
 
 Materialets motstånd mot intryckning. Vid ett hårdhetsprov pressas en diamant- eller kulformad intryckskropp in i ytan med bestämd kraft, och intrycket mäts (t.ex. diagonalerna i ett Vickersintryck). Hårdheten kopplar till sträckgränsen, alltså till motståndet mot plastisk deformation, och korrelerar ganska bra med brottgränsen för duktila material. Undantag: spröda material kan ha hög hårdhet men låg brottgräns i dragprov. Hårdhetsprov kräver bara en liten volym och är oftast oförstörande.
@@ -244,7 +232,6 @@ Materialets motstånd mot intryckning. Vid ett hårdhetsprov pressas en diamant-
 ## Vilka kombinationer av härdningsmekanismer används för aluminiumlegeringar enligt kursen?
 key: hardningsmekanismer-kombineras
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 44; Canvas, Ovning 7 m losningar, s. 5; Canvas, Fo 13 Aluminium och andra metaller, s. 7, 8; Canvas, Fo 12 Stal, s. 2
 
 - [x] Icke värmebehandlingsbara legeringar: lösningshärdning och deformationshärdning
@@ -257,7 +244,6 @@ Härdningsmekanismerna kombineras ofta, men ökad hållfasthet minskar i allmän
 ## Vilka plan och riktningar bildar glidsystemen i en FCC-metall?
 key: glidsystem-fcc
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 20, 28; Canvas, GLU 01 Kristallstrukturer, s. 11, 15, 19; Canvas, Guided Learning Unit 1, s. 4 (GL1-4); Canvas, Fo 12 Stal, s. 2
 flagga: Att glidsystemen i FCC är {111}<110> står inte ordagrant i kursmaterialets text; kortet härleder det ur Kapitel_06 s. 28 (glidsystemen följer de tätast packade planen och riktningarna) och GLU 01 s. 19, och beteckningen finns uttryckligen bara i tentan 2015-10-26 uppg. 4a. Räcker härledningen som belägg?
 
@@ -271,7 +257,6 @@ Glidplan och glidriktningar korrelerar med de mest tätpackade planen och de tä
 ## I vilka situationer är plastisk deformation önskvärd?
 key: plastisk-deformation-onskvard
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 12 Stal, s. 7; Canvas, Ovning 4 m losningar, s. 1, 6; Canvas, Ovning 7 m losningar, s. 3
 
 - [x] Vid formning av metaller, t.ex. valsning, smide, pressning och tråddragning

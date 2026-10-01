@@ -3,7 +3,6 @@
 ## Vad stämmer om krypning (creep) hos polymerer?
 key: quiz-creep-krypning
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fo19-21, fråga 4; Canvas, 2025 MTT085 Fo20, s. 15, 20; Canvas, 05142_09 (Osswald kap. 9), s. 5, 39; Canvas, MTT085 Polymeric materials L6, s. 2
 
 - [ ] Ett krypprov görs med konstant töjning
@@ -16,7 +15,6 @@ I ett krypprov hålls spänningen konstant och töjningen mäts över tiden. Kon
 ## Vad stämmer om krackelering (crazing) i en amorf polymer?
 key: polymer-krackelering-vad-stammer
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 9; Canvas, 05142_10 (Osswald kap. 10), s. 10
 
 - [x] Krazerna bildas i plan vinkelräta mot den största huvudspänningen
@@ -29,7 +27,6 @@ Krazer är mikrosprickor som bildas vinkelrätt mot den största huvudspänninge
 ## I vilken ordning sker händelserna när en delkristallin termoplast, t.ex. PP, dras till brott vid rumstemperatur?
 key: polymer-duktilt-brott-ordning
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 10–13; Canvas, 05142_10 (Osswald kap. 10), s. 12–14
 
 - [x] Linjärelastiskt område, mikrosprickor mellan sfäruliterna (stress whitening), flytpunkt, halsbildning och kalldragning
@@ -42,7 +39,6 @@ Först är deformationen linjärelastisk och reversibel (för PP upp till ca 0,5
 ## Var bildas de mikrosprickor som ger stress whitening i en delkristallin polymer?
 key: polymer-stress-whitening-var
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 12; Canvas, 05142_10 (Osswald kap. 10), s. 12–14; Canvas, MTT085 Polymeric materials L6, s. 8
 
 - [x] I gränsytorna mellan sfäruliterna
@@ -55,7 +51,6 @@ Sfäruliterna är den största längdskalan i en delkristallin polymer, och den 
 ## Hur konstrueras isokrona spännings-töjningskurvor ur krypdata?
 key: polymer-isokrona-kurvor-konstruktion
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo20, s. 20; Canvas, 05142_09 (Osswald kap. 9), s. 39
 
 - [x] Genom snitt i krypkurvorna vid konstant tid, med spänningen plottad mot töjningen
@@ -68,7 +63,6 @@ Isokron betyder "samma tid": varje kurva gäller en viss belastningstid, t.ex. 1
 ## Vilket svar ger en rent viskös vätska i ett krypprov med konstant spänning σ₀?
 key: polymer-kryp-rent-viskost-svar
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo20, s. 16; Canvas, MTT085 Polymeric materials L6, s. 5
 
 - [x] Töjningen växer linjärt med tiden, med lutningen σ₀/η
@@ -81,7 +75,6 @@ En rent viskös vätska följer Newtons viskositetslag, så töjningen blir $\ga
 ## Vad händer när krypspänningen tas bort från ett viskoelastiskt material (återhämtning)?
 key: polymer-kryp-aterhamtning
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 5; Canvas, 2025 MTT085 Fo20, s. 17
 flagga: Kortet säger att ett viskoelastiskt material får en kvarstående töjning och att full återgång "bara" gäller rent elastiska material, men en viskoelastisk fast kropp (Kelvinmodellen) återhämtar sig helt (Osswald kap. 9 s. 12), och kortet polymer-elastomer-reversibel säger att elastomerens deformation går tillbaka. Ska frågan begränsas till t.ex. en termoplast eller smälta, och ordet "bara" strykas?
 
@@ -95,7 +88,6 @@ Den töjning som återgår (återhämtningstöjningen) visar hur mycket elastisk
 ## Inom vilka områden sticker polymera material ut?
 key: polymer-var-star-polymerer-ut
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 1; Canvas, 2025 MTT085 Fo20, s. 4; Canvas, 2025 MTT085 Fo16, s. 20; Canvas, MTT085-Turorials-Part12, s. 4
 
 - [x] Lättviktskonstruktion (höga mekaniska egenskaper i förhållande till densiteten)
@@ -109,7 +101,6 @@ Polymerer och polymerkompositer har goda mekaniska egenskaper i förhållande ti
 key: polymer-krazer-langsam-deformation
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 9; Canvas, 05142_10 (Osswald kap. 10), s. 10; Canvas, MTT085 Polymeric materials L6, s. 8
 
 Det är tvärtom. Krackeleringen beror på deformationshastigheten: vid hög deformationshastighet blir krazerna små och bildas strax före brottet, eller inte alls. Vid långsam deformation blir de stora och uppträder tidigt under belastningen.
@@ -118,7 +109,6 @@ Det är tvärtom. Krackeleringen beror på deformationshastigheten: vid hög def
 key: polymer-krazer-fibriller
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 9; Canvas, 05142_10 (Osswald kap. 10), s. 10
 
 Krazerna är sammankopplade av lastbärande fibriller och är därför mindre farliga än verkliga sprickor. De är ändå en synlig varning: i transparenta detaljer syns de eftersom de försämrar klarheten och reflekterar ljus.
@@ -127,7 +117,6 @@ Krazerna är sammankopplade av lastbärande fibriller och är därför mindre fa
 key: polymer-isometriska-kurvor
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 39; Canvas, 2025 MTT085 Fo20, s. 20
 
 Det beskriver isokrona kurvor ("samma tid"). Isometriska kurvor ("samma töjning") fås genom snitt i krypkurvorna vid konstant töjning, med spänningen plottad mot tiden. De liknar resultatet av ett relaxationsprov.
@@ -136,7 +125,6 @@ Det beskriver isokrona kurvor ("samma tid"). Isometriska kurvor ("samma töjning
 key: polymer-elastomer-reversibel
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 15; Canvas, MTT085 PM 1, s. 10
 
 Tvärbindningarna gör att en elastomer klarar mycket stora deformationer (gummielasticitet). Eftersom elastomerer bara är glest tvärbundna kan stora delar av kedjorna sträckas ut, och deformationen går tillbaka så länge tvärbindningarna är intakta.
@@ -145,7 +133,6 @@ Tvärbindningarna gör att en elastomer klarar mycket stora deformationer (gummi
 key: polymer-sprott-over-tg-kryp-utmattning
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 7; Canvas, 05142_10 (Osswald kap. 10), s. 8
 flagga: Förklaringen säger utan förbehåll att sprött brott i kortvarigt dragprov "gäller termoplaster under Tg och högt tvärbundna polymerer", men Fö21 2025 s. 7 säger "usually" och PC är ett undantag (Lab-PM Polymer s. 2); just denna fråga är omtvistad i tentan 2024-10-31 uppg. 9. Ska "i regel" läggas till, som på kortet polymer-dragkurvor-fyra-typer?
 
@@ -155,7 +142,6 @@ Sprött brott i ett kortvarigt dragprov gäller termoplaster under Tg och högt 
 key: polymer-slagprov-elastiskt-langtid-viskoelastiskt
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 2
 
 Polymerers beteende är tidsberoende. Vid korta tidsskalor (slagprov) beter de sig i regel som rent elastiska material, vid långa tidsskalor (kryp) är beteendet tydligt viskoelastiskt. Svårast att bedöma är tidsskalor i samma storleksordning som ett vanligt dragprov.
@@ -163,7 +149,6 @@ Polymerers beteende är tidsberoende. Vid korta tidsskalor (slagprov) beter de s
 ## Krypmodul
 key: polymer-begrepp-krypmodul
 typ: begrepp
-status: utkast
 källa: Canvas, 2025 MTT085 Fo20, s. 15; Canvas, 05142_09 (Osswald kap. 9), s. 37
 
 Den pålagda konstanta spänningen delad med den tidsberoende töjningen i ett krypprov: $E_c = \dfrac{\sigma_0}{\varepsilon(t)}$. Krypmodulen minskar alltså med tiden. I skjuvning motsvaras den av skjuvkrypmodulen $G_c = \sigma_0/\gamma(t)$.
@@ -171,7 +156,6 @@ Den pålagda konstanta spänningen delad med den tidsberoende töjningen i ett k
 ## Deborahtal (Deborah number)
 key: polymer-begrepp-deborahtal
 typ: begrepp
-status: utkast
 källa: Canvas, 2025 MTT085 Fo20, s. 13
 
 Kvoten mellan materialets karakteristiska tidsskala och observationens tidsskala: $De = \dfrac{\text{materialets tidsskala}}{\text{observationstiden}}$. När De går mot 0 beter sig materialet som en rent viskös vätska, när De går mot oändligheten som ett rent elastiskt fast material. Däremellan är det viskoelastiskt ("everything flows", jämför beckdroppsförsöket).
@@ -179,14 +163,12 @@ Kvoten mellan materialets karakteristiska tidsskala och observationens tidsskala
 ## Halsbildning (necking)
 key: polymer-begrepp-halsbildning
 typ: begrepp
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 13; Canvas, 05142_10 (Osswald kap. 10), s. 14
 
 En lokal minskning av tvärsnittsarean som följer efter flytpunkten när en delkristallin polymer dras. Därefter följer en lång kalldragning där sfärulitstrukturen först deformeras och sedan bryts upp, så att starkt orienterade områden bildas.
 
 ## Beskriv vad som händer i molekylstrukturen vid halsbildning i en delkristallin polymer.
 key: polymer-halsbildning-molekylmodell
-status: utkast
 källa: Canvas, 2025 MTT085 Fo21, s. 13–14; Canvas, MTT085 Polymeric materials L6, s. 9–10; Canvas, 05142_10 (Osswald kap. 10), s. 14–15
 
 Under halsbildningen och kalldragningen deformeras sfärulitstrukturen och bryts upp, så att starkt orienterade områden bildas. I molekylmodellen ingår:
@@ -196,7 +178,6 @@ Under halsbildningen och kalldragningen deformeras sfärulitstrukturen och bryts
 
 ## Hur används ett isokront spännings-töjningsdiagram vid dimensionering av en plastdetalj?
 key: polymer-isokront-diagram-dimensionering
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 6–7; Canvas, 2025 MTT085 Fo20, s. 20
 
 Varje isokron kurva gäller en viss belastningstid, och diagrammet gäller den temperatur som krypproven gjordes vid. Välj kurvan för produktens livslängd, t.ex. 1 år. Gå in med spänningen på y-axeln och läs av vilken töjning detaljen har fått efter krypning under den tiden; jämför med den tillåtna töjningen. Omvänt ger en största tillåten töjning den största tillåtna spänningen.
@@ -204,7 +185,6 @@ Varje isokron kurva gäller en viss belastningstid, och diagrammet gäller den t
 ## Boltzmanns superpositionsprincip
 key: polymer-begrepp-boltzmann-superposition
 typ: begrepp
-status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 8, 9
 flagga: Boltzmanns superpositionsprincip stod i läsanvisningen för PM 6 år 2020 och på tentan 2020, men finns inte i PM 6 för 2024 och 2025 (Fö20 2025 s. 22 hänvisar bara till bokens sidor om krypprov och isokrona diagram); kortets enda källa är Osswald kap. 9 s. 8, 9. Ingår principen i årets kurs, eller ska kortet tas bort?
 
@@ -217,7 +197,6 @@ där $J$ är krypkompliansen. Varje steg bidrar efter hur länge det har verkat,
 ## En polymer har krypkompliansen $J(t)$. Spänningen $\sigma_0$ läggs på vid $t = 0$ och höjs till $2\sigma_0$ vid $t_1$. Vilket uttryck ger töjningen vid $t > t_1$ (linjär viskoelasticitet)?
 key: polymer-boltzmann-tvastegs
 typ: alternativ
-status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 8, 9
 flagga: Räkneuppgiften bygger på Boltzmanns superpositionsprincip, som inte står i läsanvisningen för PM 6 2024 och 2025 (Fö20 2025 s. 22); uträkningen stämmer med Osswald kap. 9 s. 8, 9. Ska kortet vara kvar om principen inte ingår i år (samma beslut som för polymer-begrepp-boltzmann-superposition)?
 
@@ -231,7 +210,6 @@ Enligt Boltzmanns superpositionsprincip adderas bidraget från varje spänningss
 ## En polymersmälta och en fast polymer belastas i var sitt krypprov (konstant spänning, linjärt viskoelastiskt område). Vad skiljer smältans töjningskurva från den fasta polymerens?
 key: polymer-smalta-kryp-aterhamtning
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 1, 4, 5; Canvas, 2025 MTT085 Fo20, s. 16, 17
 flagga: Kortet säger, enligt L6 s. 1, 4, 5 och Fö20 2025 s. 16, 17, att en polymersmälta ger vätskelik respons där töjningen växer linjärt, medan svarsförslaget till tentan 2023-10-23 uppg. 9b pekar ut den fastlika kurvan för smältan. Förklaringen kallar dessutom den fasta polymerens svar Kelvin-Voigt med elastisk start och kvarstående töjning, men Kelvinmodellen har ingen ögonblicklig töjning och återhämtar sig helt (Osswald kap. 9 s. 11, 12). Vilket svar gäller, och ska modellnamnet tas bort?
 
@@ -244,7 +222,6 @@ En polymersmälta domineras av den viskösa komponenten, eftersom kedjorna i sm�
 
 ## Beskriv den typiska dragprovskurvan vid rumstemperatur för en amorf termoplast, en delkristallin termoplast, en härdplast och en elastomer.
 key: polymer-dragkurvor-fyra-typer
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 7, 8, 9; Canvas, Lab-PM Polymer_MTT085-1, s. 2, 3; Canvas, MTT085-Turorials-Part12, s. 1, 3; Canvas, 2025 MTT085 Fo21, s. 7, 9, 10, 12, 13
 
 * **Amorf termoplast** (Tg oftast över rumstemperatur, t.ex. PS och PMMA): styv och spröd. Kurvan är linjär och deformationen reversibel tills små mikrosprickor (krazer) bildas strax före brottet; då blir kurvan olinjär. Undantag: PC är mycket slagtålig trots att den är amorf.
@@ -257,7 +234,6 @@ Under sitt Tg går polymerer i regel till sprött brott i ett korttidsdragprov, 
 ## Vid rumstemperatur ger en polymer i dragprov en tydlig flytpunkt, därefter ett spänningsfall, halsbildning och en lång kalldragning till mycket stor töjning. Vilken typ av polymer är det troligen?
 key: polymer-dragkurva-kalldragning-typ
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 Polymeric materials L6, s. 7, 8, 9; Canvas, 2025 MTT085 Fo21, s. 10, 12, 13; Canvas, Lab-PM Polymer_MTT085-1, s. 2, 3
 
 - [x] En delkristallin termoplast, t.ex. PP eller PE
@@ -270,7 +246,6 @@ Duktilt brott med stress whitening, flytpunkt, halsbildning och kalldragning fö
 ## En plastdetalj belastas med konstant spänning 4 MPa i ett år. Den isokrona 1-årskurvan ger då töjningen 0,8 %. Vilken E-modul (krypmodul) ska användas i t.ex. en utböjningsberäkning?
 key: polymer-krypmodul-ur-isokron-kurva
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo20, s. 15, 20; Canvas, 05142_09 (Osswald kap. 9), s. 37, 39
 
 - [x] 0,5 GPa
@@ -283,7 +258,6 @@ Krypmodulen är $E_c = \sigma_0/\varepsilon(t) = 4\ \text{MPa}/0{,}008 = 500$ MP
 ## En plaststång ska bära dragkraften 600 N i ett år utan att töjningen överstiger 1 %. Den isokrona 1-årskurvan ger 12 MPa vid 1 % töjning. Vilken är den minsta tvärsnittsarean?
 key: polymer-dimensionering-isokron-tvarsnitt
 typ: alternativ
-status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 39, 76; Canvas, 2021 MTT085 Ovningsuppgifter - Polymera material, s. 8; Canvas, MTT085 Polymeric materials L6, s. 7
 
 - [x] 50 mm²
@@ -296,7 +270,6 @@ Metoden: välj den isokrona kurvan för produktens livslängd, läs av den till�
 ## En plaströrbit pressas på en metalldubb så att töjningen i röret hålls konstant. Hur ändras spänningen i röret, och därmed kraften som krävs för att dra isär delarna, med tiden?
 key: polymer-presspassning-relaxation
 typ: alternativ
-status: utkast
 källa: Canvas, 05142_09 (Osswald kap. 9), s. 5, 39, 73, 75; Canvas, 2025 MTT085 Fo20, s. 18
 
 - [x] Spänningen minskar med tiden (spänningsrelaxation), så kraften blir mindre; den läses av längs en isometrisk kurva vid den aktuella töjningen.

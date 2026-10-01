@@ -2,19 +2,27 @@
  * Ren logik för granskningen och innehållsöversikten i admin. Inga beroenden på React eller
  * Supabase, så allt här kan enhetstestas.
  *
- * Granskningen är en inkorg med tre flikar (Alvins beslut 30 sep):
- * - Att granska: utkast som inte är flaggade. De är inte i rotation (inaktiva, dolda för
- *   studenterna) förrän en examinator godkänt dem.
- * - Granskade: kort i rotation (aktiva, utan status), senast granskade först. Oförändrade
- *   originalkort har inget granskningsdatum och står sist, som beprövade originalkort.
- * - Flaggade: kort med en flagga, oavsett status. En flagga är en anteckning om ett misstänkt
- *   fel; kortet står bara här tills flaggan åtgärdats.
+ * Granskningen är en inkorg med fyra flikar. Från 1 okt (Alvins beslut) är alla kort i rotation
+ * från början och examinatorerna granskar samtliga; tjänsten öppnas för studenterna först när
+ * inget kort är ogranskat:
+ * - Att granska: kort i rotation som ingen examinator godkänt ännu (aktiva, utan status, utan
+ *   granskningsdatum), och utkast utanför rotation (nya kort efter lanseringen). Inte flaggade.
+ * - Granskade: kort i rotation som en examinator godkänt, senast granskade först.
+ * - Flaggade: kort med en flagga (utom de som tagits ur rotation). En flagga är en anteckning om
+ *   ett misstänkt fel; kortet står bara här tills flaggan åtgärdats.
+ * - Ur rotation: kort som tagits ur rotation i granskningen (status avvisad). De kan sättas
+ *   tillbaka.
+ *
+ * Godkännandet är granskningsdatumet: ändras ett korts innehåll utan att det godkänns i samma
+ * uppdatering nollställs datumet av databasen (triggern cards_review_reset), så att kortet
+ * granskas igen.
  *
  * Terminologi: ett kort hör till ett OMRÅDE (tabellen categories) och har en UPPGIFTSTYP.
  */
 import { CARD_KINDS, isAutoGraded, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { matchesSource, type SourceFilter } from "@/lib/admin/sources";
 import { oneLine } from "@/lib/text/one-line";
+import type { CardTranslation } from "@/lib/supabase/database.types";
 import { stockholmDayHeading, stockholmDayKey, stockholmRelativeDay, stockholmTime } from "@/lib/time/stockholm";
 
 /** Det granskningen behöver veta om ett kort. CardRow uppfyller typen (utom de valfria fälten). */
@@ -39,6 +47,8 @@ export type ReviewCard = {
   flag_note: string | null;
   flagged_at: string | null;
   flagged_by: string | null;
+  /** Engelsk översättning för granskningen (lib/cards/translation.ts). */
+  translation_en?: CardTranslation | null;
   /**
    * Utkastet ändrar ett kort som varit publicerat (t.ex. ett rättat originalkort): id:t på den
    * senast publicerade versionen, som Avvisa återställer. Saknas för nya kort.
@@ -46,27 +56,33 @@ export type ReviewCard = {
   published_version_id?: number | null;
 };
 
-export type ReviewArea = { id: string; title: string };
+export type ReviewArea = { id: string; title: string; title_en?: string | null };
 
 // ---------------------------------------------------------------------------
 // Flikar
 // ---------------------------------------------------------------------------
 
-export const REVIEW_TABS = ["att-granska", "granskade", "flaggade"] as const;
+export const REVIEW_TABS = ["att-granska", "granskade", "flaggade", "ur-rotation"] as const;
 export type ReviewTab = (typeof REVIEW_TABS)[number];
 
 export function isReviewTab(value: unknown): value is ReviewTab {
   return typeof value === "string" && (REVIEW_TABS as readonly string[]).includes(value);
 }
 
-type TabFields = Pick<ReviewCard, "review_status" | "is_active" | "flag_note">;
+type TabFields = Pick<ReviewCard, "review_status" | "is_active" | "flag_note" | "reviewed_at">;
 
-/** Fliken kortet står under, eller null om det inte hör till granskningen (inaktivt eller avvisat). */
+/** Fliken kortet står under, eller null om det inte hör till granskningen (inaktiverat utanför granskningen). */
 export function reviewTab(card: TabFields): ReviewTab | null {
+  if (card.review_status === "avvisad") return "ur-rotation";
   if (card.flag_note) return "flaggade";
   if (card.review_status === "utkast") return "att-granska";
-  if (card.review_status === null && card.is_active) return "granskade";
+  if (card.review_status === null && card.is_active) return card.reviewed_at ? "granskade" : "att-granska";
   return null;
+}
+
+/** Ett kort i rotation som ingen examinator godkänt ännu. */
+export function isUnreviewed(card: TabFields): boolean {
+  return card.review_status === null && card.is_active && !card.reviewed_at;
 }
 
 /** Korten som granskningen överhuvudtaget visar. */
@@ -76,7 +92,7 @@ export function reviewRelevant<C extends TabFields>(cards: readonly C[]): C[] {
 
 /** Antal kort under varje flik. */
 export function countByTab(cards: readonly TabFields[]): Record<ReviewTab, number> {
-  const out: Record<ReviewTab, number> = { "att-granska": 0, granskade: 0, flaggade: 0 };
+  const out: Record<ReviewTab, number> = { "att-granska": 0, granskade: 0, flaggade: 0, "ur-rotation": 0 };
   for (const c of cards) {
     const tab = reviewTab(c);
     if (tab) out[tab]++;
@@ -119,7 +135,7 @@ function norm(text: string): string {
   return text.toLocaleLowerCase("sv-SE");
 }
 
-type FilterFields = Pick<ReviewCard, "category_id" | "kind" | "source" | "original" | "front" | "back" | "hint" | "options" | "flag_note">;
+type FilterFields = Pick<ReviewCard, "category_id" | "kind" | "source" | "original" | "front" | "back" | "hint" | "options" | "flag_note" | "translation_en">;
 
 export function matchesReviewFilter(card: FilterFields, filter: ReviewFilter): boolean {
   if (filter.area === "ingen" ? card.category_id !== null : filter.area !== "alla" && card.category_id !== filter.area) return false;
@@ -129,7 +145,10 @@ export function matchesReviewFilter(card: FilterFields, filter: ReviewFilter): b
   if (filter.origin === "nya" && card.original) return false;
   const words = norm(filter.query).split(/\s+/).filter(Boolean);
   if (words.length === 0) return true;
-  const haystack = norm([card.front, card.back, card.hint ?? "", ...(card.options ?? []).map((o) => o.text), card.source ?? "", card.flag_note ?? ""].join("\n"));
+  // Den engelska översättningen räknas också, så att en examinator kan söka på engelska.
+  const en = card.translation_en;
+  const english = en ? [en.front, en.back, en.hint ?? "", ...(en.options ?? [])] : [];
+  const haystack = norm([card.front, card.back, card.hint ?? "", ...(card.options ?? []).map((o) => o.text), card.source ?? "", card.flag_note ?? "", ...english].join("\n"));
   return words.every((w) => haystack.includes(w));
 }
 
@@ -356,36 +375,43 @@ export function contentMatrix(cards: readonly Pick<ReviewCard, "category_id" | "
 export type ReviewProgressRow = {
   areaId: string;
   title: string;
-  /** I rotation hos studenterna (aktiva, utan status). */
-  published: number;
-  /** Utkast utan flagga: väntar på ett godkännande. */
+  title_en?: string | null;
+  /** Godkända av en examinator (fliken Granskade). */
+  approved: number;
+  /** Väntar på granskning (fliken Att granska). */
   toReview: number;
-  /** Utkast med flagga: en fråga att ta ställning till först. */
+  /** Flaggade: en fråga att ta ställning till. */
   flagged: number;
+  /** Tagna ur rotation i granskningen. */
+  removed: number;
 };
 
 export type ReviewProgress = {
   rows: ReviewProgressRow[];
-  total: Omit<ReviewProgressRow, "areaId" | "title">;
+  total: Omit<ReviewProgressRow, "areaId" | "title" | "title_en">;
+};
+
+const PROGRESS_KEY: Record<ReviewTab, keyof ReviewProgress["total"]> = {
+  granskade: "approved",
+  "att-granska": "toReview",
+  flaggade: "flagged",
+  "ur-rotation": "removed",
 };
 
 /**
- * Hur långt granskningen har kommit i varje område, i områdenas ordning. Kort utan område och
- * inaktiva eller avvisade kort räknas inte: panelen visar vad studenterna ser och vad som återstår.
+ * Hur långt granskningen har kommit i varje område, i områdenas ordning, efter flikarna i
+ * granskningen. Kort utan område och kort utanför granskningen räknas inte.
  */
-export function reviewProgress(
-  cards: readonly Pick<ReviewCard, "category_id" | "is_active" | "review_status" | "flag_note">[],
-  areas: readonly ReviewArea[],
-): ReviewProgress {
-  const rows = new Map<string, ReviewProgressRow>(areas.map((a) => [a.id, { areaId: a.id, title: a.title, published: 0, toReview: 0, flagged: 0 }]));
-  const total = { published: 0, toReview: 0, flagged: 0 };
+export function reviewProgress(cards: readonly (TabFields & Pick<ReviewCard, "category_id">)[], areas: readonly ReviewArea[]): ReviewProgress {
+  const empty = () => ({ approved: 0, toReview: 0, flagged: 0, removed: 0 });
+  const rows = new Map<string, ReviewProgressRow>(areas.map((a) => [a.id, { areaId: a.id, title: a.title, title_en: a.title_en ?? null, ...empty() }]));
+  const total = empty();
   for (const c of cards) {
     const row = c.category_id === null ? undefined : rows.get(c.category_id);
-    if (!row) continue;
-    const key = c.review_status === "utkast" ? (c.flag_note ? "flagged" : "toReview") : c.review_status === null && c.is_active ? "published" : null;
-    if (!key) continue;
-    row[key]++;
-    total[key]++;
+    const tab = reviewTab(c);
+    if (!row || !tab) continue;
+    row[PROGRESS_KEY[tab]]++;
+    total[PROGRESS_KEY[tab]]++;
   }
   return { rows: areas.map((a) => rows.get(a.id)!), total };
 }

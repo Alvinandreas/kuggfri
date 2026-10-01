@@ -1,7 +1,6 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
-import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
 import type { ActionResult } from "@/lib/admin/action-helpers";
 import {
@@ -32,6 +31,7 @@ import type { ReviewStatus } from "../ReviewCardView";
 import type { ReviewEdit } from "../ReviewEditor";
 import { patchList, type useOptimisticDecisions } from "./useOptimisticDecisions";
 import type { View } from "./useReviewView";
+import type { ReviewText } from "./ReviewLanguage";
 
 const snapshot = (c: ReviewCard): ReviewSnapshot => ({
   id: c.id,
@@ -61,14 +61,17 @@ type Options = {
   setEditing: Dispatch<SetStateAction<boolean>>;
   /** Korten och sparandet (useOptimisticDecisions). */
   decisions: ReturnType<typeof useOptimisticDecisions>;
+  /** Texterna i granskningens språk. */
+  t: ReviewText;
 };
 
 /**
- * Granskningens beslut: godkänn, flagga, åtgärda, avvisa, spara en redigering och ångra.
+ * Granskningens beslut: godkänn, flagga, åtgärda, ta ur rotation (eller återställ originalet),
+ * sätt tillbaka i rotation, spara en redigering och ångra.
  * Funktionerna skapas på nytt vid varje rendering (som när de låg i komponenten), så att de ser
  * renderingens kort, flik och lista; det som ska vara färskt efter en väntan läses ur latestCards.
  */
-export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds, navigate, setStatus, setEditing, decisions }: Options) {
+export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds, navigate, setStatus, setEditing, decisions, t }: Options) {
   const { cards, setCards, setNow, latestCards, mark, run, restoreLocal } = decisions;
 
   /**
@@ -97,7 +100,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       () => restoreReviewAction(deckId, snaps),
       () => restoreLocal(before),
     ).then((ok) => {
-      if (ok !== null) setStatus({ id: Date.now(), text: sv.granskning.undone });
+      if (ok !== null) setStatus({ id: Date.now(), text: t.g.undone });
     });
   }
 
@@ -111,11 +114,11 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       card,
       at,
     );
-    setStatus({ id: at, text: sv.granskning.approved(label(card)), undo: () => undoDecision(snaps) });
+    setStatus({ id: at, text: t.g.approved(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => approveCardsAction(deckId, [card.id]), () => restoreLocal(snaps)).then((data) => {
       if (!data || data.skipped.length === 0) return;
       restoreLocal(snaps);
-      setStatus({ id: Date.now(), text: sv.admin.reviewSkipped(data.skipped.length), tone: "danger" });
+      setStatus({ id: Date.now(), text: t.admin.reviewSkipped(data.skipped.length), tone: "danger" });
     });
   }
 
@@ -130,7 +133,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       card,
       at,
     );
-    setStatus({ id: at, text: changing ? sv.granskning.flagUpdated : sv.granskning.flagged(label(card)), undo: () => undoDecision(snaps) });
+    setStatus({ id: at, text: changing ? t.g.flagUpdated : t.g.flagged(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => flagCardAction(deckId, card.id, text), () => restoreLocal(snaps));
   }
 
@@ -142,16 +145,20 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       card,
       at,
     );
-    setStatus({ id: at, text: sv.granskning.resolved(label(card)), undo: () => undoDecision(snaps) });
+    setStatus({ id: at, text: t.g.resolved(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => resolveFlagAction(deckId, card.id), () => restoreLocal(snaps));
   }
 
-  function reject(card: ReviewCard, note: string) {
+  /**
+   * Tar kortet ur rotation, eller (restore) återställer originalet för ett rättat originalkort:
+   * den senast publicerade versionen gäller igen, godkänd av granskaren.
+   */
+  function reject(card: ReviewCard, note: string, mode: "remove" | "restore" = "remove") {
     const snaps = [snapshot(card)];
     const at = Date.now();
     const reviewedAt = new Date(at).toISOString();
     const text = note.trim();
-    const versionId = card.review_status === "utkast" ? card.published_version_id : null;
+    const versionId = mode === "restore" ? card.published_version_id : null;
     if (typeof versionId === "number") {
       // En rättelse av ett publicerat kort: tillbaka till den publicerade versionen, som
       // servern skickar tillbaka (innehållet finns inte här).
@@ -171,7 +178,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       });
       setStatus({
         id: at,
-        text: sv.granskning.correctionRejected(label(card)),
+        text: t.g.correctionRejected(label(card)),
         undo: () => {
           setStatus(null);
           void pending.then((data) => {
@@ -189,7 +196,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
               },
               () => undefined,
             ).then((ok) => {
-              if (ok !== null) setStatus({ id: Date.now(), text: sv.granskning.undone });
+              if (ok !== null) setStatus({ id: Date.now(), text: t.g.undone });
             });
           });
         },
@@ -201,15 +208,29 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       card,
       at,
     );
-    setStatus({ id: at, text: sv.granskning.rejected(label(card)), undo: () => undoDecision(snaps) });
+    setStatus({ id: at, text: t.g.rejected(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => rejectCardAction(deckId, card.id, text), () => restoreLocal(snaps));
+  }
+
+  /** Sätter tillbaka ett kort som tagits ur rotation: i rotation igen och ogranskat. */
+  function putBack(card: ReviewCard) {
+    const snaps = [snapshot(card)];
+    const at = Date.now();
+    const back = { review_status: null, review_note: null, is_active: true, reviewed_by: null, reviewed_at: null } as const;
+    commit(
+      patchList(cards, card.id, (c) => ({ ...c, ...back })),
+      card,
+      at,
+    );
+    setStatus({ id: at, text: t.g.putBackDone(label(card)), undo: () => undoDecision(snaps) });
+    void run([card.id], () => restoreReviewAction(deckId, [{ ...snapshot(card), ...back }]), () => restoreLocal(snaps));
   }
 
   async function saveEdit(card: ReviewCard, edit: ReviewEdit, approveAfter: boolean): Promise<string | null> {
     mark([card.id], 1);
     try {
       const result = await saveReviewCardAction(deckId, { id: card.id, ...edit }, approveAfter).catch(() => null);
-      if (!result) return sv.errors.generic;
+      if (!result) return t.common.error;
       if (!result.ok) return result.error;
       const at = Date.now();
       const content = {
@@ -228,11 +249,14 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
           card,
           at,
         );
-        setStatus({ id: at, text: sv.granskning.savedApproved(firstLine(content.front, { maxLength: 60 })) });
+        setStatus({ id: at, text: t.g.savedApproved(firstLine(content.front, { maxLength: 60 })) });
       } else {
-        setCards((prev) => patchList(prev, card.id, (c) => ({ ...c, ...content })));
+        // Ändrat innehåll granskas igen (databasens trigger cards_review_reset gör samma sak).
+        const changed = (c: ReviewCard) =>
+          c.front !== content.front || c.back !== content.back || (c.hint ?? null) !== content.hint || c.kind !== content.kind || JSON.stringify(c.options) !== JSON.stringify(content.options);
+        setCards((prev) => patchList(prev, card.id, (c) => ({ ...c, ...content, ...(changed(c) ? { reviewed_at: null, reviewed_by: null } : {}) })));
         setEditing(false);
-        setStatus({ id: at, text: sv.granskning.saved });
+        setStatus({ id: at, text: t.g.saved });
       }
       return null;
     } finally {
@@ -240,5 +264,5 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
     }
   }
 
-  return { approve, flag, resolve, reject, saveEdit };
+  return { approve, flag, resolve, reject, putBack, saveEdit };
 }

@@ -22,25 +22,36 @@ const areas = [
   { id: "a", title: "Kristallstruktur" },
   { id: "b", title: "Polymerers struktur" },
 ];
+const card = (id: string, category_id: string, front: string, is_active: boolean, review_status: string | null, reviewed_at: string | null = null) => ({
+  id,
+  category_id,
+  front,
+  kind: "sjalvskattning" as const,
+  is_active,
+  review_status,
+  reviewed_at,
+});
 const cards = [
-  { id: "1", category_id: "a", front: "Vad är $\\sigma$?", kind: "sjalvskattning" as const, is_active: true, review_status: null },
-  { id: "2", category_id: "a", front: "Utkast", kind: "sjalvskattning" as const, is_active: false, review_status: "utkast" },
-  { id: "3", category_id: "b", front: "Inaktivt", kind: "sjalvskattning" as const, is_active: false, review_status: null },
+  card("1", "a", "Vad är $\\sigma$?", true, null, "2026-10-01T10:00:00Z"),
+  card("2", "a", "Utkast", false, "utkast"),
+  card("3", "b", "Inaktivt", false, null),
+  card("4", "b", "Ogranskat", true, null),
 ];
 
 describe("areaStatsCsv", () => {
-  it("ger en rad per område med innehåll och statistik, tomt under anonymitetsgränsen", () => {
+  it("ger en rad per område med innehåll, granskning och statistik, tomt under anonymitetsgränsen", () => {
     const rows = lines(areaStatsCsv(areas, cards, [{ category_id: "a", students: 6, ratings: 40, avg: 3.25, low: 10, learned: 2 }]));
-    expect(rows[0]).toBe("Nr;Område;Publicerade kort;Utkast;Studenter;Skattningar;Snittskattning (1–5);Andel skattningar 1–2 (%)");
-    expect(rows[1]).toBe("1;Kristallstruktur;1;1;6;40;3,25;25");
-    expect(rows[2]).toBe("2;Polymerers struktur;0;0;;;;");
+    expect(rows[0]).toBe("Nr;Område;Kort i rotation;Varav godkända;Utkast;Studenter;Skattningar;Snittskattning (1–5);Andel skattningar 1–2 (%)");
+    expect(rows[1]).toBe("1;Kristallstruktur;1;1;1;6;40;3,25;25");
+    expect(rows[2]).toBe("2;Polymerers struktur;1;0;0;;;;");
   });
 });
 
 describe("cardStatsCsv", () => {
-  it("tar bara publicerade kort, med frågan som läsbar text", () => {
+  it("tar korten i rotation med granskningsläget, och frågan som läsbar text", () => {
     const rows = lines(cardStatsCsv(areas, cards, [{ card_id: "1", ratings: 8, avg: 4, low: 1, reps: 20 }]));
-    expect(rows).toHaveLength(2);
-    expect(rows[1]).toMatch(/^Kristallstruktur;Vad är σ\?;[^;]+;8;4;13;20$/);
+    expect(rows).toHaveLength(3);
+    expect(rows[1]).toMatch(/^Kristallstruktur;Vad är σ\?;[^;]+;Godkänd;8;4;13;20$/);
+    expect(rows[2]).toMatch(/^Polymerers struktur;Ogranskat;[^;]+;Ogranskad;;;;$/);
   });
 });

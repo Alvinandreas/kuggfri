@@ -100,7 +100,8 @@ export async function rejectCorrectionAction(
     const loaded = await load(supabase, deckId, cardId, versionId);
     if (!loaded) return { ok: false, error: sv.admin.historyNotFound };
     const { target, current } = loaded;
-    if (!isPublished(target) || current.review_status !== "utkast") return { ok: false, error: sv.admin.correctionNotApplicable };
+    // Ett utkast eller ett ogranskat kort i rotation (1 okt: rättelserna ligger i rotation tills de granskats).
+    if (!isPublished(target) || current.review_status === "avvisad") return { ok: false, error: sv.admin.correctionNotApplicable };
 
     const reviewedAt = new Date().toISOString();
     const { data, error } = await supabase

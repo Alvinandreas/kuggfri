@@ -16,6 +16,7 @@
  *   npm run kuggfri -- utgavor <kurs>                                              lista sparade lägen
  *   npm run kuggfri -- aterga <kurs> <utgåva> [--kort k1,k2] [--mal prod] [--ja]   gå tillbaka (se scripts/utgavor.ts)
  *   npm run kuggfri -- tentor kontrollera|plan|apply <kurs> [--mal prod] [--ja]      tentabanken (docs/TENTOR.md)
+ *   npm run kuggfri -- engelska <kurs> [--mal prod] [--ja]   engelska för granskningen (content/<kurs>/engelska.json)
  *
  * Mål: `--mal lokal` (standard) eller `--mal prod` (det länkade Supabase-projektet).
  * Inga nycklar i repot: produktionen nås via Supabase CLI:ns egen inloggning.
@@ -26,6 +27,7 @@ import { OMRADE_COMMANDS, runOmraden } from "./omraden";
 import { parseArgs } from "./cli/args";
 import { fail, say } from "./cli/output";
 import { cmdApply, cmdKontrollera, cmdPlan, cmdPull } from "./kommandon/innehall";
+import { cmdEngelska } from "./kommandon/engelska";
 import { cmdKonvertera, cmdNyKategori, cmdNyKurs, cmdTaBortKurs } from "./kommandon/kurs";
 import { cmdSeed } from "./kommandon/seed";
 import { cmdTentor } from "./kommandon/tentor";
@@ -73,6 +75,8 @@ async function main(): Promise<void> {
       return cmdUtgava(args);
     case "tentor":
       return cmdTentor(args);
+    case "engelska":
+      return cmdEngelska(args);
     case "utgavor":
       return cmdUtgavor(args);
     case "aterga":

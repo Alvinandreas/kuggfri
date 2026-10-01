@@ -3,7 +3,6 @@
 ## Vilka är de olika stegen i materialvalsprocessen?
 key: vilka-ar-de-olika-stegen-i
 original: ja
-status: utkast
 källa: Rättelse: iteration stod som ett femte steg, men strategin har fyra steg och iterationen är ett tillägg; Canvas, Kapitel_03 Materialval, s. 26, 42; Canvas, Ashby et al Materials 3 utgavan PRELIMINAR Lasanvisning och detaljerade larmal Kap 1-12, s. 2
 flagga: Rättelse av originalkortet: "5. Iterera" stod som ett femte steg, men Kapitel_03 s. 26 och 42 numrerar fyra steg och tar upp iteration separat, och svarsförslaget till tentan 2025-10-30 talar om fyra steg. Fö 2 Materialval 2025 s. 9 har dock "Iterera" som en egen bild efter steg 4. Godkänns att kortet anger fyra steg plus iteration?
 
@@ -57,7 +56,6 @@ Leta i dokumentation (handböcker, artiklar, standarder m.m.) för att se om det
 ## Vad innebär det att iterera materialvalet, och varför är det viktigt?
 key: beskriv-vad-man-gor-i-5
 original: ja
-status: utkast
 källa: Rättelse: kortet sa att man utökar mängden material efter första iterationen, men kursen säger att man börjar brett med materialgrupperna och sedan begränsar sig; Canvas, Kapitel_03 Materialval, s. 26, 42; Canvas, Fo 2 Materialval, s. 9
 flagga: Rättelse av originalkortet: det sa att man brukar utöka mängden material efter första iterationen, men Kapitel_03 s. 26 och Fö 2 Materialval s. 9 säger att man börjar brett med materialgrupperna och sedan begränsar sig (CES nivå 1, sedan nivå 2 och 3). Framsidan kallar inte längre iterationen ett steg. Godkänns den nya texten?
 
@@ -73,7 +71,6 @@ Lastfallet bestämmer vilket materialindex som är bäst lämpat för situatione
 ## Vad är ett lastfall och varför är det viktigt i materialvalsprocessen?
 key: vad-ar-ett-lastfall-och-varfor-ar-det
 original: ja
-status: utkast
 källa: Rättelse: påståendet att man ska använda det lastfall som förekommer oftast saknar stöd i kursmaterialet och är struket; dubbletten vad-har-lastfall-for-inverkan-pa är inaktiverad; Canvas, Fo 7 Styvhet, s. 15, 17; Canvas, Kapitel_03 Materialval, s. 33, 35
 flagga: Rättelse av originalkortet: påståendet att man ska använda "lastfallet som förekommer oftast" saknar stöd i kursmaterialet och är struket; i stället står att bara typen av lastfall behövs (Fö 7 Styvhet s. 15) med indexexempel från Kapitel_03 s. 35. Dubbletten vad-har-lastfall-for-inverkan-pa är samtidigt inaktiverad. Godkänns rättelsen och inaktiveringen?
 
@@ -109,7 +106,6 @@ spänning)
 ## Materialval: vilket påstående är sant?
 key: quiz-materialval-vad-ar-sant-ett-ratt-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 4; Canvas, Kapitel_03 Materialval, s. 8, 9, 25, 28, 43; Canvas, Fo 2 Materialval, s. 5, 6, 7
 
 - [x] Materialvalet påverkas av möjliga tillverkningsmetoder.
@@ -122,7 +118,6 @@ Material, form och process samverkar: en specificerad process begränsar valet a
 ## Materialval: vilka påståenden är sanna?
 key: quiz-materialval-vad-ar-sant-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 5; Canvas, Fo 2 Materialval, s. 5, 6, 7
 flagga: Quizens rätta alternativ "Alla material som är kvar efter sållningen kan användas för att göra produkten" är tvetydigt, eftersom det är rangordningen som avgör vilket material som är bäst. Kortet säger nu att materialen "uppfyller kraven och kan därför användas i komponenten" (Fö 2 Materialval s. 5 till 7). Godkänns omformuleringen, och ska Quiz vecka 1 fråga 5 ändras likadant?
 
@@ -136,7 +131,6 @@ Sållningen tar bort alla material som inte fyller kraven, eftersom komponenten 
 ## Vad behöver man veta för att bestämma ett materialindex?
 key: quiz-for-att-bestamma-materialindex-behover
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 8; Canvas, Fo 7 Styvhet, s. 17; Canvas, Kapitel_03 Materialval, s. 26
 
 - [x] Lastfall
@@ -149,7 +143,6 @@ Vilket materialindex som gäller bestäms av vilken egenskap som ska optimeras (
 ## Materialindex: vilka påståenden är rätt?
 key: quiz-materialindex-vad-ar-ratt-2-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 3, fråga 9; Canvas, Fo 2 Materialval, s. 6, 7; Canvas, Kapitel_03 Materialval, s. 35; Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25; Canvas, performance-indices-booklet-bokpeien22, s. 2
 flagga: Quizens felaktiga alternativ "materialindex rangordnar material efter hur bra de uppfyller kraven" var fel bara på ordet krav (index rangordnar efter målet) och kunde läsas som rätt. Det är utbytt mot "Materialindex används i sållningen för att ta bort de material som inte uppfyller kraven" (Fö 2 Materialval s. 6, 7; Kapitel_03 s. 26), så kortet avviker från Quiz vecka 3 fråga 9. Godkänns bytet?
 
@@ -163,7 +156,6 @@ Materialindex rangordnar material efter hur väl de uppfyller målet; kraven anv
 ## Vilka av följande är krav (och inte mål) i en översättning?
 key: materialval-krav-eller-mal
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 2 Materialval, s. 5; Canvas, Kapitel_03 Materialval, s. 24, 25
 
 - [x] Tåla vatten
@@ -177,7 +169,6 @@ Krav är egenskaper som måste vara uppfyllda för att komponenten ska fungera, 
 key: sallning-inget-krav-pa-malegenskap
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, Fo 2 Materialval, s. 6
 
 Materialegenskaper som ingår i målfunktionen ska inte användas vid sållningen. Densiteten hanteras i stället i rangordningen, via materialindexet (t.ex. $\rho/\sigma_y$ för en lätt och stark dragstång).
@@ -185,7 +176,6 @@ Materialegenskaper som ingår i målfunktionen ska inte användas vid sållninge
 ## Lätt och stark dragstång (får inte plasticera): vilket materialindex ska minimeras?
 key: materialindex-latt-stark-dragstang
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 35, 37
 
 - [x] $\rho/\sigma_y$
@@ -198,7 +188,6 @@ För en dragstång med minsta massa gäller $\rho/\sigma_y$ när hållfastheten 
 ## Lätt och styv balk i böjning (tvärsnittsarean fri): vilket materialindex ska minimeras?
 key: materialindex-latt-styv-balk
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 35, 36; Canvas, Fo 7 Styvhet, s. 20
 
 - [x] $\rho/E^{1/2}$
@@ -210,7 +199,6 @@ För en lätt och styv balk i böjning är indexet $\rho/E^{1/2}$ (minimeras), d
 
 ## Härled materialindex för en lätt och stark dragstång med given längd L och last F.
 key: harled-materialindex-dragstang
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 37; Canvas, Ashby et al Materials 3 utgavan PRELIMINAR Lasanvisning och detaljerade larmal Kap 1-12, s. 4
 
 Översättning: funktion dragstång; mål minsta massa; krav längden L given och stången får inte gå sönder (plasticera) under lasten F; fria variabler materialet och tvärsnittsarean A.
@@ -224,7 +212,6 @@ F och L är givna, så massan blir minst för det material som har lägst $\rho/
 ## I ett diagram med $\log E$ mot $\log \rho$ ligger material med samma värde på $E^{1/2}/\rho$ på en linje. Vilken lutning har linjen?
 key: materialindex-lutning-bubbeldiagram
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 36; Canvas, Fo 7 Styvhet, s. 23
 
 - [x] 2
@@ -238,14 +225,12 @@ Om $E^{1/2}/\rho = C$ blir $E = C^2\rho^2$, och med logaritmer $\log E = 2\log\r
 key: konceptdesign-materialdata
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 3, 8
 
 I konceptdesign står alla material till förfogande och man använder data med låg precision, enkla egenskaper som är typiska för varje materialgrupp. I primärdesign jämförs ett fåtal material med mer detaljerade data, och först i detaljdesignen behövs välspecificerade data för ett material och en process.
 
 ## Vad är en Paretoyta (paretodiagram) i materialval och när används den?
 key: paretoyta-materialval
-status: utkast
 källa: Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25
 
 Den används när det finns en konflikt mellan önskemål (mål), t.ex. låg vikt och lågt pris, och det är oklart vilken parameter som är viktigast. Ett paretodiagram visar vilka alternativ som är de bästa kompromisserna mellan målen.
@@ -253,7 +238,6 @@ Den används när det finns en konflikt mellan önskemål (mål), t.ex. låg vik
 ## Lätt och stark panel i böjning (längd och bredd givna, tjockleken fri): vilket materialindex ska minimeras?
 key: materialindex-latt-stark-panel
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 34, 35; Canvas, Ovning 4 m losningar, s. 4
 
 - [x] $\rho/\sigma_y^{1/2}$
@@ -266,7 +250,6 @@ För minsta massa hos en panel i böjning, där hållfastheten är dimensioneran
 ## Billig och stark balk i böjning (längd och last givna, tvärsnittsarean fri): vilket materialindex ska maximeras?
 key: materialindex-billig-stark-balk
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 34, 35
 flagga: Kortet underkänner distraktorn σy^(2/3)/Cm för att densiteten saknas, i linje med Kapitel_03 s. 34 (Cm gånger ρ). Kursens egna lösningar skriver kostnadsindex utan ρ (Övning 3 m lösningar s. 5 svar 10d och Materialval Flera mål s. 4), så en student som följer lösningarna kan välja distraktorn. Är lösningarna en förkortning eller ett fel, och ska kortet nämna det?
 
@@ -280,7 +263,6 @@ När målet är lägsta materialkostnad i stället för lägsta vikt ersätts de
 ## Material för en lätt och stark balk rangordnas med $\sigma_y^{2/3}/\rho$. Vilken lutning har linjer med konstant indexvärde i ett diagram med $\log\sigma_y$ mot $\log\rho$?
 key: materialindex-lutning-hallfast-balk
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_03 Materialval, s. 35, 36
 
 - [x] 1,5
@@ -293,7 +275,6 @@ $\sigma_y^{2/3}/\rho = C$ ger $\sigma_y^{2/3} = C\rho$, alltså $\sigma_y = C^{3
 ## Vilka par av komponent och typiskt lastfall stämmer?
 key: lastfall-identifiera-komponent
 typ: alternativ
-status: utkast
 källa: Canvas, Ovning 3 m losningar, s. 1, 5; Canvas, Kapitel_03 Materialval, s. 33
 
 - [x] Läskburk: skal med inre tryck
@@ -306,7 +287,6 @@ I översättningen beskrivs komponentens funktion som ett typiskt lastfall, efte
 ## Lätt tryckkärl: en cylinder med givet inre tryck och given radie, där väggtjockleken är fri, får inte plasticera. Vilket materialindex ska maximeras?
 key: materialindex-tryckkarl-cylinder
 typ: alternativ
-status: utkast
 källa: Canvas, Ovning 4 m losningar, s. 4; Canvas, Kapitel_03 Materialval, s. 35
 
 - [x] $\sigma_y/\rho$
@@ -318,7 +298,6 @@ I kursens indextabell för hållfasthetsbegränsad design med minsta massa gäll
 
 ## Tältstängerna till ett fjälltält ska vara så lätta som möjligt. Gör en översättning och välj materialindex.
 key: materialval-taltstang-oversattning
-status: utkast
 källa: Canvas, Materialval Flera mal, s. 2, 3, 4; Canvas, Kapitel_03 Materialval, s. 34, 35; Canvas, Kapitel_03 Materialval Repetition och Inlamningsuppgift, s. 24, 25
 
 * **Funktion:** balk i böjning, styvhetsbegränsad

@@ -29,6 +29,7 @@ import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
 import { Logo } from "@/components/layout/Logo";
 import { ProfileMenu, type ShellUser } from "@/components/layout/ProfileMenu";
+import { useReviewT } from "@/components/admin/review/ReviewLanguage";
 
 type NavLink = {
   href: string;
@@ -141,14 +142,14 @@ function SectionLabel({ children }: { children: string }) {
  * alltid till den låsta kursen (Materialteknik, beslut 30 sep), och inget kursnamn står under
  * rubriken. Bara admin får Alla kurser (adminstartsidan, där Ny kurs finns) och designsystemet.
  */
-function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean): NavLink[] {
+function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean, english: boolean): NavLink[] {
   const links: NavLink[] = [];
   if (deck) {
     for (const tab of ADMIN_TABS) {
       const badge = tab.counter ? deck[tab.counter.key] : undefined;
       links.push({
         href: tab.href(deck.id),
-        label: tab.label,
+        label: english ? tab.labelEn : tab.label,
         icon: tab.icon,
         exact: tab.exact,
         also: tab.also?.(deck.id),
@@ -185,7 +186,9 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
       ? courseLinks(courses[0], adminDeckIds)
       : [{ href: routes.courses(), label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDeckIds) : [])]),
   ];
-  const admin = adminLinks(adminDeck, isAdmin);
+  // Adminposterna följer granskningens språkreglage (English), resten av menyn är alltid svensk.
+  const english = useReviewT().lang === "en";
+  const admin = adminLinks(adminDeck, isAdmin, english);
   return (
     <>
       {top}
@@ -198,7 +201,7 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
         </div>
         {admin.length > 0 ? (
           <>
-            <SectionLabel>{sv.shell.sectionAdmin}</SectionLabel>
+            <SectionLabel>{english ? "Administration" : sv.shell.sectionAdmin}</SectionLabel>
             <div className="space-y-0.5" data-testid="sidebar-admin">
               {admin.map((l) => (
                 <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />

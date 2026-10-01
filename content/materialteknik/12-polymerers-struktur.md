@@ -25,7 +25,6 @@ polymerkedjor
 ## Vad stämmer om en delkristallin (semi-crystalline) polymer?
 key: quiz-a-semi-crystalline-polymer-en
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fo15-18, fråga 1; Canvas, MTT085 PM 1, s. 7, 9; Canvas, MTT085 PM 2, s. 4; Canvas, MTT085 PM 3, s. 4
 
 - [x] Den är en typ av termoplast
@@ -38,7 +37,6 @@ Termoplaster delas in i amorfa och delkristallina. Över Tm är polymeren en sm�
 ## Vad stämmer om termoplaster?
 key: quiz-thermoplastic-polymers-termoplastiska
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fo15-18, fråga 2; Canvas, MTT085 PM 1, s. 7; Canvas, MTT085 PM 3, s. 6; Canvas, MTT085 PM 2, s. 1, 3
 
 - [x] Som smälta har de en skjuvförtunnande viskositetsfunktion
@@ -51,7 +49,6 @@ Termoplaster är antingen amorfa eller delkristallina. Som smälta är de skjuvf
 ## Vad stämmer om sampolymerer (copolymers)?
 key: quiz-copolymers-sampolymerer-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fo15-18, fråga 3; Canvas, Tentamen MTT085 24-01, s. 8; Canvas, Svarsforslag Tentamen MTT085 24-01, s. 3; Canvas, 05142_03-3 (Osswald kap. 3), s. 25–26; Canvas, MTT085-Turorials-Part12, s. 1; Canvas, MTT085 PM 1, s. 6
 
 - [x] De innehåller två eller fler typer av monomerer i samma kedja
@@ -64,7 +61,6 @@ En sampolymer har två eller fler monomertyper i samma kedja och kan vara linjä
 ## Vad stämmer om härdplaster (thermosets)?
 key: quiz-thermosets-hardplaster-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz Polymeric materials Fo15-18, fråga 4; Canvas, MTT085 PM 1, s. 10; Canvas, 2025 MTT085 Fo15, s. 44; Canvas, MTT085 PM 2, s. 4
 flagga: Quizens felaktiga alternativ "är gjorda för högtemperaturapplikationer" kan uppfattas som delvis rätt (härdplaster används både över och under Tg, Lab-PM Polymer s. 2) och är omskrivet till "De definieras som den grupp polymerer som tagits fram för högtemperaturtillämpningar". Godkänns omskrivningen, eller ska quizens ordalydelse stå kvar?
 
@@ -78,7 +74,6 @@ Härdplaster är högt tvärbundna amorfa polymerer. Nätverket bildas vid härd
 ## En polymer består av lika många kedjor med molekylvikten 100 000, 200 000 och 300 000 g/mol. Vad blir Mn och Mw?
 key: polymer-mn-mw-berakning
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo15, s. 28; Canvas, MTT085 PM 1, s. 5
 
 - [x] Mn = 200 000 g/mol och Mw ≈ 233 000 g/mol
@@ -97,7 +92,6 @@ Mw väger de tunga kedjorna tyngre och blir därför större än Mn; Mw = Mn gä
 ## Uppskatta polymerisationsgraden för en polyeten med molekylvikten 150 000 g/mol (etenmonomeren väger 28 g/mol).
 key: polymer-polymerisationsgrad-pe-berakning
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 4; Canvas, 2021 MTT085 Ovningsuppgifter - Polymera material, s. 2; Canvas, MTT085 PM 1, s. 2
 
 - [x] Ca 5 360 repeterande enheter
@@ -110,7 +104,6 @@ Polymerisationsgraden är antalet repeterande enheter: $DP = M/M_0 = 150\,000/28
 ## Hur lång är en fullt utsträckt polyetenmolekyl med molekylvikten 84 000 g/mol? (Repeterande enhet 28 g/mol, 0,252 nm per enhet.)
 key: polymer-kedjelangd-pe-berakning
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 4
 
 - [x] Ca 760 nm (0,76 µm)
@@ -123,7 +116,6 @@ Antalet repeterande enheter är $n = 84\,000/28 = 3\,000$. Den utsträckta läng
 ## Vinylpolymerer har den repeterande enheten –[CH₂–CHX]ₙ–. Vilka par av sidogrupp X och polymer är rätt?
 key: polymer-vinylpolymerer-sidogrupper
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo15, s. 20; Canvas, MTT085 PM 1, s. 3; Canvas, Svar Materialteknik 2018-10-27, s. 7
 
 - [x] X = H ger polyeten (PE)
@@ -136,7 +128,6 @@ Sidogrupperna i kursen: X = H ger PE, X = CH₃ ger PP, X = C₆H₅ (fenylgrupp
 ## Vilka övergångstemperaturer har de olika polymertyperna?
 key: polymer-overgangstemperaturer-per-typ
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo16, s. 21; Canvas, MTT085 PM 2, s. 3–4
 
 - [x] Amorf termoplast: Tg men ingen Tm
@@ -149,7 +140,6 @@ Amorfa termoplaster har bara Tg. Delkristallina har Tg, där de amorfa delarna m
 ## Inom vilket temperaturintervall används en delkristallin termoplast?
 key: polymer-anvandningsintervall-delkristallin
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 2, s. 4; Canvas, 2025 MTT085 Fo16, s. 18
 flagga: Alternativet "Under Tg" är markerat som fel enligt MTT085 PM 2 s. 4, men det finns delkristallina termoplaster som används under sitt Tg, t.ex. PET (Tg ca 75 °C) i flaskor, så distraktorn är inte entydigt fel. Ska frågan precisera "typiskt" eller distraktorn bytas ut?
 
@@ -163,7 +153,6 @@ Mellan Tg och Tm har de amorfa delarna mjuknat medan kristalliterna håller ihop
 ## Vad händer med skjuvmodulen hos en amorf termoplast, t.ex. PS, när temperaturen passerar Tg?
 key: polymer-skjuvmodul-amorf-vid-tg
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 2, s. 3–4; Canvas, 2025 MTT085 Fo16, s. 13
 
 - [x] Den sjunker med ungefär tre dekader (ca 1 000 gånger)
@@ -176,7 +165,6 @@ Vid Tg vibrerar kedjorna så kraftigt att de kan röra sig betydligt friare, och
 ## Vilken tillsats sänker hårdheten och styvheten hos en plast?
 key: polymer-tillsats-mjukgorare
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 1–2; Canvas, 05142_03-3 (Osswald kap. 3), s. 3
 
 - [x] Mjukgörare
@@ -190,7 +178,6 @@ Mjukgörare ökar avståndet mellan molekylerna, vilket sänker styvheten och Tg
 key: polymer-pdi-ett-monodispers
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 6; Canvas, 05142_03-3 (Osswald kap. 3), s. 6
 
 Eftersom Mw ≥ Mn är PDI = Mw/Mn alltid minst 1. Mw = Mn, alltså PDI = 1, gäller bara om alla kedjor är lika långa (monodispers polymer). De flesta polymerer är polydispersa med PDI > 1.
@@ -199,7 +186,6 @@ Eftersom Mw ≥ Mn är PDI = Mw/Mn alltid minst 1. Mw = Mn, alltså PDI = 1, gä
 key: polymer-ataktisk-pp-kristallinitet
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 9; Canvas, 05142_03-3 (Osswald kap. 3), s. 9
 
 Det är tvärtom. I isotaktisk PP sitter alla CH₃-grupper på samma sida, så kedjorna kan packas sida vid sida och nå hög kristallinitet. I ataktisk PP sitter sidogrupperna slumpvis, vilket gör det svårt för grannkedjorna att låsas i ett ordnat läge.
@@ -208,7 +194,6 @@ Det är tvärtom. I isotaktisk PP sitter alla CH₃-grupper på samma sida, så 
 key: polymer-restmonomer-tg
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 4; Canvas, 05142_03-3 (Osswald kap. 3), s. 3
 
 Restmonomer som är löslig i polymeren fungerar som mjukgörare och sänker Tg. Mjukgörare ökar avståndet mellan molekylerna så att de rör sig lättare.
@@ -217,7 +202,6 @@ Restmonomer som är löslig i polymeren fungerar som mjukgörare och sänker Tg.
 key: polymer-amorf-termoplast-under-tg
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 PM 2, s. 4; Canvas, Lab-PM Polymer_MTT085-1, s. 2
 
 Över Tg förlorar en amorf termoplast sin styvhet, eftersom det inte finns några kristalliter som håller ihop materialet. Användningstemperaturen är därför T < Tg med en säkerhetsmarginal. För delkristallina termoplaster är det i stället Tm som begränsar uppåt.
@@ -226,7 +210,6 @@ källa: Canvas, MTT085 PM 2, s. 4; Canvas, Lab-PM Polymer_MTT085-1, s. 2
 key: polymer-kovalent-och-van-der-waals
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 3; Canvas, 05142_03-3 (Osswald kap. 3), s. 2; Canvas, 2025 MTT085 Fo15, s. 14
 flagga: Påståendet slår ihop två av de rätta påståendena i tentan 2025-10-30 uppg. 7a (kovalenta bindningar i kedjan, van der Waals mellan kedjorna), och förklaringen följer facit till tentan 2016-10-29 uppg. 7.2; samma fakta står i PM 1 s. 3. Ligger kortet för nära tentan?
 
@@ -236,7 +219,6 @@ C–C-bindningarna i huvudkedjan är kovalenta och starka, medan krafterna mella
 key: polymer-hdpe-ldpe-kristallinitet
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 9; Canvas, 2025 MTT085 Fo15, s. 35
 
 HDPE består av linjära molekyler och kan nå en kristallinitet på upp till ca 75 %. LDPE har långkedjeförgreningar som hindrar grannkedjorna från att närma sig och låsas sida vid sida, vilket ger lägre kristallinitet.
@@ -244,7 +226,6 @@ HDPE består av linjära molekyler och kan nå en kristallinitet på upp till ca
 ## Monomer
 key: polymer-begrepp-monomer
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 1; Canvas, MTT085 PM 1, s. 1
 
 Den repeterande byggstenen i en polymer: en molekyl som kan binda till likadana molekyler och bilda en polymerkedja genom polymerisation. Exempel: eten (C₂H₄, en gas) är monomeren i polyeten.
@@ -252,7 +233,6 @@ Den repeterande byggstenen i en polymer: en molekyl som kan binda till likadana 
 ## Polymerisationsgrad
 key: polymer-begrepp-polymerisationsgrad
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 2; Canvas, 05142_03-3 (Osswald kap. 3), s. 1; Canvas, MTT085-Turorials-Part12, s. 4
 
 Antalet repeterande enheter n i en polymerkedja. Den kan uppskattas som molekylvikten delad med monomerens molekylvikt: $DP = M/M_0$.
@@ -260,7 +240,6 @@ Antalet repeterande enheter n i en polymerkedja. Den kan uppskattas som molekylv
 ## Takticitet (tacticity)
 key: polymer-begrepp-takticitet
 typ: begrepp
-status: utkast
 källa: Canvas, 05142_03-3 (Osswald kap. 3), s. 9; Canvas, MTT085 PM 1, s. 7, 9
 
 Hur sidogrupperna är placerade längs kolkedjan. Isotaktisk: alla på samma sida. Syndiotaktisk: regelbundet omväxlande. Ataktisk: slumpvis. Takticiteten avgör hur hög kristallinitet polymeren kan nå; isotaktisk PP blir mer kristallin än ataktisk.
@@ -268,7 +247,6 @@ Hur sidogrupperna är placerade längs kolkedjan. Isotaktisk: alla på samma sid
 ## Sampolymer (copolymer)
 key: polymer-begrepp-sampolymer
 typ: begrepp
-status: utkast
 källa: Canvas, 05142_03-3 (Osswald kap. 3), s. 25–26; Canvas, MTT085-Turorials-Part12, s. 1
 
 En polymer vars kedjor innehåller två eller fler typer av monomerer (en homopolymer har bara en). Typer: slumpvis, alternerande, block och ymp (graft). Exempel: ABS (akrylnitril-butadien-styren) och SBR (styren-butadiengummi).
@@ -276,7 +254,6 @@ En polymer vars kedjor innehåller två eller fler typer av monomerer (en homopo
 ## Polymerblandning (polymer blend)
 key: polymer-begrepp-polymerblandning
 typ: begrepp
-status: utkast
 källa: Canvas, 05142_03-3 (Osswald kap. 3), s. 27; Canvas, 2025 MTT085 Fo15, s. 34
 
 En blandning av två eller fler polymerer som görs för att förbättra egenskaperna hos de enskilda polymererna. Till skillnad från en sampolymer sitter de olika monomererna inte i samma kedja. Exempel: PP-PC, PVC-ABS och LDPE + HDPE.
@@ -284,7 +261,6 @@ En blandning av två eller fler polymerer som görs för att förbättra egenska
 ## Sfärulit (spherulite)
 key: polymer-begrepp-sfarulit
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 8–9; Canvas, 2025 MTT085 Fo16, s. 15; Canvas, MTT085 Polymeric materials L6, s. 8
 
 Den största strukturen (längdskalan) i en delkristallin polymer: kristalliterna bildar lameller, som i sin tur bygger upp sfäruliter, och mellan dem finns amorfa områden. Sfäruliter kan vara ungefär 1 till 500 µm stora, alltså mycket större än ljusets våglängd, och syns tydligt i ett mikroskop med polariserat ljus.
@@ -292,7 +268,6 @@ Den största strukturen (längdskalan) i en delkristallin polymer: kristallitern
 ## Tvärbindning (crosslinking)
 key: polymer-begrepp-tvarbindning
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 10; Canvas, 2025 MTT085 Fo15, s. 44
 
 Bindningspunkter, i tekniska polymerer oftast kovalenta, som knyter ihop kedjorna till ett nätverk. De bildas vid härdning (curing) av monomerer med fler än två bindningsställen. Kovalent tvärbundna polymerer kan inte smältas om. Hög tvärbindningsgrad ger en styv härdplast, låg ger en elastomer.
@@ -300,14 +275,12 @@ Bindningspunkter, i tekniska polymerer oftast kovalenta, som knyter ihop kedjorn
 ## Glasomvandlingstemperatur (Tg)
 key: polymer-begrepp-glasomvandlingstemperatur
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 4; Canvas, MTT085 PM 2, s. 3–4
 
 Temperaturen där en amorf polymer, eller de amorfa delarna av en delkristallin polymer, går från glasartat tillstånd till ett gummiartat eller smält tillstånd. Omvandlingen är reversibel och är inte smältpunkten; styvheten sjunker kraftigt vid Tg.
 
 ## Varför är polymerer bra termiska isolatorer?
 key: polymer-varfor-termiska-isolatorer
-status: utkast
 källa: Canvas, MTT085 PM 2, s. 1–2; Canvas, 2025 MTT085 Fo16, s. 7–8, 21; Canvas, 2025 MTT085 Fo15, s. 21
 flagga: Kortet säger att värme i metaller leds som gittervibrationer (fononer), som i MTT085 PM 2 s. 1, men i metaller leds värme främst av de fria elektronerna, vilket korten i område 01 också säger (elektronmoln ger termisk ledning). Ska meningen strykas eller skrivas om så att korten inte motsäger varandra?
 
@@ -315,7 +288,6 @@ I metaller leds värme som vågor av gittervibrationer (fononer). En lång polym
 
 ## Varför är amorfa termoplaster transparenta medan delkristallina ofta är translucenta eller opaka?
 key: polymer-transparens-amorf-delkristallin
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 8–10; Canvas, 2025 MTT085 Fo16, s. 15
 
 **Amorfa** termoplaster (t.ex. PS, PC, PMMA) består av slumpvis orienterade kedjor utan överstruktur och är transparenta om de inte innehåller pigment eller andra tillsatser.
@@ -325,7 +297,6 @@ källa: Canvas, MTT085 PM 1, s. 8–10; Canvas, 2025 MTT085 Fo16, s. 15
 ## Antalsmedel- och viktmedelmolekylvikt (Mn och Mw)
 key: polymer-begrepp-mn-mw
 typ: begrepp
-status: utkast
 källa: Canvas, 2025 MTT085 Fo15, s. 25, 28; Canvas, MTT085 PM 1, s. 4, 5, 6
 
 En polymer består av kedjor med olika längd, så molekylvikten beskrivs med en molekylviktsfördelning och medelvärden:
@@ -338,7 +309,6 @@ $M_w \ge M_n$, och polydispersitetsindex $\mathrm{PDI} = M_w/M_n$ är ett mått 
 ## Kortkedje- och långkedjeförgrening
 key: polymer-begrepp-langkedjeforgrening
 typ: begrepp
-status: utkast
 källa: Canvas, 2025 MTT085 Fo15, s. 35; Canvas, MTT085 PM 1, s. 7, 9
 
 Förgrening beskriver polymermolekylens topologi. De flesta tekniska polymerer är linjära, kortkedjeförgrenade eller långkedjeförgrenade. Med kortkedjeförgrening har huvudkedjan korta sidokedjor, t.ex. HDPE (ca 4–10 per 1 000 C-atomer) och LLDPE (ca 10–35), och molekylen räknas fortfarande som linjär. Med långkedjeförgrening, som i LDPE, har kedjan långa grenar. Grenarna hindrar grannkedjorna från att packas tätt, så HDPE (linjär) når mycket högre kristallinitet (upp till ca 75 %) än LDPE. Förgrening är något annat än takticitet, som beskriver hur sidogrupperna sitter längs kedjan.
@@ -346,7 +316,6 @@ Förgrening beskriver polymermolekylens topologi. De flesta tekniska polymerer �
 ## LLDPE har ca 10–35 korta sidokedjor per 1 000 kolatomer. Hur räknas molekylen i kursens indelning efter topologi?
 key: polymer-topologi-lldpe
 typ: alternativ
-status: utkast
 källa: Canvas, 2025 MTT085 Fo15, s. 35; Canvas, MTT085 PM 1, s. 7
 
 - [x] Linjär, med kortkedjeförgrening
@@ -359,7 +328,6 @@ Både HDPE (ca 4–10 korta sidokedjor per 1 000 C) och LLDPE (linear low densit
 ## Bilden visar tre schematiska polymerstrukturer. Vilken visar en tvärbunden polymer, som en härdplast? ![Tre schematiska polymerstrukturer märkta A, B och C](/kort/materialteknik/polymerstrukturer-abc.svg)
 key: polymer-struktur-bild-hardplast
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 1, s. 7, 8, 10; Canvas, 2025 MTT085 Fo15, s. 44
 flagga: Kortet visar tre schematiska polymerstrukturer A, B och C i en egen figur och frågar vilken som är en härdplast, vilket i stort sett är tentan 2024-08 uppg. 7 (matcha strukturerna A, B och C mot delkristallin termoplast, amorf termoplast och härdplast). Ligger kortet för nära tentan?
 
@@ -372,7 +340,6 @@ A har kedjor som är sammanbundna i ett nätverk av tvärbindningar: högt tvär
 ## En DMTA-mätning visar när temperaturen höjs: först ett måttligt fall i modulen, sedan en platå där materialet fortfarande är fast, och till sist ett mycket brant fall. Vilken polymertyp är det troligen?
 key: polymer-modulkurva-delkristallin
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 2, s. 2, 3, 4; Canvas, 2025 MTT085 Fo16, s. 10, 13, 21
 
 - [x] En delkristallin termoplast: fallet vid Tg i de amorfa delarna, det branta fallet vid Tm
@@ -385,7 +352,6 @@ Modulen ritas i logaritmisk skala. I en delkristallin polymer mjuknar de amorfa 
 ## En polymers modul faller vid Tg och planar sedan ut på en lägre nivå, som håller tills materialet bryts ned vid hög temperatur utan att det smälter. Vilken typ av polymer är det?
 key: polymer-modulkurva-tvarbunden
 typ: alternativ
-status: utkast
 källa: Canvas, MTT085 PM 2, s. 4; Canvas, Lab-PM Polymer_MTT085-1, s. 2
 
 - [x] En tvärbunden polymer (elastomer eller härdplast)
@@ -398,7 +364,6 @@ Tvärbundna polymerer är amorfa och har ett Tg, men de bryts ned innan de kan s
 ## Vilka av följande är härdplaster?
 key: polymer-hardplaster-forkortningar
 typ: alternativ
-status: utkast
 källa: Canvas, 05142_01-3 (Osswald kap. 1), s. 9; Canvas, 2025 MTT085 Fo16, s. 20; Canvas, MTT085 PM 1, s. 10
 flagga: Kortet säger att 80 % av härdplasterna används som matris i kompositer, som MTT085 PM 1 s. 10, men Polymeric materials L4-5 s. 1 använder samma 80 % om att härdplaster utgör ca 80 % av kompositernas produktionsvolym, vilket är ett annat påstående. Vilken uppgift stämmer, eller ska siffran strykas?
 
@@ -414,7 +379,6 @@ I kursbokens förkortningstabell är MF, PF, UF, UP, PUR (polyuretan) och EP (ep
 ## Tillsatser i plast
 key: polymer-begrepp-tillsatser
 typ: begrepp
-status: utkast
 källa: Canvas, MTT085-Turorials-Part12, s. 1, 2; Canvas, 05142_03-3 (Osswald kap. 3), s. 3
 
 Plast = polymer + tillsatser. Vanliga tillsatser:

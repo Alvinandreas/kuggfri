@@ -5,10 +5,11 @@ import { FlagTriangleRight } from "lucide-react";
 import { firstLine } from "@/lib/text/first-line";
 import { tagBgClass } from "@/lib/ui/tag-colors";
 import type { ReviewCard, ReviewTab } from "@/lib/admin/review";
-import { SOURCE_TAG_LABEL, sourceTags } from "@/lib/admin/sources";
-import { CARD_KIND_LABEL, type CardKind } from "@/lib/cards/kinds";
+import { sourceTags } from "@/lib/admin/sources";
+import type { CardKind } from "@/lib/cards/kinds";
 import { cx } from "@/components/ui/cx";
 import { KIND_ICON } from "../KindBadge";
+import { useReviewT } from "./ReviewLanguage";
 
 /** En rad i inkorgen: frågans första rad och, under den, område, uppgiftstyp och källa. */
 export function ReviewRow({
@@ -30,6 +31,7 @@ export function ReviewRow({
   areaColor: (id: string) => number;
   rightLabel: string;
 }) {
+  const t = useReviewT();
   const KindIcon = KIND_ICON[card.kind as CardKind];
   const tags = sourceTags(card);
   return (
@@ -42,7 +44,9 @@ export function ReviewRow({
       style={{ outlineOffset: "-2px" }}
     >
       <span className="min-w-0">
-        <span className="line-clamp-2 break-words font-medium sm:line-clamp-1">{firstLine(card.front, { maxLength: 200 }) || "…"}</span>
+        <span className="line-clamp-2 break-words font-medium sm:line-clamp-1" lang={t.lang === "en" && card.translation_en ? "en" : undefined}>
+          {firstLine(t.lang === "en" && card.translation_en ? card.translation_en.front : card.front, { maxLength: 200 }) || "…"}
+        </span>
         <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
           {showArea ? (
             <span className="inline-flex min-w-0 items-center gap-1.5">
@@ -52,9 +56,9 @@ export function ReviewRow({
           ) : null}
           <span className="inline-flex items-center gap-1">
             <KindIcon size={12} aria-hidden />
-            {CARD_KIND_LABEL[card.kind]}
+            {t.kind[card.kind]}
           </span>
-          <span className="inline-flex items-center gap-1">{tags.map((t) => SOURCE_TAG_LABEL[t]).join(", ")}</span>
+          <span className="inline-flex items-center gap-1">{tags.map((tag) => t.source[tag]).join(", ")}</span>
         </span>
         {tab === "flaggade" && card.flag_note ? (
           <span className="mt-1.5 flex items-start gap-1.5 text-sm">

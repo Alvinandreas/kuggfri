@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { Check } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
 import { cardFormValues, fixErrorsMessage, requiredIssues } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
 import type { ReviewArea, ReviewCard } from "@/lib/admin/review";
@@ -16,6 +15,7 @@ import { IssueList, KindSelect, TrueFalseField } from "./KindFields";
 import { OptionsEditor } from "./OptionsEditor";
 import { ReviewCardFace, questionLabel } from "./ReviewCardFace";
 import { useCardForm } from "./useCardForm";
+import { useReviewT } from "./review/ReviewLanguage";
 
 /** Det redigeraren lämnar ifrån sig. */
 export type ReviewEdit = {
@@ -43,6 +43,7 @@ type Props = {
  * här (den hör till källgranskningen). Ctrl+Enter sparar och godkänner, Esc avbryter.
  */
 export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Props) {
+  const t = useReviewT();
   const formRef = useRef<HTMLFormElement>(null);
   const { form, setFront, setBack, setHint, setKind, setAlternatives, setTrueFalse, options, auto, kindIssues } = useCardForm(card);
   const { front, back, hint, kind, alternatives, trueFalse } = form;
@@ -62,7 +63,7 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
     }
     setError(null);
     setPending(approve ? "approve" : "save");
-    const message = await onSave({ category_id: categoryId || null, ...cardFormValues(form) }, approve).catch(() => sv.errors.generic);
+    const message = await onSave({ category_id: categoryId || null, ...cardFormValues(form) }, approve).catch(() => t.common.error);
     setPending(null);
     if (message) setError(message);
   }
@@ -96,24 +97,24 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 @5xl:grid-cols-2">
         <div className="grid grid-cols-[minmax(0,1fr)] gap-5 rounded-lg border border-line bg-surface p-5 shadow-card sm:p-6 dark:border-transparent">
           <div className="grid gap-4 sm:grid-cols-2">
-            <KindSelect id="granska-typ" label={sv.granskning.kind} value={kind} onChange={setKind} compact data-testid="review-edit-kind" />
+            <KindSelect id="granska-typ" label={t.g.kind} value={kind} onChange={setKind} compact data-testid="review-edit-kind" />
             <div>
               <label htmlFor="granska-omrade" className="mb-1.5 block text-sm font-semibold">
-                {sv.granskning.area}
+                {t.g.area}
               </label>
               <Select
                 id="granska-omrade"
                 value={categoryId}
                 onChange={setCategoryId}
-                options={[...areas.map((a) => ({ value: a.id, label: a.title })), { value: "", label: sv.granskning.noArea }]}
+                options={[...areas.map((a) => ({ value: a.id, label: t.lang === "en" && a.title_en ? a.title_en : a.title })), { value: "", label: t.g.noArea }]}
                 data-testid="review-edit-area"
               />
             </div>
           </div>
 
           <TextArea
-            label={questionLabel(kind)}
-            hint={sv.admin.markdownHelp}
+            label={questionLabel(kind, t)}
+            hint={t.admin.markdownHelp}
             mono
             value={front}
             onChange={(e) => setFront(e.target.value)}
@@ -124,13 +125,13 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
             data-testid="review-edit-front"
           />
 
-          {kind === "sant-falskt" ? <TrueFalseField name="granska-sant-falskt" legend={sv.granskning.trueFalseLabel} value={trueFalse} onChange={setTrueFalse} /> : null}
+          {kind === "sant-falskt" ? <TrueFalseField name="granska-sant-falskt" legend={t.g.trueFalseLabel} value={trueFalse} onChange={setTrueFalse} /> : null}
 
           {kind === "alternativ" ? <OptionsEditor items={alternatives} onChange={setAlternatives} /> : null}
 
           <TextArea
-            label={auto ? sv.granskning.explanation : sv.granskning.answer}
-            hint={auto ? sv.granskning.explanationHelp : undefined}
+            label={auto ? t.g.explanation : t.g.answer}
+            hint={auto ? t.g.explanationHelp : undefined}
             mono
             value={back}
             onChange={(e) => setBack(e.target.value)}
@@ -139,13 +140,13 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
             className="[&_textarea]:field-sizing-content [&_textarea]:max-h-[60dvh]"
             data-testid="review-edit-back"
           />
-          <TextField label={sv.granskning.hintLabel} value={hint} onChange={(e) => setHint(e.target.value)} maxLength={LIMITS.hint} data-testid="review-edit-hint" />
+          <TextField label={t.g.hintLabel} value={hint} onChange={(e) => setHint(e.target.value)} maxLength={LIMITS.hint} data-testid="review-edit-hint" />
 
           {attempted && issues.length > 0 ? <IssueList issues={issues} /> : null}
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-3 @5xl:sticky @5xl:top-6">
-          <p className="text-sm font-semibold text-subtle">{sv.granskning.preview}</p>
+          <p className="text-sm font-semibold text-subtle">{t.g.preview}</p>
           <ReviewCardFace front={front} back={back} hint={hint || null} kind={kind} options={options} compact />
         </div>
       </div>
@@ -157,7 +158,7 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
             {canApprove ? (
               <Button type="submit" disabled={pending !== null} onClick={() => (approveNext.current = true)} data-testid="review-save-approve">
                 <Check size={17} aria-hidden />
-                {pending === "approve" ? sv.granskning.saving : sv.granskning.saveAndApprove}
+                {pending === "approve" ? t.g.saving : t.g.saveAndApprove}
               </Button>
             ) : null}
             <Button
@@ -167,10 +168,10 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
               onClick={() => (approveNext.current = false)}
               data-testid="review-save"
             >
-              {pending === "save" ? sv.granskning.saving : sv.granskning.save}
+              {pending === "save" ? t.g.saving : t.g.save}
             </Button>
             <Button variant="ghost" onClick={onCancel} disabled={pending !== null}>
-              {sv.common.cancel}
+              {t.common.cancel}
             </Button>
           </div>
         </div>

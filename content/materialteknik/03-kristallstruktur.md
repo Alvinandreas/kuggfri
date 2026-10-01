@@ -22,7 +22,6 @@ Ex: FCC (Face Centered Cubic), BCC (Body Centered Cubic), Triclinic, Simple Cubi
 ## Vad kännetecknar enhetscellen: "FCC"?
 key: vad-kannetecknar-enhetscellen-fcc
 original: ja
-status: utkast
 källa: Rättelse: "rostfritt stål" som exempel gäller bara austenitiskt rostfritt stål, eftersom det även finns ferritiska och martensitiska rostfria stål; packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 11, 13, 15; Canvas, Fo 12 Stal, s. 28; Canvas, Short_dictionary_ v2026, s. 2
 flagga: Rättelse av originalkortet: exemplet "Rostfritt stål" är ändrat till "austenitiskt rostfritt stål", eftersom ferritiska och martensitiska rostfria stål inte är FCC (Fö 12 Stål s. 28); packningsgrad 0,74 och ABCABC är tillagda (GLU 01 s. 11). GLU 01 2026 s. 15 skriver själv bara "Rostfritt stål". Godkänns preciseringen?
 
@@ -38,7 +37,6 @@ flagga: Rättelse av originalkortet: exemplet "Rostfritt stål" är ändrat till
 ## Vad kännetecknar enhetscellen: "BCC"?
 key: vad-kannetecknar-enhetscellen-bcc
 original: ja
-status: utkast
 källa: Rättelse: "Ex: Fe" angavs utan temperatur, men järn är BCC (ferrit) bara upp till ca 913 °C och därefter FCC (austenit); packningsgrad tillagd; Canvas, GLU 01 Kristallstrukturer, s. 2, 12, 13, 16; Canvas, Short_dictionary_ v2026, s. 6; Canvas, Lab_PM_M2_v2026, s. 4
 flagga: Rättelse av originalkortet: "Ex: Fe" har fått temperaturgränser (BCC upp till ca 913 °C, FCC däröver och BCC igen som δ-ferrit mellan 1394 och 1538 °C) och packningsgrad 0,68. Kursmaterialet anger omvandlingen till 913 °C (GLU 01 s. 2), 912 °C (Lab_PM_M2_v2026 s. 4) och 910 °C (Fö 4 2025 s. 14). Godkänns rättelsen, och vilken temperatur ska korten använda?
 
@@ -65,7 +63,6 @@ materialet (ex. C i Fe)
 ## Millerindex: Beskriv kortfattat vad det är och hur det tas fram.
 key: millerindex-beskriv-kortfattat-vad-det
 original: ja
-status: utkast
 källa: Rättelse: kortet påstod att riktningsindex inte kallas Millerindex, men GLU 1 2026 kallar dem "Millerindex för riktningar"; kortet beskrev också planets position i stället för orientering; Canvas, GLU 01 Kristallstrukturer, s. 19, 20
 flagga: Rättelse av originalkortet: påståendet att riktningar "inte längre kallas Millerindex" är struket eftersom GLU 01 s. 20 har rubriken "Millerindex för riktningar", "planets position" är ändrat till orientering (GLU 01 s. 19) och meningen om origo i ett hörn är borttagen. Lärandemålen (GLU 01 s. 1, Fö 3 2025) och flera tentor skiljer dock på "riktningsindex" och "Miller-index". Vilken benämning ska kortet använda?
 
@@ -95,7 +92,6 @@ Atomer eller molekyler som sitter i en ordnad struktur.
 ## Vilka beteckningar anger ett specifikt atomplan eller en specifik riktning i en kristall?
 key: quiz-kristaller-nar-man-beskriver-plan-och
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 1; Canvas, GLU 01 Kristallstrukturer, s. 19, 20
 
 - [x] (hkl)
@@ -107,7 +103,6 @@ källa: Canvas, Quiz vecka 2, fråga 1; Canvas, GLU 01 Kristallstrukturer, s. 19
 ## Kristallina och amorfa material: vilka påståenden är sanna?
 key: quiz-kristallina-eller-amorfa-material-tva
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 2; Canvas, GLU 01 Kristallstrukturer, s. 11; Canvas, Fo 3 Kristallstruktur, s. 13; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 17; Canvas, Kapitel_04 Elastisk deformation, s. 40
 flagga: Quizens rätta alternativ "Metaller är alltid kristallina" är ändrat till "Metaller är i regel kristallina", eftersom GLU 01 s. 11 skriver "de flesta metaller är kristallina". Godkänns ändringen, och ska Quiz vecka 2 fråga 2 ändras likadant?
 
@@ -121,7 +116,6 @@ De flesta metaller är kristallina, med ett regelbundet upprepat mönster av ato
 ## Kristaller och enhetsceller: vilka påståenden är sanna?
 key: quiz-kristaller-och-enhetsceller-tva-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 2, fråga 3; Canvas, GLU 01 Kristallstrukturer, s. 10, 11, 12; Canvas, Kapitel_06 Plasticitet och Duktilitet, s. 28; Canvas, Short_dictionary_ v2026, s. 1
 flagga: Quizens rätta alternativ "Enhetsceller är ett sätt att beskriva kristaller, men finns inte i verkligheten" är omskrivet till GLU 01 s. 10:s definition, den minsta volym som kan beskriva hela kristallen, eftersom kursmaterialet inte säger att enhetsceller inte finns i verkligheten. Godkänns omskrivningen, och ska Quiz vecka 2 fråga 3 ändras?
 
@@ -135,7 +129,6 @@ Tätpackade plan är viktiga för att glidplanen, där dislokationer rör sig vi
 ## Vilka strukturer är tätpackade (packningsgrad 0,74)?
 key: tatpackade-strukturer-fcc-hcp
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 11, 12; Canvas, Kapitel_04 Elastisk deformation, s. 37
 
 - [x] FCC
@@ -150,7 +143,6 @@ FCC och HCP är båda tätpackade med packningsgraden 0,74; de skiljer sig i sta
 ## Tätpackade atomskikt staplas i följden ABCABC. Vilken struktur ger det?
 key: staplingsfoljd-abcabc
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 11, 12
 
 - [x] FCC
@@ -163,7 +155,6 @@ Staplingsföljden ABCABC ger FCC och ABAB ger HCP; båda är tätpackade med pac
 ## Vilka påståenden om mikroskopi av metaller stämmer?
 key: mikroskopi-lom-sem-tem
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 7, 8, 9
 
 - [x] I transmissionselektronmikroskop (TEM) blir dislokationer synliga eftersom gittret är lokalt deformerat.
@@ -177,7 +168,6 @@ Optiskt mikroskop används för att studera mikrostrukturen på kapade, slipade,
 key: e-modul-enkristall-riktningsberoende
 typ: sant-falskt
 svar: falskt
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 21; Canvas, Kapitel_04 Elastisk deformation, s. 12
 
 E-modulen är riktningsberoende: en enkristall har olika styvhet i olika kristallografiska riktningar. I en polykristall med slumpmässigt orienterade korn jämnas det ut, så att styvheten blir i medeltal isotrop.
@@ -185,7 +175,6 @@ E-modulen är riktningsberoende: en enkristall har olika styvhet i olika kristal
 ## Ett plan skär x-axeln i 1/2, y-axeln i 1 och är parallellt med z-axeln. Vilket Millerindex har planet?
 key: millerindex-berakna-plan
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 19
 
 - [x] (210)
@@ -198,7 +187,6 @@ Skärningarna är 1/2, 1 och ∞ (parallellt med z). Inverterade blir de 2, 1 oc
 ## En riktning går från origo till punkten (1/2, 1, 0) i enhetscellen. Vilket riktningsindex har den?
 key: riktningsindex-berakna
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 20
 
 - [x] [120]
@@ -211,7 +199,6 @@ Riktningsvektorn är (1/2, 1, 0). Riktningar omvandlas alltid till heltal, efter
 ## Vilket Millerindex har det markerade planet? ![Kub med axlarna x, y och z och ett markerat plan som skär x- och y-axeln i 1 och är parallellt med z-axeln](/kort/materialteknik/millerindex-fraga-plan-1.svg)
 key: millerindex-markerat-plan-110
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 19
 
 - [x] (110)
@@ -224,7 +211,6 @@ Planet skär x-axeln i 1 och y-axeln i 1 och är parallellt med z-axeln (skärni
 ## Planet i kuben skär koordinataxlarna. Vilket Millerindex har det? ![Kub med axlarna x, y och z och ett markerat plan som skär alla tre axlarna i 1](/kort/materialteknik/millerindex-fraga-plan-2.svg)
 key: millerindex-markerat-plan-111
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 19
 
 - [x] (111)
@@ -237,7 +223,6 @@ Planet skär x-, y- och z-axeln i 1. Inverterat blir det 1, 1 och 1, alltså (11
 ## Vilket riktningsindex har den markerade riktningen? ![Kub med axlarna x, y och z och en pil från origo till hörnet (1, 1, 0)](/kort/materialteknik/millerindex-fraga-riktning-1.svg)
 key: riktningsindex-markerad-110
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 20
 
 - [x] [110]
@@ -249,7 +234,6 @@ Pilen går från origo till hörnet (1, 1, 0), diagonalt över kubens undersida,
 
 ## Vad kännetecknar enhetscellen: "HCP"?
 key: vad-kannetecknar-enhetscellen-hcp
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 11, 13, 17; Canvas, Guided Learning Unit 1, s. 4 (GL1-4); Canvas, Fo 12 Stal, s. 2; Canvas, Fo 13 Aluminium och andra metaller, s. 11
 
 ![Enhetscellerna BCC, FCC och HCP med packningsgrad 0,68, 0,74 och 0,74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)
@@ -264,7 +248,6 @@ källa: Canvas, GLU 01 Kristallstrukturer, s. 11, 13, 17; Canvas, Guided Learnin
 ## Vilken av enhetscellerna är BCC (rymdcentrerad kubisk)? ![Tre omärkta enhetsceller märkta A, B och C](/kort/materialteknik/enhetsceller-omarkerade.svg)
 key: enhetscell-kanna-igen-bcc
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 12, 13, 15, 16, 17; Canvas, Guided Learning Unit 1, s. 4, 5 (GL1-4, GL1-5)
 flagga: Kortet visar tre omärkta enhetsceller i en egen figur och frågar vilken som är BCC, vilket är samma uppgiftstyp som tentan 2024-01 uppg. 11 (namnge tre enhetsceller i en figur) och liknar 2025-10-30 uppg. 2a. Ligger kortet för nära tentan?
 
@@ -277,7 +260,6 @@ C har en atom i varje hörn och en i kubens mitt: rymdcentrerad kubisk (BCC), d�
 ## Ett plan skär x-axeln i 1 och y-axeln i −1/2 och är parallellt med z-axeln. Vilket Millerindex har planet?
 key: millerindex-negativt-index
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 19; Canvas, Guided Learning Unit 1, s. 11 (GL1-11)
 
 - [x] $(1\bar{2}0)$
@@ -289,7 +271,6 @@ Skärningarna är 1, −1/2 och ∞. Inverterat blir det 1, −2 och 0, som reda
 
 ## Hur bestämmer man Millerindex för ett plan som går genom origo?
 key: millerindex-plan-genom-origo
-status: utkast
 källa: Canvas, Guided Learning Unit 1, s. 11, 19 (GL1-11, GL1-24); Canvas, GLU 01 Kristallstrukturer, s. 19
 
 Ett plan genom origo skär axlarna i 0, och 1/0 går inte att invertera. Flytta därför planet en cellängd längs en axel (eller, likvärdigt, flytta origo till ett annat hörn av enhetscellen) så att planet inte går genom origo. Läs sedan av skärningarna, invertera och gör heltaligt som vanligt. En skärning på en axels negativa del ger ett negativt index, som skrivs med streck över siffran.
@@ -299,7 +280,6 @@ Exempel: diagonalplanet som innehåller x-axeln (y = z = 0) och den motsatta kan
 ## Planet $(213)$ i en kubisk enhetscell: var skär det axlarna?
 key: millerindex-fran-index-till-plan
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 19; Canvas, Guided Learning Unit 1, s. 11 (GL1-11)
 
 - [x] x = 1/2, y = 1, z = 1/3
@@ -312,7 +292,6 @@ Gå baklänges genom metoden: invertera indexen 2, 1 och 3 till skärningarna 1/
 ## En riktning går från punkten (0, 1, 1) till punkten (1, 1/2, 0) i enhetscellen. Vilket riktningsindex har den?
 key: riktningsindex-mellan-tva-punkter
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 20; Canvas, Guided Learning Unit 1, s. 13 (GL1-13)
 
 - [x] $[2\bar{1}\bar{2}]$
@@ -325,7 +304,6 @@ En riktning flyttas så att den börjar i origo, vilket är samma sak som att ta
 ## Vilka riktningar i en kubisk enhetscell hör till riktningsfamiljen $\langle 111\rangle$?
 key: riktningsfamilj-111
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 20; Canvas, Guided Learning Unit 1, s. 13 (GL1-13)
 
 - [x] Kubens rymddiagonaler, från ett hörn genom kubens mitt till det motsatta hörnet
@@ -339,7 +317,6 @@ $[hkl]$ är en specifik riktning och $\langle hkl\rangle$ en familj av likvärdi
 ## Vilka plan hör till planfamiljen $\{100\}$ i en kubisk enhetscell?
 key: planfamilj-100
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 19; Canvas, Guided Learning Unit 1, s. 11, 12 (GL1-11, GL1-12)
 
 - [x] Kubens sidoytor: $(100)$, $(010)$ och $(001)$ och de parallella ytorna på motsatt sida
@@ -354,7 +331,6 @@ $(hkl)$ är ett specifikt plan och $\{hkl\}$ en familj av likvärdiga plan. I en
 ## En metall med BCC-struktur har atomradien r = 0,125 nm. Hur stor är gitterparametern (kantlängden) a?
 key: bcc-gitterparameter-atomradie
 typ: alternativ
-status: utkast
 källa: Canvas, GLU 01 Kristallstrukturer, s. 15, 16; Canvas, Guided Learning Unit 1, s. 5 (GL1-5); Canvas, Ovning 2 GLU with corrections, s. 1
 
 - [x] Ca 0,289 nm

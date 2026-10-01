@@ -1,8 +1,10 @@
+"use client";
+
 import { Check, Lightbulb } from "lucide-react";
-import { sv } from "@/lib/i18n/sv";
 import { isAutoGraded, trueFalseAnswer, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { Markdown } from "@/components/markdown/Markdown";
 import { cx } from "@/components/ui/cx";
+import { useReviewT, type ReviewText } from "./review/ReviewLanguage";
 
 type Props = {
   front: string;
@@ -15,8 +17,8 @@ type Props = {
 };
 
 /** Rubriken på kortets första del, efter uppgiftstyp. */
-export function questionLabel(kind: CardKind): string {
-  return kind === "sant-falskt" ? sv.granskning.statement : kind === "begrepp" ? sv.granskning.concept : sv.granskning.question;
+export function questionLabel(kind: CardKind, t: ReviewText): string {
+  return kind === "sant-falskt" ? t.g.statement : kind === "begrepp" ? t.g.concept : t.g.question;
 }
 
 /**
@@ -27,25 +29,27 @@ export function questionLabel(kind: CardKind): string {
  * varandra.
  */
 export function ReviewCardFace({ front, back, hint, kind, options, compact = false }: Props) {
+  const t = useReviewT();
+  const g = t.g;
   const auto = isAutoGraded(kind);
   const answer = kind === "sant-falskt" ? trueFalseAnswer(options) : null;
   return (
     <div className={cx("grid grid-cols-[minmax(0,1fr)] gap-4", !compact && "@4xl:grid-cols-2 @4xl:items-stretch")} data-testid="review-card-face">
       <section
-        aria-label={questionLabel(kind)}
+        aria-label={questionLabel(kind, t)}
         className="flex min-w-0 flex-col rounded-lg border border-line bg-surface shadow-card dark:border-transparent"
         data-testid="review-question"
       >
-        <SideLabel>{questionLabel(kind)}</SideLabel>
+        <SideLabel>{questionLabel(kind, t)}</SideLabel>
         <div className={cx("grid gap-4 px-5 pb-5 sm:px-6 sm:pb-6", compact && "[&_.prose-card]:text-[1.05rem]!")}>
           <Markdown text={front || "…"} className="w-full" />
           {auto ? <OptionList kind={kind} options={options ?? []} /> : null}
-          {kind === "sant-falskt" && answer !== null ? <p className="sr-only">{sv.granskning.trueFalseAnswer(answer ? "Sant" : "Falskt")}</p> : null}
+          {kind === "sant-falskt" && answer !== null ? <p className="sr-only">{g.trueFalseAnswer(answer ? t.admin.trueWord : t.admin.falseWord)}</p> : null}
           {hint?.trim() ? (
             <p className="flex gap-2 rounded-md bg-surface-2 px-3.5 py-2.5 text-sm">
               <Lightbulb size={16} aria-hidden className="mt-0.5 shrink-0 text-muted" />
               <span className="min-w-0 break-words">
-                <span className="font-semibold">{sv.granskning.hint}: </span>
+                <span className="font-semibold">{g.hint}: </span>
                 {hint}
               </span>
             </p>
@@ -53,11 +57,11 @@ export function ReviewCardFace({ front, back, hint, kind, options, compact = fal
         </div>
       </section>
       <section
-        aria-label={auto ? sv.granskning.explanation : sv.granskning.answer}
+        aria-label={auto ? g.explanation : g.answer}
         className="flex min-w-0 flex-col rounded-lg border border-accent/40 bg-surface shadow-card"
         data-testid="review-answer"
       >
-        <SideLabel help={auto ? sv.granskning.explanationHelp : undefined}>{auto ? sv.granskning.explanation : sv.granskning.answer}</SideLabel>
+        <SideLabel help={auto ? g.explanationHelp : undefined}>{auto ? g.explanation : g.answer}</SideLabel>
         <div className={cx("px-5 pb-5 sm:px-6 sm:pb-6", compact && "[&_.prose-card]:text-[1.05rem]!")}>
           <Markdown text={back || "…"} className="w-full" />
         </div>
@@ -77,10 +81,12 @@ function SideLabel({ children, help }: { children: string; help?: string }) {
 
 /** Alternativen som studenten ser dem, med det rätta markerat (Sant/Falskt bredvid varandra). */
 function OptionList({ kind, options }: { kind: CardKind; options: readonly CardOption[] }) {
-  if (options.length === 0) return <p className="text-sm font-medium text-danger">{sv.admin.alternativesHelp}</p>;
+  const t = useReviewT();
+  const g = t.g;
+  if (options.length === 0) return <p className="text-sm font-medium text-danger">{t.admin.alternativesHelp}</p>;
   const tf = kind === "sant-falskt";
   return (
-    <ul className={cx("grid gap-2", tf && "grid-cols-2")} aria-label={sv.granskning.options}>
+    <ul className={cx("grid gap-2", tf && "grid-cols-2")} aria-label={g.options}>
       {options.map((o, i) => (
         <li
           key={`${i}-${o.text}`}
@@ -104,7 +110,7 @@ function OptionList({ kind, options }: { kind: CardKind; options: readonly CardO
           )}
           {tf && o.correct ? <Check size={16} strokeWidth={3} aria-hidden className="shrink-0 text-accent-ink" /> : null}
           <span className={cx("min-w-0", !tf && "flex-1")}>{tf ? o.text : <Markdown text={o.text || "…"} variant="body" className="[&_p]:m-0" />}</span>
-          <span className="sr-only">{o.correct ? sv.granskning.correctOption : sv.granskning.wrongOption}</span>
+          <span className="sr-only">{o.correct ? g.correctOption : g.wrongOption}</span>
         </li>
       ))}
     </ul>

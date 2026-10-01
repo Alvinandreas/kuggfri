@@ -38,7 +38,13 @@ export const getAdminNav = cache(async (): Promise<AdminNav | null> => {
   if (!active) return { isAdmin: ctx.isAdmin, deckIds: [], activeDeck: null };
   const supabase = await createSupabaseServerClient();
   const [drafts, openReports] = await Promise.all([
-    supabase.from("cards").select("id", { count: "exact", head: true }).eq("deck_id", active.id).eq("review_status", "utkast").is("flag_note", null),
+    // Samma kort som fliken Att granska (lib/admin/review, reviewTab): utkast och ogranskade kort i rotation, utan flagga.
+    supabase
+      .from("cards")
+      .select("id", { count: "exact", head: true })
+      .eq("deck_id", active.id)
+      .is("flag_note", null)
+      .or("review_status.eq.utkast,and(review_status.is.null,is_active.eq.true,reviewed_at.is.null)"),
     countOpenReports(active.id).catch(() => 0),
   ]);
   return {

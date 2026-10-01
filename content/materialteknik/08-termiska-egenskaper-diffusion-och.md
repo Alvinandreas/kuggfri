@@ -3,7 +3,6 @@
 ## Vad händer med material när temperaturen höjs?
 key: vad-hander-med-material-nar
 original: ja
-status: utkast
 källa: Rättelse: "atomerna börjar vibrera" var fel, atomerna vibrerar redan och det är amplituden som ökar med temperaturen; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 2; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 7
 flagga: Rättelse av originalkortet: "atomerna börjar vibrera" (Fö 10 Material och värme 2025 s. 2) var fel, atomerna vibrerar redan och det är amplituden som ökar. Kortet följer nu ordagrant Kapitel_12 Material och värme 2026 s. 2. Godkänns rättelsen?
 
@@ -16,7 +15,6 @@ flagga: Rättelse av originalkortet: "atomerna börjar vibrera" (Fö 10 Material
 ## Beskriv utförligt vad smälttemperatur och glasomvandlingstemperatur är och vilka material respektive är relevant för.
 key: beskriv-utforligt-vad-smalttemperatur
 original: ja
-status: utkast
 källa: Rättelse: kortet listade termoplaster bara under glasomvandlingstemperatur, men delkristallina termoplaster har både Tg (de amorfa delarna) och Tm (kristalliterna); Canvas, MTT085 PM 2, s. 4; Canvas, 2025 MTT085 Fo16, s. 21
 flagga: Rättelse av originalkortet: termoplaster stod bara under glasomvandlingstemperatur, men delkristallina termoplaster har både Tg och Tm (MTT085 PM 2 s. 4, Fö16 2025 s. 21), så de står nu också under smälttemperatur. Metalldelens bild Kapitel_12 s. 4 har originalets uppdelning. Godkänns tillägget?
 
@@ -60,7 +58,6 @@ Värmekapacitet är ett mått på hur mycket energi som krävs för att höja te
 ## Vad är termisk utvidgning respektive termiska spänningar?
 key: vad-ar-termisk-utvidgning-respektive
 original: ja
-status: utkast
 källa: Rättelse: "termiska gradienter" beskrevs som utvidgningens storlek och riktning på vektorform, men det är temperaturskillnader i materialet; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 13; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 16
 flagga: Rättelse av originalkortet: "termiska gradienter" beskrevs som utvidgningens storlek och riktning på vektorform, men det är temperaturskillnader i materialet (Kapitel_12 s. 13, 16); kortet säger också att α är svagt temperaturberoende och att volymutvidgningen är ca tre gånger den linjära. Formeln för termisk töjning på bilden s. 13 saknar parentesen, kortets är rätt. Godkänns rättelsen?
 
@@ -76,7 +73,6 @@ Upprepade temperaturvariationer kan ge termisk utmattning.
 ## Vad har atombindningar med termisk utvidgning att göra?
 key: vad-har-atombindningar-med-termisk
 original: ja
-status: utkast
 källa: Rättelse: kortet påstod att utvidgningskoefficienten beror på temperaturen eftersom bindningsstyrkan gör det, vilket inte stöds av föreläsningen, och upprepade formeln från kortet ovan; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 14; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 26
 flagga: Rättelse av originalkortet: det sa att α beror på temperaturen eftersom bindningsstyrkan gör det, en förklaring som inte finns i materialet (Fö 10 2025 s. 8 säger bara att α beror på temperaturen, Kapitel_12 s. 13 kallar den svagt temperaturberoende). Kortet bygger nu på Kapitel_12 s. 14, 15 och 26 (starka bindningar ger hög E och hög Tm, α ungefär omvänt proportionell mot Tm). Godkänns rättelsen?
 
@@ -87,7 +83,6 @@ Alla kristallina fasta ämnen expanderar ungefär 2 % från absoluta nollpunkten
 ## Vilka faktorer är avgörande för ett materials termiska ledningsförmåga?
 key: vilka-faktorer-ar-avgorande-for-ett
 original: ja
-status: utkast
 källa: Rättelse: "rena legeringar har bäst termisk ledningsförmåga" var självmotsägande (legering förbättrar inte ledningsförmågan), och energin går till område med låg temperatur (inte "låg energi"); Canvas, Fö 10 Material och värme, s. 10; Canvas, Fö 10 Material och värme, s. 11; Canvas, Fö 10 Material och värme, s. 12; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 20; Canvas, Quiz vecka 4, fråga 9; Canvas, Ashby et al Materials 3 utgåvan PRELIMINÄR Läsanvisning och detaljerade lärmål Kap 1-12, s. 4
 flagga: Rättelse av originalkortet: "Rena legeringar har bäst termisk ledningsförmåga" var självmotsägande och "till område med låg energi" är ändrat till låg temperatur; nu står att legering inte förbättrar värmeledningen (Fö 10 2025 s. 10, 11; Kapitel_12 s. 20; Quiz vecka 4 fråga 9). Förklaringen går via fononer, men i metaller leds värmen främst av fria elektroner, som också sprids av inlösta atomer. Godkänns rättelsen, och räcker fononförklaringen?
 
@@ -103,7 +98,6 @@ Fononerna hindras och sprids av kristallstörningar, t.ex. dislokationer och inl
 ## Beskriv kort vad värmeflöde är och hur det beräknas
 key: beskriv-kort-vad-varmeflode-ar-och-hur
 original: ja
-status: utkast
 källa: Rättelse: kortet påstod att beräkning av värmeflöde inte ingår i kursen, men läsanvisningen 2026 kräver att man kan beräkna värmeflöde vid steady state; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 21; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 22; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 29; Canvas, Ashby et al Materials 3 utgåvan PRELIMINÄR Läsanvisning och detaljerade lärmål Kap 1-12, s. 5
 flagga: Rättelse av originalkortet: det sa att beräkning av värmeflöde inte ingår i kursen, men läsanvisningen 2026 s. 5 kräver att man kan beräkna värmeflöde vid steady state. Kortet visar nu Fouriers lag, väggformeln och termisk diffusivitet (Kapitel_12 s. 21, 22, 29). Godkänns rättelsen?
 
@@ -117,7 +111,6 @@ Om temperaturen i stället ändras med tiden (transient värmeledning) styrs fö
 key: vad-ar-diffusion
 typ: begrepp
 original: ja
-status: utkast
 källa: Rättelse: kortet blandade ihop atomdiffusion med temperaturspridning och beskrev diffusion som något som främst gäller gaser och vätskor; Canvas, Tentamen med svarsförslag MTT085 251030, uppgift 1j; Canvas, GLU 02 Fasdiagram, s. 7; Canvas, Fö 10 Material och värme, s. 13
 flagga: Rättelse av originalkortet: det blandade ihop atomdiffusion med temperaturspridning och sa att diffusion främst gäller gaser och vätskor. Nu definieras diffusion i fast material som atomer som förflyttar sig "via atomhopp", nästan ordagrant det rätta alternativet i tentan 2025-10-30 uppg. 1j, medan GLU 02 s. 7 bara säger "slumpmässig rörelse av atomer". Godkänns rättelsen, eller ska första meningen skrivas om efter GLU 02 s. 7?
 
@@ -129,7 +122,6 @@ Diffusion i ett fast material är den temperaturberoende process där atomer fö
 ## Vilka är Ficks 1:a och 2:a lag?
 key: vilka-ar-ficks-1-a-och-2-a-lag
 original: ja
-status: utkast
 källa: Rättelse: kortet sa att Ficks lagar inte behöver vara relaterade till temperatur och att ekvationerna bäst löses numeriskt, men diffusionskoefficienten i lagarna ökar exponentiellt med temperaturen och kursen kräver att man kan räkna diffusion vid stationärt tillstånd med Ficks första lag; Canvas, Fo 10 Material och varme, s. 13; Canvas, Lasanvisningar Kapitel 12 och 13, s. 1; Canvas, Short_dictionary_ v2026, s. 10, 13
 flagga: Rättelse av originalkortet: det sa att Ficks lagar inte behöver ha med temperatur att göra och att ekvationerna bäst löses numeriskt; nu står att D ökar exponentiellt med temperaturen (Fö 10 2025 s. 13) och när första och andra lagen används. Fick nämns bara i läsanvisningen för kapitel 12 och 13 från 2025, och kapitel 13 finns inte i den preliminära läsanvisningen 2026. Godkänns rättelsen, och ingår Ficks lagar i årets kurs?
 
@@ -192,7 +184,6 @@ till brott till följd av krypning.
 key: krypning
 typ: begrepp
 original: ja
-status: utkast
 källa: Canvas, Fö 10 Material och värme, s. 14; Canvas, Fö 10 Material och värme, s. 15; Canvas, Fö 10 Material och värme, s. 16; Canvas, Fö 10 Material och värme, s. 17; Canvas, Läsanvisningar Kapitel 12 och 13, s. 1; Canvas, Svar Materialteknik 2018-10-27, s. 1; Canvas, Svarsförslag Tentamen IMS085 2023-10-25, s. 1
 flagga: Kortet och krypkurvan (krypkurva.svg) bygger bara på Fö 10 Material och värme 2025 s. 14 till 17; krypning tas bara upp i förbigående i 2026 års material (Kapitel_12 s. 3), och kapitel 13 saknas i den preliminära läsanvisningen 2026. Samma fråga gäller övriga krypkort (krypning-pastaenden, vad-ar-ett-krypbrott, diffusions- och dislokationskrypning). Ingår krypning i årets kurs?
 
@@ -205,7 +196,6 @@ Två mekanismer: diffusionskrypning och power-law-krypning (dislokationskrypning
 ## I vilket stadium av krypkurvan är töjningshastigheten konstant?
 key: kryp-konstant-tojningshastighet
 typ: alternativ
-status: utkast
 källa: Canvas, Fö 10 Material och värme, s. 14
 flagga: Kortets enda källa är Fö 10 Material och värme 2025 s. 14, och krypkurvan finns inte i 2026 års material; svaret (steady state) stämmer med källan. Ska kortet vara med i år? Det avgörs av samma beslut som för kortet krypning.
 
@@ -230,7 +220,6 @@ ske, t.ex. kemiska reaktioner, diffusion, krypning.
 key: specifik-varmekapacitet
 typ: begrepp
 original: ja
-status: utkast
 källa: Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 8; Canvas, Short_dictionary_ v2026, s. 13; Canvas, Tentamen Materialteknik med svar 2022-11-29, s. 2
 
 Värmekapacitet är den mängd energi som krävs för att höja temperaturen en grad (1 K) i en viss mängd material.
@@ -256,7 +245,6 @@ key: ja-nej-krypning-ar-ett-fenomen-som-bara
 typ: sant-falskt
 svar: sant
 original: ja
-status: utkast
 källa: Canvas, Tentamen Materialteknik med svar 2020-10-24, s. 2; Canvas, Fö 10 Material och värme, s. 14; Canvas, Svar Materialteknik 2018-10-27, s. 1; Canvas, Svarsförslag Tentamen IMS085 2023-10-25, s. 1
 flagga: Originalkortet (tentan 2020-10-24 uppg. 1g, "Krypning är ett fenomen som bara uppstår vid höga temperaturer", facit ja) är omskrivet till "Krypning i metaller sker över ungefär halva smälttemperaturen, räknat i kelvin", eftersom "höga temperaturer" bara är entydigt i förhållande till Tm och polymerer kryper vid rumstemperatur. Fö 10 s. 14 säger ½ Tm och svarsförslaget 2023-10-25 säger 0,4 till 0,5 Tm; källraden saknar "Rättelse:". Godkänns omformuleringen?
 
@@ -267,7 +255,6 @@ Tentan 2020 hade påståendet "Krypning är ett fenomen som bara uppstår vid h�
 ## Vad stämmer om temperatur?
 key: quiz-vad-ar-ratt-for-temperatur-tva-ratta
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 1; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 2; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 3; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 7
 
 - [x] Den är ett mått på atomernas kinetiska energi (rörelse).
@@ -280,7 +267,6 @@ Värme är atomer i rörelse: atomerna vibrerar med en amplitud som ökar med te
 ## Temperatur och material: vilka påståenden är sanna?
 key: quiz-temperatur-och-material-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 2; Canvas, GLU 02 Fasdiagram, s. 9; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 4; Canvas, GLU_5-8 Mikrostruktur och intro till Fasdiagram, s. 9; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 4; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 6; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 8
 flagga: Quizens rätta alternativ "Bara rena kristallina material har en väl definierad smälttemperatur" är omskrivet till "Rena metaller har en distinkt smälttemperatur, medan legeringar i regel har ett smältintervall" (GLU 02 s. 9, GLU_5-8 s. 9), och värmekapacitivitet är preciserad till per kg och K (Kapitel_12 s. 8). Det felaktiga alternativet "Glasomvandlingstemperaturen är temperaturen då ett material omvandlas till glas" kan dessutom läsas som sant, eftersom ett amorft material under Tg är i glastillstånd. Godkänns omskrivningen, och ska Tg-alternativet bytas ut?
 
@@ -296,7 +282,6 @@ Quizens formuleringar "Bara rena kristallina material har en väl definierad sm�
 ## Vad händer när man höjer temperaturen i ett fast material?
 key: quiz-nar-man-hojer-temperaturen-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 3; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 2; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 3; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 6; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, GLU 02 Fasdiagram, s. 7
 flagga: Quizens rätta alternativ "Diffusionshastigheten ökar exponentiellt med temperaturen för alla material" är för starkt, och "för alla material" är struket ur kortet. Godkänns ändringen, och ska Quiz vecka 4 fråga 3 ändras likadant?
 
@@ -312,7 +297,6 @@ Quizens "för alla material" är struket ur det rätta alternativet.
 ## Vad stämmer om diffusion?
 key: quiz-diffusion-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 5; Canvas, GLU 02 Fasdiagram, s. 7; Canvas, Fö 10 Material och värme, s. 13; Canvas, Svarsförslag uppgift 4-6, IMS085 251030, s. 2; Canvas, Fö 12 Stål, s. 24
 flagga: Förklaringen säger att krom tillsätts i stål för oxidskiktet "inte för att minska diffusionen", men Fö 12 Stål s. 24 säger att legering också ökar härdbarheten eftersom stora legeringsatomer fördröjer perlitbildningen, alltså diffusionen; alternativet är bara fel på grund av "det bästa sättet". Meningen om att polymerkedjor måste diffundera över svetslinjen har bara stöd i svarsförslaget till tentan 2025-10-30. Ska förklaringen skrivas om?
 
@@ -326,7 +310,6 @@ Diffusion är slumpmässig rörelse av atomer som netto går från hög till lå
 ## Termiska egenskaper: vilka påståenden är sanna?
 key: quiz-termiska-egenskaper-2-ratt
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 4, fråga 9; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 12; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 21; Canvas, Fö 10 Material och värme, s. 10; Canvas, Fö 10 Material och värme, s. 11
 
 - [x] Vid stationärt tillstånd är värmeflödet värmeledningsförmågan gånger temperaturgradienten, $q = -\lambda\,\Delta T/\Delta x$.
@@ -339,7 +322,6 @@ Fouriers lag ger värmeflödet vid stationärt tillstånd; minustecknet visar at
 ## En ugnsvägg har isolering med $\lambda = 0{,}04$ W/(m K) och tjockleken 0,10 m. Inne är det 200 °C och ute 20 °C. Hur stort är värmeflödet genom väggen vid stationärt tillstånd?
 key: varme-fourier-berakning
 typ: alternativ
-status: utkast
 källa: Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 22; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 21; Canvas, Ashby et al Materials 3 utgåvan PRELIMINÄR Läsanvisning och detaljerade lärmål Kap 1-12, s. 5
 
 - [ ] 0,72 W/m²
@@ -353,14 +335,12 @@ Vid stationärt tillstånd är $q = \lambda\,\dfrac{T_i - T_o}{t} = 0{,}04 \cdot
 key: varme-alfa-och-smalttemperatur
 typ: sant-falskt
 svar: sant
-status: utkast
 källa: Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 15; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 26
 
 Sant. Starka atombindningar ger hög smälttemperatur och hög E-modul, och alla kristallina fasta ämnen expanderar ungefär 2 % från absoluta nollpunkten till smältpunkten. Utvidgningskoefficienten korrelerar därför med $1/T_m$: blylegeringar har högt $\alpha$, medan titanlegeringar och stål har lägre.
 
 ## Hur kan man undvika stora termiska spänningar mellan två sammanfogade material?
 key: varme-undvika-termiska-spanningar
-status: utkast
 källa: Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 16; Canvas, 2026-09-25 Kapitel_12 Material och värme, s. 18
 
 Termiska spänningar uppstår när sammanfogade material har olika termisk utvidgningskoefficient $\alpha$, så att det ena expanderar mer än det andra vid en temperaturändring.
@@ -371,7 +351,6 @@ Termiska spänningar uppstår när sammanfogade material har olika termisk utvid
 ## Hur beror diffusionskoefficienten D på temperaturen T och aktiveringsenergin Q?
 key: diffusion-arrhenius-samband
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 10 Material och varme, s. 13; Canvas, Lasanvisningar Kapitel 12 och 13, s. 1
 
 - [x] $D = D_0\,e^{-Q/RT}$
@@ -384,7 +363,6 @@ $D_0$ är en preexponentiell konstant, Q aktiveringsenergin (J/mol), R den allm�
 ## Självdiffusion i aluminium har aktiveringsenergin $Q = 142$ kJ/mol. Ungefär hur många gånger större är diffusionskoefficienten vid 500 °C än vid 400 °C?
 key: diffusion-arrhenius-berakning
 typ: alternativ
-status: utkast
 källa: Canvas, Ovning 8 m losningar, s. 4; Canvas, Fo 10 Material och varme, s. 13
 
 - [x] Ca 27 gånger
@@ -397,7 +375,6 @@ $\dfrac{D_{500}}{D_{400}} = \exp\!\left[\dfrac{Q}{R}\left(\dfrac{1}{673} - \dfra
 ## Vilka påståenden om krypning stämmer?
 key: krypning-pastaenden
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 10 Material och varme, s. 14, 15, 16; Canvas, MTT085 Polymeric materials L6, s. 5; Canvas, 2021 MTT085 Ovningsuppgifter - Polymera material, s. 8
 flagga: Tre av fyra alternativ motsvarar påståendena i tentan 2023-10-23 uppg. 1b (över halva smälttemperaturen, bara kristallina material, elastisk deformation som går tillbaka), omskrivna och preciserade för metaller. Ligger kortet för nära tentan?
 

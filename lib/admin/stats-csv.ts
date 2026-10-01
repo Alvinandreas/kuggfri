@@ -38,28 +38,33 @@ export type CsvCard = {
   kind: CardKind;
   is_active: boolean;
   review_status: string | null;
+  reviewed_at: string | null;
 };
 export type CsvAreaStats = { category_id: string; students: number; ratings: number; avg: number | null; low: number; learned: number };
 export type CsvCardStats = { card_id: string; ratings: number; avg: number | null; low: number | null; reps: number };
 
-/** Status som examinatorn känner igen från granskningen. */
+const inRotation = (c: CsvCard) => c.review_status === null && c.is_active;
+
+/** Granskningsläget som examinatorn känner igen från granskningen. */
 function status(c: CsvCard): string | null {
   if (c.review_status === "utkast") return "Utkast";
-  if (c.review_status === null && c.is_active) return "Publicerad";
+  if (c.review_status === "avvisad") return "Ur rotation";
+  if (inRotation(c)) return c.reviewed_at ? "Godkänd" : "Ogranskad";
   return null;
 }
 
 /** En rad per område: innehållet och hur det går för studenterna. */
 export function areaStatsCsv(areas: readonly CsvArea[], cards: readonly CsvCard[], stats: readonly CsvAreaStats[]): string {
   const byArea = new Map(stats.map((s) => [s.category_id, s] as const));
-  const header = ["Nr", "Område", "Publicerade kort", "Utkast", "Studenter", "Skattningar", "Snittskattning (1–5)", "Andel skattningar 1–2 (%)"];
+  const header = ["Nr", "Område", "Kort i rotation", "Varav godkända", "Utkast", "Studenter", "Skattningar", "Snittskattning (1–5)", "Andel skattningar 1–2 (%)"];
   const rows = areas.map((a, i) => {
     const mine = cards.filter((c) => c.category_id === a.id);
     const s = byArea.get(a.id);
     return [
       i + 1,
       a.title,
-      mine.filter((c) => status(c) === "Publicerad").length,
+      mine.filter(inRotation).length,
+      mine.filter((c) => status(c) === "Godkänd").length,
       mine.filter((c) => status(c) === "Utkast").length,
       s?.students ?? null,
       s?.ratings ?? null,
@@ -70,19 +75,20 @@ export function areaStatsCsv(areas: readonly CsvArea[], cards: readonly CsvCard[
   return toCsv([header, ...rows]);
 }
 
-/** En rad per publicerat kort i kursens ordning, med kortets statistik om den passerat gränsen. */
+/** En rad per kort i rotation i kursens ordning, med granskningsläget och statistiken om den passerat gränsen. */
 export function cardStatsCsv(areas: readonly CsvArea[], cards: readonly CsvCard[], stats: readonly CsvCardStats[]): string {
   const areaTitle = new Map(areas.map((a) => [a.id, a.title] as const));
   const byCard = new Map(stats.map((s) => [s.card_id, s] as const));
-  const header = ["Område", "Fråga", "Uppgiftstyp", "Skattningar", "Snittskattning (1–5)", "Andel skattningar 1–2 (%)", "Repetitioner totalt"];
+  const header = ["Område", "Fråga", "Uppgiftstyp", "Granskning", "Skattningar", "Snittskattning (1–5)", "Andel skattningar 1–2 (%)", "Repetitioner totalt"];
   const rows = cards
-    .filter((c) => status(c) === "Publicerad")
+    .filter(inRotation)
     .map((c) => {
       const s = byCard.get(c.id);
       return [
         c.category_id ? (areaTitle.get(c.category_id) ?? null) : null,
         firstLine(c.front),
         CARD_KIND_LABEL[c.kind],
+        status(c),
         s?.ratings ?? null,
         s?.avg ?? null,
         s && s.low !== null ? share(s.low, s.ratings) : null,

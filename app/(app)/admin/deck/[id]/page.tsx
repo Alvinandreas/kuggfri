@@ -31,7 +31,7 @@ export default async function AdminDeckPage({ params }: { params: Params }) {
       openReports={reports.filter((r) => r.status === "open")}
       reviewProgress={reviewProgress(
         cards,
-        categories.map((c) => ({ id: c.id, title: c.title })),
+        categories.map((c) => ({ id: c.id, title: c.title, title_en: c.title_en ?? null })),
       )}
     />
   );

@@ -151,7 +151,6 @@ optiska egenskaper
 ## Ge minst två exempel på mekaniska egenskaper.
 key: ge-minst-tva-exempel-pa-mekaniska
 original: ja
-status: utkast
 källa: Rättelse: brottseghet beskrevs som den last vid vilken materialet går sönder, men brottseghet är materialets motstånd mot spricktillväxt; Canvas, Kapitel_02 Material och tillverkning databaser, s. 26; Canvas, Fo 8 Plasticitet, s. 26; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 28
 flagga: Rättelse av originalkortet: brottseghet beskrevs som "vid vilken last ett material går sönder" (ordagrant Fö 1 HT25 s. 28), vilket snarare beskriver brottgränsen. Nu står "materialets motstånd mot spricktillväxt (K1c)" enligt Kapitel_02 s. 26 och Kapitel_08 s. 7. Godkänns rättelsen?
 
@@ -240,7 +239,6 @@ Förslitning som fås när ett hårt material/medium avverkar ytan.
 ## Vilka påståenden om atombindningar är sanna?
 key: quiz-vad-ar-sant-for-atombindningar-tva
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 1; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 14, 17; Canvas, Kapitel_04 Elastisk deformation, s. 34
 
 - [x] Keramiska material kan ha jonbindningar.
@@ -253,7 +251,6 @@ Keramer har kovalent- eller jonbindning. I metallbindningen lossnar valenselektr
 ## Vilka påståenden om keramiska material är sanna?
 key: quiz-vad-ar-sant-for-keramiska-material-tva
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 2; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 16, 17; Canvas, Fo 7 Styvhet, s. 4
 flagga: Quizens rätta alternativ "Alla keramer är kristallina förutom glas" är för starkt och har skrivits om till "Keramer är oftast kristallina; glas är ett undantag", som Fö 1 HT25 s. 17 säger. Godkänns omskrivningen, och ska Quiz vecka 1 fråga 2 i Canvas ändras likadant?
 
@@ -267,7 +264,6 @@ Keramer är oftast kristallina, med glas som amorft undantag, och de har kovalen
 ## Keramer: vilka påståenden är sanna?
 key: quiz-mer-keramer-vad-ar-sant-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 3; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 17, 18
 
 - [x] Keramer är vanligtvis isolatorer.
@@ -280,7 +276,6 @@ Keramer är elektriskt och termiskt isolerande. De är spröda och tål dragbela
 ## Vilka påståenden om metaller är sanna?
 key: quiz-vad-ar-sant-for-metaller-tva-ratta-svar
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 9; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 17, 19, 20; Canvas, Kapitel_02 Material och tillverkning databaser, s. 26; Canvas, Fo 13 Aluminium och andra metaller, s. 11
 flagga: Quizens rätta alternativ är förenklade: "Alla metaller kan gjutas" har blivit "Metaller kan gjutas" (Fö 1 HT25 s. 20), och "högre brottseghet än plaster och keramer" har begränsats till keramer, eftersom jämförelsen med plaster inte står i föreläsningstexten. Godkänns omskrivningen, och ska Quiz vecka 1 fråga 9 ändras likadant?
 
@@ -294,7 +289,6 @@ Spröda material har låg brottseghet, och keramer är spröda medan metaller in
 ## Vilka påståenden om kompositer är sanna?
 key: quiz-vad-ar-sant-for-kompositer-tva-ratta
 typ: alternativ
-status: utkast
 källa: Canvas, Quiz vecka 1, fråga 10; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 11, 23; Canvas, Fo 7 Styvhet, s. 3; Canvas, Kapitel_04 Elastisk deformation, s. 27; Canvas, Short_dictionary_ v2026, s. 12
 
 - [x] En komposit består vanligen av två olika material.
@@ -307,7 +301,6 @@ En komposit är en kombination av två eller flera material, t.ex. plast och kol
 ## Designbegränsande egenskap
 key: designbegransande-egenskap
 typ: begrepp
-status: utkast
 källa: Canvas, Kapitel_01 Intro till Material, s. 26
 
 En egenskap som avgör om ett material är lämpligt utifrån designkraven. Exempel: för ett flygplan är hållfasthet, styvhet och seghet designbegränsande; är någon av dem för låg kan flygplanet inte flyga.
@@ -315,7 +308,6 @@ En egenskap som avgör om ett material är lämpligt utifrån designkraven. Exem
 ## Vilka av följande är egna familjer i kursens indelning i sex materialfamiljer?
 key: sex-materialfamiljer
 typ: alternativ
-status: utkast
 källa: Canvas, Kapitel_02 Material och tillverkning databaser, s. 3, 5; Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 15
 
 - [x] Glas
@@ -328,7 +320,6 @@ De sex familjerna är metaller (med legeringar), keramer, glas, polymerer, elast
 ## Vilka påståenden om kolfiberkompositer stämmer enligt kursen?
 key: komposit-kolfiber-begransningar
 typ: alternativ
-status: utkast
 källa: Canvas, Fo 1 Materialegenskaper och materialgrupper HT25, s. 11; Canvas, Kapitel_03 Materialval, s. 41; Canvas, Fo 13 Hallbarhet, s. 20
 
 - [x] De har hög styrka och låg vikt och används t.ex. i flygplan, vindkraft och sport.

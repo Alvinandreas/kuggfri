@@ -49,8 +49,9 @@ test.describe("plugga", () => {
     await expectStoredCount(2);
     const before = await accountProgress(email);
 
-    // Fri repetition tar svagast först: fem aldrig sedda kort, före de två som fick 5.
-    await startSession(page, "free", "all");
+    // Fri repetition tar svagast först: fem aldrig sedda kort, före de två som fick 5. Bara
+    // vändkort: ett automaträttat kort i det första passet kan ha rättats till 1 och kommit först.
+    await startSession(page, "free", "all", "typer=vand");
     for (let i = 0; i < 5; i++) {
       await rateCurrentCard(page, 1);
     }

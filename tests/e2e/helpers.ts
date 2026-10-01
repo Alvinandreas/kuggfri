@@ -72,17 +72,37 @@ export async function startSession(page: Page, mode: "fsrs" | "free" | "random",
 }
 
 /** Vänder aktuellt kort och skattar det. */
+/**
+ * Går vidare från det aktuella kortet. Vändkort vänds och skattas; automaträttade kort (flerval,
+ * sant/falskt) besvaras med första alternativet och rättas av appen, så `rating` gäller inte dem.
+ */
 export async function rateCurrentCard(page: Page, rating: 1 | 2 | 3 | 4 | 5) {
-  const card = page.getByTestId("flashcard");
-  const before = await card.getAttribute("data-card-id");
-  await page.getByTestId("flip").click();
-  await expect(card).toHaveAttribute("data-flipped", "true");
-  await page.getByTestId(`rate-${rating}`).click();
+  const current = page.locator('[data-testid="flashcard"], [data-testid="quizcard"]').first();
+  await expect(current).toBeVisible();
+  const before = await current.getAttribute("data-card-id");
+  if (await page.getByTestId("quizcard").isVisible()) {
+    const primary = page.getByTestId("quiz-primary");
+    await page.getByTestId("quiz-option").first().click();
+    if (!(await page.getByTestId("quiz-result").isVisible())) {
+      await expect(primary).toBeEnabled();
+      await primary.click();
+    }
+    await expect(page.getByTestId("quiz-result")).toBeVisible();
+    await primary.click();
+  } else {
+    const card = page.getByTestId("flashcard");
+    await page.getByTestId("flip").click();
+    await expect(card).toHaveAttribute("data-flipped", "true");
+    await page.getByTestId(`rate-${rating}`).click();
+  }
   // Vänta tills nästa kort visas (eller sammanfattningen).
   await expect
     .poll(async () => {
       if (await page.getByTestId("session-summary").isVisible()) return "summary";
-      return page.getByTestId("flashcard").getAttribute("data-card-id");
+      // Mellan sista kortet och sammanfattningen finns inget kort: vänta inte på ett som aldrig kommer.
+      const next = page.locator('[data-testid="flashcard"], [data-testid="quizcard"]').first();
+      if ((await next.count()) === 0) return null;
+      return next.getAttribute("data-card-id", { timeout: 1_000 }).catch(() => null);
     })
     .not.toBe(before);
 }

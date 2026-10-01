@@ -37,13 +37,15 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    ".next-prod/types/**/*.ts",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    ".next-prod/types/**/*.ts"
+    ".next-visual/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "playwright-report",
-    "test-results", ".next-prod"
+    "test-results",
+    ".next-prod"
   ]
 }

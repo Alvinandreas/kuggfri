@@ -65,3 +65,7 @@ supabase/.env
 # Kursmaterial från Canvas (kuggfri canvas), lämnar aldrig datorn
 /material/
 /.next-dev3005/
+
+# visuellt regressionstest (playwright.visual.config.ts): eget produktionsbygge och inloggningar
+/.next-visual/
+/tests/visual/.state/

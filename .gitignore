@@ -68,4 +68,5 @@ supabase/.env
 
 # visuellt regressionstest (playwright.visual.config.ts): eget produktionsbygge och inloggningar
 /.next-visual/
+/.next-e2e/
 /tests/visual/.state/

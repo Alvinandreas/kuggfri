@@ -185,8 +185,10 @@ test.describe("konto", () => {
     const mail = await latestMailText(email, 20_000, "type=recovery");
     const match = /href="([^"]*token_hash=[^"]*type=recovery[^"]*)"/.exec(mail) ?? /(https?:\/\/\S*token_hash=\S*type=recovery\S*)/.exec(mail);
     expect(match, "återställningslänk i mejlet").not.toBeNull();
-    const link = match![1]!.replace(/&amp;/g, "&");
-    await page.goto(link);
+    // Länken har site_url som värd; bara sökväg och query används, så att testet fungerar mot
+    // vilken baseURL som helst (som confirmSignupFromMail i helpers.ts).
+    const link = new URL(match![1]!.replace(/&amp;/g, "&"));
+    await page.goto(`${link.pathname}${link.search}`);
     await expect(page).toHaveURL(/\/konto\?byt-losenord=1/);
     await expect(page.getByTestId("set-new-password-banner")).toBeVisible();
 

@@ -54,24 +54,40 @@ export async function expectNoSeriousA11yViolations(page: Page) {
   await expect(page).toHaveTitle(/./);
   // Block som strömmas in sent tonar in efter att sidan laddats; vänta tills inget laddas längre.
   await page.waitForLoadState("networkidle");
-  // Oändliga animationer (t.ex. laddningsskelett) går inte att spola fram och hoppas över.
-  await page.evaluate(() =>
-    document.getAnimations().forEach((a) => {
-      if (a.effect?.getComputedTiming().endTime !== Infinity) a.finish();
-    }),
-  );
+  // Oändliga animationer (t.ex. laddningsskelett) går inte att spola fram och hoppas över. Ett
+  // block som strömmas in efter första framspolningen startar en ny intoning: spola fram tills
+  // inga nya startar under två kontroller i rad (högst några varv).
+  for (let round = 0, quiet = 0; round < 10 && quiet < 2; round++) {
+    const finished = await page.evaluate(() => {
+      let n = 0;
+      for (const a of document.getAnimations()) {
+        if (a.playState === "finished" || a.effect?.getComputedTiming().endTime === Infinity) continue;
+        a.finish();
+        n++;
+      }
+      return n;
+    });
+    quiet = finished === 0 ? quiet + 1 : 0;
+    await page.waitForTimeout(150);
+  }
   const results = await new AxeBuilder({ page }).analyze();
   const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(serious, JSON.stringify(serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.html) })), null, 2)).toEqual([]);
 }
 
 /** Startar en session från deckets sida med valt läge och urval. */
-export async function startSession(page: Page, mode: "fsrs" | "free" | "random", selection = "all") {
-  await page.goto(`/d/${DECK_SLUG}/plugga?mode=${mode}&urval=${encodeURIComponent(selection)}`);
-  await expect(page.getByTestId("flashcard")).toBeVisible();
+/** Passets aktuella kort, vändkort eller automaträttat (flerval, sant/falskt). */
+export function currentCard(page: Page) {
+  return page.locator('[data-testid="flashcard"], [data-testid="quizcard"]').first();
 }
 
-/** Vänder aktuellt kort och skattar det. */
+/** Startar ett pass; `extra` är fler passinställningar i adressen, t.ex. "typer=vand". */
+export async function startSession(page: Page, mode: "fsrs" | "free" | "random", selection = "all", extra = "") {
+  await page.goto(`/d/${DECK_SLUG}/plugga?mode=${mode}&urval=${encodeURIComponent(selection)}${extra ? `&${extra}` : ""}`);
+  // Första kortet kan vara ett vändkort eller ett automaträttat kort.
+  await expect(page.locator('[data-testid="flashcard"], [data-testid="quizcard"]').first()).toBeVisible();
+}
+
 /**
  * Går vidare från det aktuella kortet. Vändkort vänds och skattas; automaträttade kort (flerval,
  * sant/falskt) besvaras med första alternativet och rättas av appen, så `rating` gäller inte dem.

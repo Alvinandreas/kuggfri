@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
   DECK_SLUG,
   accountProgress,
+  currentCard,
   expectNoSeriousA11yViolations,
   rateCurrentCard,
   registerStudent,
@@ -29,7 +30,7 @@ test.describe("plugga", () => {
     await expectNoSeriousA11yViolations(page);
 
     await page.getByTestId("start-session").click();
-    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(currentCard(page)).toBeVisible();
     await expectNoSeriousA11yViolations(page);
 
     for (let i = 0; i < 10; i++) {
@@ -79,7 +80,8 @@ test.describe("plugga", () => {
   });
 
   test("tangentbord: mellanslag vänder, siffra skattar, pil hoppar", async ({ page }) => {
-    await startSession(page, "free");
+    // Bara vändkort: det är vändningen och skattningen med tangenterna som testas.
+    await startSession(page, "free", "all", "typer=vand");
     const card = page.getByTestId("flashcard");
     const first = await card.getAttribute("data-card-id");
     await page.keyboard.press("Space");
@@ -100,7 +102,7 @@ test.describe("plugga", () => {
     await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check();
     await expect(page.getByTestId("selection-summary")).toContainText("Materialvalsprocessen");
     await page.getByTestId("start-session").click();
-    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(currentCard(page)).toBeVisible();
 
     for (let i = 0; i < 6; i++) {
       if (await page.getByTestId("session-summary").isVisible()) break;
@@ -126,7 +128,7 @@ test.describe("hemsidan", () => {
     await page.getByTestId("home-start").click();
     await page.waitForURL(new RegExp(`/d/${DECK_SLUG}$`));
     await page.getByTestId("start-session").click();
-    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(currentCard(page)).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
   });
 
@@ -139,7 +141,7 @@ test.describe("hemsidan", () => {
     await expect(dialog.getByTestId("focus-study")).toContainText("6 kort i dag");
     await expectNoSeriousA11yViolations(page);
     await dialog.getByTestId("focus-study").click();
-    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(currentCard(page)).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("6 kort kvar");
   });
 
@@ -221,10 +223,12 @@ test.describe("dosering", () => {
     await expect(page.getByTestId("start-info")).toContainText("cirka 5 min");
 
     await page.getByTestId("start-session").click();
-    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(currentCard(page)).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("20 kort kvar");
 
-    // Vänt kort visar intervall per skattning i schemalagt läge.
+    // Vänt kort visar intervall per skattning i schemalagt läge. Automaträttade kort först i kön
+    // besvaras tills ett vändkort kommer.
+    for (let i = 0; i < 5 && (await page.getByTestId("quizcard").isVisible()); i++) await rateCurrentCard(page, 4);
     await page.getByTestId("flip").click();
     await expect(page.getByTestId("rate-4")).toHaveAttribute("aria-label", /om \d+ dagar|i morgon/);
     // Tillbaka till framsidan så att hjälpfunktionen kan vända själv.
@@ -298,7 +302,7 @@ test.describe("dugga", () => {
     await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check({ force: true });
     await expect(page.getByTestId("start-info")).toContainText("6 kort");
     await page.getByTestId("start-session").click();
-    await expect(page.getByTestId("flashcard")).toBeVisible();
+    await expect(currentCard(page)).toBeVisible();
     await expect(page.getByTestId("remaining")).toHaveText("Fråga 1 av 6");
     await expect(page.getByTestId("prev")).toBeDisabled();
     for (let i = 0; i < 6; i++) {

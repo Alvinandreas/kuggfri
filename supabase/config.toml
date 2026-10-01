@@ -203,9 +203,12 @@ anonymous_users = 30
 # Number of sessions that can be refreshed in a 5 minute interval per IP address.
 token_refresh = 150
 # Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
-sign_in_sign_ups = 30
+# Kuggfri: högt lokalt, eftersom E2E-sviten och det visuella testet registrerar och loggar in
+# ett 50-tal konton från samma adress (30 gav slumpvisa fel). Gäller bara den lokala stacken;
+# produktionens gränser ställs i Supabase-panelen.
+sign_in_sign_ups = 1000
 # Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
-token_verifications = 30
+token_verifications = 1000
 # Number of Web3 logins that can be made in a 5 minute interval per IP address.
 web3 = 30
 

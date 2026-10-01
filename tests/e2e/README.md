@@ -11,9 +11,9 @@ npx playwright test --project=desktop -g "export"  # ett test, ett projekt
 E2E_BASE_URL=http://localhost:3001 npx playwright test …   # mot en server som redan kör
 ```
 
-Utan `E2E_BASE_URL` används `http://localhost:3000`; kör ingen server där startar Playwright
-`npm run dev`. Starta inte en andra dev-server mot samma `.next` (de korrumperar den); peka i
-stället `E2E_BASE_URL` på den som redan kör.
+Utan `E2E_BASE_URL` bygger Playwright ett produktionsbygge (`.next-e2e`) och startar det på
+`http://localhost:3020` (ca 1,5 min extra). Det är stabilare än dev-servern, som kompilerar
+varje sida vid första anropet. `E2E_REUSE_SERVER=1` återanvänder en server som redan kör på 3020.
 
 Mot produktionen körs bara `public.spec.ts`, som inte skapar eller skriver något:
 `E2E_BASE_URL=https://kuggfri.com E2E_SKIP_SETUP=1 npx playwright test public.spec.ts`.

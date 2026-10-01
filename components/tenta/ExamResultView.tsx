@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, CircleMinus, FlaskConical, PenLine, RotateCcw, Undo2, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import type { Answer, Answers, Exam, ExamQuestion } from "@/lib/tentor/model";
+import type { Answers, Exam } from "@/lib/tentor/model";
 import { gradeFor, hypotheticalTotal, type ExamResult, type QuestionResult } from "@/lib/tentor/grade";
 import { startExamAttemptAction } from "@/lib/tentor/actions";
 import { formatPoints, halfSteps, partOf } from "@/lib/tentor/session";
@@ -18,6 +18,9 @@ import { cx } from "@/components/ui/cx";
 import { ExamFigures } from "./ExamFigures";
 import { PointsPicker } from "./PointsPicker";
 import { StudentViewBar } from "./StudentView";
+import { AnswerReview } from "./result/AnswerReview";
+import { GradeBadge } from "./result/GradeBadge";
+import { PointsBar } from "./result/PointsBar";
 import { KeepDates } from "@/components/ui/KeepDates";
 
 /** Tentan som den skickas till webbläsaren efter rättningen: med facit men utan källa och status. */
@@ -41,8 +44,6 @@ type Props = {
 
 type Filter = "alla" | "fel" | "sjalv";
 
-const inline = "[&_p]:m-0 [&_.katex-display]:my-1";
-
 const OUTCOME_STYLE: Record<QuestionResult["outcome"], string> = {
   ratt: "bg-accent-soft text-accent-ink",
   delvis: "bg-chart-3/15 text-fg",
@@ -56,185 +57,6 @@ function OutcomeIcon({ outcome }: { outcome: QuestionResult["outcome"] }) {
   if (outcome === "fel") return <X size={14} strokeWidth={2.6} aria-hidden />;
   if (outcome === "sjalv") return <PenLine size={13} aria-hidden />;
   return <CircleMinus size={14} aria-hidden />;
-}
-
-/** Stapel med poängen och betygsgränserna som streck; `ghost` visar det verkliga resultatet under det tänkta. */
-function PointsBar({ points, ghost, max, grades, compact = false }: { points: number; ghost?: number | null; max: number; grades: Exam["grades"]; compact?: boolean }) {
-  const pct = (n: number) => `${Math.max(0, Math.min(100, (n / max) * 100))}%`;
-  return (
-    <div className={compact ? "" : "mt-6"} aria-hidden>
-      <div className={cx("relative rounded-full bg-surface-3", compact ? "h-2" : "h-3")}>
-        {ghost !== undefined && ghost !== null ? <div className="absolute inset-y-0 left-0 rounded-full bg-fg/25" style={{ width: pct(ghost) }} /> : null}
-        <div className="absolute inset-y-0 left-0 rounded-full bg-accent transition-[width] duration-500" style={{ width: pct(points) }} />
-        {grades.map((g) => (
-          <span key={g.grade} className="absolute -bottom-1 -top-1 w-0.5 rounded bg-fg/70" style={{ left: pct(g.min) }} />
-        ))}
-      </div>
-      {compact ? null : (
-        <div className="relative mt-1.5 h-9 text-xs font-semibold text-muted">
-          {grades.map((g) => (
-            <span key={g.grade} className="absolute flex -translate-x-1/2 flex-col items-center tabular-nums leading-tight" style={{ left: pct(g.min) }}>
-              <span className="text-fg">{g.grade}</span>
-              <span className="font-medium">{formatPoints(g.min)} p</span>
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function GradeBadge({ grade, size = "lg", testId }: { grade: string; size?: "lg" | "sm"; testId?: string }) {
-  return (
-    <span
-      className={cx(
-        "inline-flex items-center justify-center rounded-full font-extrabold",
-        size === "lg" ? "h-20 min-w-20 px-5 text-4xl" : "h-9 min-w-9 px-2.5 text-lg",
-        grade === "U" ? "bg-surface-3 text-fg" : "bg-accent text-accent-fg",
-      )}
-      data-testid={testId}
-    >
-      {grade}
-    </span>
-  );
-}
-
-function Tag({ tone, children }: { tone: "right" | "wrong" | "mine"; children: React.ReactNode }) {
-  return (
-    <span
-      className={cx(
-        "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold",
-        tone === "right" ? "bg-accent text-accent-fg" : tone === "wrong" ? "bg-danger text-white dark:text-bg" : "bg-surface-3 text-fg",
-      )}
-    >
-      {children}
-    </span>
-  );
-}
-
-function OptionsReview({ q, answer }: { q: ExamQuestion; answer: Answer | undefined }) {
-  const chosen = new Set(answer?.kind === "flerval" ? (answer.choice === null ? [] : [answer.choice]) : answer?.kind === "flera" ? answer.choices : []);
-  const showKey = !q.noKey;
-  return (
-    <ul className="grid gap-2">
-      {(q.options ?? []).map((o, i) => {
-        const mine = chosen.has(i);
-        const right = showKey && o.correct;
-        const wrong = showKey && mine && !o.correct;
-        return (
-          <li
-            key={i}
-            className={cx(
-              "flex flex-wrap items-start gap-x-3 gap-y-1.5 rounded-md border px-4 py-3",
-              right && mine ? "border-accent bg-accent-soft/70" : right ? "border-dashed border-accent" : wrong ? "border-danger bg-danger-soft" : mine ? "border-fg/50 bg-surface-2" : "border-line",
-            )}
-            data-testid={`review-option-${i}`}
-          >
-            <span className={cx("mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center border-2", q.kind === "flerval" ? "rounded-full" : "rounded", mine ? "border-fg bg-fg" : "border-line-strong")} aria-hidden>
-              {mine ? <span className={cx("h-1.5 w-1.5 bg-bg", q.kind === "flerval" ? "rounded-full" : "rounded-[1px]")} /> : null}
-            </span>
-            <Markdown text={o.text} variant="body" className={cx("min-w-0 flex-1", inline)} />
-            <span className="flex basis-full flex-wrap gap-1 pl-7 empty:hidden sm:basis-auto sm:justify-end sm:pl-0">
-              {mine ? <Tag tone={wrong ? "wrong" : right ? "right" : "mine"}>{sv.tenta.yourAnswer}</Tag> : null}
-              {right ? <Tag tone="right">{sv.tenta.correctAnswer}</Tag> : null}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-function Mark({ ok, blank }: { ok: boolean; blank?: boolean }) {
-  if (blank) return <CircleMinus size={16} aria-label={sv.tenta.outcome.obesvarad} className="text-muted" />;
-  return ok ? <Check size={16} strokeWidth={2.6} aria-label={sv.tenta.outcome.ratt} className="text-accent" /> : <X size={16} strokeWidth={2.6} aria-label={sv.tenta.outcome.fel} className="text-danger" />;
-}
-
-function TableReview({ rows, head }: { rows: { prompt: string; mine: string | null; right: string; ok: boolean }[]; head: string }) {
-  return (
-    <div className="relative overflow-x-auto">
-      <table className="w-full border-collapse text-left text-[0.95rem]">
-        <thead>
-          <tr className="text-sm text-muted">
-            <th scope="col" className="pb-2 pr-3 font-semibold">
-              {head}
-            </th>
-            <th scope="col" className="pb-2 pr-3 font-semibold">
-              {sv.tenta.yourAnswer}
-            </th>
-            <th scope="col" className="pb-2 pr-3 font-semibold">
-              {sv.tenta.correctAnswer}
-            </th>
-            <th scope="col" className="w-8 pb-2">
-              <span className="sr-only">{sv.tenta.resultTitle}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i} className={cx("border-t border-line align-top", !r.ok && r.mine !== null && "bg-danger-soft/40")}>
-              <td className="py-2.5 pr-3">
-                <Markdown text={r.prompt} variant="body" className={inline} />
-              </td>
-              <td className={cx("py-2.5 pr-3 font-medium", r.mine === null && "text-muted", !r.ok && r.mine !== null && "text-danger")}>{r.mine ?? sv.tenta.noAnswer}</td>
-              <td className="py-2.5 pr-3 font-medium text-accent-ink">{r.right}</td>
-              <td className="py-2.5">
-                <Mark ok={r.ok} blank={r.mine === null} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function AnswerReview({ q, answer, outcome }: { q: ExamQuestion; answer: Answer | undefined; outcome: QuestionResult["outcome"] }) {
-  switch (q.kind) {
-    case "flerval":
-    case "flera":
-      return <OptionsReview q={q} answer={answer} />;
-    case "sant-falskt": {
-      const values = answer?.kind === "sant-falskt" ? answer.values : [];
-      const label = (v: boolean | null | undefined) => (v === true ? sv.tenta.trueLabel : v === false ? sv.tenta.falseLabel : null);
-      return (
-        <TableReview
-          head={sv.tenta.statement}
-          rows={(q.statements ?? []).map((s, i) => ({ prompt: s.text, mine: label(values[i]), right: label(s.answer) ?? "", ok: values[i] === s.answer }))}
-        />
-      );
-    }
-    case "para": {
-      const values = answer?.kind === "para" ? answer.values : [];
-      return <TableReview head={sv.tenta.pairHead} rows={(q.pairs ?? []).map((p, i) => ({ prompt: p.prompt, mine: values[i] ?? null, right: p.answer, ok: values[i] === p.answer }))} />;
-    }
-    case "numerisk": {
-      const mine = answer?.kind === "numerisk" && answer.value.trim() ? answer.value.trim() : null;
-      const key = q.numeric;
-      const unit = key?.unit && key.unit !== "-" ? ` ${key.unit}` : "";
-      const tol = key ? (key.relative ? `${formatPoints(key.tolerance * 100)} %` : formatPoints(key.tolerance)) : "";
-      const ok = outcome === "ratt";
-      return (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className={cx("rounded-md border px-4 py-3", mine === null ? "border-line" : ok ? "border-accent bg-accent-soft/60" : "border-danger bg-danger-soft")}>
-            <p className="text-sm font-semibold text-muted">{sv.tenta.yourAnswer}</p>
-            <p className={cx("mt-1 text-lg font-bold tabular-nums", mine === null && "font-medium text-muted")}>{mine ? `${mine}${unit}` : sv.tenta.noAnswer}</p>
-          </div>
-          {key && !q.noKey ? (
-            <div className="rounded-md border border-accent px-4 py-3">
-              <p className="text-sm font-semibold text-muted">{sv.tenta.correctAnswer}</p>
-              <p className="mt-1 text-lg font-bold tabular-nums text-accent-ink">
-                {formatPoints(key.value)}
-                {unit} <span className="text-sm font-medium text-muted">{key.tolerance > 0 ? sv.tenta.tolerance(tol) : null}</span>
-              </p>
-            </div>
-          ) : null}
-        </div>
-      );
-    }
-    case "text":
-      return null;
-  }
 }
 
 /** Stegen i Tänk om: halva poäng upp till max, plus uppgiftens verkliga poäng (t.ex. 0,75). */

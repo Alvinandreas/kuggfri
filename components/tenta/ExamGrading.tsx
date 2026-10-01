@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { cx } from "@/components/ui/cx";
 import { ExamFigures } from "./ExamFigures";
+import { inlineMarkdown } from "./markdownClasses";
 import { PointsPicker } from "./PointsPicker";
 import { StudentViewBar } from "./StudentView";
 
@@ -37,8 +38,6 @@ type Props = {
   studentViewDeck: string | null;
 };
 
-const inline = "[&_p]:m-0 [&_.katex-display]:my-1";
-
 /** Studentens svar som det lämnades in, utan rätt eller fel (för uppgifter utan facit och skrivuppgifter). */
 function MyAnswer({ q, answer }: { q: StudentQuestion; answer: Answer | undefined }) {
   const none = <span className="text-muted">{sv.tenta.noAnswer}</span>;
@@ -58,7 +57,7 @@ function MyAnswer({ q, answer }: { q: StudentQuestion; answer: Answer | undefine
         <ul className={cx(box, "grid gap-1.5")}>
           {chosen.map((i) => (
             <li key={i}>
-              <Markdown text={q.options?.[i] ?? ""} variant="body" className={inline} />
+              <Markdown text={q.options?.[i] ?? ""} variant="body" className={inlineMarkdown} />
             </li>
           ))}
         </ul>
@@ -70,7 +69,7 @@ function MyAnswer({ q, answer }: { q: StudentQuestion; answer: Answer | undefine
         <ul className={cx(box, "grid gap-2")}>
           {(q.statements ?? []).map((s, i) => (
             <li key={i} className="flex items-start justify-between gap-3">
-              <Markdown text={s} variant="body" className={cx("min-w-0 flex-1", inline)} />
+              <Markdown text={s} variant="body" className={cx("min-w-0 flex-1", inlineMarkdown)} />
               <span className="shrink-0 font-semibold">{values[i] === true ? sv.tenta.trueLabel : values[i] === false ? sv.tenta.falseLabel : "-"}</span>
             </li>
           ))}
@@ -83,7 +82,7 @@ function MyAnswer({ q, answer }: { q: StudentQuestion; answer: Answer | undefine
         <ul className={cx(box, "grid gap-2")}>
           {(q.pairs ?? []).map((p, i) => (
             <li key={i} className="flex items-start justify-between gap-3">
-              <Markdown text={p} variant="body" className={cx("min-w-0 flex-1", inline)} />
+              <Markdown text={p} variant="body" className={cx("min-w-0 flex-1", inlineMarkdown)} />
               <span className="shrink-0 font-semibold">{values[i] && choicesForPair(q, i).includes(values[i]!) ? values[i] : "-"}</span>
             </li>
           ))}

@@ -13,6 +13,7 @@ import { Select } from "@/components/ui/Select";
 import { inputClass } from "@/components/ui/TextField";
 import { textareaClass } from "@/components/ui/TextArea";
 import { cx } from "@/components/ui/cx";
+import { inlineMarkdown } from "./markdownClasses";
 
 type Props = { q: StudentQuestion; answer: Answer | undefined; onChange: (a: Answer | undefined) => void };
 
@@ -50,8 +51,6 @@ function AnswerHead({ id, label, extra, onClear }: { id: string; label: string; 
   );
 }
 
-const inline = "[&_p]:m-0 [&_.katex-display]:my-1";
-
 /** Poängregeln när uppgiften har minuspoäng, som i originalet: rätt ger sin andel, fel ger avdrag. */
 function PenaltyRule({ q }: { q: StudentQuestion }) {
   if (!q.penalty) return null;
@@ -85,7 +84,7 @@ export function AnswerInput({ q, answer, onChange }: Props) {
                 checked={choice === i}
                 control={<Radio name={`q-${q.id}`} checked={choice === i} onChange={() => onChange({ kind: "flerval", choice: i })} data-testid={`option-${i}`} />}
               >
-                <Markdown text={o} variant="body" className={inline} />
+                <Markdown text={o} variant="body" className={inlineMarkdown} />
               </OptionRow>
             ))}
           </div>
@@ -105,7 +104,7 @@ export function AnswerInput({ q, answer, onChange }: Props) {
           <div className="grid gap-2">
             {(q.options ?? []).map((o, i) => (
               <OptionRow key={i} checked={chosen.includes(i)} control={<Checkbox checked={chosen.includes(i)} onChange={() => toggle(i)} data-testid={`option-${i}`} />}>
-                <Markdown text={o} variant="body" className={inline} />
+                <Markdown text={o} variant="body" className={inlineMarkdown} />
               </OptionRow>
             ))}
           </div>
@@ -141,7 +140,7 @@ export function AnswerInput({ q, answer, onChange }: Props) {
               {statements.map((s, i) => (
                 <tr key={i} className="border-t border-line align-top">
                   <td className="py-3 pr-3">
-                    <Markdown text={s} variant="body" className={inline} />
+                    <Markdown text={s} variant="body" className={inlineMarkdown} />
                   </td>
                   {[true, false].map((v) => (
                     <td key={String(v)} className="py-3 text-center">
@@ -179,7 +178,7 @@ export function AnswerInput({ q, answer, onChange }: Props) {
             {pairs.map((p, i) => (
               <div key={i} className="grid items-center gap-2 border-t border-line pt-2 first:border-t-0 first:pt-0 sm:grid-cols-[minmax(0,1fr)_17rem] sm:gap-4">
                 <div className="min-w-0 font-medium">
-                  <Markdown text={p} variant="body" className={inline} />
+                  <Markdown text={p} variant="body" className={inlineMarkdown} />
                 </div>
                 <Select value={values[i] ?? ""} onChange={(v) => set(i, v)} options={optionsFor(i)} label={`${sv.tenta.choose}: ${p}`} data-testid={`pair-${i}`} />
               </div>

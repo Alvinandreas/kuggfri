@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, FolderInput, Trash2 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
@@ -9,11 +8,13 @@ import { deleteCardAction, moveCardsToCategoryAction, reorderCardsAction } from 
 import { mergeSubsetOrder } from "@/lib/admin/card-form";
 import { SOURCE_TAGS, SOURCE_TAG_LABEL, countBySourceTag, matchesSource, type SourceFilter } from "@/lib/admin/sources";
 import type { CardRow } from "@/lib/supabase/database.types";
+import { useActionRunner } from "@/lib/ui/use-action-runner";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Choice";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Menu, MenuItem, MenuSeparator } from "@/components/ui/Menu";
 import { Select } from "@/components/ui/Select";
 import { Toast } from "@/components/ui/Toast";
@@ -31,9 +32,7 @@ type Props = {
 };
 
 export function CardList({ deckId, cards, categories = [], currentCategoryId }: Props) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, handle } = useActionRunner();
   const [deleting, setDeleting] = useState<CardRow | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
@@ -49,18 +48,6 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
       return next.size === prev.size ? prev : next;
     });
   }, [cards]);
-
-  function handle(promise: Promise<{ ok: boolean; error?: string }>, onOk?: () => void) {
-    startTransition(async () => {
-      const result = await promise;
-      if (!result.ok) setError(result.error ?? sv.errors.generic);
-      else {
-        setError(null);
-        onOk?.();
-        router.refresh();
-      }
-    });
-  }
 
   function toggle(id: string, on: boolean) {
     setSelected((prev) => {
@@ -190,11 +177,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
           </div>
         )}
       />
-      {error ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-          {error}
-        </p>
-      ) : null}
+      {error ? <ErrorBanner>{error}</ErrorBanner> : null}
       <ConfirmDialog
         open={deleting !== null}
         title={sv.admin.deleteCard}

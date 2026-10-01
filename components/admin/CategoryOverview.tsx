@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { ChevronRight, Combine, Pencil, Plus, Trash2 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { createCategoryAction, deleteCategoryAction, mergeCategoryAction, reorderCategoriesAction, updateCategoryAction } from "@/lib/admin/actions";
 import type { CategoryRow } from "@/lib/supabase/database.types";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
+import { useActionRunner } from "@/lib/ui/use-action-runner";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Modal } from "@/components/ui/Modal";
 import { Select } from "@/components/ui/Select";
 import { Toast } from "@/components/ui/Toast";
@@ -36,26 +37,12 @@ type Props = {
  * Klick på namnet öppnar områdets kortlista. Byt namn, slå ihop, ta bort och ordna om görs här.
  */
 export function CategoryOverview({ deckId, categories, counts, uncategorized }: Props) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, handle } = useActionRunner();
   const [newTitle, setNewTitle] = useState("");
   const [deleting, setDeleting] = useState<CategoryRow | null>(null);
   const [merging, setMerging] = useState<CategoryRow | null>(null);
   const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
   const colorIndex = categoryColorIndex(categories);
-
-  function handle(promise: Promise<{ ok: boolean; error?: string }>, onOk?: () => void) {
-    startTransition(async () => {
-      const result = await promise;
-      if (!result.ok) setError(result.error ?? sv.errors.generic);
-      else {
-        setError(null);
-        onOk?.();
-        router.refresh();
-      }
-    });
-  }
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-3" data-testid="admin-category-list">
@@ -111,11 +98,7 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
           {sv.admin.newCategory}
         </Button>
       </form>
-      {error ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-          {error}
-        </p>
-      ) : null}
+      {error ? <ErrorBanner>{error}</ErrorBanner> : null}
       <ConfirmDialog
         open={deleting !== null}
         title={sv.admin.deleteCategory}

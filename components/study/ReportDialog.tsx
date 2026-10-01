@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { reportCardAction } from "@/lib/study/report-actions";
 import { Button } from "@/components/ui/Button";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Modal } from "@/components/ui/Modal";
 import { TextArea } from "@/components/ui/TextArea";
 import { TextField } from "@/components/ui/TextField";
@@ -110,11 +111,7 @@ export function ReportDialog({ open, cardId, onClose }: Props) {
             autoComplete="email"
             data-testid="report-contact"
           />
-          {error ? (
-            <p role="alert" className="rounded-lg bg-danger-soft px-4 py-3 text-sm text-danger">
-              {error}
-            </p>
-          ) : null}
+          {error ? <ErrorBanner className="rounded-lg bg-danger-soft px-4 py-3 text-sm text-danger">{error}</ErrorBanner> : null}
         </form>
       )}
     </Modal>

@@ -7,6 +7,7 @@ import { changedFields, exactTime, isPublished, relativeTime, restoreValues, ver
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Disclosure } from "@/components/ui/Disclosure";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Modal } from "@/components/ui/Modal";
 import { KindBadge } from "./KindBadge";
 import { VersionDiff } from "./VersionDiff";
@@ -158,9 +159,7 @@ export function CardHistory({ versions, count, error = false, onRetry, current, 
           <div className="grid gap-4">
             <p className="text-muted">{sv.admin.historyRestoreBody}</p>
             {hides || shows ? (
-              <p role="note" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-                {hides ? sv.admin.historyRestoreHides : sv.admin.historyRestoreShows}
-              </p>
+              <ErrorBanner role="note">{hides ? sv.admin.historyRestoreHides : sv.admin.historyRestoreShows}</ErrorBanner>
             ) : null}
             <p className="text-sm font-semibold">{sv.admin.historyRestoreChanges}</p>
             <VersionDiff before={current} after={target} areaTitle={areaTitle} mode="split" labels={{ before: sv.admin.historyNow, after: sv.admin.historyAfterRestore }} />

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { FormMessage } from "@/components/ui/FormMessage";
 import { TextArea } from "@/components/ui/TextArea";
 import { TextField } from "@/components/ui/TextField";
 
@@ -105,9 +106,9 @@ export function DeckForm({ deck, canDelete = true, canManage = true }: { deck?: 
         <TextArea label={sv.admin.sourceCredit} name="source_credit" rows={3} maxLength={2000} defaultValue={deck?.source_credit ?? ""} />
 
         {message ? (
-          <p role="status" className={`text-sm font-medium ${message.ok ? "text-accent" : "text-danger"}`}>
+          <FormMessage role="status" ok={message.ok}>
             {message.text}
-          </p>
+          </FormMessage>
         ) : null}
 
         <div className="flex flex-wrap items-center gap-2 border-t border-line pt-5">

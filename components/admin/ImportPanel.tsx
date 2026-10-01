@@ -11,6 +11,7 @@ import { Upload } from "lucide-react";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Disclosure } from "@/components/ui/Disclosure";
+import { FormMessage } from "@/components/ui/FormMessage";
 import { TextArea } from "@/components/ui/TextArea";
 import { cx } from "@/components/ui/cx";
 import { StatBlock } from "./StatBlock";
@@ -192,9 +193,9 @@ export function ImportPanel({ deckId, existingCards, existingCategories }: Props
       ) : null}
 
       {result ? (
-        <p role="status" className={`text-sm font-medium ${result.ok ? "text-accent" : "text-danger"}`} data-testid="import-result">
+        <FormMessage role="status" ok={result.ok} data-testid="import-result">
           {result.text}
-        </p>
+        </FormMessage>
       ) : null}
     </div>
   );

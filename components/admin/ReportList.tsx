@@ -1,33 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { deleteReportAction, setReportStatusAction } from "@/lib/admin/actions";
 import type { AdminReport } from "@/lib/admin/queries";
 import { firstLine } from "@/lib/text/first-line";
 import { formatDateTime } from "@/lib/time/format";
+import { useActionRunner } from "@/lib/ui/use-action-runner";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { cx } from "@/components/ui/cx";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 
 export function ReportList({ deckId, reports }: { deckId: string; reports: AdminReport[] }) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const { pending, error, run } = useActionRunner();
   const [deleting, setDeleting] = useState<string | null>(null);
-
-  function run(action: () => Promise<{ ok: boolean; error?: string }>) {
-    setError(null);
-    startTransition(async () => {
-      const result = await action();
-      if (!result.ok) setError(result.error ?? sv.errors.generic);
-      router.refresh();
-    });
-  }
 
   if (reports.length === 0)
     return (
@@ -38,11 +28,7 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
-      {error ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-          {error}
-        </p>
-      ) : null}
+      {error ? <ErrorBanner>{error}</ErrorBanner> : null}
       <ul className="grid grid-cols-[minmax(0,1fr)] gap-3">
         {reports.map((r) => {
           const open = r.status === "open";

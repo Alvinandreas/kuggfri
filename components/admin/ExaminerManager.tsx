@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { FormMessage } from "@/components/ui/FormMessage";
 import { TextField } from "@/components/ui/TextField";
 
 /** Admins verktyg för att ge och ta ifrån examinatorsrätt på ett deck. */
@@ -88,9 +89,9 @@ export function ExaminerManager({ deckId, examiners }: { deckId: string; examine
         </Button>
       </form>
       {message ? (
-        <p role="status" className={`text-sm font-medium ${message.ok ? "text-accent" : "text-danger"}`}>
+        <FormMessage role="status" ok={message.ok}>
           {message.text}
-        </p>
+        </FormMessage>
       ) : null}
       <ConfirmDialog
         open={removing !== null}

@@ -14,6 +14,7 @@ import {
 } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { TextField } from "@/components/ui/TextField";
 import { GoogleButton } from "./GoogleButton";
@@ -29,11 +30,7 @@ function Message({ result }: { result: AuthResult | null }) {
       </p>
     ) : null;
   }
-  return (
-    <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-      {result.error}
-    </p>
-  );
+  return <ErrorBanner>{result.error}</ErrorBanner>;
 }
 
 async function run(action: (fd: FormData) => Promise<AuthResult>, _prev: AuthResult | null, fd: FormData): Promise<AuthResult | null> {
@@ -131,11 +128,7 @@ export function LoginFields({
   return (
     <div className="grid gap-5">
       {heading ?? <FormHeading title={useLink ? sv.auth.magicLinkTitle : sv.auth.loginTitle} />}
-      {initialError ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-          {initialError}
-        </p>
-      ) : null}
+      {initialError ? <ErrorBanner>{initialError}</ErrorBanner> : null}
       {initialNotice && !unconfirmedEmail ? (
         <p role="status" className="rounded-md bg-surface-2 px-4 py-3 text-sm" data-testid="login-notice">
           {initialNotice}

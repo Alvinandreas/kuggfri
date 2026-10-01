@@ -11,6 +11,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { FormMessage } from "@/components/ui/FormMessage";
 import { Select } from "@/components/ui/Select";
 import { inputClass } from "@/components/ui/TextField";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
@@ -39,9 +40,9 @@ type Notice = { text: string; ok: boolean; where: "reset" | "delete" };
 function FormStatus({ state }: { state: AuthResult | null }) {
   if (!state) return null;
   return (
-    <p role="status" className={cx("text-sm font-medium", state.ok ? "text-accent" : "text-danger")}>
+    <FormMessage role="status" ok={state.ok}>
       {state.ok ? state.message : state.error}
-    </p>
+    </FormMessage>
   );
 }
 
@@ -55,14 +56,6 @@ function ResetRow({ title, help, children }: { title: string; help: string; chil
       </div>
       {children}
     </li>
-  );
-}
-
-function NoticeText({ notice }: { notice: Notice }) {
-  return (
-    <p role="status" className={cx("text-sm font-medium", notice.ok ? "text-accent" : "text-danger")}>
-      {notice.text}
-    </p>
   );
 }
 
@@ -294,7 +287,11 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
               </Button>
             </ResetRow>
           </ul>
-          {notice?.where === "reset" ? <NoticeText notice={notice} /> : null}
+          {notice?.where === "reset" ? (
+            <FormMessage role="status" ok={notice.ok}>
+              {notice.text}
+            </FormMessage>
+          ) : null}
         </div>
       </Card>
 
@@ -317,7 +314,11 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
           <Button variant="danger" onClick={() => setPending({ kind: "delete" })} data-testid="delete-account">
             {sv.account.delete}
           </Button>
-          {notice?.where === "delete" ? <NoticeText notice={notice} /> : null}
+          {notice?.where === "delete" ? (
+            <FormMessage role="status" ok={notice.ok}>
+              {notice.text}
+            </FormMessage>
+          ) : null}
         </div>
       </section>
 

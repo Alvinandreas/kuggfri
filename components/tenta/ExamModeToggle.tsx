@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { setExamModeOpenAction } from "@/lib/tentor/actions";
 import { Card } from "@/components/ui/Card";
+import { FormMessage } from "@/components/ui/FormMessage";
 import { ToggleRow } from "@/components/ui/Toggle";
 
 /** Reglaget i kursens inställningar: tentaläget öppet eller låst för studenterna. */
@@ -33,9 +34,9 @@ export function ExamModeToggle({ deckId, open: initial }: { deckId: string; open
     <Card data-testid="exam-mode-toggle">
       <ToggleRow title={sv.tenta.modeToggle} description={sv.tenta.modeToggleHelp} checked={open} onChange={change} disabled={pending} />
       {message ? (
-        <p role={message.ok ? "status" : "alert"} className={message.ok ? "mt-2 text-sm font-medium text-accent-ink" : "mt-2 text-sm font-medium text-danger"}>
+        <FormMessage ok={message.ok} className="mt-2 text-sm font-medium" okClassName="text-accent-ink">
           {message.text}
-        </p>
+        </FormMessage>
       ) : null}
     </Card>
   );

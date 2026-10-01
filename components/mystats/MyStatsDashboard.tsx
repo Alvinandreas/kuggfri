@@ -25,6 +25,7 @@ import { AreaCard, type AreaItem } from "./AreaCard";
 import { MilestonesCard } from "./MilestonesCard";
 import { RatingsCard } from "./RatingsCard";
 import { RhythmCard } from "./RhythmCard";
+import { routes } from "@/lib/routes";
 
 type Props = { userId: string | null; decks: HomeDeck[] };
 
@@ -87,7 +88,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
             key: `${deck.id}:${c.id}`,
             title: c.title,
             colorIndex: i,
-            href: `/d/${deck.slug}`,
+            href: routes.deck(deck.slug),
             deckTitle: scoped.length > 1 ? deck.title : null,
             learned: s.learned,
             total: s.total,
@@ -187,7 +188,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
               <p className="mt-1 max-w-2xl text-muted">{sv.myStats.emptyBody}</p>
             </div>
             {firstDeck ? (
-              <LinkButton href={`/d/${firstDeck.slug}`} size="lg">
+              <LinkButton href={routes.deck(firstDeck.slug)} size="lg">
                 {sv.myStats.emptyCta}
                 <ArrowRight size={18} aria-hidden />
               </LinkButton>

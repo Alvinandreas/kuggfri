@@ -5,6 +5,7 @@ import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 type Params = Promise<{ id: string }>;
 
@@ -43,7 +44,7 @@ export default async function DeckLayout({ children, params }: { children: React
             </Badge>
           </p>
         </div>
-        <LinkButton href={`/d/${deck.slug}`} variant="outline" size="sm">
+        <LinkButton href={routes.deck(deck.slug)} variant="outline" size="sm">
           {sv.admin.viewDeck}
           <ArrowUpRight size={15} aria-hidden />
         </LinkButton>

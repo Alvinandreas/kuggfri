@@ -7,6 +7,7 @@ import { CategoryOverview, type CategoryCounts } from "@/components/admin/Catego
 import { ContentMatrix } from "@/components/admin/ContentMatrix";
 import { Download, Plus } from "lucide-react";
 import { LinkButton, buttonClass } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 type Params = Promise<{ id: string }>;
 
@@ -44,11 +45,11 @@ export default async function AdminContentPage({ params }: { params: Params }) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-bold tracking-tight">{sv.admin.categories}</h2>
           <div className="flex flex-wrap gap-2">
-            <LinkButton href={`/admin/deck/${deck.id}/kort/ny`} size="sm">
+            <LinkButton href={routes.admin.newCard(deck.id)} size="sm">
               <Plus size={16} aria-hidden />
               {sv.admin.newCard}
             </LinkButton>
-            <a href={`/admin/deck/${deck.id}/export`} download={`${deck.slug}.json`} className={buttonClass("outline", "sm")}>
+            <a href={routes.admin.export(deck.id)} download={`${deck.slug}.json`} className={buttonClass("outline", "sm")}>
               <Download size={15} aria-hidden />
               {sv.admin.export}
             </a>

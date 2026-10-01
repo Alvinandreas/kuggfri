@@ -22,6 +22,7 @@ import { IssueList, KindSelect, TrueFalseField } from "./KindFields";
 import { ReviewStatusBadge } from "./KindBadge";
 import { OptionsEditor } from "./OptionsEditor";
 import { useCardForm } from "./useCardForm";
+import { routes } from "@/lib/routes";
 
 /** Det som sparades, så att en inbäddad redigerare (granskningen) kan uppdatera sin lista. */
 export type SavedCard = Pick<CardRow, "id" | "category_id" | "front" | "back" | "hint" | "kind" | "options" | "source" | "is_active">;
@@ -55,7 +56,7 @@ type Props = {
 /** Kortredigerare med uppgiftstyp, svarsalternativ och live-förhandsvisning (markdown och KaTeX). */
 export function CardEditor({ deckId, categories, card, initialCategoryId = null, backHref, onSaved, onCancel, initialKind, stacked = false }: Props) {
   const inline = onSaved !== undefined;
-  const closeHref = backHref ?? `/admin/deck/${deckId}/innehall`;
+  const closeHref = backHref ?? routes.admin.content(deckId);
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
@@ -107,7 +108,7 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
           is_active: reviewStatus ? false : isActive,
         });
       } else if (closeAfter) router.push(closeHref);
-      else if (!card) router.push(`/admin/deck/${deckId}/kort/${result.data.id}`);
+      else if (!card) router.push(routes.admin.card(deckId, result.data.id));
       else router.refresh();
     });
   }

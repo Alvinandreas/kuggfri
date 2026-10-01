@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { TextArea } from "@/components/ui/TextArea";
 import { TextField } from "@/components/ui/TextField";
+import { routes } from "@/lib/routes";
 
 /**
  * canManage: global admin. Examinatorer ser adressen men kan inte ändra den, och kan inte
@@ -40,7 +41,7 @@ export function DeckForm({ deck, canDelete = true, canManage = true }: { deck?: 
       });
       if (result.ok) {
         setMessage({ ok: true, text: sv.admin.saved });
-        if (!deck) router.push(`/admin/deck/${result.data.id}`);
+        if (!deck) router.push(routes.admin.deck(result.data.id));
         else router.refresh();
       } else {
         setMessage({ ok: false, text: result.error });
@@ -71,7 +72,7 @@ export function DeckForm({ deck, canDelete = true, canManage = true }: { deck?: 
     if (!deck) return;
     startTransition(async () => {
       const result = await deleteDeckAction(deck.id);
-      if (result.ok) router.push("/admin/deck");
+      if (result.ok) router.push(routes.admin.decks());
       else setMessage({ ok: false, text: result.error });
       setConfirmDelete(false);
     });

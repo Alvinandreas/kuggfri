@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { StudentViewBar, StudentViewButton } from "./StudentView";
 import { KeepDates } from "@/components/ui/KeepDates";
+import { routes } from "@/lib/routes";
 
 type Deck = { id: string; slug: string; title: string; course_code: string | null };
 
@@ -44,7 +45,7 @@ export function ExamModeLocked({ deck, studentView = false }: { deck: Deck; stud
         <p className="mx-auto mt-3 max-w-lg text-muted">{sv.tenta.lockedBody}</p>
         <p className="mx-auto mt-2 max-w-lg text-muted">{sv.tenta.lockedHint}</p>
         <div className="mt-7 flex justify-center">
-          <LinkButton href={`/d/${deck.slug}`}>
+          <LinkButton href={routes.deck(deck.slug)}>
             {sv.tenta.toCoursePage}
             <ArrowRight size={17} aria-hidden />
           </LinkButton>
@@ -65,7 +66,7 @@ function Meta({ icon: Icon, children }: { icon: typeof Clock; children: React.Re
 
 function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; attempts: AttemptInfo[]; slug: string; now: number; showDraft: boolean }) {
   const { inProgress, grading, latest, best, submitted } = attemptOverview(attempts, exam.durationMinutes, now);
-  const href = `/d/${slug}/tenta/${exam.key}`;
+  const href = routes.examAttempt(slug, exam.key);
   const max = formatPoints(exam.maxPoints);
   const date = formatExamDate(exam.date);
   return (
@@ -99,7 +100,7 @@ function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; 
                 </span>
               ) : null}
               <span className="text-subtle">{sv.tenta.attemptsCount(submitted)}</span>
-              <Link href={`${href}?forsok=${latest.id}`} className="font-semibold text-accent-ink underline-offset-2 hover:underline">
+              <Link href={routes.examAttempt(slug, exam.key, { forsok: latest.id })} className="font-semibold text-accent-ink underline-offset-2 hover:underline">
                 {sv.tenta.showResult}
               </Link>
             </p>
@@ -107,12 +108,12 @@ function ExamRow({ exam, attempts, slug, now, showDraft }: { exam: ExamSummary; 
         </div>
         <div className="shrink-0">
           {inProgress ? (
-            <LinkButton href={`${href}?forsok=${inProgress.id}`} className="w-full sm:w-auto">
+            <LinkButton href={routes.examAttempt(slug, exam.key, { forsok: inProgress.id })} className="w-full sm:w-auto">
               {sv.tenta.resume}
               <ArrowRight size={17} aria-hidden />
             </LinkButton>
           ) : grading ? (
-            <LinkButton href={`${href}?forsok=${grading.id}`} className="w-full sm:w-auto" data-testid="exam-row-grade">
+            <LinkButton href={routes.examAttempt(slug, exam.key, { forsok: grading.id })} className="w-full sm:w-auto" data-testid="exam-row-grade">
               {sv.tenta.gradingContinue}
               <ArrowRight size={17} aria-hidden />
             </LinkButton>
@@ -163,7 +164,7 @@ export function ExamModeHome({
           {studentsCanSee ? <LockOpen size={16} aria-hidden className="shrink-0" /> : <Lock size={16} aria-hidden className="shrink-0" />}
           <span className="min-w-0 flex-1 basis-60">
             {studentsCanSee ? sv.tenta.editorOpen : sv.tenta.editorLocked}{" "}
-            <Link href={`/admin/deck/${deck.id}/installningar`} className="font-semibold underline underline-offset-2">
+            <Link href={routes.admin.settings(deck.id)} className="font-semibold underline underline-offset-2">
               {sv.tenta.toSettings}
             </Link>
           </span>

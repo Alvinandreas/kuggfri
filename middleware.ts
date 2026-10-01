@@ -5,6 +5,7 @@ import { forbiddenHtml } from "@/lib/auth/forbidden-html";
 import { decideAdminAccess, loadAdminFacts, withCsp } from "@/lib/auth/admin-gate";
 import { inviteRewriteTarget, isPublicPath, loginRedirectTarget } from "@/lib/auth/route-gate";
 import { buildCsp, createNonce, NONCE_HEADER } from "@/lib/security/headers";
+import { routes } from "@/lib/routes";
 
 /**
  * 1. Sätter en innehållspolicy (CSP) med en färsk nonce per request. Next.js märker sina
@@ -40,7 +41,7 @@ export async function middleware(request: NextRequest) {
   const code = searchParams.get("code");
   if (code && !pathname.startsWith("/auth/")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/auth/confirm";
+    url.pathname = routes.authConfirm();
     // Behåll vart besökaren skulle ha hamnat, men bara som en intern sökväg.
     url.searchParams.set("next", pathname === "/" ? "/" : pathname);
     return withCsp(NextResponse.redirect(url), csp);
@@ -63,7 +64,7 @@ export async function middleware(request: NextRequest) {
     const facts = user ? await loadAdminFacts(supabase, user.id) : null;
     const decision = decideAdminAccess(user, facts?.profile ?? null, facts?.examinerDeckIds.length ?? 0);
     if (decision.kind === "redirect-login") {
-      const loginUrl = new URL("/logga-in", request.url);
+      const loginUrl = new URL(routes.login(), request.url);
       loginUrl.searchParams.set("next", pathname);
       return withCsp(NextResponse.redirect(loginUrl), csp);
     }

@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/Card";
 import { cx } from "@/components/ui/cx";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
+import { routes } from "@/lib/routes";
 
 export function ReportList({ deckId, reports }: { deckId: string; reports: AdminReport[] }) {
   const { pending, error, run } = useActionRunner();
@@ -48,7 +49,7 @@ export function ReportList({ deckId, reports }: { deckId: string; reports: Admin
               </div>
               <p className="text-sm">
                 <span className="text-muted">{sv.admin.reportCard}: </span>
-                <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="font-semibold underline decoration-line-strong underline-offset-2 hover:decoration-fg">
+                <Link href={routes.admin.card(deckId, r.card_id)} className="font-semibold underline decoration-line-strong underline-offset-2 hover:decoration-fg">
                   {firstLine(r.card_front)}
                 </Link>
               </p>

@@ -6,6 +6,7 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { cx } from "@/components/ui/cx";
 import { AreaLink } from "./AreaLink";
+import { routes } from "@/lib/routes";
 
 const th = "py-3 text-xs font-semibold text-subtle";
 /** Första kolumnen står kvar när tabellen scrollar i sidled; bakgrunden följer radens hovring. */
@@ -18,7 +19,7 @@ const stickyCell = "sticky left-0 z-10 bg-surface transition-colors duration-150
  * områdets sida. Tabellen scrollar i sidled inom blocket på smala skärmar.
  */
 export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matrix }) {
-  const reviewHref = (areaId: string | null) => `/admin/deck/${deckId}/granskning?omrade=${areaId ?? "ingen"}`;
+  const reviewHref = (areaId: string | null) => routes.admin.review(deckId, { omrade: areaId ?? "ingen" });
   const areaName = (row: MatrixRow) => row.title ?? sv.admin.uncategorized;
   const colorIndex = categoryColorIndex(matrix.rows.flatMap((r) => (r.areaId ? [{ id: r.areaId }] : [])));
 
@@ -52,7 +53,7 @@ export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matr
                   {row.areaId ? (
                     <AreaLink deckId={deckId} areaId={row.areaId} title={areaName(row)} colorIndex={colorIndex.get(row.areaId) ?? 0} />
                   ) : (
-                    <Link href={`/admin/deck/${deckId}/kategori/ingen`} className="inline-flex rounded-full bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted ring-fg/25 transition-shadow duration-150 hover:ring-2">
+                    <Link href={routes.admin.category(deckId, "ingen")} className="inline-flex rounded-full bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted ring-fg/25 transition-shadow duration-150 hover:ring-2">
                       {areaName(row)}
                     </Link>
                   )}
@@ -79,7 +80,7 @@ export function ContentMatrix({ deckId, matrix }: { deckId: string; matrix: Matr
               ))}
               <td className="px-3 py-3 text-right">{matrix.total.active}</td>
               <td className="py-3 pl-3 pr-6 text-right sm:pr-7">
-                <DraftCount n={matrix.total.drafts} href={`/admin/deck/${deckId}/granskning`} label={sv.admin.draftCount(matrix.total.drafts)} />
+                <DraftCount n={matrix.total.drafts} href={routes.admin.review(deckId)} label={sv.admin.draftCount(matrix.total.drafts)} />
               </td>
             </tr>
           </tfoot>

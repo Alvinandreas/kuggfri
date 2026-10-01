@@ -26,6 +26,7 @@ import { Card, CardHeader, CardLink, SectionTitle } from "@/components/ui/Card";
 import { Countdown } from "@/components/ui/Countdown";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { routes } from "@/lib/routes";
 
 export type HomeDeck = {
   id: string;
@@ -207,7 +208,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
         <section className="mt-10">
           <SectionTitle
             action={
-              <Link href="/kurser" className="text-sm font-semibold text-accent hover:underline">
+              <Link href={routes.courses()} className="text-sm font-semibold text-accent hover:underline">
                 {sv.dashboard.allCourses}
               </Link>
             }
@@ -217,7 +218,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {others.map((v, i) => (
               <li key={v.deck.id} className="anim-fade-up" style={{ ["--i" as string]: i + 5 }}>
-                <CardLink href={`/d/${v.deck.slug}`} padding="lg" className="h-full">
+                <CardLink href={routes.deck(v.deck.slug)} padding="lg" className="h-full">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-lg font-bold tracking-tight">{v.deck.title}</h3>
                     {v.stats.seen === 0 ? (
@@ -401,7 +402,7 @@ function TodayCard({
             {sv.dashboard.todayPlan(plan.sessionDue, plan.sessionNew)}, cirka {estimateMinutes(plan.sessionCards)} min
           </p>
           {/* Till kurssidan, där läge och områden väljs; dagens pass är förvalt där. */}
-          <LinkButton href={`/d/${view.deck.slug}`} size="lg" className="mt-5 w-full" data-testid="home-start">
+          <LinkButton href={routes.deck(view.deck.slug)} size="lg" className="mt-5 w-full" data-testid="home-start">
             {stats.seen > 0 ? sv.dashboard.continue : sv.dashboard.startFirst}
             <ArrowRight size={18} aria-hidden />
           </LinkButton>

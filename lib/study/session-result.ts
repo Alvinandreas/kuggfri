@@ -12,6 +12,7 @@ import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { filterCards, serializeSelection, type SelectableCard, type Selection } from "@/lib/study/selection";
 import { EXTRA_SESSION_SIZE } from "@/lib/study/plan";
 import { endOfDay } from "@/lib/time/day";
+import { routes } from "@/lib/routes";
 
 /** Dagsläget efter en schemalagd session: underlag för "Klar för i dag". */
 export type TodaySummary = {
@@ -89,7 +90,7 @@ export function buildSessionResult(input: {
   const canContinue = continueCount > 0 && !input.finalReview;
   // Plugga vidare finns alltid när dagen är klar och urvalet har kort: ingen dos, inget tak.
   const extraCount = Math.min(input.size ?? EXTRA_SESSION_SIZE, newCards ? inSelection.length : inSelection.length - queue.new);
-  const base = `/d/${input.deckSlug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(input.selection))}`;
+  const base = routes.study(input.deckSlug, { mode: "fsrs", urval: serializeSelection(input.selection) });
   const next = `${input.suffix ?? ""}&pass=${(input.pass ?? 0) + 1}`;
 
   return {

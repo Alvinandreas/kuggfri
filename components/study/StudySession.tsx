@@ -31,6 +31,7 @@ import { useQuizAnswer } from "./session/useQuizAnswer";
 import { useSessionQueue } from "./session/useSessionQueue";
 import { useStudyKeyboard } from "./session/useStudyKeyboard";
 import type { StudyCard } from "./types";
+import { routes } from "@/lib/routes";
 
 export type { StudyCard };
 
@@ -266,7 +267,7 @@ export function StudySession({
       <Card padding="lg" className="anim-fade-up mx-auto mt-10 w-full max-w-xl text-center">
         <p className="text-lg text-muted">{mode === "fsrs" ? sv.study.emptyFsrs : mode === "tricky" ? sv.study.emptyTricky : sv.study.empty}</p>
         <div className="mt-6">
-          <LinkButton href={`/d/${deck.slug}`} variant="secondary">
+          <LinkButton href={routes.deck(deck.slug)} variant="secondary">
             {sv.study.backToDeck}
           </LinkButton>
         </div>
@@ -302,7 +303,7 @@ export function StudySession({
     const againHref =
       mode === "fsrs"
         ? null
-        : `/d/${deck.slug}/plugga?mode=${mode}&urval=${encodeURIComponent(serializeSelection(selection))}${suffix}${onlyStarred ? "&stjarnor=1" : ""}&pass=${pass + 1}`;
+        : `${routes.study(deck.slug, { mode, urval: serializeSelection(selection) })}${suffix}${onlyStarred ? "&stjarnor=1" : ""}&pass=${pass + 1}`;
     return (
       <SessionSummary
         summary={summary}
@@ -339,7 +340,7 @@ export function StudySession({
       </h1>
       <div className="flex items-center justify-between gap-3 text-sm text-muted">
         <Link
-          href={`/d/${deck.slug}`}
+          href={routes.deck(deck.slug)}
           aria-label={`${sv.study.backToDeck}: ${deck.title}`}
           className="group -my-1 inline-flex min-w-0 items-center gap-3 rounded-full py-1 pr-2 font-semibold text-fg"
         >

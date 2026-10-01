@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/supabase/server";
+import { routes } from "@/lib/routes";
 
 /**
  * Fokusläge för pluggpasset: ingen sidomeny, bara kortet. Passet har en egen stängknapp
@@ -7,7 +8,7 @@ import { getCurrentUser } from "@/lib/supabase/server";
  */
 export default async function FocusLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const user = await getCurrentUser();
-  if (!user) redirect("/");
+  if (!user) redirect(routes.landing());
   // overflow-x-clip: stämpeln och kortets in- och utglidning får aldrig ge sidan en
   // horisontell rullning på mobilen (clip skapar ingen egen rullningsyta).
   return (

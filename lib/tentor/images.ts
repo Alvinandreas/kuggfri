@@ -1,3 +1,5 @@
+import { routes } from "@/lib/routes";
+
 /**
  * Tentornas figurer ligger som data-URI:er i tentabanken. De skickas aldrig inbäddade till
  * webbläsaren: en figur på några hundra kB i sidans RSC-data fick klientnavigeringen i
@@ -18,7 +20,7 @@ export function contentHash(text: string): string {
 
 /** Adressen till figur nr `index` i uppgiften `questionId`. */
 export function examImageUrl(slug: string, key: string, questionId: string, index: number, src: string): string {
-  return `/d/${encodeURIComponent(slug)}/tenta/${encodeURIComponent(key)}/bild/${encodeURIComponent(questionId)}/${index}?v=${contentHash(src)}`;
+  return routes.examImage(slug, key, questionId, index, contentHash(src));
 }
 
 /** Uppgifterna med figurernas data-URI:er utbytta mot adresser (andra källor lämnas orörda). */

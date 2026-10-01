@@ -8,6 +8,7 @@ import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ContactCards } from "@/components/layout/ContactCards";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.about.title };
 
@@ -43,7 +44,7 @@ export default async function AboutPage() {
             <p>{sv.about.howBody}</p>
           </div>
           <ActionList className="mt-4">
-            <ActionRow href="/hjalp" icon={LifeBuoy} title={sv.help.fromAbout} meta={sv.help.fromAboutMeta} />
+            <ActionRow href={routes.help()} icon={LifeBuoy} title={sv.help.fromAbout} meta={sv.help.fromAboutMeta} />
           </ActionList>
         </section>
 
@@ -62,7 +63,7 @@ export default async function AboutPage() {
                   </span>
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold">
-                      <Link href={`/d/${d.slug}`} className="underline decoration-line-strong underline-offset-2 hover:decoration-fg">
+                      <Link href={routes.deck(d.slug)} className="underline decoration-line-strong underline-offset-2 hover:decoration-fg">
                         {d.title}
                       </Link>
                       {d.course_code ? <Badge tone="outline">{d.course_code}</Badge> : null}

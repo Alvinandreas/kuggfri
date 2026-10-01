@@ -1,6 +1,7 @@
 import { sv } from "@/lib/i18n/sv";
 import { LinkButton } from "@/components/ui/Button";
 import { FullPage, StatusMessage } from "@/components/layout/StatusMessage";
+import { routes } from "@/lib/routes";
 
 /** Renderas med status 403 när en sida anropar forbidden(). */
 export default function Forbidden() {
@@ -10,7 +11,7 @@ export default function Forbidden() {
         title={sv.common.forbiddenTitle}
         body={sv.common.forbiddenBody}
         actions={
-          <LinkButton href="/" variant="secondary">
+          <LinkButton href={routes.landing()} variant="secondary">
             {sv.common.toHome}
           </LinkButton>
         }

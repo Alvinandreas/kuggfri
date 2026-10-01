@@ -7,6 +7,7 @@ import { getRequestOrigin } from "@/lib/supabase/request-origin";
 import { sv } from "@/lib/i18n/sv";
 import { safeNext } from "./safe-next";
 import { SIGNUP_NEXT_KEY } from "./signup-next";
+import { routes } from "@/lib/routes";
 
 /**
  * checkEmail: kontot är skapat men väntar på bekräftelse; adressen visas i "Kolla din inkorg".
@@ -35,13 +36,13 @@ export async function signOutAction(): Promise<void> {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect(routes.landing());
 }
 
 export async function signInWithPasswordAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const next = safeNext(formData.get("next"), "/hem");
+  const next = safeNext(formData.get("next"), routes.home());
   if (!email || !password) return { ok: false, error: sv.auth.error };
 
   const supabase = await createSupabaseServerClient();
@@ -59,7 +60,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const displayName = String(formData.get("display_name") ?? "").trim().slice(0, 80);
-  const next = safeNext(formData.get("next"), "/hem");
+  const next = safeNext(formData.get("next"), routes.home());
   if (!displayName) return { ok: false, error: sv.auth.nameRequired };
   if (!email) return { ok: false, error: sv.auth.error };
   if (password.length < 8) return { ok: false, error: sv.auth.weakPassword };
@@ -70,7 +71,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
     password,
     options: {
       data: { display_name: displayName, [SIGNUP_NEXT_KEY]: next },
-      emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${await getRequestOrigin()}${routes.authConfirm({ next })}`,
     },
   });
   if (error) return { ok: false, error: authErrorMessage(error, sv.auth.error) };
@@ -92,13 +93,13 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
  */
 export async function resendConfirmationAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
-  const next = safeNext(formData.get("next"), "/hem");
+  const next = safeNext(formData.get("next"), routes.home());
   if (!email) return { ok: false, error: sv.auth.invalidEmail };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.resend({
     type: "signup",
     email,
-    options: { emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}` },
+    options: { emailRedirectTo: `${await getRequestOrigin()}${routes.authConfirm({ next })}` },
   });
   if (error) {
     const code = (error.code ?? "").toLowerCase();
@@ -114,14 +115,14 @@ export async function resendConfirmationAction(formData: FormData): Promise<Auth
 
 export async function sendMagicLinkAction(formData: FormData): Promise<AuthResult> {
   const email = String(formData.get("email") ?? "").trim();
-  const next = safeNext(formData.get("next"), "/hem");
+  const next = safeNext(formData.get("next"), routes.home());
   if (!email) return { ok: false, error: sv.auth.error };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${await getRequestOrigin()}${routes.authConfirm({ next })}`,
       // Konton skapas bara via registreringen (namn + bekräftat välkomstmejl), aldrig via en inloggningslänk.
       shouldCreateUser: false,
     },
@@ -144,7 +145,7 @@ export async function sendPasswordResetAction(formData: FormData): Promise<AuthR
   if (!email) return { ok: false, error: sv.auth.invalidEmail };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${await getRequestOrigin()}/auth/confirm?next=${encodeURIComponent("/konto?byt-losenord=1")}`,
+    redirectTo: `${await getRequestOrigin()}${routes.authConfirm({ next: routes.account({ bytLosenord: true }) })}`,
   });
   if (error) {
     const message = authErrorMessage(error, sv.auth.error);
@@ -178,7 +179,7 @@ export async function updateDisplayNameAction(formData: FormData): Promise<AuthR
     .update({ display_name: displayName || null })
     .eq("id", user.id);
   if (error) return { ok: false, error: sv.errors.generic };
-  revalidatePath("/konto");
+  revalidatePath(routes.account());
   return { ok: true, message: sv.account.saved };
 }
 
@@ -193,7 +194,7 @@ export async function updateEmailPrefsAction(formData: FormData): Promise<AuthRe
   if (formData.has("digest_form")) values.digest_email = formData.get("digest_email") === "on";
   const { error } = await supabase.from("profiles").update(values).eq("id", user.id);
   if (error) return { ok: false, error: sv.errors.generic };
-  revalidatePath("/konto");
+  revalidatePath(routes.account());
   return { ok: true, message: sv.account.saved };
 }
 
@@ -207,5 +208,5 @@ export async function deleteAccountAction(): Promise<AuthResult> {
   if (error) return { ok: false, error: sv.errors.generic };
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/?raderad=1");
+  redirect(routes.landing({ raderad: true }));
 }

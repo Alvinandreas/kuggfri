@@ -18,6 +18,7 @@ import { Toast } from "@/components/ui/Toast";
 import { inputClass } from "@/components/ui/TextField";
 import { cx } from "@/components/ui/cx";
 import { SortableList, rowActionClass } from "./SortableList";
+import { routes } from "@/lib/routes";
 
 /**
  * total och inactive räknar granskade kort, drafts utkast som väntar på granskning och
@@ -52,7 +53,7 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
         items={categories}
         label={sv.admin.categories}
         onReorder={(ids) => handle(reorderCategoriesAction(deckId, ids))}
-        href={(c) => `/admin/deck/${deckId}/kategori/${c.id}`}
+        href={(c) => routes.admin.category(deckId, c.id)}
         hrefLabel={(c) => c.title}
         linkTestId="admin-category-link"
         renderItem={(c) => (
@@ -69,7 +70,7 @@ export function CategoryOverview({ deckId, categories, counts, uncategorized }: 
       />
       {uncategorized.all > 0 ? (
         <Link
-          href={`/admin/deck/${deckId}/kategori/ingen`}
+          href={routes.admin.category(deckId, "ingen")}
           className="group flex min-h-14 items-center gap-3 rounded-lg border border-dashed border-line-strong px-4 py-2 transition-colors duration-150 hover:bg-surface-2"
         >
           <span className="font-semibold">{sv.admin.uncategorized}</span>

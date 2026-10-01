@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { StatusMessage } from "@/components/layout/StatusMessage";
+import { routes } from "@/lib/routes";
 
 /** Felsida i sajtens stil i stället för Next.js råa "Application error". */
 export function ErrorContent({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
@@ -18,7 +19,7 @@ export function ErrorContent({ error, reset }: { error: Error & { digest?: strin
       actions={
         <>
           <Button onClick={reset}>{sv.errors.retry}</Button>
-          <LinkButton href="/" variant="secondary">
+          <LinkButton href={routes.landing()} variant="secondary">
             {sv.common.toHome}
           </LinkButton>
         </>

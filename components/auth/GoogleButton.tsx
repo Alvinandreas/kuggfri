@@ -4,6 +4,7 @@ import { useState } from "react";
 import { sv } from "@/lib/i18n/sv";
 import { googleClientId } from "@/lib/auth/google";
 import { buttonClass } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 /**
  * "Fortsätt med Google": en vanlig knapp i designsystemet som skickar hela sidan till Googles
@@ -20,7 +21,7 @@ export function GoogleButton({ next }: { next: string }) {
   return (
     <div className="grid gap-4" data-testid="google-signin">
       <a
-        href={`/auth/google?next=${encodeURIComponent(next)}`}
+        href={routes.authGoogle({ next })}
         onClick={() => setLeaving(true)}
         aria-busy={leaving}
         className={buttonClass("outline", "lg", "w-full gap-3")}

@@ -6,6 +6,7 @@ import { SITE_HOST } from "@/lib/contact";
 import { daysUntil, estimateMinutes, parseExamDate } from "@/lib/study/plan";
 import { firstLine } from "@/lib/text/first-line";
 import type { DeckDigest } from "@/lib/supabase/database.types";
+import { routes } from "@/lib/routes";
 
 export type ReminderDeck = { slug: string; title: string; due: number; exam_date: string | null };
 
@@ -43,7 +44,7 @@ export function buildReminderEmail(input: { name: string | null; decks: Reminder
   const lines: string[] = [];
   const htmlLines: string[] = [];
   for (const d of input.decks) {
-    const url = `${input.siteUrl}/d/${d.slug}/plugga?mode=fsrs&urval=all`;
+    const url = `${input.siteUrl}${routes.study(d.slug, { mode: "fsrs", urval: "all" })}`;
     const exam = examLine(d.exam_date, now);
     const line = `${d.title}: ${d.due === 1 ? "1 kort" : `${d.due} kort`} att repetera, cirka ${estimateMinutes(d.due)} min.${exam ? ` ${exam}` : ""}`;
     lines.push(`${line}\n${url}`);
@@ -112,7 +113,7 @@ export function buildDigestEmail(input: {
   } else {
     paras.push("Inga öppna felrapporter.");
   }
-  const url = `${input.siteUrl}/admin/deck/${input.deckId}`;
+  const url = `${input.siteUrl}${routes.admin.deck(input.deckId)}`;
   const footerText = `Allt är sammanställt och anonymt; inget visas per kategori eller kort förrän minst ${input.minStudents} studenter skattat. Veckobrevet kan stängas av under Konto.`;
   const text = [hello, "", ...paras, "", `Kursöversikten: ${url}`, "", footerText].join("\n");
   const html = layout(

@@ -10,6 +10,7 @@ import { OriginalBadge } from "@/components/admin/KindBadge";
 import { SourceList } from "@/components/admin/SourceBadges";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.admin.editCard };
 
@@ -19,7 +20,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
   if (!data || !card || card.deck_id !== data.deck.id) notFound();
   const versions = await getCardHistory(data.deck.id, card.id).catch(() => []);
   const category = card.category_id ? (data.categories.find((c) => c.id === card.category_id) ?? null) : null;
-  const backHref = `/admin/deck/${data.deck.id}/kategori/${category ? category.id : "ingen"}`;
+  const backHref = routes.admin.category(data.deck.id, category ? category.id : "ingen");
   const siblings = data.cards.filter((c) => c.category_id === card.category_id);
   const index = siblings.findIndex((c) => c.id === card.id);
   const prev = index > 0 ? siblings[index - 1] : null;
@@ -27,7 +28,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
       <nav aria-label={sv.admin.breadcrumb} className="flex min-w-0 items-center gap-1 text-sm text-muted">
-        <Link href={`/admin/deck/${data.deck.id}/innehall`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
+        <Link href={routes.admin.content(data.deck.id)} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
           {sv.admin.tabContent}
         </Link>
         <ChevronRight size={15} aria-hidden className="shrink-0 text-subtle" />
@@ -45,13 +46,13 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
         </div>
         <div className="flex gap-2">
           {prev ? (
-            <LinkButton href={`/admin/deck/${data.deck.id}/kort/${prev.id}`} variant="outline" size="sm">
+            <LinkButton href={routes.admin.card(data.deck.id, prev.id)} variant="outline" size="sm">
               <ArrowLeft size={15} aria-hidden />
               {sv.admin.prevCard}
             </LinkButton>
           ) : null}
           {next ? (
-            <LinkButton href={`/admin/deck/${data.deck.id}/kort/${next.id}`} variant="outline" size="sm">
+            <LinkButton href={routes.admin.card(data.deck.id, next.id)} variant="outline" size="sm">
               {sv.admin.nextCard}
               <ArrowRight size={15} aria-hidden />
             </LinkButton>
@@ -65,7 +66,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
             <p className="text-sm font-semibold">{sv.granskning.tabFlagged}</p>
             <p className="whitespace-pre-wrap break-words">{card.flag_note}</p>
           </div>
-          <LinkButton href={`/admin/deck/${data.deck.id}/granskning?flik=flaggade&kort=${card.id}`} variant="outline" size="sm">
+          <LinkButton href={routes.admin.review(data.deck.id, { flik: "flaggade", kort: card.id })} variant="outline" size="sm">
             {sv.granskning.title}
             <ArrowRight size={15} aria-hidden />
           </LinkButton>

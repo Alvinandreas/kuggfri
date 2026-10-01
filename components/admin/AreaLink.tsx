@@ -2,6 +2,7 @@ import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import { tagBgClass } from "@/lib/ui/tag-colors";
 import { cx } from "@/components/ui/cx";
+import { routes } from "@/lib/routes";
 
 /**
  * Ett område som färgad tagg och länk till områdets sida i admin. Samma form som CategoryTag,
@@ -25,7 +26,7 @@ export function AreaLink({
 }) {
   return (
     <Link
-      href={`/admin/deck/${deckId}/kategori/${areaId}`}
+      href={routes.admin.category(deckId, areaId)}
       title={sv.admin.openArea(title)}
       data-testid="area-link"
       className={cx(

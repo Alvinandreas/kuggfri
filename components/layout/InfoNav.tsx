@@ -3,11 +3,12 @@
 import { usePathname } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { routes } from "@/lib/routes";
 
 const PAGES = [
-  { href: "/hjalp", label: sv.shell.help },
-  { href: "/om", label: sv.shell.about },
-  { href: "/integritet", label: sv.shell.privacy },
+  { href: routes.help(), label: sv.shell.help },
+  { href: routes.about(), label: sv.shell.about },
+  { href: routes.privacy(), label: sv.shell.privacy },
 ] as const;
 
 type Href = (typeof PAGES)[number]["href"];

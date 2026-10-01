@@ -4,13 +4,14 @@ import { sv } from "@/lib/i18n/sv";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
 import { getPublishedDecks } from "@/lib/content/queries";
 import { AccountPanel } from "@/components/account/AccountPanel";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.account.title };
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
   const session = await getCurrentProfile();
-  if (!session) redirect("/logga-in?next=%2Fkonto");
+  if (!session) redirect(routes.login({ next: routes.account() }));
   const supabase = await createSupabaseServerClient();
   const [decks, { data: examinerRows }] = await Promise.all([
     getPublishedDecks(),

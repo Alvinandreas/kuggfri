@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { decodeFlow, GOOGLE_CALLBACK_PATH, GOOGLE_COOKIE, GOOGLE_TOKEN_URL, googleClientId, sameString } from "@/lib/auth/google";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
+import { routes } from "@/lib/routes";
 
 /**
  * Steg 2 av inloggning med Google: Google skickar tillbaka hit med en kod. Kontrollera state,
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
   const flow = decodeFlow(request.cookies.get(GOOGLE_COOKIE)?.value);
   const fail = (reason: string, cancelled = false) => {
     if (!cancelled) console.error("[auth] google:", reason);
-    const res = NextResponse.redirect(new URL(cancelled ? "/logga-in" : "/logga-in?fel=google", request.url));
+    const res = NextResponse.redirect(new URL(cancelled ? routes.login() : routes.login({ fel: "google" }), request.url));
     res.cookies.delete({ name: GOOGLE_COOKIE, path: "/auth/google" });
     return res;
   };

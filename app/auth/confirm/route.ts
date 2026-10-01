@@ -3,6 +3,7 @@ import type { EmailOtpType } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { safeNext } from "@/lib/auth/safe-next";
 import { signupNextFromMetadata } from "@/lib/auth/signup-next";
+import { routes } from "@/lib/routes";
 
 /** Typerna som Kuggfris mejlmallar (supabase/templates) skickar. Allt annat avvisas. */
 const EMAIL_TYPES = new Set<EmailOtpType>(["signup", "email", "recovery", "magiclink", "email_change"]);
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     // Bekräftelsemejlet har en fast länk (next=/). Registrerade man sig från en kurslänk
     // sparades målet i användarens metadata, så att man hamnar i kursen efter bekräftelsen.
     if (ok && isSignup && next === "/") {
-      next = signupNextFromMetadata(data.user?.user_metadata) ?? "/hem";
+      next = signupNextFromMetadata(data.user?.user_metadata) ?? routes.home();
     }
   } else if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
 
   // En bekräftelselänk som redan använts (t.ex. av en länkskanner i mejlprogrammet) eller gått ut
   // får en egen förklaring: kontot kan mycket väl redan vara bekräftat.
-  const failure = isSignup ? "/logga-in?fel=bekraftelse" : "/logga-in?fel=lank";
+  const failure = isSignup ? routes.login({ fel: "bekraftelse" }) : routes.login({ fel: "lank" });
   const redirectTo = new URL(ok ? next : failure, request.url);
   return NextResponse.redirect(redirectTo);
 }

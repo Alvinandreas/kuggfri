@@ -6,6 +6,7 @@ import { safeNext } from "@/lib/auth/safe-next";
 import { first } from "@/lib/http/search-params";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { AuthPanel } from "@/components/auth/AuthForms";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: { absolute: `${sv.app.name} – ${sv.landing.title}` } };
 
@@ -19,7 +20,7 @@ const ICONS = [CalendarClock, GraduationCap, ChartNoAxesColumn];
  */
 export default async function LandingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
-  const next = safeNext(query.next, "/hem");
+  const next = safeNext(query.next, routes.home());
   const user = await getCurrentUser();
   if (user) redirect(next);
   const flik = first(query.flik);
@@ -33,7 +34,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
       </div>
 
       <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
-        <AuthPanel next={next} initialTab={flik === "logga-in" ? "logga-in" : "registrera"} hint={next !== "/hem" ? sv.landing.nextHint : null} />
+        <AuthPanel next={next} initialTab={flik === "logga-in" ? "logga-in" : "registrera"} hint={next !== routes.home() ? sv.landing.nextHint : null} />
       </div>
 
       <ul className="grid gap-5 lg:col-start-1 lg:row-start-2 lg:self-start">

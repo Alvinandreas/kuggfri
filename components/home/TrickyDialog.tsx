@@ -14,6 +14,7 @@ import { ActionRow } from "@/components/ui/ActionRow";
 import { Checkbox } from "@/components/ui/Choice";
 import { Modal } from "@/components/ui/Modal";
 import { cx } from "@/components/ui/cx";
+import { routes } from "@/lib/routes";
 
 type Props = {
   open: boolean;
@@ -129,7 +130,7 @@ export function TrickyDialog({ open, onClose, deck, cards, categories, categoryS
           </ul>
         </section>
 
-        <Link href={`/d/${deck.slug}?lage=tricky`} className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-accent hover:underline">
+        <Link href={routes.deck(deck.slug, { lage: "tricky" })} className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-accent hover:underline">
           {sv.quick.onCoursePage}
           <ArrowRight size={15} aria-hidden />
         </Link>

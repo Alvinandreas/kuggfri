@@ -1,3 +1,5 @@
+import { routes } from "@/lib/routes";
+
 /**
  * Vilka adresser når man utan konto? Sedan Kuggfri 2.0 krävs konto för att plugga
  * (DECISIONS.md, 27 september 2026). Utloggade når bara landningssidan, inloggnings-
@@ -31,11 +33,11 @@ export function isPublicPath(pathname: string): boolean {
  */
 export function inviteRewriteTarget(pathname: string): string | null {
   const m = COURSE_LINK.exec(pathname);
-  return m ? `/kurs/${m[1]}` : null;
+  return m?.[1] ? routes.courseInvite(m[1]) : null;
 }
 
 /** Vart en utloggad besökare skickas: landningssidan, med ursprungsadressen som next. */
 export function loginRedirectTarget(pathname: string, search: string): string {
   const next = `${pathname}${search}`;
-  return next === "/" ? "/" : `/?next=${encodeURIComponent(next)}`;
+  return next === "/" ? routes.landing() : routes.landing({ next });
 }

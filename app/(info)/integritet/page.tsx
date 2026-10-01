@@ -3,6 +3,7 @@ import Link from "next/link";
 import { sv } from "@/lib/i18n/sv";
 import { Card } from "@/components/ui/Card";
 import { CONTACTS } from "@/lib/contact";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.privacy.title };
 
@@ -71,7 +72,7 @@ export default function PrivacyPage() {
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
             <span>
               Du kan ladda ner allt vi har om dig, och radera kontot helt, själv under{" "}
-              <Link href="/konto" className={summaryLink}>
+              <Link href={routes.account()} className={summaryLink}>
                 Konto
               </Link>
               .
@@ -325,7 +326,7 @@ export default function PrivacyPage() {
           <h2>Dina rättigheter</h2>
           <ul>
             <li>
-              <strong>Tillgång och dataportabilitet.</strong> Under <Link href="/konto">Konto</Link> laddar du själv
+              <strong>Tillgång och dataportabilitet.</strong> Under <Link href={routes.account()}>Konto</Link> laddar du själv
               ner allt vi har om dig som en JSON-fil, direkt och utan att behöva fråga.
             </li>
             <li>

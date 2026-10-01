@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { CardEditor } from "@/components/admin/CardEditor";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.admin.newCard };
 
@@ -19,11 +20,11 @@ export default async function NewCardPage({
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
   const category = kategori ? (data.categories.find((c) => c.id === kategori) ?? null) : null;
-  const backHref = `/admin/deck/${data.deck.id}/kategori/${category ? category.id : "ingen"}`;
+  const backHref = routes.admin.category(data.deck.id, category ? category.id : "ingen");
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
       <nav aria-label={sv.admin.breadcrumb} className="flex min-w-0 items-center gap-1 text-sm text-muted">
-        <Link href={`/admin/deck/${data.deck.id}/innehall`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
+        <Link href={routes.admin.content(data.deck.id)} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
           {sv.admin.tabContent}
         </Link>
         {category ? (
@@ -40,7 +41,7 @@ export default async function NewCardPage({
         deckId={data.deck.id}
         categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
         initialCategoryId={category?.id ?? null}
-        backHref={category ? backHref : `/admin/deck/${data.deck.id}/innehall`}
+        backHref={category ? backHref : routes.admin.content(data.deck.id)}
       />
     </div>
   );

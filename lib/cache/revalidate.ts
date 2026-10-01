@@ -1,55 +1,56 @@
 import "server-only";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CONTENT_TAG } from "@/lib/content/queries";
+import { routes } from "@/lib/routes";
 
 /** Vad serveråtgärderna tömmer i cachen efter en ändring, samlat på ett ställe. */
 
 /** Ett decks innehåll eller inställningar har ändrats. */
 export function revalidateDeck(deckId: string, slug?: string) {
   revalidateTag(CONTENT_TAG);
-  revalidatePath("/admin");
-  revalidatePath("/admin/deck");
-  revalidatePath(`/admin/deck/${deckId}`, "layout");
-  revalidatePath("/");
+  revalidatePath(routes.admin.home());
+  revalidatePath(routes.admin.decks());
+  revalidatePath(routes.admin.deck(deckId), "layout");
+  revalidatePath(routes.landing());
   if (slug) {
-    revalidatePath(`/d/${slug}`);
-    revalidatePath(`/d/${slug}/plugga`);
+    revalidatePath(routes.deck(slug));
+    revalidatePath(routes.study(slug));
   }
 }
 
 /** Ett deck har tagits bort. */
 export function revalidateDeckRemoved() {
   revalidateTag(CONTENT_TAG);
-  revalidatePath("/admin");
-  revalidatePath("/admin/deck");
-  revalidatePath("/");
+  revalidatePath(routes.admin.home());
+  revalidatePath(routes.admin.decks());
+  revalidatePath(routes.landing());
 }
 
 /** Felrapporterna för ett deck. */
 export function revalidateReports(deckId: string) {
-  revalidatePath(`/admin/deck/${deckId}`);
-  revalidatePath(`/admin/deck/${deckId}/rapporter`);
+  revalidatePath(routes.admin.deck(deckId));
+  revalidatePath(routes.admin.reports(deckId));
 }
 
 /** Deckets inställningar med examinatorerna. */
 export function revalidateExaminers(deckId: string) {
-  revalidatePath(`/admin/deck/${deckId}/installningar`);
+  revalidatePath(routes.admin.settings(deckId));
 }
 
 /** En tentas sidor efter ett försök. */
 export function revalidateExam(slug: string, key: string) {
-  revalidatePath(`/d/${slug}/tenta`);
-  revalidatePath(`/d/${slug}/tenta/${key}`);
+  revalidatePath(routes.exam(slug));
+  revalidatePath(routes.examAttempt(slug, key));
 }
 
 /** Tentaläget för studenterna (redaktörens studentvy). */
 export function revalidateExamPages(slug: string) {
-  revalidatePath(`/d/${slug}/tenta`, "layout");
+  revalidatePath(routes.exam(slug), "layout");
 }
 
 /** Tentaläget har öppnats eller låsts. */
 export function revalidateExamMode(deckId: string, slug: string) {
   revalidateDeck(deckId, slug);
   revalidateExamPages(slug);
-  revalidatePath(`/admin/deck/${deckId}/tentor`, "layout");
+  revalidatePath(routes.admin.exams(deckId), "layout");
 }

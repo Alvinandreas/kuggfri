@@ -12,6 +12,7 @@ import type { SelectableCard } from "@/lib/study/selection";
 import { DuggaSettingsFields } from "@/components/study/DuggaSettingsFields";
 import { ActionRow } from "@/components/ui/ActionRow";
 import { Modal } from "@/components/ui/Modal";
+import { routes } from "@/lib/routes";
 
 type Props = {
   open: boolean;
@@ -67,7 +68,7 @@ export function DuggaDialog({ open, onClose, deck, cards, progress, reviews, dai
 
         <DuggaSettingsFields value={dugga} onChange={setDugga} available={available} />
 
-        <Link href={`/d/${deck.slug}?lage=exam`} className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-accent hover:underline">
+        <Link href={routes.deck(deck.slug, { lage: "exam" })} className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-accent hover:underline">
           {sv.quick.onCoursePage}
           <ArrowRight size={15} aria-hidden />
         </Link>

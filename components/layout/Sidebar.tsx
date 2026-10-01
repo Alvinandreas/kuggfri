@@ -9,27 +9,22 @@ import {
   ChartNoAxesColumn,
   ChevronsLeft,
   CircleHelp,
-  ClipboardCheck,
   ClipboardPen,
-  Flag,
   House,
   Info,
-  Layers,
-  LayoutDashboard,
   LayoutList,
   Library,
   Lock,
   Menu as MenuIcon,
   Palette,
-  ScrollText,
-  Settings2,
   ShieldCheck,
-  Upload,
   X,
   type LucideProps,
 } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import type { AdminNavDeck } from "@/lib/admin/nav";
+import { ADMIN_TABS } from "@/lib/admin/tabs";
+import { routes } from "@/lib/routes";
 import { IconButton } from "@/components/ui/Button";
 import { cx } from "@/components/ui/cx";
 import { Logo } from "@/components/layout/Logo";
@@ -149,19 +144,21 @@ function SectionLabel({ children }: { children: string }) {
 function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean): NavLink[] {
   const links: NavLink[] = [];
   if (deck) {
-    const base = `/admin/deck/${deck.id}`;
-    links.push(
-      { href: base, label: sv.admin.tabOverview, icon: LayoutDashboard, exact: true, also: [`${base}/statistik`] },
-      { href: `${base}/innehall`, label: sv.admin.tabContent, icon: Layers, also: [`${base}/kategori`, `${base}/kort`] },
-      { href: `${base}/granskning`, label: sv.admin.tabReview, icon: ClipboardCheck, badge: deck.pendingDrafts, badgeLabel: sv.shell.pendingDrafts(deck.pendingDrafts) },
-      { href: `${base}/tentor`, label: sv.admin.tabExams, icon: ScrollText },
-      { href: `${base}/rapporter`, label: sv.admin.tabReports, icon: Flag, badge: deck.openReports, badgeLabel: sv.shell.openReports(deck.openReports) },
-      { href: `${base}/import`, label: sv.admin.tabImport, icon: Upload },
-      { href: `${base}/installningar`, label: sv.admin.tabSettings, icon: Settings2 },
-    );
+    for (const tab of ADMIN_TABS) {
+      const badge = tab.counter ? deck[tab.counter.key] : undefined;
+      links.push({
+        href: tab.href(deck.id),
+        label: tab.label,
+        icon: tab.icon,
+        exact: tab.exact,
+        also: tab.also?.(deck.id),
+        badge,
+        badgeLabel: tab.counter && badge !== undefined ? tab.counter.label(badge) : undefined,
+      });
+    }
   }
-  if (isAdmin) links.push({ href: "/admin/deck", label: sv.shell.allCourses, icon: LayoutList, exact: true, also: ["/admin/deck/ny"] });
-  if (isAdmin) links.push({ href: "/designsystem", label: sv.shell.designSystem, icon: Palette });
+  if (isAdmin) links.push({ href: routes.admin.decks(), label: sv.shell.allCourses, icon: LayoutList, exact: true, also: [routes.admin.newDeck()] });
+  if (isAdmin) links.push({ href: routes.designSystem(), label: sv.shell.designSystem, icon: Palette });
   return links;
 }
 
@@ -170,24 +167,23 @@ function adminLinks(deck: AdminNavDeck | null, isAdmin: boolean): NavLink[] {
  * inte är öppet för studenterna och användaren inte är redaktör för kursen.
  */
 function courseLinks(course: SidebarProps["courses"][number], adminDeckIds: string[]): NavLink[] {
-  const base = `/d/${course.slug}`;
   const locked = !course.examModeOpen && !adminDeckIds.includes(course.id);
   return [
-    { href: base, label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [`${base}/plugga`], testId: "nav-course-page" },
-    { href: `${base}/tenta`, label: sv.shell.examMode, icon: ClipboardPen, locked, lockedLabel: sv.shell.examModeLocked, testId: "nav-exam-mode" },
+    { href: routes.deck(course.slug), label: sv.shell.coursePage, icon: BookOpen, exact: true, also: [routes.study(course.slug)], testId: "nav-course-page" },
+    { href: routes.exam(course.slug), label: sv.shell.examMode, icon: ClipboardPen, locked, lockedLabel: sv.shell.examModeLocked, testId: "nav-exam-mode" },
   ];
 }
 
 /** Innehållet i sidomenyn; samma på desktop och i mobilens utdragbara meny. */
 function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathname, top, drawer }: SidebarProps & { pathname: string; top: React.ReactNode; drawer?: boolean }) {
   // Med flera kurser: Kurser, och kursens två poster när man är inne i en kurs.
-  const inCourse = courses.find((c) => under(pathname, `/d/${c.slug}`));
+  const inCourse = courses.find((c) => under(pathname, routes.deck(c.slug)));
   const study: NavLink[] = [
-    { href: "/hem", label: sv.shell.home, icon: House },
-    { href: "/statistik", label: sv.shell.myStats, icon: ChartNoAxesColumn },
+    { href: routes.home(), label: sv.shell.home, icon: House },
+    { href: routes.myStats(), label: sv.shell.myStats, icon: ChartNoAxesColumn },
     ...(courses.length === 1 && courses[0]
       ? courseLinks(courses[0], adminDeckIds)
-      : [{ href: "/kurser", label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDeckIds) : [])]),
+      : [{ href: routes.courses(), label: sv.shell.courses, icon: Library, exact: true }, ...(inCourse ? courseLinks(inCourse, adminDeckIds) : [])]),
   ];
   const admin = adminLinks(adminDeck, isAdmin);
   return (
@@ -214,9 +210,9 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, pathn
       {/* Avgränsad från listan ovanför: på låga skärmar rullar listan, och utan kant såg den
           avklippta sista posten ut att ligga under Hjälp. */}
       <div className="space-y-0.5 border-t border-line px-3 pb-4 pt-2">
-        <NavItem link={{ href: "/hjalp", label: sv.shell.help, icon: CircleHelp }} pathname={pathname} drawer={drawer} />
-        <NavItem link={{ href: "/om", label: sv.shell.about, icon: Info }} pathname={pathname} drawer={drawer} />
-        <NavItem link={{ href: "/integritet", label: sv.shell.privacy, icon: ShieldCheck }} pathname={pathname} drawer={drawer} />
+        <NavItem link={{ href: routes.help(), label: sv.shell.help, icon: CircleHelp }} pathname={pathname} drawer={drawer} />
+        <NavItem link={{ href: routes.about(), label: sv.shell.about, icon: Info }} pathname={pathname} drawer={drawer} />
+        <NavItem link={{ href: routes.privacy(), label: sv.shell.privacy, icon: ShieldCheck }} pathname={pathname} drawer={drawer} />
         <ProfileMenu user={user} placement="right-end" />
       </div>
     </>
@@ -300,7 +296,7 @@ export function Sidebar(props: SidebarProps) {
 
   const desktopTop = (
     <div className="sidebar-top flex items-center justify-between gap-2 px-4 pb-1 pt-4">
-      <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
+      <Link href={routes.home()} aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
         <span data-sidebar-label>
           <Logo variant="menu" height={34} priority decorative />
         </span>
@@ -317,7 +313,7 @@ export function Sidebar(props: SidebarProps) {
 
   const drawerTop = (
     <div className="flex items-center justify-between gap-2 px-4 pb-1 pt-4">
-      <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
+      <Link href={routes.home()} aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
         <Logo variant="menu" height={34} decorative />
       </Link>
       <IconButton ref={closeButtonRef} label={sv.shell.closeMenu} variant="outline" size="sm" className="relative after:absolute after:-inset-1.5" onClick={closeDrawer}>
@@ -336,7 +332,7 @@ export function Sidebar(props: SidebarProps) {
         <IconButton ref={menuButtonRef} label={sv.shell.openMenu} className="relative after:absolute after:-inset-0.5" onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>
           <MenuIcon size={20} strokeWidth={2} aria-hidden />
         </IconButton>
-        <Link href="/hem" aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
+        <Link href={routes.home()} aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
           <Logo variant="menu" height={30} decorative />
         </Link>
         <ProfileMenu user={props.user} placement="bottom-end" compact />

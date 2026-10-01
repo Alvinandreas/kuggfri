@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { pickActiveAdminCourse } from "@/lib/admin/active-course";
 import { getEditableDecks } from "@/lib/admin/queries";
+import { routes } from "@/lib/routes";
 
 /**
  * Ingången till admin. Adminfunktionerna gäller Materialteknik (lib/admin/active-course.ts,
@@ -10,6 +11,6 @@ import { getEditableDecks } from "@/lib/admin/queries";
  */
 export default async function AdminPage() {
   const target = pickActiveAdminCourse(await getEditableDecks(), "enda");
-  if (target) redirect(`/admin/deck/${target.id}`);
-  redirect("/admin/deck");
+  if (target) redirect(routes.admin.deck(target.id));
+  redirect(routes.admin.decks());
 }

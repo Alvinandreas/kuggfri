@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { safeNext } from "@/lib/auth/safe-next";
 import { buildGoogleAuthUrl, encodeFlow, GOOGLE_CALLBACK_PATH, GOOGLE_COOKIE, googleClientId, randomToken, sha256Hex } from "@/lib/auth/google";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
+import { routes } from "@/lib/routes";
 
 /**
  * Steg 1 av inloggning med Google (lib/auth/google.ts): skickar webbläsaren till Googles egen
@@ -10,9 +11,9 @@ import { getRequestOrigin } from "@/lib/supabase/request-origin";
 export async function GET(request: NextRequest) {
   const clientId = googleClientId();
   if (!clientId || !process.env.GOOGLE_CLIENT_SECRET) {
-    return NextResponse.redirect(new URL("/logga-in?fel=google", request.url));
+    return NextResponse.redirect(new URL(routes.login({ fel: "google" }), request.url));
   }
-  const next = safeNext(new URL(request.url).searchParams.get("next"), "/hem");
+  const next = safeNext(new URL(request.url).searchParams.get("next"), routes.home());
   const origin = await getRequestOrigin();
   const state = randomToken();
   const nonce = randomToken();

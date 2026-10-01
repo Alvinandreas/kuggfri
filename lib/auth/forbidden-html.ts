@@ -1,4 +1,5 @@
 import { sv } from "@/lib/i18n/sv";
+import { routes } from "@/lib/routes";
 
 /** Minimal 403-sida som middleware kan svara med utan att rendera React. */
 export function forbiddenHtml(): string {
@@ -20,7 +21,7 @@ export function forbiddenHtml(): string {
 <main>
 <h1>${sv.common.forbiddenTitle}</h1>
 <p>${sv.common.forbiddenBody}</p>
-<p><a href="/">${sv.common.toHome}</a></p>
+<p><a href="${routes.landing()}">${sv.common.toHome}</a></p>
 </main>
 </body>
 </html>`;

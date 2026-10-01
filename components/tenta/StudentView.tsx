@@ -9,6 +9,7 @@ import type { StudentView } from "@/lib/tentor/queries";
 import { Button } from "@/components/ui/Button";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { cx } from "@/components/ui/cx";
+import { routes } from "@/lib/routes";
 
 /**
  * "Visa som student" för redaktörer: sätter studentvyn för kursen (en kaka som servern bara
@@ -23,7 +24,7 @@ export function StudentViewButton({ deckId, slug, variant = "outline", className
     startTransition(async () => {
       const res = await setStudentViewAction(deckId, "oppen");
       if (!res.ok) return setError(res.error);
-      router.push(`/d/${slug}/tenta`);
+      router.push(routes.exam(slug));
       router.refresh();
     });
   }

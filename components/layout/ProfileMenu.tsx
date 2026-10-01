@@ -7,6 +7,7 @@ import { signOutAction } from "@/lib/auth/actions";
 import { Avatar } from "@/components/ui/Avatar";
 import { Menu, MenuHeader, MenuItem, MenuRow, MenuSeparator, type MenuPlacement } from "@/components/ui/Menu";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
+import { routes } from "@/lib/routes";
 
 export type ShellUser = { name: string; email: string };
 
@@ -51,16 +52,16 @@ export function ProfileMenu({ user, placement, compact = false }: { user: ShellU
           </div>
         </div>
       </MenuHeader>
-      <MenuItem href="/konto" icon={<UserRound size={18} />}>
+      <MenuItem href={routes.account()} icon={<UserRound size={18} />}>
         {sv.shell.account}
       </MenuItem>
       <MenuRow label={sv.shell.theme} icon={<SunMoon size={18} />}>
         <ThemeSwitcher inMenu />
       </MenuRow>
-      <MenuItem href="/integritet" icon={<ShieldCheck size={18} />}>
+      <MenuItem href={routes.privacy()} icon={<ShieldCheck size={18} />}>
         {sv.shell.privacy}
       </MenuItem>
-      <MenuItem href="/om" icon={<Info size={18} />}>
+      <MenuItem href={routes.about()} icon={<Info size={18} />}>
         {sv.shell.about}
       </MenuItem>
       <MenuSeparator />

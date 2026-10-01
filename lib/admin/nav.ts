@@ -4,9 +4,13 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminContext } from "./access";
 import { pickActiveAdminCourse } from "./active-course";
 import { countOpenReports, getEditableDecks } from "./queries";
+import type { AdminTabCounter } from "./tabs";
 
-/** Kursen som sidomenyns adminsektion gäller, med räknarna (att granska, öppna felrapporter). */
-export type AdminNavDeck = { id: string; title: string; pendingDrafts: number; openReports: number };
+/**
+ * Kursen som sidomenyns adminsektion gäller, med räknarna som adminflikarna visar
+ * (ADMIN_TABS i lib/admin/tabs.ts: att granska, öppna felrapporter).
+ */
+export type AdminNavDeck = { id: string; title: string } & Record<AdminTabCounter, number>;
 
 export type AdminNav = {
   /** Global admin: ser alla kurser, "Alla kurser" och designsystemet. */

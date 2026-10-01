@@ -17,6 +17,7 @@ import { inputClass } from "@/components/ui/TextField";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
 import { ToggleRow } from "@/components/ui/Toggle";
 import { cx } from "@/components/ui/cx";
+import { routes } from "@/lib/routes";
 
 const DAILY_OPTIONS = DAILY_NEW_CHOICES.map((n) => ({ value: String(n), label: `${sv.deck.newCards(n)} per dag` }));
 
@@ -297,7 +298,7 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
 
       <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 7 }} role="region" aria-labelledby="data-rubrik">
         <CardHeader id="data-rubrik" title={sv.account.dataTitle} description={sv.account.downloadHelp} />
-        <a href="/api/konto/export" download="kuggfri-data.json" className={buttonClass("outline", "md")}>
+        <a href={routes.accountExport()} download="kuggfri-data.json" className={buttonClass("outline", "md")}>
           <Download size={17} aria-hidden />
           <span className="whitespace-normal">{sv.account.download}</span>
         </a>

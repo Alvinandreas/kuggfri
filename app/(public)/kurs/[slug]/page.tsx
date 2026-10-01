@@ -6,6 +6,7 @@ import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { AuthPanel } from "@/components/auth/AuthForms";
 import { Badge } from "@/components/ui/Badge";
+import { routes } from "@/lib/routes";
 
 type Params = Promise<{ slug: string }>;
 
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function CourseInvitePage({ params }: { params: Params }) {
   const { slug } = await params;
   const user = await getCurrentUser();
-  if (user) redirect(`/d/${slug}`);
+  if (user) redirect(routes.deck(slug));
   // Utloggad: bara publicerade kurser hittas, så en opublicerad kurs läcker inte ens sitt namn.
   const data = await getDeckBySlug(slug);
   if (!data) notFound();
@@ -48,7 +49,7 @@ export default async function CourseInvitePage({ params }: { params: Params }) {
         {deck.description ? <p className="mt-5 max-w-xl text-lg text-muted">{deck.description}</p> : null}
         <p className="mt-5 max-w-xl text-muted">{sv.invite.lead}</p>
       </div>
-      <AuthPanel next={`/d/${deck.slug}`} initialTab="registrera" />
+      <AuthPanel next={routes.deck(deck.slug)} initialTab="registrera" />
     </div>
   );
 }

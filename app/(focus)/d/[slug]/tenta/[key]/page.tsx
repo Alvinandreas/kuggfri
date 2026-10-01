@@ -12,6 +12,7 @@ import { ExamGrading } from "@/components/tenta/ExamGrading";
 import { ExamRunner } from "@/components/tenta/ExamRunner";
 import { ExamResultView } from "@/components/tenta/ExamResultView";
 import { first } from "@/lib/http/search-params";
+import { routes } from "@/lib/routes";
 
 type Params = Promise<{ slug: string; key: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -38,13 +39,13 @@ export default async function ExamPage({ params, searchParams }: { params: Param
   const { deck, access } = ctx;
   const studentView = access.studentView ?? null;
   // Låst för studenten (och i studentvyns låsta läge): tillbaka till startsidan, som visar låsvyn.
-  if (studentView === "last" || (!access.canEdit && !openForStudents(access))) redirect(`/d/${slug}/tenta`);
+  if (studentView === "last" || (!access.canEdit && !openForStudents(access))) redirect(routes.exam(slug));
   const record = await getExamRecord(deck.id, key, access);
   if (!record) notFound();
   const { exam } = record;
   const preview = access.canEdit && !studentView;
   const fromAdmin = preview && first(query.fran) === "admin";
-  const back = fromAdmin ? { href: `/admin/deck/${deck.id}/tentor`, label: sv.tenta.toAdminExams } : { href: `/d/${slug}/tenta`, label: sv.tenta.toList };
+  const back = fromAdmin ? { href: routes.admin.exams(deck.id), label: sv.tenta.toAdminExams } : { href: routes.exam(slug), label: sv.tenta.toList };
   const suffix = fromAdmin ? "&fran=admin" : "";
   const studentViewDeck = studentView ? deck.id : null;
   const questions = withImageUrls(exam.questions, slug, exam.key);

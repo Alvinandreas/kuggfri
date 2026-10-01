@@ -11,6 +11,7 @@ import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import { EXAM_SIZE, EXTRA_SESSION_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
 import { filterCards, serializeSelection, trickyCardsFor, type SelectableCard, type Selection } from "@/lib/study/selection";
 import { defaultSettings, filterKinds, sizeLimit, type SessionSettings } from "@/lib/study/session-settings";
+import { routes } from "@/lib/routes";
 
 export type DeckPlan = {
   phase: ExamPhase;
@@ -94,7 +95,7 @@ export function planDeckSession(input: {
         : input.mode === "fsrs"
           ? selectionCards.length
           : cap(selectionCards.length);
-  const startHref = `/d/${input.deck.slug}/plugga?mode=${input.mode}&urval=${encodeURIComponent(serializeSelection(effectiveSelection))}`;
+  const startHref = routes.study(input.deck.slug, { mode: input.mode, urval: serializeSelection(effectiveSelection) });
 
   const phase = examPhase(parseExamDate(input.deck.exam_date), now);
   const finalReview = phase.kind === "final";
@@ -119,7 +120,7 @@ export function planDeckSession(input: {
   const nothingDue = input.mode === "fsrs" && selStats !== null && sessionCards === 0;
   const moreNew = s.newCards ? cap(Math.min(input.dailyNew, selStats?.new ?? 0)) : 0;
   const extraCount = Math.min(limit ?? EXTRA_SESSION_SIZE, s.newCards ? selectedCards.length : seenCount);
-  const fsrsHref = `/d/${input.deck.slug}/plugga?mode=fsrs&urval=${encodeURIComponent(serializeSelection(categorySelection))}`;
+  const fsrsHref = routes.study(input.deck.slug, { mode: "fsrs", urval: serializeSelection(categorySelection) });
 
   return {
     phase,

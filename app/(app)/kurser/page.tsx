@@ -5,6 +5,7 @@ import { sv } from "@/lib/i18n/sv";
 import { getPublishedDecks } from "@/lib/content/queries";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardLink } from "@/components/ui/Card";
+import { routes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: sv.home.title };
@@ -12,7 +13,7 @@ export const metadata: Metadata = { title: sv.home.title };
 export default async function CoursesPage() {
   const decks = await getPublishedDecks();
   // Med en enda kurs finns inget att välja mellan: gå direkt till den.
-  if (decks.length === 1 && decks[0]) redirect(`/d/${decks[0].slug}`);
+  if (decks.length === 1 && decks[0]) redirect(routes.deck(decks[0].slug));
 
   return (
     <div>
@@ -29,7 +30,7 @@ export default async function CoursesPage() {
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {decks.map((deck, i) => (
             <li key={deck.id} className="anim-fade-up" style={{ ["--i" as string]: i + 1 }}>
-              <CardLink href={`/d/${deck.slug}`} padding="lg" className="flex h-full flex-col">
+              <CardLink href={routes.deck(deck.slug)} padding="lg" className="flex h-full flex-col">
                 <div className="flex items-start justify-between gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent-soft text-accent-ink">
                     <BookOpen size={22} aria-hidden />

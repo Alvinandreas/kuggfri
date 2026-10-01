@@ -21,6 +21,7 @@ import { Toast } from "@/components/ui/Toast";
 import { KindBadge, ReviewStatusBadge } from "./KindBadge";
 import { SourceBadges } from "./SourceBadges";
 import { SortableList, rowActionClass } from "./SortableList";
+import { routes } from "@/lib/routes";
 
 type Props = {
   deckId: string;
@@ -139,7 +140,7 @@ export function CardList({ deckId, cards, categories = [], currentCategoryId }: 
         items={shown}
         label={sv.admin.cards}
         onReorder={(ids) => handle(reorderCardsAction(deckId, source === "alla" ? ids : mergeSubsetOrder(cards.map((c) => c.id), ids)))}
-        href={(card) => `/admin/deck/${deckId}/kort/${card.id}`}
+        href={(card) => routes.admin.card(deckId, card.id)}
         hrefLabel={(card) => firstLine(card.front)}
         linkTestId="admin-card-front"
         renderItem={(card) => (

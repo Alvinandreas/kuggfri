@@ -14,6 +14,7 @@ import { MIN_STUDENTS } from "@/lib/admin/thresholds";
 import { formatCount, formatDecimal } from "@/lib/admin/format";
 import { AreaLink } from "./AreaLink";
 import { StatBlock } from "./StatBlock";
+import { routes } from "@/lib/routes";
 
 type Category = { id: string; title: string; cardCount: number };
 
@@ -103,7 +104,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
             label={sv.admin.tileReports}
             value={formatCount(stats.open_reports)}
             sub={sv.admin.tileReportsSub}
-            href={`/admin/deck/${deckId}/rapporter`}
+            href={routes.admin.reports(deckId)}
             className="anim-fade-up"
             style={{ ["--i" as string]: 4 }}
           />
@@ -192,7 +193,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                     {tricky.map((c) => (
                       <tr key={c.card_id} className="transition-colors duration-150 hover:bg-surface-2">
                         <td className="py-3 pl-6 pr-4 sm:pl-7">
-                          <Link href={`/admin/deck/${deckId}/kort/${c.card_id}`} className="line-clamp-2 font-medium underline-offset-2 hover:underline" title={firstLine(c.front)}>
+                          <Link href={routes.admin.card(deckId, c.card_id)} className="line-clamp-2 font-medium underline-offset-2 hover:underline" title={firstLine(c.front)}>
                             {firstLine(c.front)}
                           </Link>
                         </td>
@@ -236,7 +237,7 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                   {openReports.slice(0, 3).map((r) => (
                     <li key={r.id} className="rounded-md bg-surface-2 px-4 py-3 text-sm">
                       <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                        <Link href={`/admin/deck/${deckId}/kort/${r.card_id}`} className="min-w-0 truncate font-semibold underline-offset-2 hover:underline" title={firstLine(r.card_front)}>
+                        <Link href={routes.admin.card(deckId, r.card_id)} className="min-w-0 truncate font-semibold underline-offset-2 hover:underline" title={firstLine(r.card_front)}>
                           {firstLine(r.card_front)}
                         </Link>
                         <span className="text-xs text-muted">{formatDateTime(r.created_at)}</span>
@@ -246,11 +247,11 @@ export function CourseOverview({ deckId, stats, categories, openReports }: Props
                   ))}
                 </ul>
               )}
-              <MoreLink href={`/admin/deck/${deckId}/rapporter`}>{sv.admin.allReports}</MoreLink>
+              <MoreLink href={routes.admin.reports(deckId)}>{sv.admin.allReports}</MoreLink>
             </Panel>
           </div>
 
-          <MoreLink href={`/admin/deck/${deckId}/statistik`}>{sv.admin.moreStats}</MoreLink>
+          <MoreLink href={routes.admin.stats(deckId)}>{sv.admin.moreStats}</MoreLink>
         </>
       ) : null}
     </div>

@@ -22,6 +22,7 @@ import { AnswerReview } from "./result/AnswerReview";
 import { GradeBadge } from "./result/GradeBadge";
 import { PointsBar } from "./result/PointsBar";
 import { KeepDates } from "@/components/ui/KeepDates";
+import { routes } from "@/lib/routes";
 
 /** Tentan som den skickas till webbläsaren efter rättningen: med facit men utan källa och status. */
 export type ResultExam = Omit<Exam, "source" | "status">;
@@ -96,7 +97,7 @@ export function ExamResultView({ slug, exam, result, answers, selfGrades, points
   function retake() {
     startRetake(async () => {
       const res = await startExamAttemptAction(slug, exam.key);
-      if (res.ok) router.push(`/d/${slug}/tenta/${exam.key}?forsok=${res.data.attemptId}${attemptSuffix}`);
+      if (res.ok) router.push(`${routes.examAttempt(slug, exam.key, { forsok: res.data.attemptId })}${attemptSuffix}`);
       else setError(res.error);
     });
   }

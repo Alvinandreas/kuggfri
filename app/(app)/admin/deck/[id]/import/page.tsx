@@ -5,6 +5,7 @@ import { getDeckForAdmin } from "@/lib/admin/queries";
 import { ImportPanel } from "@/components/admin/ImportPanel";
 import { Download } from "lucide-react";
 import { buttonClass } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.admin.importTitle };
 
@@ -17,7 +18,7 @@ export default async function ImportPage({ params }: { params: Promise<{ id: str
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-bold tracking-tight">{sv.admin.importTitle}</h2>
         <a
-          href={`/admin/deck/${data.deck.id}/export`}
+          href={routes.admin.export(data.deck.id)}
           download={`${data.deck.slug}.json`}
           title={sv.admin.exportHelp}
           className={buttonClass("outline", "sm")}

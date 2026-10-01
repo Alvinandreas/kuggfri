@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { ExamFigures } from "@/components/tenta/ExamFigures";
 import { ExamKey } from "@/components/tenta/ExamKey";
+import { routes } from "@/lib/routes";
 
 type Params = Promise<{ id: string; key: string }>;
 
@@ -38,7 +39,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6" data-testid="admin-exam-key">
       <div>
-        <Link href={`/admin/deck/${deck.id}/tentor`} className="mb-3 inline-flex items-center gap-1.5 rounded-md text-sm font-semibold text-muted hover:text-fg">
+        <Link href={routes.admin.exams(deck.id)} className="mb-3 inline-flex items-center gap-1.5 rounded-md text-sm font-semibold text-muted hover:text-fg">
           <ArrowLeft size={16} aria-hidden />
           {sv.admin.tabExams}
         </Link>
@@ -56,7 +57,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
                 ))}
             </p>
           </div>
-          <LinkButton href={`/d/${deck.slug}/tenta/${exam.key}?fran=admin`} variant="outline" size="sm">
+          <LinkButton href={routes.examAttempt(deck.slug, exam.key, { fran: "admin" })} variant="outline" size="sm">
             <Eye size={15} aria-hidden />
             {sv.tenta.previewLink}
           </LinkButton>

@@ -7,6 +7,7 @@ import { getAllDecksForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.admin.decks };
 
@@ -17,7 +18,7 @@ export default async function AdminDeckListPage() {
       <div className="anim-fade-up flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{sv.admin.decks}</h1>
         {ctx?.isAdmin ? (
-          <LinkButton href="/admin/deck/ny" size="sm">
+          <LinkButton href={routes.admin.newDeck()} size="sm">
             <Plus size={16} aria-hidden />
             {sv.admin.newDeck}
           </LinkButton>
@@ -40,7 +41,7 @@ export default async function AdminDeckListPage() {
               </span>
               <div className="min-w-0 flex-1">
                 {/* Hela raden är klickbar via länkens ::after; "Visa kursen" ligger ovanpå (z-10). */}
-                <Link href={`/admin/deck/${d.id}`} className="text-lg font-bold tracking-tight after:absolute after:inset-0 after:rounded-lg">
+                <Link href={routes.admin.deck(d.id)} className="text-lg font-bold tracking-tight after:absolute after:inset-0 after:rounded-lg">
                   {d.title}
                 </Link>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
@@ -50,7 +51,7 @@ export default async function AdminDeckListPage() {
                 </p>
               </div>
               <Link
-                href={`/d/${d.slug}`}
+                href={routes.deck(d.slug)}
                 className="relative z-10 inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors duration-150 hover:bg-surface-3 hover:text-fg"
               >
                 {sv.admin.viewDeck}

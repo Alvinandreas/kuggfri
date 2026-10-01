@@ -8,6 +8,7 @@ import { Kbd } from "@/components/ui/Kbd";
 import { Modal } from "@/components/ui/Modal";
 import { cx } from "@/components/ui/cx";
 import { ratingClass } from "./RatingButtons";
+import { routes } from "@/lib/routes";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -74,7 +75,7 @@ export function SessionHelpDialog({ open, onClose }: { open: boolean; onClose: (
         </Section>
 
         <p className="text-muted">
-          <Link href="/hjalp" className="font-semibold text-accent underline-offset-2 hover:underline">
+          <Link href={routes.help()} className="font-semibold text-accent underline-offset-2 hover:underline">
             {sv.session.helpSchedule}
           </Link>
         </p>

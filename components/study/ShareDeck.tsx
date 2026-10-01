@@ -7,6 +7,7 @@ import { SITE_HOST } from "@/lib/contact";
 import { sv } from "@/lib/i18n/sv";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { routes } from "@/lib/routes";
 
 type Props = { slug: string };
 
@@ -22,7 +23,7 @@ export function ShareDeck({ slug }: Props) {
   // QR-koden renderas först när den efterfrågas.
   useEffect(() => {
     if (!showQr || qrSvg) return;
-    QRCode.toString(`${window.location.origin}/d/${slug}`, { type: "svg", margin: 1, errorCorrectionLevel: "M" })
+    QRCode.toString(`${window.location.origin}${routes.deck(slug)}`, { type: "svg", margin: 1, errorCorrectionLevel: "M" })
       .then(setQrSvg)
       .catch(() => setQrSvg(null));
   }, [showQr, qrSvg, slug]);
@@ -34,7 +35,7 @@ export function ShareDeck({ slug }: Props) {
   }, [copied]);
 
   async function copyLink() {
-    if (await copyToClipboard(`${window.location.origin}/d/${slug}`)) setCopied(true);
+    if (await copyToClipboard(`${window.location.origin}${routes.deck(slug)}`)) setCopied(true);
   }
 
   return (
@@ -68,7 +69,7 @@ export function ShareDeck({ slug }: Props) {
           {qrSvg ? (
             <div
               role="img"
-              aria-label={sv.deck.qrAlt(`${SITE_HOST}/d/${slug}`)}
+              aria-label={sv.deck.qrAlt(`${SITE_HOST}${routes.deck(slug)}`)}
               className="h-44 w-44 shrink-0 rounded-md bg-white p-2 [&_svg]:h-full [&_svg]:w-full"
               dangerouslySetInnerHTML={{ __html: qrSvg }}
             />

@@ -13,6 +13,7 @@ import { StatTile } from "@/components/stats/StatTile";
 import { ratingClass } from "./RatingButtons";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import type { StudyCard, TodaySummary } from "./types";
+import { routes } from "@/lib/routes";
 
 type Props = {
   summary: Summary;
@@ -212,7 +213,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <LinkButton href={`/d/${deckSlug}`} variant={offerExtra ? "secondary" : "primary"} size="lg">
+        <LinkButton href={routes.deck(deckSlug)} variant={offerExtra ? "secondary" : "primary"} size="lg">
           {sv.summary.backToDeck}
         </LinkButton>
         {againHref ? (
@@ -225,7 +226,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
             {sv.summary.continueNew(today.continueCount)}
           </LinkButton>
         ) : (
-          <LinkButton href="/hem" variant="secondary" size="lg">
+          <LinkButton href={routes.home()} variant="secondary" size="lg">
             {sv.summary.home}
           </LinkButton>
         )}

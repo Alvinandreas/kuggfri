@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { StudentViewBar } from "./StudentView";
 import { KeepDates } from "@/components/ui/KeepDates";
+import { routes } from "@/lib/routes";
 
 export type CoverExam = {
   key: string;
@@ -62,7 +63,6 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [left, setLeft] = useState<number | null>(null);
-  const base = `/d/${deck.slug}/tenta/${exam.key}`;
 
   useEffect(() => {
     if (!inProgress) return;
@@ -78,7 +78,7 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
     setError(null);
     startTransition(async () => {
       const res = await startExamAttemptAction(deck.slug, exam.key);
-      if (res.ok) router.push(`${base}?forsok=${res.data.attemptId}${attemptSuffix}`);
+      if (res.ok) router.push(`${routes.examAttempt(deck.slug, exam.key, { forsok: res.data.attemptId })}${attemptSuffix}`);
       else setError(res.error);
     });
   }
@@ -161,12 +161,12 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
               <span />
             )}
             {inProgress ? (
-              <Button size="lg" onClick={() => router.push(`${base}?forsok=${inProgress.id}${attemptSuffix}`)} data-testid="exam-resume">
+              <Button size="lg" onClick={() => router.push(`${routes.examAttempt(deck.slug, exam.key, { forsok: inProgress.id })}${attemptSuffix}`)} data-testid="exam-resume">
                 {sv.tenta.resumeExam}
                 <ArrowRight size={18} aria-hidden />
               </Button>
             ) : grading ? (
-              <Button size="lg" onClick={() => router.push(`${base}?forsok=${grading.id}${attemptSuffix}`)} data-testid="exam-continue-grading">
+              <Button size="lg" onClick={() => router.push(`${routes.examAttempt(deck.slug, exam.key, { forsok: grading.id })}${attemptSuffix}`)} data-testid="exam-continue-grading">
                 {sv.tenta.gradingContinue}
                 <ArrowRight size={18} aria-hidden />
               </Button>
@@ -194,7 +194,7 @@ export function ExamCover({ deck, exam, inProgress, grading, submitted, serverNo
             {submitted.map((a) => (
               <li key={a.id}>
                 <Link
-                  href={`${base}?forsok=${a.id}${attemptSuffix}`}
+                  href={`${routes.examAttempt(deck.slug, exam.key, { forsok: a.id })}${attemptSuffix}`}
                   className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface px-5 py-3.5 transition-colors hover:bg-surface-2 dark:border-transparent"
                 >
                   <span className="inline-flex items-center gap-2 text-sm text-muted">

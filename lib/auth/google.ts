@@ -1,3 +1,5 @@
+import { routes } from "@/lib/routes";
+
 /**
  * Inloggning med Google via Googles egen inloggningssida (OAuth 2.0 / OpenID Connect,
  * auktoriseringskod). Rena hjälpfunktioner; flödet finns i app/auth/google/.
@@ -15,7 +17,7 @@
 export const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 export const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 export const GOOGLE_COOKIE = "kuggfri_google";
-export const GOOGLE_CALLBACK_PATH = "/auth/google/callback";
+export const GOOGLE_CALLBACK_PATH = routes.authGoogleCallback();
 
 /** Klient-id:t från Google Cloud (inte hemligt). Null när Google-inloggning inte är påslagen. */
 export function googleClientId(env: Record<string, string | undefined> = { NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID }): string | null {

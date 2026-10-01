@@ -3,12 +3,13 @@ import { redirect } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { ForgotPasswordForm } from "@/components/auth/AuthForms";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.auth.forgotTitle };
 
 /** Glömt lösenord: mejlar en återställningslänk som loggar in och leder till lösenordsbytet under Konto. */
 export default async function ForgotPasswordPage() {
   const user = await getCurrentUser();
-  if (user) redirect("/konto");
+  if (user) redirect(routes.account());
   return <ForgotPasswordForm />;
 }

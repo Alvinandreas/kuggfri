@@ -32,6 +32,7 @@ import { Card } from "@/components/ui/Card";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { cx } from "@/components/ui/cx";
 import { ContactCards } from "@/components/layout/ContactCards";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.help.title };
 
@@ -306,14 +307,14 @@ export default function HelpPage() {
 
         <HelpSection id="statistik" lead={t.statsBody}>
           <ActionList>
-            <ActionRow href="/statistik" icon={ChartNoAxesColumn} title={t.statsLink} />
+            <ActionRow href={routes.myStats()} icon={ChartNoAxesColumn} title={t.statsLink} />
           </ActionList>
         </HelpSection>
 
         <HelpSection id="konto" lead={t.accountBody}>
           <ActionList>
-            <ActionRow href="/konto" icon={UserRound} title={t.accountLink} meta={t.accountLinkMeta} />
-            <ActionRow href="/integritet" icon={ShieldCheck} title={t.privacyLink} meta={t.privacyLinkMeta} />
+            <ActionRow href={routes.account()} icon={UserRound} title={t.accountLink} meta={t.accountLinkMeta} />
+            <ActionRow href={routes.privacy()} icon={ShieldCheck} title={t.privacyLink} meta={t.privacyLinkMeta} />
           </ActionList>
         </HelpSection>
 

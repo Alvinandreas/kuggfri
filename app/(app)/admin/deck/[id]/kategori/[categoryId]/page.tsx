@@ -8,6 +8,7 @@ import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CardList } from "@/components/admin/CardList";
 import { CategoryTag } from "@/components/ui/CategoryTag";
 import { LinkButton } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 type Params = Promise<{ id: string; categoryId: string }>;
 
@@ -35,12 +36,12 @@ export default async function AdminCategoryPage({ params }: { params: Params }) 
   const inactive = cards.filter((c) => !c.is_active && c.review_status === null).length;
   const drafts = cards.filter((c) => c.review_status === "utkast").length;
   const colorIndex = categoryColorIndex(categories);
-  const newHref = `/admin/deck/${deck.id}/kort/ny${category ? `?kategori=${category.id}` : ""}`;
+  const newHref = routes.admin.newCard(deck.id, { kategori: category?.id });
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${deck.id}/innehall`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
+        <Link href={routes.admin.content(deck.id)} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
           <ArrowLeft size={15} aria-hidden />
           {sv.admin.tabContent}
         </Link>

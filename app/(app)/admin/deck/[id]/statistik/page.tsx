@@ -11,6 +11,7 @@ import { StatBlock } from "@/components/admin/StatBlock";
 import { Card } from "@/components/ui/Card";
 import { AreaLink } from "@/components/admin/AreaLink";
 import { formatCount, formatDecimal } from "@/lib/admin/format";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = { title: sv.admin.allCardsDetail };
 
@@ -26,7 +27,7 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <nav aria-label={sv.admin.breadcrumb} className="text-sm text-muted">
-        <Link href={`/admin/deck/${id}`} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
+        <Link href={routes.admin.deck(id)} className="inline-flex min-h-8 items-center gap-1 rounded-full font-semibold hover:text-fg">
           <ArrowLeft size={15} aria-hidden />
           {sv.admin.tabOverview}
         </Link>
@@ -63,7 +64,7 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
                 return (
                   <tr key={c.card_id} className="transition-colors duration-150 hover:bg-surface-2">
                     <td className="max-w-[28rem] py-2.5 pl-5 pr-3">
-                      <Link href={`/admin/deck/${id}/kort/${c.card_id}`} className="block truncate underline-offset-2 hover:underline" title={firstLine(c.front)}>
+                      <Link href={routes.admin.card(id, c.card_id)} className="block truncate underline-offset-2 hover:underline" title={firstLine(c.front)}>
                         {firstLine(c.front)}
                       </Link>
                     </td>

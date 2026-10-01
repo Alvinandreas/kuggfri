@@ -12,6 +12,7 @@ import { tagBgClass } from "@/lib/ui/tag-colors";
 import { ActionList, ActionRow } from "@/components/ui/ActionRow";
 import { Modal } from "@/components/ui/Modal";
 import { StatTile } from "./StatTile";
+import { routes } from "@/lib/routes";
 
 type Props = {
   open: boolean;
@@ -120,7 +121,7 @@ export function CategoryFocusDialog({ open, onClose, deck, cards, category, stat
               title={sv.focus.freeArea}
               meta={`${sv.home.cards(plans.free.selectionCount)}. ${sv.deck.modeFreeShort}`}
             />
-            <ActionRow href={`/d/${deck.slug}?lage=exam&omrade=${encodeURIComponent(category.id)}`} icon={GraduationCap} title={sv.focus.examArea} meta={sv.dugga.areaMeta} />
+            <ActionRow href={routes.deck(deck.slug, { lage: "exam", omrade: category.id })} icon={GraduationCap} title={sv.focus.examArea} meta={sv.dugga.areaMeta} />
           </ActionList>
         </div>
       ) : null}

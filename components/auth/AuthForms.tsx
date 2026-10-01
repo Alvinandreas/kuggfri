@@ -18,6 +18,7 @@ import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { TextField } from "@/components/ui/TextField";
 import { GoogleButton } from "./GoogleButton";
+import { routes } from "@/lib/routes";
 
 const linkClass = "font-semibold text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent";
 
@@ -85,7 +86,7 @@ function CheckInbox({ email, next, level, onRestart }: { email: string; next: st
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-sm">
         <p className="text-muted">
           {sv.auth.checkInboxConfirmed}{" "}
-          <Link href={`/logga-in?next=${encodeURIComponent(next)}`} className={linkClass}>
+          <Link href={routes.login({ next })} className={linkClass}>
             {sv.auth.login}
           </Link>
         </p>
@@ -169,7 +170,7 @@ export function LoginFields({
             required
             autoComplete="current-password"
             labelAction={
-              <Link href="/glomt-losenord" className={`text-sm ${linkClass}`}>
+              <Link href={routes.forgotPassword()} className={`text-sm ${linkClass}`}>
                 {sv.auth.forgotLink}
               </Link>
             }
@@ -228,7 +229,7 @@ export function LoginForm({ next, initialError = null, initialNotice = null }: {
       <LoginFields next={next} initialError={initialError} initialNotice={initialNotice} />
       <p className="mt-6 text-sm text-muted">
         {sv.auth.noAccount}{" "}
-        <Link href={`/registrera?next=${encodeURIComponent(next)}`} className={linkClass}>
+        <Link href={routes.register({ next })} className={linkClass}>
           {sv.auth.register}
         </Link>
       </p>
@@ -242,7 +243,7 @@ export function RegisterForm({ next }: { next: string }) {
       <RegisterFields next={next} />
       <p className="mt-6 text-sm text-muted">
         {sv.auth.hasAccount}{" "}
-        <Link href={`/logga-in?next=${encodeURIComponent(next)}`} className={linkClass}>
+        <Link href={routes.login({ next })} className={linkClass}>
           {sv.auth.login}
         </Link>
       </p>
@@ -264,7 +265,7 @@ export function ForgotPasswordForm() {
             {sv.auth.forgotSend}
           </Button>
         </form>
-        <Link href="/logga-in" className={`w-fit text-sm ${linkClass}`}>
+        <Link href={routes.login()} className={`w-fit text-sm ${linkClass}`}>
           {sv.auth.backToLogin}
         </Link>
       </div>

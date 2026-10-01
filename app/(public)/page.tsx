@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { CalendarClock, ChartNoAxesColumn, GraduationCap } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { safeNext } from "@/lib/auth/safe-next";
+import { first } from "@/lib/http/search-params";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { AuthPanel } from "@/components/auth/AuthForms";
 
@@ -21,7 +22,7 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
   const next = safeNext(query.next, "/hem");
   const user = await getCurrentUser();
   if (user) redirect(next);
-  const flik = Array.isArray(query.flik) ? query.flik[0] : query.flik;
+  const flik = first(query.flik);
 
   return (
     <div className="grid items-center gap-10 py-4 lg:min-h-[calc(100dvh-13rem)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">

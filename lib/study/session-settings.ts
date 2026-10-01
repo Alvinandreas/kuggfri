@@ -11,6 +11,7 @@
 import type { StudyMode } from "@/lib/progress/types";
 import type { CardKind } from "@/lib/cards/kinds";
 import { DEFAULT_DUGGA, parseDugga } from "@/lib/study/dugga";
+import { first } from "@/lib/http/search-params";
 
 /** Lägena på kurssidan: Stjärnmärkta körs som fri repetition men har egna inställningar. */
 export type SettingsMode = StudyMode | "starred";
@@ -136,10 +137,6 @@ function normalize(mode: SettingsMode, s: SessionSettings): SessionSettings {
 }
 
 type Query = Record<string, string | string[] | undefined>;
-
-function first(v: string | string[] | undefined): string | undefined {
-  return Array.isArray(v) ? v[0] : v;
-}
 
 /** Läser inställningarna ur passets adress. Saknade parametrar ger lägets standard. */
 export function parseSessionSettings(mode: SettingsMode, query: Query): SessionSettings {

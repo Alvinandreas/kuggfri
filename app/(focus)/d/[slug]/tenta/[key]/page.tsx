@@ -11,11 +11,10 @@ import { ExamCover } from "@/components/tenta/ExamCover";
 import { ExamGrading } from "@/components/tenta/ExamGrading";
 import { ExamRunner } from "@/components/tenta/ExamRunner";
 import { ExamResultView } from "@/components/tenta/ExamResultView";
+import { first } from "@/lib/http/search-params";
 
 type Params = Promise<{ slug: string; key: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug, key } = await params;

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { parseOptions } from "@/lib/cards/kinds";
 import { notFound } from "next/navigation";
 import { getDeckBySlug } from "@/lib/content/queries";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { isStudyMode, type StudyMode } from "@/lib/progress/types";
 import { parseSelection } from "@/lib/study/selection";
 import { parseSessionSettings } from "@/lib/study/session-settings";
+import { first, flag, positiveInt } from "@/lib/http/search-params";
+import { toCategoryOption, toStudyCard } from "@/lib/content/view-models";
 import { StudySession } from "@/components/study/StudySession";
 import { sv } from "@/lib/i18n/sv";
 
@@ -23,22 +24,19 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const [data, user] = await Promise.all([getDeckBySlug(slug), getCurrentUser()]);
   if (!data) notFound();
 
-  const rawMode = Array.isArray(query.mode) ? query.mode[0] : query.mode;
+  const rawMode = first(query.mode);
   const mode: StudyMode = isStudyMode(rawMode) ? rawMode : "fsrs";
   const selection = parseSelection(query.urval);
-  const rawExtra = Array.isArray(query.nya) ? query.nya[0] : query.nya;
-  const parsedExtra = rawExtra ? Number.parseInt(rawExtra, 10) : Number.NaN;
-  const extraNew = Number.isFinite(parsedExtra) && parsedExtra > 0 ? Math.min(200, parsedExtra) : null;
-  const onlyStarred = (Array.isArray(query.stjarnor) ? query.stjarnor[0] : query.stjarnor) === "1";
+  const extraNew = positiveInt(query.nya, 200);
+  const onlyStarred = flag(query.stjarnor);
   // Passets inställningar (antal, ledtrådar, ordning, uppgiftstyper …), valda under Ditt pass.
   const settingsMode = onlyStarred && mode === "free" ? "starred" : mode;
   const settings = parseSessionSettings(settingsMode, query);
-  const onlyOriginal = (Array.isArray(query.original) ? query.original[0] : query.original) === "1";
+  const onlyOriginal = flag(query.original);
   // Plugga vidare (vidare=1): ett extra pass i schemalagt läge när dagens kort är klara.
-  const extra = mode === "fsrs" && (Array.isArray(query.vidare) ? query.vidare[0] : query.vidare) === "1";
+  const extra = mode === "fsrs" && flag(query.vidare);
   // Löpnummer i en kedja av fortsättningar från sammanfattningen: ger varje nytt pass en egen adress.
-  const rawPass = Number.parseInt((Array.isArray(query.pass) ? query.pass[0] : query.pass) ?? "", 10);
-  const pass = Number.isFinite(rawPass) && rawPass > 0 ? Math.min(10_000, rawPass) : 0;
+  const pass = positiveInt(query.pass, 10_000) ?? 0;
 
   return (
     <StudySession
@@ -51,18 +49,8 @@ export default async function StudyPage({ params, searchParams }: { params: Para
       settings={settings}
       onlyStarred={onlyStarred}
       onlyOriginal={onlyOriginal}
-      categories={data.categories.map((c) => ({ id: c.id, title: c.title }))}
-      cards={data.cards.map((c) => ({
-        id: c.id,
-        category_id: c.category_id,
-        front: c.front,
-        back: c.back,
-        hint: c.hint,
-        sort_order: c.sort_order,
-        kind: c.kind ?? "sjalvskattning",
-        options: parseOptions(c.options),
-        original: c.original ?? false,
-      }))}
+      categories={data.categories.map(toCategoryOption)}
+      cards={data.cards.map(toStudyCard)}
       mode={mode}
       selection={selection}
       userId={user?.id ?? null}

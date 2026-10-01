@@ -5,7 +5,7 @@ import { cleanIds, fail, isUuid, tooLong, type ActionResult } from "@/lib/action
 import { saveCardAction } from "@/lib/admin/actions";
 import { normalizeKindInput } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
-import { approvalIssues, cleanFlagNote } from "@/lib/admin/review";
+import { NO_FLAG, approvalIssues, approvedPatch, cleanFlagNote, rejectedPatch } from "@/lib/admin/review";
 import { parseOptions, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { revalidateDeck } from "@/lib/cache/revalidate";
 import { sv } from "@/lib/i18n/sv";
@@ -19,9 +19,6 @@ import { sv } from "@/lib/i18n/sv";
   Flaggan är inte innehåll: triggern record_card_version sparar ingen ny version när bara
   flaggan ändras.
 */
-
-/** Fälten som tar bort en flagga. */
-const NO_FLAG = { flag_note: null, flagged_at: null, flagged_by: null } as const;
 
 /**
  * Godkänner kort: review_status null, aktivt, granskat av användaren nu, och en eventuell
@@ -46,7 +43,7 @@ export async function approveCardsAction(deckId: string, ids: string[]): Promise
     if (approved.length > 0) {
       const { error } = await supabase
         .from("cards")
-        .update({ review_status: null, is_active: true, reviewed_by: ctx.userId, reviewed_at: reviewedAt, ...NO_FLAG })
+        .update(approvedPatch(ctx.userId, reviewedAt))
         .eq("deck_id", deckId)
         .in("id", approved);
       if (error) return fail(error);
@@ -106,7 +103,7 @@ export async function rejectCardAction(deckId: string, id: string, note: string)
     const reviewedAt = new Date().toISOString();
     const { error } = await supabase
       .from("cards")
-      .update({ review_status: "avvisad", review_note: text || null, is_active: false, reviewed_by: ctx.userId, reviewed_at: reviewedAt, ...NO_FLAG })
+      .update(rejectedPatch(ctx.userId, reviewedAt, text))
       .eq("deck_id", deckId)
       .eq("id", id);
     if (error) return fail(error);
@@ -165,7 +162,7 @@ export async function saveReviewCardAction(deckId: string, input: ReviewEditInpu
     const reviewedAt = new Date().toISOString();
     const { error } = await supabase
       .from("cards")
-      .update({ review_status: null, is_active: true, reviewed_by: ctx.userId, reviewed_at: reviewedAt, ...NO_FLAG })
+      .update(approvedPatch(ctx.userId, reviewedAt))
       .eq("deck_id", deckId)
       .eq("id", input.id);
     if (error) return fail(error);

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, FlagTriangleRight, Info, MessageSquareWarning, Pencil, RotateCcw, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { cardSources } from "@/lib/admin/sources";
+import { shouldIgnoreShortcut } from "@/lib/ui/keyboard";
 import type { ReviewArea, ReviewCard, ReviewTab } from "@/lib/admin/review";
 import { Badge } from "@/components/ui/Badge";
 import { Button, IconButton } from "@/components/ui/Button";
@@ -109,9 +110,7 @@ export function ReviewCardView(props: Props) {
   };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || e.repeat) return;
-      const target = e.target as HTMLElement | null;
-      if (target?.closest(TYPING_SELECTOR) || document.querySelector("dialog[open]")) return;
+      if (shouldIgnoreShortcut(e, { handled: true, repeat: true, selector: TYPING_SELECTOR, openDialog: true })) return;
       keys.current(e);
     };
     window.addEventListener("keydown", onKey);

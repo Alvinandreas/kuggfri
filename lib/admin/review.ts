@@ -279,6 +279,25 @@ export function cleanFlagNote(note: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Beslutens fält (samma på klienten, som visar beslutet direkt, och på servern)
+// ---------------------------------------------------------------------------
+
+/** Fälten som tar bort en flagga. */
+export const NO_FLAG = { flag_note: null, flagged_at: null, flagged_by: null } as const;
+
+type DecisionPatch = Pick<ReviewCard, "review_status" | "is_active" | "reviewed_by" | "reviewed_at" | "flag_note" | "flagged_at" | "flagged_by">;
+
+/** Godkänt: utan status, aktivt (i rotation), granskat av userId vid reviewedAt, och utan flagga. */
+export function approvedPatch(userId: string, reviewedAt: string): DecisionPatch & { review_status: null; is_active: true } {
+  return { review_status: null, is_active: true, reviewed_by: userId, reviewed_at: reviewedAt, ...NO_FLAG };
+}
+
+/** Avvisat: status avvisad med kommentaren (tom blir null), inaktivt, granskat av userId vid reviewedAt, och utan flagga. */
+export function rejectedPatch(userId: string, reviewedAt: string, note: string): DecisionPatch & { review_status: "avvisad"; is_active: false; review_note: string | null } {
+  return { review_status: "avvisad", review_note: note || null, is_active: false, reviewed_by: userId, reviewed_at: reviewedAt, ...NO_FLAG };
+}
+
+// ---------------------------------------------------------------------------
 // Innehållsöversikten: område × uppgiftstyp
 // ---------------------------------------------------------------------------
 

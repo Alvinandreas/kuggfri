@@ -1,5 +1,5 @@
 """Bygger logotypfiler och appikoner från Alvins original (brand/logotyp-kuggfri.png,
-vit/grön på svart). Kör: python scripts/build-logo.py
+vit/grön på svart). Kör: python scripts/verktyg/build-logo.py
 
 Skapar i public/:
   logo-dark.png       hela logotypen, vit text/kugghjul + grön bock, transparent (mörkt tema)

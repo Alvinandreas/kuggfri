@@ -76,7 +76,7 @@
 
 ## Beslut jag fattat åt dig
 
-Se [DECISIONS.md](DECISIONS.md). De viktigaste:
+Se [DECISIONS.md](../../DECISIONS.md). De viktigaste:
 
 - Fri och slumpad repetition skriver **ingenting** till progressen, inte ens självskattningen.
 - Skattning 1–2 → Again, 3 → Hard, 4 → Good, 5 → Easy. Korta inlärningssteg i FSRS är

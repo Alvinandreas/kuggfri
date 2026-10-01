@@ -5,7 +5,7 @@ Varje punkt: vad, varför, och hur du ändrar om du vill annat.
 ## Miljö och verktyg
 
 - **RLS-tester körs mot PGlite i process** (riktig Postgres 18 kompilerad till WASM) i stället för
-  Docker, eftersom Docker saknas på maskinen (se BLOCKERS.md). Samma migrationsfiler används
+  Docker, eftersom Docker saknas på maskinen (se docs/arkiv/BLOCKERS.md). Samma migrationsfiler används
   oförändrade; en liten shim (`tests/unit/db/supabase-shim.sql`) återskapar rollerna `anon`,
   `authenticated`, `service_role` och `auth.uid()`. Sätt `DATABASE_URL` för att i stället köra
   testerna mot `supabase start`.

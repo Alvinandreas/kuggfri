@@ -1,5 +1,5 @@
 """Genererar appikoner (PNG) till public/ från ett enkelt vektormotiv: två staplade kort på
-Kuggfris gröna kontrastfärg. Körs med `python scripts/build-icons.py` (kräver Pillow).
+Kuggfris gröna kontrastfärg. Körs med `python scripts/verktyg/build-icons.py` (kräver Pillow).
 Ikonerna används av manifestet (lägg till på hemskärmen) och som apple-touch-icon."""
 from PIL import Image, ImageDraw
 

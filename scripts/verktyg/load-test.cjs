@@ -1,8 +1,8 @@
 // Belastningstest med bara läsningar: simulerar att många studenter öppnar decket samtidigt
 // direkt efter en föreläsning. Mäter svarstider och fel per sida.
 //
-//   node scripts/load-test.cjs                       mot https://kuggfri.com, 60 samtidiga, 20 s
-//   node scripts/load-test.cjs http://localhost:3001 100 30
+//   node scripts/verktyg/load-test.cjs                       mot https://kuggfri.com, 60 samtidiga, 20 s
+//   node scripts/verktyg/load-test.cjs http://localhost:3001 100 30
 //
 // Inga skrivningar, inga konton: bara GET på startsidan, decksidan och studieläget (gäst).
 

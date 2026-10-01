@@ -3,7 +3,7 @@
  * med kryssrutor och anteckningsrad per kort. Avsett att lämnas hos en examinator
  * eller kursansvarig för innehållsgranskning.
  *
- *   npx tsx scripts/build-review-pdf.tsx [materialteknik] [docs/granskning-materialteknik.pdf]
+ *   npx tsx scripts/verktyg/build-review-pdf.tsx [materialteknik] [docs/granskning-materialteknik.pdf]
  *
  * Läser kursen ur content/ (samma text som ligger i databasen), react-markdown + KaTeX
  * för rendering, och Playwrights Chromium för PDF-utskriften.
@@ -18,7 +18,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { chromium } from "@playwright/test";
-import { loadCourse } from "../lib/content/store";
+import { loadCourse } from "../../lib/content/store";
 
 type Manifest = {
   title: string;

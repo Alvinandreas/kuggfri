@@ -9,11 +9,18 @@ byggt från de Brainscape-set som redan använts av två årskullar.
 - ts-fsrs för schemalagd repetition, KaTeX för matte
 - Vitest (enhetstester, RLS-tester) och Playwright (E2E med axe)
 
-Läs också [PLAN.md](PLAN.md), [DECISIONS.md](DECISIONS.md), [BLOCKERS.md](BLOCKERS.md),
-[SUMMARY.md](SUMMARY.md), omvärldsanalysen och arbetsplanen i [docs/OMVARLDSANALYS.md](docs/OMVARLDSANALYS.md)
-samt återställningsrutinen i [docs/ATERSTALLNING.md](docs/ATERSTALLNING.md) (den ersätter kodfrysning).
+Läs också [DECISIONS.md](DECISIONS.md), [TASKS.md](TASKS.md), ordlistan i
+[docs/ORDLISTA.md](docs/ORDLISTA.md) (kurs/`decks`, område/`categories`, kort/`cards`, utkast,
+granskning, flaggor, utgåvor, tentabanken), omvärldsanalysen och arbetsplanen i
+[docs/OMVARLDSANALYS.md](docs/OMVARLDSANALYS.md) samt återställningsrutinen i
+[docs/ATERSTALLNING.md](docs/ATERSTALLNING.md) (den ersätter kodfrysning).
 Inför studentlanseringen: körordningen i [docs/LANSERING.md](docs/LANSERING.md) och talarpunkterna i
 [docs/PRESENTATION-STUDENTER.md](docs/PRESENTATION-STUDENTER.md).
+
+Historiska dokument från bygget av version ett ligger i [docs/arkiv/](docs/arkiv/):
+[PLAN.md](docs/arkiv/PLAN.md), [SUMMARY.md](docs/arkiv/SUMMARY.md),
+[BLOCKERS.md](docs/arkiv/BLOCKERS.md), [KUGGFRIv1.0.md](docs/arkiv/KUGGFRIv1.0.md) och
+[LAUNCH_CHECK.md](docs/arkiv/LAUNCH_CHECK.md).
 
 ## Starta lokalt
 
@@ -185,6 +192,9 @@ lib/
   supabase/          klienter och databastyper
 supabase/            config, migrationer, genererad seed
 content/             kursernas innehåll (markdown + kurs.json), källan till allt innehåll
+scripts/             verktyget kuggfri, säkerhetskopior, deploy-SQL
+  verktyg/           engångsverktyg (logotyp, granskningspdf, demo, belastningstest), se README där
+docs/                handböcker; docs/arkiv/ historiska dokument
 tests/unit, tests/e2e
 ```
 

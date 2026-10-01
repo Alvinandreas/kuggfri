@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 // Simulerar studieprogress för ett konto i den LOKALA databasen, så att progressvyn och
 // diagrammen kan granskas utan att plugga i dagar. Rör aldrig produktion (kräver lokal URL).
-//   node scripts/simulate-progress.cjs <e-post> [antal kort=90] [dagar=14]
+//   node scripts/verktyg/simulate-progress.cjs <e-post> [antal kort=90] [dagar=14]
 const { Client } = require("pg");
 
 const url = process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:54322/postgres";

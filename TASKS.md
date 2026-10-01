@@ -108,7 +108,7 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 - [x] 144 kort laddade, `/d/materialteknik` kontrollerad mot riktig databas
 - [x] `npx playwright install chromium`
 - [x] `npm run test:e2e`: 28/28 gröna efter fixar (understrukna textlänkar för axe, tvetydiga lokatorer, admin ser opublicerade deck, längre timeouts för dev-kompilering, städning av importerade testkort)
-- [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), BLOCKERS.md uppdaterad
+- [x] `npm run verify` grönt mån 10:55 (134 enhetstester + 28 E2E), docs/arkiv/BLOCKERS.md uppdaterad
 - [x] Adminflödet mot riktig databas: deck, kategori, kort, import, export (E2E) samt ombeställning och statistik (manuellt som admin@kuggfri.test). Hittade och rättade: seedens sort_order räknades per kategori så att kategorierna blandades i deckets ordning; nu global numrering
 - [x] Gör Alvin till admin (SQL enligt README) när e-post finns (lokalt mån 11:55, molnet mån 20:30)
 
@@ -182,13 +182,13 @@ Presentationen för Johan (examinator) torsdag 17 sep 08:30 är genomförd: sama
 
 - [x] Alvin registrerade om kontot med manuellt lösenord, admin satt i molnet (ons 20:30)
 - [x] Felrapporter (se Tillkommit)
-- [x] Granskningsunderlag: `docs/granskning-materialteknik.pdf` (144 kort per kategori, kryssrutor + anteckningsrad, byggs med `npx tsx scripts/build-review-pdf.tsx`)
-- [x] Appikon + manifest ("lägg till på hemskärmen"): `scripts/build-icons.py` → public/icon-*.png, `app/manifest.ts`, apple-touch-icon
+- [x] Granskningsunderlag: `docs/granskning-materialteknik.pdf` (144 kort per kategori, kryssrutor + anteckningsrad, byggs med `npx tsx scripts/verktyg/build-review-pdf.tsx`)
+- [x] Appikon + manifest ("lägg till på hemskärmen"): `scripts/verktyg/build-icons.py` → public/icon-*.png, `app/manifest.ts`, apple-touch-icon
 - [x] /om: avsnitt "För kursansvariga"; /d/dev-preview borttagen
 - [x] Lämna-kvar-sida: `docs/lamna-kvar-johan.pdf` (källa `docs/lamna-kvar-johan.html`), skriv ut och lägg ovanpå granskningsunderlaget
 - [x] Allt pushat och live på kuggfri.com (ons 21:50, commit be99e4e): felrapporter, ikon/manifest, /om, mobilfix i admin. Testkopian på 3001 ombyggd
-- [x] Skärmdumpar av hela flödet som reserv: `docs/demo-skarmdumpar/` (17 bilder: gäst i mobilen mot kuggfri.com, admin på desktop; byggs om med `node scripts/demo-shots.cjs`)
-- [x] Feedbackrunda 4 (ons 22:30, lokalt, ej pushad förrän Alvin verifierat): Alvins logotyp i sidhuvud, startsida och /om (ljus/mörk variant, `scripts/build-logo.py` → public/logo-*.png, nya appikoner från märket); kryssrutan i kategoritabellen fick luft; admin omstrukturerad: kategorier först med antal kort, egen sida per kategori (`/admin/deck/[id]/kategori/[katId]`, "ingen" = utan kategori), kortredigeraren har förhandsvisning som ser ut som studentens kort, "Spara och stäng", föregående/nästa kort, sökväg. Deckets ordning = kategoriordning, sedan kortordning inom kategorin
+- [x] Skärmdumpar av hela flödet som reserv: `docs/demo-skarmdumpar/` (17 bilder: gäst i mobilen mot kuggfri.com, admin på desktop; byggs om med `node scripts/verktyg/demo-shots.cjs`)
+- [x] Feedbackrunda 4 (ons 22:30, lokalt, ej pushad förrän Alvin verifierat): Alvins logotyp i sidhuvud, startsida och /om (ljus/mörk variant, `scripts/verktyg/build-logo.py` → public/logo-*.png, nya appikoner från märket); kryssrutan i kategoritabellen fick luft; admin omstrukturerad: kategorier först med antal kort, egen sida per kategori (`/admin/deck/[id]/kategori/[katId]`, "ingen" = utan kategori), kortredigeraren har förhandsvisning som ser ut som studentens kort, "Spara och stäng", föregående/nästa kort, sökväg. Deckets ordning = kategoriordning, sedan kortordning inom kategorin
 - [x] Feedbackrunda 5 (ons 23:15, lokalt): logotypen används oförändrad (bara beskuren; mörkt bläck i ljust tema), bara i sidhuvudet och på /om; appikon/favicon från Alvins ikonfil (`brand/ikon-kuggfri.png`). Admin: hela kategoriraden och hela kortraden är klickbara med hover, titel + antal på samma rad, "Öppna"-knappen borta; Deckets inställningar överst igen. Fokusramar klipps inte längre (överflödesskyddet i adminlayouten bort). Enhetlig rullgardinsmeny (`components/ui/Select.tsx`) i kortredigeraren och decksidans sortering. `scripts/simulate-progress.cjs` fyller ett lokalt konto med 14 dagars progress så att diagrammen syns (körd för Alvins lokala konto och admin@kuggfri.test)
 - [x] Feedbackrunda 6 (ons 23:50, lokalt): menylogotyp med större ordmärke (`brand/logotyp-kuggfri-meny.png`); linjediagrammet bort, stapeldiagram 2/3 + nytt radardiagram 1/3 (kunskap per kategori, numrerade axlar med färgkodad lista under, delad hover, tabellvy); "Dela decket med en vän" som eget kort med tydlig kopierad-återkoppling, sluggen borta; vibranta kategorifärger (tio jämnt fördelade nyanser i oklch, ingen brun/grå)
 - [x] Feedbackrunda 7 (tor 00:30, lokalt): "Visa som tabell" borta (tabellerna finns kvar osynliga för skärmläsare); "Studerade" → "Delvis inlärda" (skattning 3–4) i mjuk orange (`--chart-3`, validerad mot grönt i båda teman), staplat i radarn; sju datumetiketter i stapeldiagrammet; färgade nyckeltalsrutor (grön/orange/blå/violett ur taggskalan); delningskortet bara så brett som innehållet; nollställning flyttad till progresskortets rubrik, resttexterna borta; sidfoten visar menylogotypen (scrollar till toppen) i stället för spårningstexten
@@ -391,7 +391,7 @@ Allt nedan är lokalt tills Alvin sagt "pusha".
 ### Inre kvalitet (bara om tiden räcker)
 
 - [-] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler
-- [-] Beslut om komponenttester: egen jsdom-körning eller ta bort de fyra testing-library-beroendena
+- [x] Beslut om komponenttester: jsdom och `@testing-library/react` används av hooktesterna (`// @vitest-environment jsdom`); `@testing-library/user-event` och `@vitest/coverage-v8` borttagna (AP-15, 1 okt)
 
 ### Tisdag 22 sep: presentationen genomförd, tjänsten stängd under sista rundan
 
@@ -593,7 +593,7 @@ Alvin fick TA-åtkomst till MTT085 på Canvas med examinatorns tillstånd att an
 
 ### Klart
 
-- [x] Skiva 0–7 enligt PLAN.md: skelett, datamodell + RLS-tester, FSRS, studieläge, konton, admin, statistik, dokumentation
+- [x] Skiva 0–7 enligt docs/arkiv/PLAN.md: skelett, datamodell + RLS-tester, FSRS, studieläge, konton, admin, statistik, dokumentation
 - [x] Härdning: kontrast, inert, RPC-ombeställning, memoiserad auth
 - [x] Förhandsvisning utan databas på `/d/dev-preview`
 - [x] Veckoplan inlagd i Alvins kalender (Privat), 14–17 sep

@@ -12,7 +12,7 @@ type Props = {
   priority?: boolean;
 };
 
-// Bildernas bredd/höjd (fylls i av scripts/build-logo.py: se public/logo-*.png).
+// Bildernas bredd/höjd (fylls i av scripts/verktyg/build-logo.py: se public/logo-*.png).
 const RATIO = { full: 4196 / 2223, menu: 2.3062 };
 
 /**

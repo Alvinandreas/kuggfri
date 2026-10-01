@@ -2,23 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
-import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { saveCardAction } from "@/lib/admin/actions";
-import { buildOptions, initialAlternatives, initialTrueFalse, moveItem, newOptionKey, type OptionDraft } from "@/lib/admin/card-form";
+import { fixErrorsMessage, savedCardFields } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
-import { CARD_KINDS, CARD_KIND_DESCRIPTION, CARD_KIND_LABEL, isAutoGraded, validateKind, type CardKind } from "@/lib/cards/kinds";
+import type { CardKind } from "@/lib/cards/kinds";
 import type { CardRow } from "@/lib/supabase/database.types";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
-import { Button, IconButton, LinkButton } from "@/components/ui/Button";
+import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Checkbox, CheckboxField, ChoiceCard } from "@/components/ui/Choice";
+import { CheckboxField } from "@/components/ui/Choice";
+import { FormMessage } from "@/components/ui/FormMessage";
 import { Select } from "@/components/ui/Select";
 import { TextArea } from "@/components/ui/TextArea";
-import { TextField, inputClass } from "@/components/ui/TextField";
+import { TextField } from "@/components/ui/TextField";
 import { cx } from "@/components/ui/cx";
 import { CardPreview } from "./CardPreview";
+import { IssueList, KindSelect, TrueFalseField } from "./KindFields";
 import { ReviewStatusBadge } from "./KindBadge";
+import { OptionsEditor } from "./OptionsEditor";
+import { useCardForm } from "./useCardForm";
 
 /** Det som sparades, så att en inbäddad redigerare (granskningen) kan uppdatera sin lista. */
 export type SavedCard = Pick<CardRow, "id" | "category_id" | "front" | "back" | "hint" | "kind" | "options" | "source" | "is_active">;
@@ -56,14 +59,10 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
-  const [front, setFront] = useState(card?.front ?? "");
-  const [back, setBack] = useState(card?.back ?? "");
-  const [hint, setHint] = useState(card?.hint ?? "");
+  const { form, setFront, setBack, setHint, setKind, setAlternatives, setTrueFalse, options, auto, kindIssues: issues } = useCardForm(card, initialKind);
+  const { front, back, hint, kind, alternatives, trueFalse } = form;
   const [source, setSource] = useState(card?.source ?? "");
   const [categoryId, setCategoryId] = useState(card?.category_id ?? initialCategoryId ?? "");
-  const [kind, setKind] = useState<CardKind>(initialKind ?? card?.kind ?? "sjalvskattning");
-  const [alternatives, setAlternatives] = useState<OptionDraft[]>(() => initialAlternatives(card?.kind ?? "sjalvskattning", card?.options ?? null));
-  const [trueFalse, setTrueFalse] = useState<boolean | null>(() => initialTrueFalse(card?.kind ?? "sjalvskattning", card?.options ?? null));
   const [isActive, setIsActive] = useState(card?.is_active ?? true);
   const [closeAfter, setCloseAfter] = useState(false);
   const [attempted, setAttempted] = useState(false);
@@ -72,16 +71,13 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
   const colorIndex = categoryColorIndex(categories);
   const previewCategory = categories.find((c) => c.id === categoryId) ?? null;
   const reviewStatus = card?.review_status ?? null;
-  const auto = isAutoGraded(kind);
-  const options = buildOptions(kind, alternatives, trueFalse);
-  const issues = validateKind(kind, options);
   const frontLabel = kind === "sant-falskt" ? sv.admin.statement : kind === "begrepp" ? sv.admin.concept : kind === "alternativ" ? sv.admin.question : sv.admin.front;
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setAttempted(true);
     if (issues.length > 0) {
-      setMessage({ ok: false, text: `${sv.admin.fixErrors} ${issues.join(" ")}` });
+      setMessage({ ok: false, text: fixErrorsMessage(issues) });
       return;
     }
     startTransition(async () => {
@@ -106,11 +102,7 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
         onSaved({
           id: result.data.id,
           category_id: categoryId || null,
-          front: front.trim(),
-          back: back.trim(),
-          hint: hint.trim() || null,
-          kind,
-          options,
+          ...savedCardFields(form),
           source: source.trim() || null,
           is_active: reviewStatus ? false : isActive,
         });
@@ -142,19 +134,7 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
             </div>
           ) : null}
 
-          <div>
-            <label htmlFor="kort-typ" className="mb-1.5 block text-sm font-semibold">
-              {sv.admin.kind}
-            </label>
-            <Select
-              id="kort-typ"
-              value={kind}
-              onChange={setKind}
-              options={CARD_KINDS.map((k) => ({ value: k, label: CARD_KIND_LABEL[k] }))}
-              data-testid="card-kind"
-            />
-            <p className="mt-1.5 text-sm text-muted">{CARD_KIND_DESCRIPTION[kind]}</p>
-          </div>
+          <KindSelect id="kort-typ" label={sv.admin.kind} value={kind} onChange={setKind} data-testid="card-kind" />
 
           <p className="text-sm text-muted">{sv.admin.markdownHelp}</p>
           <TextArea
@@ -169,25 +149,11 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
             data-testid="card-front"
           />
 
-          {kind === "sant-falskt" ? (
-            <fieldset className="grid gap-2">
-              <legend className="mb-1.5 text-sm font-semibold">{sv.admin.trueFalseLabel}</legend>
-              <div className="grid grid-cols-2 gap-2">
-                <ChoiceCard name="sant-falskt" title={sv.admin.trueLabel} checked={trueFalse === true} onChange={() => setTrueFalse(true)} />
-                <ChoiceCard name="sant-falskt" title={sv.admin.falseLabel} checked={trueFalse === false} onChange={() => setTrueFalse(false)} />
-              </div>
-            </fieldset>
-          ) : null}
+          {kind === "sant-falskt" ? <TrueFalseField name="sant-falskt" legend={sv.admin.trueFalseLabel} value={trueFalse} onChange={setTrueFalse} /> : null}
 
           {kind === "alternativ" ? <OptionsEditor items={alternatives} onChange={setAlternatives} /> : null}
 
-          {attempted && issues.length > 0 ? (
-            <ul role="alert" className="grid gap-1 rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-              {issues.map((i) => (
-                <li key={i}>{i}</li>
-              ))}
-            </ul>
-          ) : null}
+          {attempted && issues.length > 0 ? <IssueList issues={issues} /> : null}
 
           <TextArea
             label={auto ? sv.admin.explanation : sv.admin.back}
@@ -255,9 +221,9 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
       </div>
 
       {message ? (
-        <p role="status" className={`text-sm font-medium ${message.ok ? "text-accent" : "text-danger"}`}>
+        <FormMessage role="status" ok={message.ok}>
           {message.text}
-        </p>
+        </FormMessage>
       ) : null}
 
       <div className="flex flex-wrap gap-2">
@@ -280,64 +246,5 @@ export function CardEditor({ deckId, categories, card, initialCategoryId = null,
         )}
       </div>
     </form>
-  );
-}
-
-/** Redigerbar lista med svarsalternativ: text, rätt/fel, flytta och ta bort. Används också i granskningen. */
-export function OptionsEditor({ items, onChange }: { items: OptionDraft[]; onChange: (next: OptionDraft[]) => void }) {
-  const update = (key: string, patch: Partial<OptionDraft>) => onChange(items.map((o) => (o.key === key ? { ...o, ...patch } : o)));
-  return (
-    <fieldset className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2" data-testid="card-options">
-      <legend className="mb-1 text-sm font-semibold">{sv.admin.alternatives}</legend>
-      <p className="-mt-1 mb-1 text-sm text-muted">{sv.admin.alternativesHelp}</p>
-      <ol className="grid grid-cols-[minmax(0,1fr)] gap-2">
-        {items.map((o, i) => (
-          <li key={o.key} className={cx("flex items-start gap-2 rounded-md border-2 p-1.5 pl-3 transition-colors duration-150", o.correct ? "border-accent/60 bg-accent-soft/40" : "border-transparent bg-surface-2")}>
-            <label className="flex h-10 shrink-0 cursor-pointer items-center gap-2 text-sm font-semibold">
-              <Checkbox checked={o.correct} onChange={(e) => update(o.key, { correct: e.target.checked })} aria-label={`${sv.admin.correctOption}: ${sv.admin.alternativeLabel(i + 1)}`} />
-              <span aria-hidden className="hidden w-8 sm:inline">
-                {sv.admin.correctOption}
-              </span>
-            </label>
-            {/* Växer med texten, så att långa alternativ går att läsa i sin helhet. Ett alternativ är
-                en rad: Enter infogar ingen radbrytning (Ctrl+Enter sparar som i resten av formuläret). */}
-            <textarea
-              value={o.text}
-              onChange={(e) => update(o.key, { text: e.target.value.replace(/\r?\n/g, " ") })}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) e.preventDefault();
-              }}
-              rows={1}
-              aria-label={sv.admin.alternativeLabel(i + 1)}
-              placeholder={sv.admin.alternativeLabel(i + 1)}
-              maxLength={LIMITS.optionText}
-              className={cx(inputClass, "field-sizing-content min-h-10 min-w-0 flex-1 resize-none bg-surface! px-3 py-2 leading-snug dark:bg-surface-3!")}
-            />
-            <div className="flex h-10 shrink-0 items-center">
-              <IconButton label={sv.admin.moveAlternativeUp(i + 1)} size="sm" onClick={() => onChange(moveItem(items, i, -1))} disabled={i === 0}>
-                <ArrowUp size={15} aria-hidden />
-              </IconButton>
-              <IconButton label={sv.admin.moveAlternativeDown(i + 1)} size="sm" onClick={() => onChange(moveItem(items, i, 1))} disabled={i === items.length - 1}>
-                <ArrowDown size={15} aria-hidden />
-              </IconButton>
-              <IconButton label={sv.admin.removeAlternative(i + 1)} size="sm" onClick={() => onChange(items.filter((x) => x.key !== o.key))} disabled={items.length <= 2}>
-                <X size={15} aria-hidden />
-              </IconButton>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <div>
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => onChange([...items, { key: newOptionKey(), text: "", correct: false }])}
-          disabled={items.length >= LIMITS.maxOptions}
-        >
-          <Plus size={15} aria-hidden />
-          {sv.admin.addAlternative}
-        </Button>
-      </div>
-    </fieldset>
   );
 }

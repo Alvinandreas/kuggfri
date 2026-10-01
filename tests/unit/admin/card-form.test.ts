@@ -1,5 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { buildOptions, initialAlternatives, initialTrueFalse, moveItem, normalizeKindInput } from "@/lib/admin/card-form";
+import {
+  buildOptions,
+  cardFormValues,
+  changeKind,
+  fixErrorsMessage,
+  formOptions,
+  initialAlternatives,
+  initialCardForm,
+  initialTrueFalse,
+  kindIssues,
+  moveItem,
+  normalizeKindInput,
+  requiredIssues,
+  savedCardFields,
+  type CardFormState,
+} from "@/lib/admin/card-form";
+import { sv } from "@/lib/i18n/sv";
 import { trueFalseOptions } from "@/lib/cards/kinds";
 
 describe("buildOptions", () => {
@@ -87,5 +103,109 @@ describe("normalizeKindInput (serverns kontroll)", () => {
   it("nekar för många alternativ", () => {
     const many = Array.from({ length: 11 }, (_, i) => ({ text: `Alt ${i}`, correct: i === 0 }));
     expect(normalizeKindInput("alternativ", many).ok).toBe(false);
+  });
+});
+
+const texts = (form: CardFormState) => form.alternatives.map((o) => [o.text, o.correct]);
+
+describe("initialCardForm", () => {
+  it("ett nytt kort är ett tomt vändkort med två tomma alternativrader och inget Sant/Falskt-svar", () => {
+    const form = initialCardForm();
+    expect({ ...form, alternatives: texts(form) }).toEqual({
+      front: "",
+      back: "",
+      hint: "",
+      kind: "sjalvskattning",
+      alternatives: [
+        ["", true],
+        ["", false],
+      ],
+      trueFalse: null,
+    });
+  });
+
+  it("läser kortets fält, med saknad ledtråd som tom text", () => {
+    const form = initialCardForm({ front: "F", back: "B", hint: null, kind: "alternativ", options: [{ text: "A", correct: false }, { text: "B", correct: true }] });
+    expect([form.front, form.back, form.hint, form.kind, form.trueFalse]).toEqual(["F", "B", "", "alternativ", null]);
+    expect(texts(form)).toEqual([
+      ["A", false],
+      ["B", true],
+    ]);
+  });
+
+  it("initialKind byter typ, men alternativen och svaret läses ur kortets egen typ", () => {
+    const tf = initialCardForm({ front: "F", back: "B", hint: "H", kind: "sant-falskt", options: trueFalseOptions(false) }, "alternativ");
+    expect(tf.kind).toBe("alternativ");
+    expect(tf.trueFalse).toBe(false);
+    expect(texts(tf)).toEqual([
+      ["", true],
+      ["", false],
+    ]);
+  });
+});
+
+describe("changeKind", () => {
+  const start = initialCardForm({ front: "F", back: "B", hint: "", kind: "alternativ", options: [{ text: " Järn ", correct: true }, { text: "Trä", correct: false }] });
+
+  it("behåller alternativen och Sant/Falskt-svaret, så att de finns kvar när man byter tillbaka", () => {
+    const flipped = changeKind(changeKind(start, "begrepp"), "alternativ");
+    expect(flipped).toEqual(start);
+    expect(changeKind(start, "begrepp").alternatives).toBe(start.alternatives);
+    const answered = { ...changeKind(start, "sant-falskt"), trueFalse: true };
+    expect(changeKind(changeKind(answered, "sjalvskattning"), "sant-falskt").trueFalse).toBe(true);
+  });
+
+  it("det som sparas följer typen", () => {
+    expect(formOptions(start)).toEqual([
+      { text: "Järn", correct: true },
+      { text: "Trä", correct: false },
+    ]);
+    expect(formOptions(changeKind(start, "begrepp"))).toBeNull();
+    expect(formOptions(changeKind(start, "sant-falskt"))).toBeNull();
+    expect(formOptions({ ...changeKind(start, "sant-falskt"), trueFalse: false })).toEqual(trueFalseOptions(false));
+  });
+});
+
+describe("validering", () => {
+  it("kindIssues är typens fel för det som skulle sparas", () => {
+    const blank = initialCardForm();
+    expect(kindIssues(blank)).toEqual([]);
+    expect(kindIssues(changeKind(blank, "sant-falskt"))).toHaveLength(1);
+    expect(kindIssues(changeKind(blank, "alternativ"))).toContain("Ett alternativ är tomt.");
+    const filled = { ...changeKind(blank, "alternativ"), alternatives: blank.alternatives.map((o, i) => ({ ...o, text: `Alt ${i}` })) };
+    expect(kindIssues(filled)).toEqual([]);
+  });
+
+  it("requiredIssues ger Obligatoriskt en gång om något fält är tomt eller bara blanksteg", () => {
+    expect(requiredIssues("a", "b")).toEqual([]);
+    expect(requiredIssues("  ")).toEqual([sv.common.required]);
+    expect(requiredIssues("", "")).toEqual([sv.common.required]);
+    expect(requiredIssues()).toEqual([]);
+  });
+
+  it("fixErrorsMessage sätter felen efter uppmaningen", () => {
+    expect(fixErrorsMessage(["A.", "B."])).toBe(`${sv.admin.fixErrors} A. B.`);
+  });
+});
+
+describe("det som sparas", () => {
+  const form: CardFormState = initialCardForm({ front: " F ", back: " B ", hint: "  ", kind: "alternativ", options: [{ text: " A ", correct: true }, { text: "B", correct: false }] });
+
+  it("cardFormValues skickar texten som den står (servern trimmar)", () => {
+    expect(cardFormValues(form)).toEqual({
+      front: " F ",
+      back: " B ",
+      hint: "  ",
+      kind: "alternativ",
+      options: [
+        { text: "A", correct: true },
+        { text: "B", correct: false },
+      ],
+    });
+  });
+
+  it("savedCardFields trimmar och gör en tom ledtråd till null", () => {
+    expect(savedCardFields(form)).toEqual({ ...cardFormValues(form), front: "F", back: "B", hint: null });
+    expect(savedCardFields({ ...form, hint: " Fe " }).hint).toBe("Fe");
   });
 });

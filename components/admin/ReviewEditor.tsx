@@ -3,17 +3,19 @@
 import { useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import { buildOptions, initialAlternatives, initialTrueFalse, type OptionDraft } from "@/lib/admin/card-form";
+import { cardFormValues, fixErrorsMessage, requiredIssues } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
 import type { ReviewArea, ReviewCard } from "@/lib/admin/review";
-import { CARD_KINDS, CARD_KIND_DESCRIPTION, CARD_KIND_LABEL, isAutoGraded, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
+import type { CardKind, CardOption } from "@/lib/cards/kinds";
 import { Button } from "@/components/ui/Button";
-import { ChoiceCard } from "@/components/ui/Choice";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Select } from "@/components/ui/Select";
 import { TextArea } from "@/components/ui/TextArea";
 import { TextField } from "@/components/ui/TextField";
-import { OptionsEditor } from "./CardEditor";
+import { IssueList, KindSelect, TrueFalseField } from "./KindFields";
+import { OptionsEditor } from "./OptionsEditor";
 import { ReviewCardFace, questionLabel } from "./ReviewCardFace";
+import { useCardForm } from "./useCardForm";
 
 /** Det redigeraren lämnar ifrån sig. */
 export type ReviewEdit = {
@@ -42,31 +44,25 @@ type Props = {
  */
 export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [front, setFront] = useState(card.front);
-  const [back, setBack] = useState(card.back);
-  const [hint, setHint] = useState(card.hint ?? "");
-  const [kind, setKind] = useState<CardKind>(card.kind);
+  const { form, setFront, setBack, setHint, setKind, setAlternatives, setTrueFalse, options, auto, kindIssues } = useCardForm(card);
+  const { front, back, hint, kind, alternatives, trueFalse } = form;
   const [categoryId, setCategoryId] = useState(card.category_id ?? "");
-  const [alternatives, setAlternatives] = useState<OptionDraft[]>(() => initialAlternatives(card.kind, card.options));
-  const [trueFalse, setTrueFalse] = useState<boolean | null>(() => initialTrueFalse(card.kind, card.options));
   const [pending, setPending] = useState<"save" | "approve" | null>(null);
   const [attempted, setAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const approveNext = useRef(canApprove);
 
-  const auto = isAutoGraded(kind);
-  const options = buildOptions(kind, alternatives, trueFalse);
-  const issues = [...(!front.trim() ? [sv.common.required] : []), ...validateKind(kind, options)];
+  const issues = [...requiredIssues(front), ...kindIssues];
 
   async function submit(approve: boolean) {
     setAttempted(true);
     if (issues.length > 0 || !back.trim()) {
-      setError(`${sv.admin.fixErrors} ${[...validateKind(kind, options), ...(!front.trim() || !back.trim() ? [sv.common.required] : [])].join(" ")}`);
+      setError(fixErrorsMessage([...kindIssues, ...requiredIssues(front, back)]));
       return;
     }
     setError(null);
     setPending(approve ? "approve" : "save");
-    const message = await onSave({ category_id: categoryId || null, front, back, hint, kind, options }, approve).catch(() => sv.errors.generic);
+    const message = await onSave({ category_id: categoryId || null, ...cardFormValues(form) }, approve).catch(() => sv.errors.generic);
     setPending(null);
     if (message) setError(message);
   }
@@ -100,19 +96,7 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 @5xl:grid-cols-2">
         <div className="grid grid-cols-[minmax(0,1fr)] gap-5 rounded-lg border border-line bg-surface p-5 shadow-card sm:p-6 dark:border-transparent">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="granska-typ" className="mb-1.5 block text-sm font-semibold">
-                {sv.granskning.kind}
-              </label>
-              <Select<CardKind>
-                id="granska-typ"
-                value={kind}
-                onChange={setKind}
-                options={CARD_KINDS.map((k) => ({ value: k, label: CARD_KIND_LABEL[k] }))}
-                data-testid="review-edit-kind"
-              />
-              <p className="mt-1.5 text-xs text-muted">{CARD_KIND_DESCRIPTION[kind]}</p>
-            </div>
+            <KindSelect id="granska-typ" label={sv.granskning.kind} value={kind} onChange={setKind} compact data-testid="review-edit-kind" />
             <div>
               <label htmlFor="granska-omrade" className="mb-1.5 block text-sm font-semibold">
                 {sv.granskning.area}
@@ -140,15 +124,7 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
             data-testid="review-edit-front"
           />
 
-          {kind === "sant-falskt" ? (
-            <fieldset className="grid gap-2">
-              <legend className="mb-1.5 text-sm font-semibold">{sv.granskning.trueFalseLabel}</legend>
-              <div className="grid grid-cols-2 gap-2">
-                <ChoiceCard name="granska-sant-falskt" title={sv.admin.trueLabel} checked={trueFalse === true} onChange={() => setTrueFalse(true)} />
-                <ChoiceCard name="granska-sant-falskt" title={sv.admin.falseLabel} checked={trueFalse === false} onChange={() => setTrueFalse(false)} />
-              </div>
-            </fieldset>
-          ) : null}
+          {kind === "sant-falskt" ? <TrueFalseField name="granska-sant-falskt" legend={sv.granskning.trueFalseLabel} value={trueFalse} onChange={setTrueFalse} /> : null}
 
           {kind === "alternativ" ? <OptionsEditor items={alternatives} onChange={setAlternatives} /> : null}
 
@@ -165,13 +141,7 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
           />
           <TextField label={sv.granskning.hintLabel} value={hint} onChange={(e) => setHint(e.target.value)} maxLength={LIMITS.hint} data-testid="review-edit-hint" />
 
-          {attempted && issues.length > 0 ? (
-            <ul role="alert" className="grid gap-1 rounded-md bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-              {issues.map((i) => (
-                <li key={i}>{i}</li>
-              ))}
-            </ul>
-          ) : null}
+          {attempted && issues.length > 0 ? <IssueList issues={issues} /> : null}
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-3 @5xl:sticky @5xl:top-6">
@@ -182,11 +152,7 @@ export function ReviewEditor({ card, areas, onSave, onCancel, canApprove }: Prop
 
       <div className="sticky bottom-3 z-20" data-testid="review-editor-actions">
         <div className="grid gap-2 rounded-lg border border-line bg-surface p-2.5 shadow-pop dark:border-line-strong">
-          {error ? (
-            <p role="alert" className="rounded-md bg-danger-soft px-3 py-2 text-sm font-medium text-danger">
-              {error}
-            </p>
-          ) : null}
+          {error ? <ErrorBanner className="rounded-md bg-danger-soft px-3 py-2 text-sm font-medium text-danger">{error}</ErrorBanner> : null}
           <div className="flex flex-wrap items-center gap-2">
             {canApprove ? (
               <Button type="submit" disabled={pending !== null} onClick={() => (approveNext.current = true)} data-testid="review-save-approve">

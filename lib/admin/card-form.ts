@@ -5,6 +5,7 @@
  */
 import { isAutoGraded, isCardKind, parseOptions, trueFalseAnswer, trueFalseOptions, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { LIMITS } from "@/lib/admin/limits";
+import { sv } from "@/lib/i18n/sv";
 
 /** Ett alternativ i redigeraren. key håller React-listan stabil när raderna flyttas. */
 export type OptionDraft = { key: string; text: string; correct: boolean };
@@ -38,6 +39,74 @@ export function buildOptions(kind: CardKind, alternatives: readonly Pick<OptionD
   if (!isAutoGraded(kind)) return null;
   if (kind === "sant-falskt") return trueFalse === null ? null : trueFalseOptions(trueFalse);
   return alternatives.map((a) => ({ text: a.text.trim(), correct: a.correct }));
+}
+
+/** Formulärets kortfält, gemensamma för kortsidan och redigeringen i granskningen. */
+export type CardFormState = {
+  front: string;
+  back: string;
+  hint: string;
+  kind: CardKind;
+  alternatives: OptionDraft[];
+  trueFalse: boolean | null;
+};
+
+/** Det formuläret läser från ett befintligt kort. */
+export type CardFormSource = { front: string; back: string; hint: string | null; kind: CardKind; options: readonly CardOption[] | null };
+
+/**
+ * Formuläret att börja med: kortets fält, eller ett tomt vändkort. initialKind startar med en
+ * annan typ än kortets; alternativen och Sant/Falskt-svaret läses ändå ur kortets egen typ.
+ */
+export function initialCardForm(card?: CardFormSource, initialKind?: CardKind): CardFormState {
+  const cardKind = card?.kind ?? "sjalvskattning";
+  const options = card?.options ?? null;
+  return {
+    front: card?.front ?? "",
+    back: card?.back ?? "",
+    hint: card?.hint ?? "",
+    kind: initialKind ?? cardKind,
+    alternatives: initialAlternatives(cardKind, options),
+    trueFalse: initialTrueFalse(cardKind, options),
+  };
+}
+
+/**
+ * Byter uppgiftstyp. Alternativen och Sant/Falskt-svaret står kvar orörda, så att de finns
+ * igen om man byter tillbaka; det som sparas avgörs av typen (formOptions).
+ */
+export function changeKind(form: CardFormState, kind: CardKind): CardFormState {
+  return { ...form, kind };
+}
+
+/** Alternativen som sparas för formulärets typ. */
+export function formOptions(form: CardFormState): CardOption[] | null {
+  return buildOptions(form.kind, form.alternatives, form.trueFalse);
+}
+
+/** Typens fel: för få alternativ, inget rätt svar, inget valt Sant/Falskt-svar. */
+export function kindIssues(form: CardFormState): string[] {
+  return validateKind(form.kind, formOptions(form));
+}
+
+/** "Obligatoriskt" en gång om något av fälten är tomt (bara blanksteg räknas som tomt). */
+export function requiredIssues(...values: string[]): string[] {
+  return values.some((v) => !v.trim()) ? [sv.common.required] : [];
+}
+
+/** Meddelandet när man försöker spara med fel kvar. */
+export function fixErrorsMessage(issues: readonly string[]): string {
+  return `${sv.admin.fixErrors} ${issues.join(" ")}`;
+}
+
+/** Kortfälten som de skickas till servern: som de står i formuläret (servern trimmar). */
+export function cardFormValues(form: CardFormState): { front: string; back: string; hint: string; kind: CardKind; options: CardOption[] | null } {
+  return { front: form.front, back: form.back, hint: form.hint, kind: form.kind, options: formOptions(form) };
+}
+
+/** Kortfälten som servern sparar dem: trimmad text och tom ledtråd som null. */
+export function savedCardFields(form: CardFormState): { front: string; back: string; hint: string | null; kind: CardKind; options: CardOption[] | null } {
+  return { front: form.front.trim(), back: form.back.trim(), hint: form.hint.trim() || null, kind: form.kind, options: formOptions(form) };
 }
 
 /** Flyttar ett element ett steg upp (-1) eller ner (1). Utanför listan: oförändrad kopia. */

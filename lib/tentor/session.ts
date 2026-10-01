@@ -3,6 +3,7 @@
  * och kontroll av svar som kommer från webbläsaren. Ren modul (ingen React, ingen databas), så
  * att den kan testas och användas både i klienten och i serveråtgärderna.
  */
+import { stockholmDateTime, stockholmLongDate } from "@/lib/time/stockholm";
 import { QUESTION_KINDS, isAnswered, type Answer, type Answers, type QuestionKind } from "./model";
 
 // ---------------------------------------------------------------------------
@@ -138,19 +139,17 @@ export function kindSummary(counts: readonly { kind: QuestionKind; count: number
 }
 
 /** Poäng med decimalkomma och högst två decimaler: 1.5 → "1,5". */
-export function formatPoints(n: number): string {
-  return (Math.round(n * 100) / 100).toString().replace(".", ",");
-}
+export { formatPoints } from "@/lib/format/number";
 
 /** Tentans datum: "2024-10-31" → "31 oktober 2024". */
 export function formatExamDate(date: string | null): string | null {
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
-  return new Date(`${date}T12:00:00Z`).toLocaleDateString("sv-SE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Stockholm" });
+  return stockholmLongDate(`${date}T12:00:00Z`);
 }
 
 /** Ett försöks tidpunkt i svensk tid: "29 sep. 2026 14:32". */
 export function formatAttemptTime(iso: string): string {
-  return new Date(iso).toLocaleString("sv-SE", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Stockholm" });
+  return stockholmDateTime(iso);
 }
 
 /** Ord i en text (ordräknaren under skrivuppgifter). */

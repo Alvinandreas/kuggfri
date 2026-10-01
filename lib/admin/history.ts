@@ -1,9 +1,10 @@
 /**
- * Ren logik för kortens historik (card_versions) i admin: versionernas status, vilken version
- * som senast var publicerad, vilka fält som skiljer två versioner åt, alternativens skillnad,
- * rättelsens motivering och svensk relativ tid. Inga beroenden på React eller Supabase.
+ * Ren logik för kortens historik (card_versions) i admin: versionernas status, vilka fält som
+ * skiljer två versioner åt, alternativens skillnad och svensk relativ tid. Inga beroenden på
+ * React eller Supabase.
  */
 import { diffSequence } from "@/lib/admin/diff";
+import { stockholmDate, stockholmDateTime } from "@/lib/time/stockholm";
 import { DEFAULT_CARD_KIND, isCardKind, isReviewStatus, parseOptions, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import type { CardVersionRow } from "@/lib/supabase/database.types";
 
@@ -77,11 +78,6 @@ export function versionStatus(v: Pick<VersionContent, "review_status" | "is_acti
 /** Syntes versionen för studenterna (granskad och aktiv)? */
 export function isPublished(v: Pick<VersionContent, "review_status" | "is_active">): boolean {
   return v.review_status === null && v.is_active;
-}
-
-/** Den senast publicerade versionen (versionerna nyast först), eller null. */
-export function latestPublished<V extends Pick<VersionContent, "review_status" | "is_active">>(versions: readonly V[]): V | null {
-  return versions.find(isPublished) ?? null;
 }
 
 /**
@@ -163,19 +159,6 @@ export function diffOptions(before: readonly CardOption[] | null, after: readonl
 }
 
 // ---------------------------------------------------------------------------
-// Rättelser
-// ---------------------------------------------------------------------------
-
-const RATTELSE = /^\s*rättelse\s*:\s*/i;
-
-/** Motiveringen i en källa som börjar med "Rättelse:", annars null. */
-export function correctionReason(source: string | null): string | null {
-  if (!source || !RATTELSE.test(source)) return null;
-  const reason = source.replace(RATTELSE, "").trim();
-  return reason || null;
-}
-
-// ---------------------------------------------------------------------------
 // Tid
 // ---------------------------------------------------------------------------
 
@@ -194,11 +177,10 @@ export function relativeTime(iso: string, now: number): string {
   if (diff < DAY) return rtf.format(-Math.floor(diff / HOUR), "hour");
   const days = Math.floor(diff / DAY);
   if (days < 14) return rtf.format(-days, "day");
-  return new Date(t).toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Stockholm" });
+  return stockholmDate(t);
 }
 
 /** Exakt tid i svensk tid, t.ex. till en title. */
 export function exactTime(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "" : d.toLocaleString("sv-SE", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Stockholm" });
+  return stockholmDateTime(iso);
 }

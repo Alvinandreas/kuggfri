@@ -1,5 +1,6 @@
 import { sv } from "@/lib/i18n/sv";
 import { calendarDaysUntil, endOfDay } from "@/lib/time/day";
+import { stockholmDateTime } from "@/lib/time/stockholm";
 
 export { calendarDaysUntil, endOfDay };
 
@@ -15,8 +16,7 @@ export function formatRelative(date: Date, now: Date = new Date()): string {
   return sv.time.inMonths(Math.round(days / 30));
 }
 
+/** Datum och klockslag i svensk tid: "29 sep. 2026 14:32". Ogiltig tid ger "". */
 export function formatDateTime(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat("sv-SE", { dateStyle: "medium", timeStyle: "short" }).format(d);
+  return stockholmDateTime(iso);
 }

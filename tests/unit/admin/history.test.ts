@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   changedFields,
-  correctionReason,
   differsFromPublished,
   diffOptions,
   exactTime,
   isPublished,
-  latestPublished,
   relativeTime,
   restoreValues,
   versionFromRow,
@@ -35,18 +33,6 @@ describe("versionStatus och isPublished", () => {
     expect(versionStatus({ ...base, is_active: false, review_status: "avvisad" })).toBe("avvisad");
     expect(isPublished(base)).toBe(true);
     expect(isPublished({ ...base, review_status: "utkast", is_active: false })).toBe(false);
-  });
-});
-
-describe("latestPublished", () => {
-  it("ger den nyaste publicerade versionen (listan nyast först)", () => {
-    const versions = [
-      { id: 3, ...base, review_status: "utkast" as const, is_active: false },
-      { id: 2, ...base },
-      { id: 1, ...base },
-    ];
-    expect(latestPublished(versions)?.id).toBe(2);
-    expect(latestPublished([versions[0]!])).toBeNull();
   });
 });
 
@@ -112,19 +98,6 @@ describe("diffOptions", () => {
   it("klarar att ena sidan saknar alternativ", () => {
     expect(diffOptions(null, [{ text: "Sant", correct: true }])).toEqual([{ text: "Sant", before: null, after: true }]);
     expect(diffOptions(null, null)).toEqual([]);
-  });
-});
-
-describe("correctionReason", () => {
-  it("plockar ut motiveringen efter Rättelse:", () => {
-    expect(correctionReason("Rättelse: Johan påpekade att siffran var fel (föreläsning 4).")).toBe("Johan påpekade att siffran var fel (föreläsning 4).");
-    expect(correctionReason("  rättelse :  kort text ")).toBe("kort text");
-  });
-
-  it("ger null för andra källor och tom motivering", () => {
-    expect(correctionReason("Föreläsning 3, bild 12")).toBeNull();
-    expect(correctionReason("Rättelse:")).toBeNull();
-    expect(correctionReason(null)).toBeNull();
   });
 });
 

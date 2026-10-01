@@ -14,6 +14,8 @@
  */
 import { CARD_KINDS, isAutoGraded, validateKind, type CardKind, type CardOption } from "@/lib/cards/kinds";
 import { matchesSource, type SourceFilter } from "@/lib/admin/sources";
+import { oneLine } from "@/lib/text/one-line";
+import { stockholmDayHeading, stockholmDayKey, stockholmRelativeDay, stockholmTime } from "@/lib/time/stockholm";
 
 /** Det granskningen behöver veta om ett kort. CardRow uppfyller typen (utom de valfria fälten). */
 export type ReviewCard = {
@@ -210,36 +212,24 @@ export function groupReviewList<C extends ReviewCard>(orderedCards: readonly C[]
 // Datum (alltid i svensk tid, så att server och klient visar samma sak)
 // ---------------------------------------------------------------------------
 
-const DAY_KEY = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", year: "numeric", month: "2-digit", day: "2-digit" });
-const DAY_MONTH = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", day: "numeric", month: "short" });
-const DAY_MONTH_YEAR = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", day: "numeric", month: "short", year: "numeric" });
-const TIME = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", hour: "2-digit", minute: "2-digit" });
-
 /** Dagen (ÅÅÅÅ-MM-DD) i svensk tid. */
 export function stockholmDay(iso: string): string {
-  return DAY_KEY.format(new Date(iso));
+  return stockholmDayKey(iso);
 }
 
 /** "30 sep", med år om det inte är i år ("30 sep 2025"). Månaden utan punkt. */
 export function formatDay(iso: string, now: number): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const sameYear = stockholmDay(iso).slice(0, 4) === stockholmDay(new Date(now).toISOString()).slice(0, 4);
-  return (sameYear ? DAY_MONTH : DAY_MONTH_YEAR).format(d).replace(/\./g, "");
+  return stockholmDayHeading(iso, now);
 }
 
 /** Klockslaget ("14:32") i svensk tid. */
 export function formatTime(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "" : TIME.format(d);
+  return stockholmTime(iso);
 }
 
 /** Relativ dag: "today", "yesterday" eller null (vyn sätter texten). */
 export function relativeDay(iso: string, now: number): "today" | "yesterday" | null {
-  const day = stockholmDay(iso);
-  if (day === stockholmDay(new Date(now).toISOString())) return "today";
-  if (day === stockholmDay(new Date(now - 24 * 60 * 60 * 1000).toISOString())) return "yesterday";
-  return null;
+  return stockholmRelativeDay(iso, now);
 }
 
 // ---------------------------------------------------------------------------
@@ -285,7 +275,7 @@ export function approvalIssues(card: Pick<ReviewCard, "front" | "back" | "kind" 
 
 /** En flaggas anteckning: en rad, utan omgivande blanksteg (samma form som i kortfilerna). */
 export function cleanFlagNote(note: string): string {
-  return note.replace(/\s*\r?\n\s*/g, " ").trim();
+  return oneLine(note);
 }
 
 // ---------------------------------------------------------------------------

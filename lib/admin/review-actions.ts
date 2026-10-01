@@ -1,11 +1,13 @@
 "use server";
 
-import { cleanIds, fail, isUuid, requireEditor, revalidateDeck, tooLong, type ActionResult } from "@/lib/admin/action-helpers";
+import { editorAction } from "@/lib/actions/guard";
+import { cleanIds, fail, isUuid, tooLong, type ActionResult } from "@/lib/actions/result";
 import { saveCardAction } from "@/lib/admin/actions";
 import { normalizeKindInput } from "@/lib/admin/card-form";
 import { LIMITS } from "@/lib/admin/limits";
 import { approvalIssues, cleanFlagNote } from "@/lib/admin/review";
 import { parseOptions, type CardKind, type CardOption } from "@/lib/cards/kinds";
+import { revalidateDeck } from "@/lib/cache/revalidate";
 import { sv } from "@/lib/i18n/sv";
 
 /*
@@ -27,8 +29,7 @@ const NO_FLAG = { flag_note: null, flagged_at: null, flagged_by: null } as const
  * text) hoppas över och rapporteras, så att inget trasigt kort når studenterna.
  */
 export async function approveCardsAction(deckId: string, ids: string[]): Promise<ActionResult<{ approved: string[]; skipped: string[]; reviewedAt: string }>> {
-  try {
-    const { supabase, ctx } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase, ctx }) => {
     const clean = cleanIds(ids, LIMITS.bulkCards);
     if (!clean) return { ok: false, error: sv.errors.generic };
     const reviewedAt = new Date().toISOString();
@@ -52,9 +53,7 @@ export async function approveCardsAction(deckId: string, ids: string[]): Promise
       revalidateDeck(deckId);
     }
     return { ok: true, data: { approved, skipped, reviewedAt } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /**
@@ -62,8 +61,7 @@ export async function approveCardsAction(deckId: string, ids: string[]): Promise
  * samlas under Flaggade tills flaggan åtgärdats. Anteckningen krävs och blir en rad.
  */
 export async function flagCardAction(deckId: string, id: string, note: string): Promise<ActionResult<{ flagNote: string; flaggedAt: string }>> {
-  try {
-    const { supabase, ctx } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase, ctx }) => {
     if (!isUuid(id) || typeof note !== "string") return { ok: false, error: sv.errors.generic };
     const text = cleanFlagNote(note);
     if (!text) return { ok: false, error: sv.granskning.flagNoteRequired };
@@ -80,23 +78,18 @@ export async function flagCardAction(deckId: string, id: string, note: string): 
     if (!data || data.length === 0) return { ok: false, error: sv.errors.generic };
     revalidateDeck(deckId);
     return { ok: true, data: { flagNote: text, flaggedAt } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /** Åtgärdad: tar bort flaggan. Kortet går tillbaka till sin flik (Att granska eller Granskade). */
 export async function resolveFlagAction(deckId: string, id: string): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     if (!isUuid(id)) return { ok: false, error: sv.errors.generic };
     const { error } = await supabase.from("cards").update(NO_FLAG).eq("deck_id", deckId).eq("id", id);
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /**
@@ -105,8 +98,7 @@ export async function resolveFlagAction(deckId: string, id: string): Promise<Act
  * rejectCorrectionAction, som återställer den publicerade versionen.)
  */
 export async function rejectCardAction(deckId: string, id: string, note: string): Promise<ActionResult<{ reviewedAt: string }>> {
-  try {
-    const { supabase, ctx } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase, ctx }) => {
     if (!isUuid(id) || typeof note !== "string") return { ok: false, error: sv.errors.generic };
     const text = note.trim();
     const long = tooLong(sv.admin.reviewRejectNote, text, LIMITS.reviewNote);
@@ -120,9 +112,7 @@ export async function rejectCardAction(deckId: string, id: string, note: string)
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: { reviewedAt } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /** Det granskaren kan ändra på ett kort direkt i granskningen. */
@@ -136,18 +126,15 @@ export type ReviewEditInput = {
   options: CardOption[] | null;
 };
 
+type ReviewSaved = { reviewedAt: string | null; kind: CardKind; options: CardOption[] | null };
+
 /**
  * Sparar en redigering gjord i granskningen, och godkänner kortet om approve (Spara och
  * godkänn). Källan och kortets status rörs inte av själva sparandet; ett kort som väntar på
  * granskning förblir inaktivt tills det godkänns. Godkännandet tar bort en eventuell flagga.
  */
-export async function saveReviewCardAction(
-  deckId: string,
-  input: ReviewEditInput,
-  approve: boolean,
-): Promise<ActionResult<{ reviewedAt: string | null; kind: CardKind; options: CardOption[] | null }>> {
-  try {
-    const { supabase, ctx } = await requireEditor(deckId);
+export async function saveReviewCardAction(deckId: string, input: ReviewEditInput, approve: boolean): Promise<ActionResult<ReviewSaved>> {
+  return editorAction<ReviewSaved>(deckId, async ({ supabase, ctx }) => {
     if (!input || !isUuid(input.id) || (input.category_id !== null && !isUuid(input.category_id))) return { ok: false, error: sv.errors.generic };
     const { data: row, error: readError } = await supabase.from("cards").select("is_active").eq("deck_id", deckId).eq("id", input.id).maybeSingle();
     if (readError) return fail(readError);
@@ -184,9 +171,7 @@ export async function saveReviewCardAction(
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: { reviewedAt, kind: normalized.kind, options: normalized.options } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /** Ett korts granskningsläge före ett beslut, för Ångra. */
@@ -210,8 +195,7 @@ const isDate = (value: unknown): value is string => typeof value === "string" &&
  * flaggat kan bara återställas till ett uuid (eller null), och utan anteckning ingen flagga.
  */
 export async function restoreReviewAction(deckId: string, snapshots: ReviewSnapshot[]): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     if (!Array.isArray(snapshots) || snapshots.length > LIMITS.bulkCards) return { ok: false, error: sv.errors.generic };
     // Kort med samma läge (typiskt många utkast efter ett massgodkännande) återställs i ett anrop.
     const groups = new Map<string, { values: Omit<ReviewSnapshot, "id">; ids: string[] }>();
@@ -240,7 +224,5 @@ export async function restoreReviewAction(deckId: string, snapshots: ReviewSnaps
     }
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }

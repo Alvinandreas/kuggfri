@@ -35,7 +35,9 @@ function badExports(source: string): string[] {
       if (line.startsWith("export async function")) return false;
       // Typer och interface försvinner vid kompilering och räknas inte.
       if (/^export (type|interface) /.test(line)) return false;
-      if (/^export \{[^}]*\} from /.test(line) || /^export type \{/.test(line)) return false;
+      // Bara typer får vidareexporteras: `export { x } from "./y"` stoppas av bygget med samma
+      // fel ("Only async functions are allowed to be exported"), även när x är en async-funktion.
+      if (/^export type \{/.test(line)) return false;
       return true;
     });
 }

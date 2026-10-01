@@ -1,16 +1,26 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
 import { MAX_IMPORT_CARDS, LIMITS } from "@/lib/admin/limits";
-import { cleanIds, fail, isUuid, requireAdmin, requireEditor, revalidateDeck, tooLong, type ActionResult } from "@/lib/admin/action-helpers";
+import { adminAction, editorAction, requireAdmin, requireEditor, runAction } from "@/lib/actions/guard";
+import { cleanIds, fail, isUuid, tooLong, type ActionResult } from "@/lib/actions/result";
 import { normalizeKindInput } from "@/lib/admin/card-form";
-import { CONTENT_TAG } from "@/lib/content/queries";
+import { revalidateDeck, revalidateDeckRemoved, revalidateExaminers, revalidateReports } from "@/lib/cache/revalidate";
 import { sv } from "@/lib/i18n/sv";
 import { diffImport } from "@/lib/import/diff";
 import type { ImportCard } from "@/lib/import/parse-import";
 import type { CardKind, CardOption } from "@/lib/cards/kinds";
 
-export type { ActionResult } from "@/lib/admin/action-helpers";
+export type { ActionResult } from "@/lib/actions/result";
+
+/*
+  Adminvyns serveråtgärder: deck, kategorier, kort, import, felrapporter och examinatorer.
+  Åtkomsten och felhanteringen sköts av lib/actions/guard.ts (editorAction: admin eller
+  examinator för decket; adminAction: bara global admin), cachen av lib/cache/revalidate.ts.
+
+  Filen delas inte upp per domän: en "use server"-fil får inte vidareexportera åtgärder från
+  andra filer (export { … } from ger samma byggfel som en exporterad konstant), så en uppdelning
+  skulle tvinga varje komponent att byta import.
+*/
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -32,7 +42,7 @@ export type DeckInput = {
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ id: string }>> {
-  try {
+  return runAction(async () => {
     const { supabase, ctx } = input.id ? await requireEditor(input.id) : await requireAdmin();
     // Kursens adress ändras bara av global admin (Alvins beslut 29 sep); databasen spärrar
     // dessutom (migration 20260929000000). En examinators formulär skickar ingen adress.
@@ -70,37 +80,26 @@ export async function saveDeckAction(input: DeckInput): Promise<ActionResult<{ i
     if (error) return error.code === "23505" ? { ok: false, error: sv.admin.slugTaken } : fail(error);
     revalidateDeck(data.id, slug);
     return { ok: true, data: { id: data.id } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function setDeckPublishedAction(id: string, published: boolean): Promise<ActionResult> {
-  try {
-    // Publicering är global admins beslut, inte examinatorns (Alvins beslut 29 sep).
-    const { supabase } = await requireAdmin();
+  // Publicering är global admins beslut, inte examinatorns (Alvins beslut 29 sep).
+  return adminAction(async ({ supabase }) => {
     const { data, error } = await supabase.from("decks").update({ is_published: published }).eq("id", id).select("slug").single();
     if (error) return fail(error);
     revalidateDeck(id, data.slug);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function deleteDeckAction(id: string): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireAdmin();
+  return adminAction(async ({ supabase }) => {
     const { error } = await supabase.from("decks").delete().eq("id", id);
     if (error) return fail(error);
-    revalidateTag(CONTENT_TAG);
-    revalidatePath("/admin");
-    revalidatePath("/admin/deck");
-    revalidatePath("/");
+    revalidateDeckRemoved();
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -108,8 +107,7 @@ export async function deleteDeckAction(id: string): Promise<ActionResult> {
 // ---------------------------------------------------------------------------
 
 export async function createCategoryAction(deckId: string, title: string): Promise<ActionResult<{ id: string }>> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const t = title.trim();
     if (!t) return { ok: false, error: sv.common.required };
     const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
@@ -120,14 +118,11 @@ export async function createCategoryAction(deckId: string, title: string): Promi
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: { id: data.id } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function updateCategoryAction(id: string, deckId: string, title: string): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const t = title.trim();
     if (!t) return { ok: false, error: sv.common.required };
     const long = tooLong(sv.admin.categoryTitle, t, LIMITS.categoryTitle);
@@ -138,33 +133,25 @@ export async function updateCategoryAction(id: string, deckId: string, title: st
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function deleteCategoryAction(id: string, deckId: string): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const { error } = await supabase.from("categories").delete().eq("id", id).eq("deck_id", deckId);
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function reorderCategoriesAction(deckId: string, orderedIds: string[]): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const { error } = await supabase.rpc("reorder_categories", { p_deck_id: deckId, p_ids: orderedIds });
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /**
@@ -172,8 +159,7 @@ export async function reorderCategoriesAction(deckId: string, orderedIds: string
  * samma deck; korten binds också till decket i själva uppdateringen.
  */
 export async function moveCardsToCategoryAction(deckId: string, ids: string[], categoryId: string | null): Promise<ActionResult<{ moved: number }>> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const clean = cleanIds(ids, LIMITS.bulkCards);
     if (!clean) return { ok: false, error: sv.errors.generic };
     if (clean.length === 0) return { ok: true, data: { moved: 0 } };
@@ -186,9 +172,7 @@ export async function moveCardsToCategoryAction(deckId: string, ids: string[], c
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: { moved: data?.length ?? 0 } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /**
@@ -197,8 +181,7 @@ export async function moveCardsToCategoryAction(deckId: string, ids: string[], c
  * området står tomt kvar, så inget går förlorat.
  */
 export async function mergeCategoryAction(deckId: string, fromId: string, intoId: string): Promise<ActionResult<{ moved: number }>> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     if (!isUuid(fromId) || !isUuid(intoId) || fromId === intoId) return { ok: false, error: sv.errors.generic };
     const { data: found } = await supabase.from("categories").select("id").eq("deck_id", deckId).in("id", [fromId, intoId]);
     if ((found ?? []).length !== 2) return { ok: false, error: sv.errors.generic };
@@ -208,9 +191,7 @@ export async function mergeCategoryAction(deckId: string, fromId: string, intoId
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: { moved: moved?.length ?? 0 } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -239,7 +220,7 @@ export type CardInput = {
  * vad formuläret skickar.
  */
 export async function saveCardAction(input: CardInput): Promise<ActionResult<{ id: string }>> {
-  try {
+  return runAction(async () => {
     const { supabase } = await requireEditor(input.deck_id);
     const front = input.front.trim();
     const back = input.back.trim();
@@ -294,33 +275,25 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult<{ i
     if (error) return fail(error);
     revalidateDeck(input.deck_id);
     return { ok: true, data: { id: data.id } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function deleteCardAction(id: string, deckId: string): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const { error } = await supabase.from("cards").delete().eq("id", id).eq("deck_id", deckId);
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function reorderCardsAction(deckId: string, orderedIds: string[]): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const { error } = await supabase.rpc("reorder_cards", { p_deck_id: deckId, p_ids: orderedIds });
     if (error) return fail(error);
     revalidateDeck(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -334,7 +307,8 @@ export type ImportResult = { created: number; updated: number; newCategories: nu
  * klientens förhandsvisning är bara en visning av samma logik.
  */
 export async function importCardsAction(deckId: string, cards: ImportCard[]): Promise<ActionResult<ImportResult>> {
-  try {
+  return runAction(async () => {
+    // Antalet kontrolleras före åtkomsten.
     if (cards.length > MAX_IMPORT_CARDS) return { ok: false, error: sv.admin.importTooMany(MAX_IMPORT_CARDS) };
     const { supabase } = await requireEditor(deckId);
     const [{ data: existingCards }, { data: existingCategories }] = await Promise.all([
@@ -345,7 +319,7 @@ export async function importCardsAction(deckId: string, cards: ImportCard[]): Pr
     const diff = diffImport(cards, existingCards ?? [], categories);
 
     // Allt skrivs i en transaktion i databasen (import_cards). RLS avgör rättigheten.
-    const { data: result, error } = await supabase.rpc("import_cards", {
+    const { error } = await supabase.rpc("import_cards", {
       p_deck_id: deckId,
       p_new_categories: diff.newCategories,
       p_create: diff.create.map((c) => ({ front: c.front, back: c.back, hint: c.hint, category: c.category, sort_order: c.sort_order })),
@@ -355,7 +329,6 @@ export async function importCardsAction(deckId: string, cards: ImportCard[]): Pr
       console.error("[import]", error.message);
       return { ok: false, error: error.message === "forbidden" ? sv.common.forbiddenBody : sv.admin.importFailed };
     }
-    void result;
 
     revalidateDeck(deckId);
     return {
@@ -367,45 +340,32 @@ export async function importCardsAction(deckId: string, cards: ImportCard[]): Pr
         skipped: diff.errors.length,
       },
     };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 // ---------------------------------------------------------------------------
 // Felrapporter
 // ---------------------------------------------------------------------------
 
-function revalidateReports(deckId: string) {
-  revalidatePath(`/admin/deck/${deckId}`);
-  revalidatePath(`/admin/deck/${deckId}/rapporter`);
-}
-
 export async function setReportStatusAction(id: string, deckId: string, status: "open" | "resolved"): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const { error } = await supabase
       .from("card_reports")
       .update({ status, resolved_at: status === "resolved" ? new Date().toISOString() : null })
       .eq("id", id);
-    if (error) throw error;
+    if (error) return fail(error);
     revalidateReports(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 export async function deleteReportAction(id: string, deckId: string): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     const { error } = await supabase.from("card_reports").delete().eq("id", id);
-    if (error) throw error;
+    if (error) return fail(error);
     revalidateReports(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -413,31 +373,25 @@ export async function deleteReportAction(id: string, deckId: string): Promise<Ac
 // ---------------------------------------------------------------------------
 
 export async function addExaminerAction(deckId: string, email: string): Promise<ActionResult<{ status: "added" | "exists" | "invited" }>> {
-  try {
-    const { supabase } = await requireAdmin();
+  return adminAction(async ({ supabase }) => {
     const e = email.trim();
     if (!e) return { ok: false, error: sv.common.required };
     const { data, error } = await supabase.rpc("add_deck_examiner", { p_deck_id: deckId, p_email: e });
     if (error) return fail(error);
-    revalidatePath(`/admin/deck/${deckId}/installningar`);
+    revalidateExaminers(deckId);
     return { ok: true, data: { status: data } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /** Tar bort ett kopplat konto (userId) eller en väntande inbjudan (email). */
 export async function removeExaminerAction(deckId: string, target: { userId: string } | { email: string }): Promise<ActionResult> {
-  try {
-    const { supabase } = await requireAdmin();
+  return adminAction(async ({ supabase }) => {
     const { error } =
       "userId" in target
         ? await supabase.rpc("remove_deck_examiner", { p_deck_id: deckId, p_user_id: target.userId })
         : await supabase.rpc("remove_deck_examiner_invite", { p_deck_id: deckId, p_email: target.email });
     if (error) return fail(error);
-    revalidatePath(`/admin/deck/${deckId}/installningar`);
+    revalidateExaminers(deckId);
     return { ok: true, data: undefined };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }

@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { isUuid } from "@/lib/actions/result";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { createSupabaseServerClient, getCurrentUser } from "@/lib/supabase/server";
 import type { ExamAttemptRow } from "@/lib/supabase/database.types";
@@ -74,7 +75,7 @@ export type AttemptContext = { attempt: ExamAttemptRow; exam: Exam; examKey: str
  * användarens (RLS) eller tentan inte längre får ses (t.ex. när tentaläget låsts igen).
  */
 export async function loadAttempt(attemptId: string): Promise<AttemptContext | null> {
-  if (!/^[0-9a-f-]{36}$/i.test(attemptId)) return null;
+  if (!isUuid(attemptId)) return null;
   const supabase = await createSupabaseServerClient();
   const { data: attempt } = await supabase.from("exam_attempts").select("*").eq("id", attemptId).maybeSingle();
   if (!attempt) return null;

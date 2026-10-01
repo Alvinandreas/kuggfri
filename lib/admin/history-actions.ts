@@ -1,8 +1,10 @@
 "use server";
 
-import { fail, isUuid, requireEditor, revalidateDeck, tooLong, type ActionResult } from "@/lib/admin/action-helpers";
+import { editorAction, type Access } from "@/lib/actions/guard";
+import { fail, isUuid, tooLong, type ActionResult } from "@/lib/actions/result";
 import { changedFields, contentOf, isPublished, restoreValues, versionFromRow, type VersionContent } from "@/lib/admin/history";
 import { LIMITS } from "@/lib/admin/limits";
+import { revalidateDeck } from "@/lib/cache/revalidate";
 import { parseOptions } from "@/lib/cards/kinds";
 import { sv } from "@/lib/i18n/sv";
 
@@ -13,7 +15,7 @@ import { sv } from "@/lib/i18n/sv";
   ersätts, så en återställning går i sin tur att ångra (undoVersionId).
 */
 
-type Supabase = Awaited<ReturnType<typeof requireEditor>>["supabase"];
+type Supabase = Access["supabase"];
 
 export type RestoreResult = {
   /** Kortets innehåll efter återställningen. */
@@ -63,8 +65,7 @@ async function newestVersionId(supabase: Supabase, deckId: string, cardId: strin
  * granskningsstatus blir alltid inaktivt.
  */
 export async function restoreCardVersionAction(deckId: string, cardId: string, versionId: number): Promise<ActionResult<RestoreResult>> {
-  try {
-    const { supabase } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase }) => {
     if (!isUuid(cardId) || !isVersionId(versionId)) return { ok: false, error: sv.errors.generic };
     const loaded = await load(supabase, deckId, cardId, versionId);
     if (!loaded) return { ok: false, error: sv.admin.historyNotFound };
@@ -77,9 +78,7 @@ export async function restoreCardVersionAction(deckId: string, cardId: string, v
     const undoVersionId = await newestVersionId(supabase, deckId, cardId);
     revalidateDeck(deckId);
     return { ok: true, data: { content: target, undoVersionId } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }
 
 /**
@@ -93,8 +92,7 @@ export async function rejectCorrectionAction(
   versionId: number,
   note: string,
 ): Promise<ActionResult<RestoreResult & { reviewedAt: string }>> {
-  try {
-    const { supabase, ctx } = await requireEditor(deckId);
+  return editorAction(deckId, async ({ supabase, ctx }) => {
     if (!isUuid(cardId) || !isVersionId(versionId) || typeof note !== "string") return { ok: false, error: sv.errors.generic };
     const text = note.trim();
     const long = tooLong(sv.admin.reviewRejectNote, text, LIMITS.reviewNote);
@@ -117,7 +115,5 @@ export async function rejectCorrectionAction(
     const undoVersionId = await newestVersionId(supabase, deckId, cardId);
     revalidateDeck(deckId);
     return { ok: true, data: { content: target, undoVersionId, reviewedAt } };
-  } catch (e) {
-    return fail(e);
-  }
+  });
 }

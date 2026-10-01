@@ -1,5 +1,6 @@
 "use server";
 
+import { isUuid } from "@/lib/actions/result";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { sv } from "@/lib/i18n/sv";
 
@@ -18,7 +19,7 @@ export async function reportCardAction(input: { cardId: string; message: string;
   const contact = (input.contact ?? "").trim().slice(0, MAX_CONTACT) || null;
   if (message.length < 3) return { ok: false, error: sv.report.tooShort };
   if (message.length > MAX_MESSAGE) return { ok: false, error: sv.report.tooLong };
-  if (!/^[0-9a-f-]{36}$/i.test(input.cardId)) return { ok: false, error: sv.errors.generic };
+  if (!isUuid(input.cardId)) return { ok: false, error: sv.errors.generic };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("card_reports").insert({ card_id: input.cardId, message, contact });

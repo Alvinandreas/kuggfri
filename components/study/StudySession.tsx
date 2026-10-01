@@ -11,7 +11,7 @@ import { SELF_RATINGS, type SelfRating, type StudyMode } from "@/lib/progress/ty
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { serializeSelection, type Selection } from "@/lib/study/selection";
 import { buildSessionResult, type SessionResult } from "@/lib/study/session-result";
-import { settingsQuery, sizeLimit, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
+import { settingsQuery, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
 import { useStars } from "@/lib/progress/stars";
 import { playRatingSound } from "@/lib/ui/sound";
 import { formatRelative } from "@/lib/time/format";
@@ -54,8 +54,8 @@ type Props = {
   settings: SessionSettings;
   /** Bara stjärnmärkta kort. */
   onlyStarred: boolean;
-  /** Bara originalkorten (den beprövade uppsättningen). */
-  onlyOriginal?: boolean;
+  /** Högst så här många kort (tak=, från "Kör N kort till"), eller null. */
+  max?: number | null;
 };
 
 /** "4:07" eller "1:02:09". */
@@ -70,7 +70,7 @@ function clock(ms: number): string {
 export function StudySession({
   deck,
   categories,
-  cards: allCards,
+  cards,
   mode,
   selection,
   userId,
@@ -80,12 +80,10 @@ export function StudySession({
   settingsMode = mode,
   settings,
   onlyStarred,
-  onlyOriginal = false,
+  max = null,
 }: Props) {
   // Duggans regler är passets inställningar i duggaläget (tidtagning, märket i toppen).
   const dugga = mode === "exam" ? settings : null;
-  // Bara originalkorten: allt i passet (kö, dagsplan, sammanfattning) räknar på dem.
-  const cards = useMemo(() => (onlyOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal]);
   const store = useProgressStore(userId);
   /** Nyckel (kort + position) för det kort som är vänt. Ett nytt kort börjar alltid på framsidan. */
   const [flippedKey, setFlippedKey] = useState<string | null>(null);
@@ -116,9 +114,9 @@ export function StudySession({
     selection,
     extraNew,
     extra,
+    max,
     settings,
     onlyStarred,
-    onlyOriginal,
     examDate: deck.exam_date,
   });
 
@@ -277,8 +275,8 @@ export function StudySession({
 
   if (session.finished) {
     const summary = summarize(session);
-    // Länkarna vidare behåller passets inställningar och originalfiltret.
-    const suffix = `${settingsQuery(settingsMode, settings)}${onlyOriginal ? "&original=1" : ""}`;
+    // Länkarna vidare behåller passets inställningar.
+    const suffix = settingsQuery(settingsMode, settings);
     // Alla lägen utom duggan visar nästa repetition (varje skattning räknas in i schemat), men
     // bara den schemalagda kön har en slutpunkt för dagen och erbjuder Plugga vidare.
     const result: SessionResult | null =
@@ -294,9 +292,9 @@ export function StudySession({
             finalReview: sessionPlan.finalReview,
             extraPass: sessionPlan.extra,
             pass,
-            suffix,
-            newCards: settings.newCards,
-            size: sizeLimit(settings.size),
+            // Bara schemalagt läge har länkar vidare (today), med sina egna inställningar.
+            settings: mode === "fsrs" ? settings : undefined,
+            examDate: deck.exam_date,
           })
         : null;
     // Ett pass till med samma läge, urval och inställningar (inte schemalagt: där finns Plugga vidare).

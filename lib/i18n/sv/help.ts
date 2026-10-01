@@ -112,7 +112,7 @@ export const help = {
   homeBody:
     "Hemsidan visar dagens pass, din streak, din inlärda kunskap och tiden kvar till tentan. Genvägarna Kluriga kort och Dugga öppnar en ruta där du ser vad som ingår, väljer inställningar och startar direkt. Radardiagrammet visar hur mycket du kan inom varje område av kursen.",
   homeRadar:
-    "Klicka på ett område i diagrammet eller i listan bredvid för att öppna det. Där pluggar du bara det området: schemalagt, som kluriga kort, fritt eller som dugga. Grönt betyder klart: Plugga området lyser grönt när dagens schemalagda kort i området är gjorda, och Kluriga kort när inga kluriga kort finns kvar.",
+    "Klicka på ett område i diagrammet eller i listan bredvid för att öppna det. Där pluggar du bara det området: schemalagt, som kluriga kort, fritt eller som dugga. Grönt betyder klart: Schemalagt plugg lyser grönt när dagens schemalagda kort i området är gjorda, och Kluriga kort när inga kluriga kort finns kvar.",
   statsBody:
     "Min statistik i menyn samlar din egen studiestatistik på ett ställe. Den bygger bara på dina egna repetitioner och syns bara för dig.",
   statsLink: "Öppna Min statistik",

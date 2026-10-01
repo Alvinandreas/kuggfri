@@ -11,7 +11,7 @@ export function getSupabaseEnv(): { url: string; anonKey: string } {
 
 /**
  * Sajtens bas-URL. Används till återvändsadressen i inloggnings- och återställningsmejl,
- * till länkarna i påminnelserna och till og:image.
+ * till länkarna i veckobrevet och till og:image.
  *
  * Saknas NEXT_PUBLIC_SITE_URL i produktion är localhost aldrig rätt svar: då pekar varje
  * länk i varje mejl på studentens egen dator, och felet syns inte för någon annan än den

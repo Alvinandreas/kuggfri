@@ -32,7 +32,7 @@ type Props = {
  * kort och länkar stämmer med vad passet sedan innehåller.
  *
  * Grönt betyder klart (Alvins beslut 30 sep 2026): alla genvägar är gråa så länge det finns
- * något kvar. Plugga området blir grönt när dagens schemalagda kort i området är gjorda (och
+ * något kvar. Schemalagt plugg blir grönt när dagens schemalagda kort i området är gjorda (och
  * startar då Plugga vidare), Kluriga kort när inga kluriga kort finns kvar i området. Fri
  * repetition och Dugga har ingen slutpunkt och förblir gråa.
  */

@@ -138,6 +138,7 @@ test.describe("hemsidan", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("heading", { name: "Materialvalsprocessen" })).toBeVisible();
+    await expect(dialog.getByTestId("focus-study")).toContainText("Schemalagt plugg");
     await expect(dialog.getByTestId("focus-study")).toContainText("6 kort i dag");
     await expectNoSeriousA11yViolations(page);
     await dialog.getByTestId("focus-study").click();
@@ -145,7 +146,7 @@ test.describe("hemsidan", () => {
     await expect(page.getByTestId("remaining")).toHaveText("6 kort kvar");
   });
 
-  test("grönt betyder klart: Plugga området och Kluriga kort lyser först när området är gjort", async ({ page }) => {
+  test("grönt betyder klart: Schemalagt plugg och Kluriga kort lyser först när området är gjort", async ({ page }) => {
     const openArea = async () => {
       await page.goto("/hem");
       await page.getByRole("button", { name: "Öppna Materialvalsprocessen" }).first().click();
@@ -159,7 +160,7 @@ test.describe("hemsidan", () => {
     await expect(dialog.getByTestId("focus-study")).not.toHaveClass(/bg-accent-soft/);
     await expect(dialog.getByTestId("focus-tricky")).not.toHaveClass(/bg-accent-soft/);
 
-    // Plugga områdets schemalagda kort med skattning 4: inget kvar i dag och inga kluriga kort.
+    // Områdets schemalagda kort med skattning 4: inget kvar i dag och inga kluriga kort.
     await dialog.getByTestId("focus-study").click();
     for (let i = 0; i < 6; i++) {
       if (await page.getByTestId("session-summary").isVisible()) break;

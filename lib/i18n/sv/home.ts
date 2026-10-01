@@ -9,7 +9,6 @@ export const home = {
 } as const;
 
 export const landing = {
-  eyebrow: "Flashcards för Chalmersstudenter",
   title: "Plugga smartare inför tentan.",
   lead: "Kuggfri visar rätt kort på rätt dag, så att det du lär dig sitter kvar till tentan. Gratis och utan reklam.",
   points: [

@@ -10,7 +10,7 @@ import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } fr
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
-import { kindMatches, readStoredSettings, writeStoredSettings, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
+import { forgetLegacyOnlyOriginal, kindMatches, readStoredSettings, writeStoredSettings, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
 import { useStars } from "@/lib/progress/stars";
 import { Badge } from "@/components/ui/Badge";
 import { CategoryTable, type SortMode } from "./CategoryTable";
@@ -20,9 +20,6 @@ import { SessionPanel } from "./SessionPanel";
 import { ShareDeck } from "./ShareDeck";
 
 const MODES: StudyMode[] = ["fsrs", "tricky", "free", "random", "exam"];
-
-/** Per kurs och besökare: studenten som valt originalkorten ska slippa välja igen. */
-const ONLY_ORIGINAL_KEY = (deckId: string) => `kuggfri:bara-original:${deckId}`;
 
 /** Läget som passet faktiskt körs i: Stjärnmärkta är fri repetition av de markerade korten. */
 function runMode(pick: PickerMode): StudyMode {
@@ -41,7 +38,7 @@ type Props = {
   };
   categories: { id: string; title: string }[];
   /** Med frågetexten, för listan över stjärnmärkta kort. hasHint: kortet har en ledtråd. */
-  cards: (SelectableCard & { front: string; original: boolean; hasHint?: boolean })[];
+  cards: (SelectableCard & { front: string; hasHint?: boolean })[];
   userId: string | null;
   /** Förvalt läge och område (?lage=, ?omrade=), t.ex. från Duggan på hemsidan. */
   initialMode?: StudyMode;
@@ -53,7 +50,7 @@ type Props = {
  * statistik om hur det går ligger på hemsidan; här finns bara det som behövs för att
  * komma igång, och passets inställningar.
  */
-export function DeckOverview({ deck, categories, cards: allCards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
+export function DeckOverview({ deck, categories, cards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
   const store = useProgressStore(userId);
   const [pick, setPick] = useState<PickerMode>(initialMode);
   const mode = runMode(pick);
@@ -64,7 +61,6 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
   const { stars } = useStars();
   const [sortMode, setSortMode] = useState<SortMode>("deck");
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
-  const [onlyOriginal, setOnlyOriginal] = useState(false);
 
   // Nya kort per dag ställs in under Konto; här läses bara värdet.
   useEffect(() => {
@@ -74,24 +70,9 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
     } catch {
       // Utan lagring gäller standardvärdena.
     }
-    try {
-      setOnlyOriginal(window.localStorage.getItem(ONLY_ORIGINAL_KEY(deck.id)) === "1");
-    } catch {
-      // Utan lagring börjar valet avslaget.
-    }
-  }, [deck.id]);
-
-  const changeOnlyOriginal = useCallback(
-    (next: boolean) => {
-      setOnlyOriginal(next);
-      try {
-        window.localStorage.setItem(ONLY_ORIGINAL_KEY(deck.id), next ? "1" : "0");
-      } catch {
-        // Valet gäller ändå för den här sidvisningen.
-      }
-    },
-    [deck.id],
-  );
+    // Det borttagna valet Bara originalkorten: ett sparat val ska inte ligga kvar.
+    forgetLegacyOnlyOriginal(window.localStorage);
+  }, []);
 
   const changeSettings = useCallback(
     (next: SessionSettings) => {
@@ -108,12 +89,6 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
     [pick],
   );
 
-  // Bara originalkorten: den beprövade uppsättningen. Filtret gäller alla lägen och alla siffror
-  // på sidan, så att det som visas stämmer med passet som startas.
-  const originalCount = useMemo(() => allCards.filter((c) => c.original).length, [allCards]);
-  const offerOriginal = originalCount > 0 && originalCount < allCards.length;
-  const cards = useMemo(() => (onlyOriginal && offerOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal, offerOriginal]);
-
   // Uppgiftstyper går bara att välja när kursen har både vändkort och flerval; annars gäller
   // alla typer, så att ett sparat val aldrig tömmer passet utan att reglaget syns.
   const kindsOffered = useMemo(() => {
@@ -129,8 +104,7 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
   );
   const settings = effectiveSettings[pick];
 
-  // Progress laddas för alla kort, så att valet Bara originalkorten inte hämtar om den.
-  const cardIds = useMemo(() => allCards.map((c) => c.id), [allCards]);
+  const cardIds = useMemo(() => cards.map((c) => c.id), [cards]);
   // Kort utan område får en egen rad ("Utan område") så att de aldrig försvinner ur urvalet.
   const tableCategories = useMemo(
     () => (cards.some((c) => c.category_id === null) ? [...categories, { id: UNCATEGORIZED_ID, title: sv.deck.uncategorized }] : categories),
@@ -225,7 +199,7 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
           <div className="min-w-0">
             <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{deck.title}</h1>
             <p className="mt-1.5 text-sm text-muted">
-              {[deck.course_code ? `${sv.home.courseCode} ${deck.course_code}` : null, sv.deck.totalCards(allCards.length)].filter(Boolean).join(", ")}
+              {[deck.course_code ? `${sv.home.courseCode} ${deck.course_code}` : null, sv.deck.totalCards(cards.length)].filter(Boolean).join(", ")}
             </p>
           </div>
         </div>
@@ -287,7 +261,6 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
             kindsOffered={kindsOffered}
             starredCount={starredCount}
             onShowStarred={() => setStarredOpen(true)}
-            original={offerOriginal ? { count: originalCount, on: onlyOriginal, onChange: changeOnlyOriginal } : null}
           />
           <StarredDialog open={starredOpen} onClose={() => setStarredOpen(false)} cards={cards} categories={tableCategories} colorIndex={colorIndex} />
         </div>

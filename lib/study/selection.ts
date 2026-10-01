@@ -126,6 +126,7 @@ function orderIds(ids: readonly string[], order: SessionOrder, cards: readonly S
 /**
  * Kort-id i den ordning sessionen ska visa dem.
  * - fsrs: förfallna och nya kort ur urvalet, förfallna först (blandat inom samma dag).
+ *   Med onlyNew ("Ta N nya kort till"): bara nya kort, högst maxNew.
  *   Med extraSize (Plugga vidare): kort närmast att förfalla, sedan nya kort utan dos.
  * - free: urvalet, svagast först, blandat inom samma skattning.
  * - tricky: bara kluriga kort ur urvalet, svagast först, blandat inom samma skattning.
@@ -152,6 +153,8 @@ export function selectCardIds(input: {
   examSize?: number;
   /** Schemalagt läge: Plugga vidare med så här många kort (buildExtraQueue). */
   extraSize?: number;
+  /** Schemalagt läge: bara nya kort ("Ta N nya kort till"), högst maxNew. Förfallna kort ingår inte. */
+  onlyNew?: boolean;
   /** Passets inställningar. Undefined = lägets standard. */
   settings?: SessionSettings;
 }): string[] {
@@ -172,8 +175,9 @@ export function selectCardIds(input: {
   }
   if (input.mode === "fsrs") {
     const now = input.now ?? new Date();
-    // Utan nya kort: bara kort som redan finns i schemat.
-    const ids = filtered.map((c) => c.id).filter((id) => s.newCards || !(input.progress[id] === undefined || input.progress[id]?.state === 0));
+    const isNew = (id: string) => input.progress[id] === undefined || input.progress[id]?.state === 0;
+    // Utan nya kort: bara kort som redan finns i schemat. Bara nya: inga förfallna kort.
+    const ids = filtered.map((c) => c.id).filter((id) => (input.onlyNew ? isNew(id) : s.newCards || !isNew(id)));
     let queue: string[];
     if (input.extraSize !== undefined) queue = buildExtraQueue(ids, input.progress, now, random, { size: input.extraSize });
     else if (input.finalReview) queue = cap(buildFinalReviewQueue(ids, input.progress, now, random));

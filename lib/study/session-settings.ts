@@ -213,6 +213,27 @@ export function readStoredSettings(storage: Pick<Storage, "getItem"> | null | un
   return Object.fromEntries(MODES.map((m) => [m, sanitizeSettings(m, obj[m])])) as Record<SettingsMode, SessionSettings>;
 }
 
+/**
+ * Det borttagna valet "Bara originalkorten" (1 okt 2026) sparades per kurs under
+ * kuggfri:bara-original:<kurs-id>. Ett sparat val gäller inte längre (och original=1 i en
+ * gammal adress ignoreras); kurssidan tar bort nycklarna så att inget filter ligger kvar.
+ */
+const LEGACY_ONLY_ORIGINAL_PREFIX = "kuggfri:bara-original:";
+
+export function forgetLegacyOnlyOriginal(storage: Pick<Storage, "length" | "key" | "removeItem"> | null | undefined): void {
+  try {
+    if (!storage) return;
+    const keys: string[] = [];
+    for (let i = 0; i < storage.length; i++) {
+      const key = storage.key(i);
+      if (key?.startsWith(LEGACY_ONLY_ORIGINAL_PREFIX)) keys.push(key);
+    }
+    for (const key of keys) storage.removeItem(key);
+  } catch {
+    // Utan lagring finns inget att ta bort.
+  }
+}
+
 /** Sparar alla val. Går lagringen inte att nå gäller valen ändå för sidvisningen. */
 export function writeStoredSettings(storage: Pick<Storage, "setItem"> | null | undefined, all: Record<SettingsMode, SessionSettings>): void {
   try {

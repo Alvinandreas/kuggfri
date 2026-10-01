@@ -124,7 +124,7 @@ export const focus = {
   knownSub: "enligt schemat",
   tricky: "Kluriga",
   cardsOf: (n: number, total: number) => `${n} av ${total}`,
-  studyArea: "Plugga området",
+  studyArea: "Schemalagt plugg",
   studyAreaMeta: (n: number, minutes: number) => `${n === 1 ? "1 kort" : `${n} kort`} i dag, cirka ${minutes} min`,
   studyAreaDone: "Inget att repetera här i dag",
   studyAreaDoneTitle: "Klart för i dag",

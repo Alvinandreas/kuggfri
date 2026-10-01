@@ -43,7 +43,7 @@ export const shell = {
 
 export const footer = {
   privacy: "Integritetspolicy",
-  about: "Om Kuggfri",
+  about: "Om",
 } as const;
 
 export const theme = {

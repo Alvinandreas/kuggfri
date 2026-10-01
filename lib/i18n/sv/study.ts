@@ -107,6 +107,7 @@ export const summary = {
   tileKnownHelp: "Uppskattat ur schemat: summan av sannolikheten att du minns varje kort just nu.",
   freezesLeft: (n: number) => (n === 1 ? "1 frysning kvar" : `${n} frysningar kvar`),
   freezeUsed: "En frysning täckte en missad dag.",
+  continuePass: (n: number) => `Kör ${n} kort till`,
   continueNew: (n: number) => (n === 1 ? "Ta 1 nytt kort till" : `Ta ${n} nya kort till`),
   continueHelp: "Utöver dagsmålet. Bra om du har tid över, inte nödvändigt.",
   reviewed: (n: number) => (n === 1 ? "1 kort genomgånget" : `${n} kort genomgångna`),

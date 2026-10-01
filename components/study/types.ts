@@ -20,8 +20,6 @@ export type StudyCard = {
   kind: CardKind;
   /** Svarsalternativ för sant-falskt och alternativ, annars null. */
   options: CardOption[] | null;
-  /** Del av den beprövade originaluppsättningen. */
-  original: boolean;
 };
 
 /** Dagsläget efter en schemalagd session. Definieras i lib, där det räknas fram. */

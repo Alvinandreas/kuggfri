@@ -2,23 +2,17 @@ import { NextResponse } from "next/server";
 import { getSiteUrl } from "@/lib/supabase/env";
 import { createServiceRoleClient } from "@/lib/supabase/service";
 import { createMailer, readMailerConfig, type Mailer } from "@/lib/email/mailer";
-import { buildDigestEmail, buildReminderEmail, buildReminderStopEmail, decideReminder, type DigestData, type ReminderDeck } from "@/lib/email/templates";
+import { buildDigestEmail, type DigestData } from "@/lib/email/templates";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
 import { bearerMatches } from "@/lib/security/headers";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Påminnelser till studenter är avstängda (Alvin 28 sep 2026: studenterna får redan för många
- * påminnelser; det enda mejl de får från Kuggfri är sådant de själva begär, t.ex. inloggnings- och
- * bekräftelselänkar). Koden finns kvar men körs inte, så att den som tidigare slagit på
- * påminnelser aldrig får något även när cron-jobbet körs för gallringen och veckobrevet.
- */
-const STUDENT_REMINDERS_ENABLED = false;
-
-/**
  * Dagligt cron-jobb (vercel.json): gallring av gamla uppgifter och på måndagar examinatorns
- * veckobrev. Påminnelser till studenter är avstängda (STUDENT_REMINDERS_ENABLED). Anropas av Vercel med Authorization: Bearer CRON_SECRET.
+ * veckobrev. Studenter får inga påminnelser (Alvin 28 sep 2026: det enda mejl de får från Kuggfri
+ * är sådant de själva begär, t.ex. inloggnings- och bekräftelselänkar). Anropas av Vercel med
+ * Authorization: Bearer CRON_SECRET.
  * ?digest=1 tvingar veckobrevet (för test). Utan SMTP-konfiguration skickas inget, men svaret
  * visar vad som skulle ha skickats.
  */
@@ -38,41 +32,12 @@ export async function GET(request: Request) {
   const forceDigest = new URL(request.url).searchParams.get("digest") === "1";
   const doDigest = forceDigest || stockholmWeekday === "Mon";
 
-  const summary = { configured: mailer !== null, reminders: 0, stops: 0, digests: 0, skipped: 0, purged: {} as Record<string, number>, errors: [] as string[] };
+  const summary = { configured: mailer !== null, digests: 0, skipped: 0, purged: {} as Record<string, number>, errors: [] as string[] };
 
   // Gallring av det som inte ska sparas för alltid (docs/PERSONUPPGIFTER.md avsnitt 3).
   const { data: purged, error: purgeErr } = await supabase.rpc("purge_old_data");
   if (purgeErr) summary.errors.push(`purge_old_data: ${purgeErr.message}`);
   else summary.purged = (purged ?? {}) as Record<string, number>;
-
-  // Påminnelser (avstängda, se STUDENT_REMINDERS_ENABLED)
-  const { data: candidates, error: candErr } = STUDENT_REMINDERS_ENABLED
-    ? await supabase.rpc("reminder_candidates")
-    : { data: [], error: null };
-  if (candErr) summary.errors.push(`reminder_candidates: ${candErr.message}`);
-  for (const c of candidates ?? []) {
-    const decks = (c.decks ?? []) as ReminderDeck[];
-    const due = decks.reduce((s, d) => s + d.due, 0);
-    const decision = decideReminder({ sentToday: c.sent_today, remindersSinceLastReview: c.reminders_since_last_review, due });
-    if (decision === "skip") {
-      summary.skipped++;
-      continue;
-    }
-    const email = decision === "stop" ? buildReminderStopEmail({ name: c.display_name, siteUrl }) : buildReminderEmail({ name: c.display_name, decks, siteUrl, now });
-    try {
-      if (mailer) await mailer.send({ to: c.email, ...email });
-      if (decision === "stop") {
-        await supabase.from("profiles").update({ reminder_email: false }).eq("id", c.user_id);
-      }
-      if (mailer) await supabase.from("email_log").insert({ kind: decision === "stop" ? "reminder_stop" : "reminder", user_id: c.user_id, subject: email.subject });
-      if (decision === "stop") summary.stops++;
-      else summary.reminders++;
-    } catch (e) {
-      // Loggas med detaljer på servern, men svaret innehåller inga user_id eller adresser.
-      console.error("[cron] påminnelse misslyckades", c.user_id, e);
-      summary.errors.push("reminder_failed");
-    }
-  }
 
   // Veckobrev
   if (doDigest) {

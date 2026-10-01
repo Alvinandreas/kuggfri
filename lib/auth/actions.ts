@@ -183,17 +183,23 @@ export async function updateDisplayNameAction(formData: FormData): Promise<AuthR
   return { ok: true, message: sv.account.saved };
 }
 
-/** Kryssrutorna under Konto → Påminnelser. Bara egna raden (RLS) och bara dessa två kolumner (kolumnrättighet). */
+/**
+ * Veckobrevsvalet under Konto → Mejl (bara examinatorer ser formuläret). Bara egna raden (RLS)
+ * och bara digest_email: formuläret skickar inget annat, så inget annat skrivs.
+ */
 export async function updateEmailPrefsAction(formData: FormData): Promise<AuthResult> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: sv.auth.error };
-  const values: { reminder_email: boolean; digest_email?: boolean } = { reminder_email: formData.get("reminder_email") === "on" };
-  if (formData.has("digest_form")) values.digest_email = formData.get("digest_email") === "on";
-  const { error } = await supabase.from("profiles").update(values).eq("id", user.id);
-  if (error) return { ok: false, error: sv.errors.generic };
+  if (formData.has("digest_form")) {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ digest_email: formData.get("digest_email") === "on" })
+      .eq("id", user.id);
+    if (error) return { ok: false, error: sv.errors.generic };
+  }
   revalidatePath(routes.account());
   return { ok: true, message: sv.account.saved };
 }

@@ -37,10 +37,10 @@ describe("toCategoryOption", () => {
 });
 
 describe("toOverviewCard", () => {
-  it("ger samma fält som kurssidan byggde förut, i samma ordning", () => {
-    const out = toOverviewCard(card({ hint: "Tänk på…", kind: "begrepp", original: false }));
-    expect(out).toEqual({ id: "c1", category_id: "k1", sort_order: 3, front: "Fråga", original: false, kind: "begrepp", hasHint: true });
-    expect(Object.keys(out)).toEqual(["id", "category_id", "sort_order", "front", "original", "kind", "hasHint"]);
+  it("ger samma fält som kurssidan byggde förut, i samma ordning, utan originalmarkeringen", () => {
+    const out = toOverviewCard(card({ hint: "Tänk på…", kind: "begrepp", original: true }));
+    expect(out).toEqual({ id: "c1", category_id: "k1", sort_order: 3, front: "Fråga", kind: "begrepp", hasHint: true });
+    expect(Object.keys(out)).toEqual(["id", "category_id", "sort_order", "front", "kind", "hasHint"]);
   });
 
   it("hasHint är falskt för saknad och tom ledtråd", () => {
@@ -55,7 +55,7 @@ describe("toOverviewCard", () => {
 });
 
 describe("toStudyCard", () => {
-  it("ger samma fält som passet byggde förut och tolkar alternativen", () => {
+  it("ger samma fält som passet byggde förut och tolkar alternativen, utan originalmarkeringen", () => {
     const options = [
       { text: "Sant", correct: true },
       { text: "Falskt", correct: false },
@@ -70,9 +70,8 @@ describe("toStudyCard", () => {
       sort_order: 3,
       kind: "sant-falskt",
       options,
-      original: true,
     });
-    expect(Object.keys(out)).toEqual(["id", "category_id", "front", "back", "hint", "sort_order", "kind", "options", "original"]);
+    expect(Object.keys(out)).toEqual(["id", "category_id", "front", "back", "hint", "sort_order", "kind", "options"]);
   });
 
   it("trasiga alternativ blir null, som med parseOptions", () => {

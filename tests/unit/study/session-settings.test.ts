@@ -248,11 +248,11 @@ describe("buildSessionResult med inställningar", () => {
       finalReview: false,
       now: NOW,
     };
-    const withNew = buildSessionResult({ ...base, suffix: "&antal=10", size: 10 });
+    const withNew = buildSessionResult({ ...base, settings: { ...defaultSettings("fsrs"), size: 10 } });
     expect(withNew.today.extraHref).toContain("&antal=10&pass=1");
     expect(withNew.today.extraCount).toBe(10);
     expect(withNew.today.continueHref).toContain("&nya=10&antal=10");
-    const noNew = buildSessionResult({ ...base, suffix: "&nyakort=0", newCards: false });
+    const noNew = buildSessionResult({ ...base, settings: { ...defaultSettings("fsrs"), newCards: false } });
     expect(noNew.today.continueHref).toBeNull();
     expect(noNew.today.extraCount).toBe(1);
     expect(noNew.today.extraHref).toContain("&nyakort=0");

@@ -1,55 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildDigestEmail, buildReminderEmail, buildReminderStopEmail, decideReminder } from "@/lib/email/templates";
+import { buildDigestEmail } from "@/lib/email/templates";
 
 const NOW = new Date(2026, 9, 18, 17, 0, 0); // 18 okt 2026, lokal tid
-
-describe("påminnelse", () => {
-  it("ett deck: ämnesrad med antal och tid, tentarad, länk och avstängningstext", () => {
-    const e = buildReminderEmail({
-      name: "Alvin",
-      decks: [{ slug: "materialteknik", title: "Materialteknik", due: 14, exam_date: "2026-10-27" }],
-      siteUrl: "https://kuggfri.com",
-      now: NOW,
-    });
-    expect(e.subject).toBe("14 kort att repetera i Materialteknik, cirka 4 min");
-    expect(e.text).toContain("Hej Alvin!");
-    expect(e.text).toContain("Tentan om 9 dagar.");
-    expect(e.text).toContain("https://kuggfri.com/d/materialteknik/plugga?mode=fsrs&urval=all");
-    expect(e.text).toContain("högst ett mejl per dag");
-    expect(e.html).toContain("Starta passet");
-    expect(e.html).not.toContain("<script");
-  });
-
-  it("flera deck summeras i ämnesraden, utan tentarad när tentan passerat", () => {
-    const e = buildReminderEmail({
-      name: null,
-      decks: [
-        { slug: "a", title: "A", due: 3, exam_date: "2026-10-01" },
-        { slug: "b", title: "B", due: 1, exam_date: null },
-      ],
-      siteUrl: "https://kuggfri.com",
-      now: NOW,
-    });
-    expect(e.subject).toBe("4 kort att repetera, cirka 1 min");
-    expect(e.text).toContain("Hej!");
-    expect(e.text).not.toContain("Tentan");
-    expect(e.text).toContain("B: 1 kort att repetera");
-  });
-
-  it("sista mejlet säger att påminnelserna stängs av, utan skuld", () => {
-    const e = buildReminderStopEmail({ name: "Alvin", siteUrl: "https://kuggfri.com" });
-    expect(e.subject).toBe("Vi slutar skicka påminnelser");
-    expect(e.text).toContain("Inget illa ment");
-    expect(e.text).toContain("https://kuggfri.com/konto");
-  });
-
-  it("beslutet: högst ett per dag, stopp efter 14 utan repetition, inget utan förfallna kort", () => {
-    expect(decideReminder({ sentToday: true, remindersSinceLastReview: 0, due: 10 })).toBe("skip");
-    expect(decideReminder({ sentToday: false, remindersSinceLastReview: 14, due: 10 })).toBe("stop");
-    expect(decideReminder({ sentToday: false, remindersSinceLastReview: 3, due: 0 })).toBe("skip");
-    expect(decideReminder({ sentToday: false, remindersSinceLastReview: 3, due: 5 })).toBe("send");
-  });
-});
 
 describe("veckobrev", () => {
   const data = {

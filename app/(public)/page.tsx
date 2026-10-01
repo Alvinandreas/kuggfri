@@ -17,6 +17,11 @@ const ICONS = [CalendarClock, GraduationCap, ChartNoAxesColumn];
  * till hemsidan (eller dit länken de följde pekade). ?next= kommer från inloggningsgrinden
  * i middleware, ?flik=logga-in öppnar inloggningsfliken direkt. Om, Hjälp och
  * integritetspolicyn länkas från sidfoten i PublicLayout (krav för inloggning med Google).
+ *
+ * På stor skärm står formuläret i höger spalt över alla fyra rader, och vänsterspaltens två
+ * block (rubriken med ingressen, punkterna) står i raderna 2 och 3 mellan två lika höga
+ * fyllnadsrader, så att de tillsammans hamnar mitt för formuläret. På mobil kommer
+ * formuläret mellan ingressen och punkterna.
  */
 export default async function LandingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
@@ -26,18 +31,17 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
   const flik = first(query.flik);
 
   return (
-    <div className="grid items-center gap-10 py-4 lg:min-h-[calc(100dvh-13rem)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">
-      <div className="anim-fade-up lg:col-start-1 lg:row-start-1 lg:self-end">
-        <p className="inline-flex rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent-ink">{sv.landing.eyebrow}</p>
-        <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">{sv.landing.title}</h1>
+    <div className="grid items-center gap-10 py-4 lg:grow lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-x-16 lg:gap-y-0 lg:py-0">
+      <div className="anim-fade-up lg:col-start-1 lg:row-start-2">
+        <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">{sv.landing.title}</h1>
         <p className="mt-5 max-w-xl text-lg text-muted">{sv.landing.lead}</p>
       </div>
 
-      <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      <div className="lg:col-start-2 lg:row-span-4 lg:row-start-1">
         <AuthPanel next={next} initialTab={flik === "logga-in" ? "logga-in" : "registrera"} hint={next !== routes.home() ? sv.landing.nextHint : null} />
       </div>
 
-      <ul className="grid gap-5 lg:col-start-1 lg:row-start-2 lg:self-start">
+      <ul className="grid gap-5 lg:col-start-1 lg:row-start-3 lg:mt-16">
         {sv.landing.points.map((p, i) => {
           const Icon = ICONS[i] ?? CalendarClock;
           return (

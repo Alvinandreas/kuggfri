@@ -221,7 +221,11 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
             {isExam ? sv.summary.againExam : sv.summary.again}
           </LinkButton>
         ) : null}
-        {today?.continueHref && !offerExtra ? (
+        {today?.passHref ? (
+          <LinkButton href={today.passHref} variant="secondary" size="lg" data-testid="continue-pass">
+            {sv.summary.continuePass(today.passCount)}
+          </LinkButton>
+        ) : today?.continueHref && !offerExtra ? (
           <LinkButton href={today.continueHref} variant="secondary" size="lg" data-testid="continue-new">
             {sv.summary.continueNew(today.continueCount)}
           </LinkButton>
@@ -237,7 +241,7 @@ export function SessionSummary({ summary, cardsById, categories, colorIndex, mod
           </Button>
         ) : null}
       </div>
-      {today?.continueHref && !offerExtra ? <p className="-mt-3 text-sm text-muted">{sv.summary.continueHelp}</p> : null}
+      {today?.continueHref && !today.passHref && !offerExtra ? <p className="-mt-3 text-sm text-muted">{sv.summary.continueHelp}</p> : null}
     </div>
   );
 }

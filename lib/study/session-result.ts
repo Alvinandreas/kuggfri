@@ -11,6 +11,8 @@ import { buildProgressStats } from "@/lib/stats/progress-stats";
 import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { filterCards, serializeSelection, type SelectableCard, type Selection } from "@/lib/study/selection";
 import { EXTRA_SESSION_SIZE } from "@/lib/study/plan";
+import { buildSessionQueue } from "@/lib/study/session-queue";
+import { defaultSettings, settingsQuery, sizeLimit, type SessionSettings } from "@/lib/study/session-settings";
 import { endOfDay } from "@/lib/time/day";
 import { routes } from "@/lib/routes";
 
@@ -25,7 +27,14 @@ export type TodaySummary = {
   total: number;
   /** Inget förfallet kvar och dagsmålet nått: en tydlig slutpunkt. */
   done: boolean;
-  /** Länk för att ta fler nya kort utöver dagsmålet, eller null. */
+  /**
+   * "Kör N kort till" när dagens schemalagda kort inte är klara (t.ex. överhoppade kort, eller
+   * fler förfallna än passets antal): nästa schemalagda pass, eller null. passCount är exakt
+   * det antal kort passet får (tak= håller det så även om fler kort hinner förfalla).
+   */
+  passHref: string | null;
+  passCount: number;
+  /** "Ta N nya kort till" när dagen är klar: ett pass med exakt N nya kort, eller null. */
   continueHref: string | null;
   continueCount: number;
   /** Plugga vidare: nästa extra pass (kort närmast att förfalla, sedan nya), eller null. */
@@ -61,14 +70,13 @@ export function buildSessionResult(input: {
    */
   pass?: number;
   /**
-   * Passets inställningar i adressform (settingsQuery, plus t.ex. &original=1), som länkarna
-   * vidare behåller: samma antal kort, samma val av nya kort.
+   * Det schemalagda passets inställningar, som länkarna vidare behåller (samma antal kort,
+   * samma val av nya kort). Undefined = standard. Nya kort av: inga "Ta N nya kort till", och
+   * Plugga vidare utan nya kort. Antal: tak på varje pass (Plugga vidare: EXTRA_SESSION_SIZE).
    */
-  suffix?: string;
-  /** Inställningen Nya kort i dag. Av: inga "Ta N nya kort till", och Plugga vidare utan nya kort. */
-  newCards?: boolean;
-  /** Antal kort per pass enligt inställningarna. Undefined = EXTRA_SESSION_SIZE i Plugga vidare. */
-  size?: number;
+  settings?: SessionSettings;
+  /** Kursens tentadatum: styr doseringen i "Kör N kort till" precis som i passet. */
+  examDate?: string | null;
   now?: Date;
 }): SessionResult {
   const now = input.now ?? new Date();
@@ -85,13 +93,30 @@ export function buildSessionResult(input: {
   // dos. Under slutrepetitionen inför tentan ska däremot allt gås igenom, så då räknas
   // kvarvarande nya kort som att dagen inte är slut.
   const done = queue.due === 0 && (queue.new === 0 || !input.finalReview);
-  const newCards = input.newCards ?? true;
-  const continueCount = newCards ? Math.min(input.dailyNew, queue.new, input.size ?? Number.POSITIVE_INFINITY) : 0;
-  const canContinue = continueCount > 0 && !input.finalReview;
-  // Plugga vidare finns alltid när dagen är klar och urvalet har kort: ingen dos, inget tak.
-  const extraCount = Math.min(input.size ?? EXTRA_SESSION_SIZE, newCards ? inSelection.length : inSelection.length - queue.new);
+  const settings = input.settings ?? defaultSettings("fsrs");
+  const size = sizeLimit(settings.size);
   const base = routes.study(input.deckSlug, { mode: "fsrs", urval: serializeSelection(input.selection) });
-  const next = `${input.suffix ?? ""}&pass=${(input.pass ?? 0) + 1}`;
+  const next = `${settingsQuery("fsrs", settings)}&pass=${(input.pass ?? 0) + 1}`;
+
+  // Kör N kort till: dagens schemalagda kort är inte klara. N räknas med samma funktion som
+  // passet byggs med, och tak=N gör att passet aldrig blir större än knappen sa.
+  const passCount =
+    done || input.finalReview
+      ? 0
+      : buildSessionQueue({
+          cards: input.cards,
+          progress: input.progress,
+          reviews: input.reviews,
+          request: { mode: "fsrs", selection: input.selection, extraNew: null, extra: false, max: null, settings },
+          dailyNew: input.dailyNew,
+          examDate: input.examDate ?? null,
+          now,
+        }).order.length;
+  // Ta N nya kort till: när dagen är klar. Passet (nya=N) består av bara nya kort, exakt N.
+  const continueCount = settings.newCards ? Math.min(input.dailyNew, queue.new, size ?? Number.POSITIVE_INFINITY) : 0;
+  const canContinue = done && continueCount > 0 && !input.finalReview;
+  // Plugga vidare finns alltid när dagen är klar och urvalet har kort: ingen dos, inget tak.
+  const extraCount = Math.min(size ?? EXTRA_SESSION_SIZE, settings.newCards ? inSelection.length : inSelection.length - queue.new);
 
   return {
     nextDue,
@@ -103,8 +128,10 @@ export function buildSessionResult(input: {
       known: Math.round(stats.knowledge.known),
       total: stats.totalCards,
       done,
+      passHref: passCount > 0 ? `${base}&tak=${passCount}${next}` : null,
+      passCount,
       continueHref: canContinue ? `${base}&nya=${continueCount}${next}` : null,
-      continueCount,
+      continueCount: canContinue ? continueCount : 0,
       extraHref: done && extraCount > 0 ? `${base}&vidare=1${next}` : null,
       extraCount,
       extraPass: input.extraPass ?? false,

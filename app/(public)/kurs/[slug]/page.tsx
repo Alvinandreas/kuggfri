@@ -33,7 +33,7 @@ export default async function CourseInvitePage({ params }: { params: Params }) {
   const { deck, cards } = data;
 
   return (
-    <div className="grid items-center gap-10 py-4 lg:min-h-[calc(100dvh-13rem)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">
+    <div className="grid items-center gap-10 py-4 lg:grow lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">
       <div className="anim-fade-up">
         <p className="inline-flex rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent-ink">{sv.invite.eyebrow}</p>
         <div className="mt-6 flex items-center gap-4">

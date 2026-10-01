@@ -2,13 +2,10 @@
  * Mejlinnehåll. Ren modul (inga beroenden på server eller databas) så att den kan testas.
  * Tonen följer docs/OMVARLDSANALYS.md: ett mejl med faktiskt värde, aldrig skuld.
  */
-import { SITE_HOST } from "@/lib/contact";
-import { daysUntil, estimateMinutes, parseExamDate } from "@/lib/study/plan";
+import { daysUntil, parseExamDate } from "@/lib/study/plan";
 import { firstLine } from "@/lib/text/first-line";
 import type { DeckDigest } from "@/lib/supabase/database.types";
 import { routes } from "@/lib/routes";
-
-export type ReminderDeck = { slug: string; title: string; due: number; exam_date: string | null };
 
 export type Email = { subject: string; text: string; html: string };
 
@@ -29,41 +26,6 @@ function examLine(exam: string | null, now: Date): string | null {
   if (days === 0) return "Tentan är i dag.";
   if (days === 1) return "Tentan är i morgon.";
   return `Tentan om ${days} dagar.`;
-}
-
-export function buildReminderEmail(input: { name: string | null; decks: ReminderDeck[]; siteUrl: string; now?: Date }): Email {
-  const now = input.now ?? new Date();
-  const total = input.decks.reduce((s, d) => s + d.due, 0);
-  const minutes = estimateMinutes(total);
-  const first = input.decks[0];
-  const subject =
-    input.decks.length === 1 && first
-      ? `${first.due} kort att repetera i ${first.title}, cirka ${minutes} min`
-      : `${total} kort att repetera, cirka ${minutes} min`;
-  const hello = input.name ? `Hej ${input.name}!` : "Hej!";
-  const lines: string[] = [];
-  const htmlLines: string[] = [];
-  for (const d of input.decks) {
-    const url = `${input.siteUrl}${routes.study(d.slug, { mode: "fsrs", urval: "all" })}`;
-    const exam = examLine(d.exam_date, now);
-    const line = `${d.title}: ${d.due === 1 ? "1 kort" : `${d.due} kort`} att repetera, cirka ${estimateMinutes(d.due)} min.${exam ? ` ${exam}` : ""}`;
-    lines.push(`${line}\n${url}`);
-    htmlLines.push(`${esc(line)}<br><a href="${url}" style="color:#1f7a4d">Starta passet</a>`);
-  }
-  const footerText = `Du får högst ett mejl per dag, bara när det finns kort att repetera, och inget efter tentan. Stäng av under Konto på ${SITE_HOST}.`;
-  const text = [hello, "", ...lines, "", footerText].join("\n");
-  const html = layout(hello, htmlLines, `${esc(footerText)} <a href="${input.siteUrl}/konto" style="color:#676259">Konto</a>`);
-  return { subject, text, html };
-}
-
-export function buildReminderStopEmail(input: { name: string | null; siteUrl: string }): Email {
-  const hello = input.name ? `Hej ${input.name}!` : "Hej!";
-  const body = "Du har inte repeterat på två veckor, så vi slutar skicka påminnelser. Inget illa ment: de ska hjälpa, inte tjata. Vill du ha dem igen slår du på dem under Konto.";
-  return {
-    subject: "Vi slutar skicka påminnelser",
-    text: [hello, "", body, "", `${input.siteUrl}/konto`].join("\n"),
-    html: layout(hello, [esc(body)], `<a href="${input.siteUrl}/konto" style="color:#676259">Konto på ${SITE_HOST}</a>`),
-  };
 }
 
 /**
@@ -122,14 +84,4 @@ export function buildDigestEmail(input: {
     esc(footerText),
   );
   return { subject, text, html };
-}
-
-/** Beslut per student: skicka påminnelse, skicka sista mejlet och stäng av, eller ingenting. */
-export const REMINDER_STOP_AFTER = 14;
-
-export function decideReminder(input: { sentToday: boolean; remindersSinceLastReview: number; due: number }): "send" | "stop" | "skip" {
-  if (input.sentToday) return "skip";
-  if (input.remindersSinceLastReview >= REMINDER_STOP_AFTER) return "stop";
-  if (input.due <= 0) return "skip";
-  return "send";
 }

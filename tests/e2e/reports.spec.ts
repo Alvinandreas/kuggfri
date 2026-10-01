@@ -7,7 +7,8 @@ test.describe("felrapporter", () => {
 
     // Student utan kontaktuppgift i rapporten: visas som anonym för admin.
     await registerStudent(page, "rapport");
-    await startSession(page, "free");
+    // Bara vändkort: efter rapporten vänds kortet (ett flervalskort har ingen vändknapp).
+    await startSession(page, "free", "all", "typer=vand");
     await page.getByTestId("report-open").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();

@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
   DECK_SLUG,
   accountProgress,
+  serviceClient,
   currentCard,
   expectNoSeriousA11yViolations,
   rateCurrentCard,
@@ -17,6 +18,46 @@ let email = "";
 test.beforeEach(async ({ page }) => {
   email = await registerStudent(page, "plugg");
 });
+
+/**
+ * Ett litet område (färre kort än dagsdosen 20), så att ett pass på området går att göra klart.
+ * Sedan 1 okt ligger alla kursens kort i rotation; det minsta området har 16 kort, varav några
+ * rättas automatiskt.
+ */
+const SMALL_AREA = "Hållbarhet och återvinning";
+const SMALL_AREA_CARDS = 16;
+
+/**
+ * Sätter studentens progress på alla områdets kort till skattning 4 med nästa repetition i morgon:
+ * området är klart för i dag. (Ett automaträttat kort som testet besvarade fel hade annars kommit
+ * tillbaka i dag, så testet gör det deterministiskt.)
+ */
+async function completeAreaInDb(area: string) {
+  const admin = serviceClient();
+  const { data: users } = await admin.auth.admin.listUsers({ perPage: 1000 });
+  const userId = users?.users.find((u) => u.email === email)?.id;
+  if (!userId) throw new Error(`Hittade inte ${email}`);
+  const { data: category } = await admin.from("categories").select("id").eq("title", area).single();
+  const { data: cards } = await admin.from("cards").select("id").eq("category_id", category!.id).eq("is_active", true).is("review_status", null);
+  const now = new Date();
+  const tomorrow = new Date(now.getTime() + 36 * 3600_000);
+  const rows = (cards ?? []).map((c) => ({
+    user_id: userId,
+    card_id: c.id,
+    due: tomorrow.toISOString(),
+    stability: 5,
+    difficulty: 5,
+    elapsed_days: 0,
+    scheduled_days: 1,
+    reps: 1,
+    lapses: 0,
+    state: 2,
+    last_review: now.toISOString(),
+    self_rating: 4,
+  }));
+  const { error } = await admin.from("card_progress").upsert(rows, { onConflict: "user_id,card_id" });
+  if (error) throw error;
+}
 
 /** Väntar tills antalet kort med progress i databasen är n (skrivningarna går asynkront). */
 async function expectStoredCount(n: number) {
@@ -100,12 +141,12 @@ test.describe("plugga", () => {
     await page.goto(`/d/${DECK_SLUG}`);
     // Välj fri repetition och en kategori via kryssrutan i kategorilistan.
     await page.getByLabel("Fri repetition").check();
-    await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check();
-    await expect(page.getByTestId("selection-summary")).toContainText("Materialvalsprocessen");
+    await page.getByTestId("category-row").filter({ hasText: SMALL_AREA }).getByRole("checkbox").check();
+    await expect(page.getByTestId("selection-summary")).toContainText(SMALL_AREA);
     await page.getByTestId("start-session").click();
     await expect(currentCard(page)).toBeVisible();
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < SMALL_AREA_CARDS; i++) {
       if (await page.getByTestId("session-summary").isVisible()) break;
       await rateCurrentCard(page, ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5);
     }
@@ -135,39 +176,40 @@ test.describe("hemsidan", () => {
 
   test("ett område i radardiagrammet öppnas i en dialog och startar ett pass på bara det området", async ({ page }) => {
     await page.goto("/hem");
-    await page.getByRole("button", { name: "Öppna Materialvalsprocessen" }).first().click();
+    await page.getByRole("button", { name: `Öppna ${SMALL_AREA}` }).first().click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("heading", { name: "Materialvalsprocessen" })).toBeVisible();
+    await expect(dialog.getByRole("heading", { name: SMALL_AREA })).toBeVisible();
     await expect(dialog.getByTestId("focus-study")).toContainText("Schemalagt plugg");
-    await expect(dialog.getByTestId("focus-study")).toContainText("6 kort i dag");
+    await expect(dialog.getByTestId("focus-study")).toContainText(`${SMALL_AREA_CARDS} kort i dag`);
     await expectNoSeriousA11yViolations(page);
     await dialog.getByTestId("focus-study").click();
     await expect(currentCard(page)).toBeVisible();
-    await expect(page.getByTestId("remaining")).toHaveText("6 kort kvar");
+    await expect(page.getByTestId("remaining")).toHaveText(`${SMALL_AREA_CARDS} kort kvar`);
   });
 
   test("grönt betyder klart: Schemalagt plugg och Kluriga kort lyser först när området är gjort", async ({ page }) => {
     const openArea = async () => {
       await page.goto("/hem");
-      await page.getByRole("button", { name: "Öppna Materialvalsprocessen" }).first().click();
+      await page.getByRole("button", { name: `Öppna ${SMALL_AREA}` }).first().click();
       const dialog = page.getByRole("dialog");
       await expect(dialog.getByTestId("focus-study")).toBeVisible();
       return dialog;
     };
     // Allt kvar: båda genvägarna är gråa (ingen grön yta).
     let dialog = await openArea();
-    await expect(dialog.getByTestId("focus-study")).toContainText("6 kort i dag");
+    await expect(dialog.getByTestId("focus-study")).toContainText(`${SMALL_AREA_CARDS} kort i dag`);
     await expect(dialog.getByTestId("focus-study")).not.toHaveClass(/bg-accent-soft/);
     await expect(dialog.getByTestId("focus-tricky")).not.toHaveClass(/bg-accent-soft/);
 
     // Områdets schemalagda kort med skattning 4: inget kvar i dag och inga kluriga kort.
     await dialog.getByTestId("focus-study").click();
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < SMALL_AREA_CARDS; i++) {
       if (await page.getByTestId("session-summary").isVisible()) break;
       await rateCurrentCard(page, 4);
     }
     await expect(page.getByTestId("session-summary")).toBeVisible();
+    await completeAreaInDb(SMALL_AREA);
 
     dialog = await openArea();
     await expect(dialog.getByTestId("focus-study")).toContainText("Klart för i dag");
@@ -301,20 +343,21 @@ test.describe("dugga", () => {
     await page.getByLabel("Dugga").check();
     await expect(page.getByTestId("session-settings")).toHaveAttribute("data-mode", "exam");
     await expect(page.getByTestId("session-settings")).toContainText("Inställningar");
-    await page.getByTestId("category-row").filter({ hasText: "Materialvalsprocessen" }).getByRole("checkbox").check({ force: true });
-    await expect(page.getByTestId("start-info")).toContainText("6 kort");
+    await page.getByTestId("category-row").filter({ hasText: SMALL_AREA }).getByRole("checkbox").check({ force: true });
+    await expect(page.getByTestId("start-info")).toContainText(`${SMALL_AREA_CARDS} kort`);
     await page.getByTestId("start-session").click();
     await expect(currentCard(page)).toBeVisible();
-    await expect(page.getByTestId("remaining")).toHaveText("Fråga 1 av 6");
+    await expect(page.getByTestId("remaining")).toHaveText(`Fråga 1 av ${SMALL_AREA_CARDS}`);
     await expect(page.getByTestId("prev")).toBeDisabled();
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < SMALL_AREA_CARDS; i++) {
       if (await page.getByTestId("session-summary").isVisible()) break;
       await rateCurrentCard(page, i < 4 ? 5 : 2);
     }
     await expect(page.getByTestId("session-summary")).toBeVisible();
-    await expect(page.getByTestId("exam-result")).toContainText("4 av 6");
-    await expect(page.getByTestId("exam-result")).toContainText("67 %");
-    await expectStoredCount(6);
+    // Automaträttade frågor rättas efter alternativet testet väljer, så resultatet varierar; formen gör det inte.
+    await expect(page.getByTestId("exam-result")).toContainText(new RegExp(`\\d+ av ${SMALL_AREA_CARDS}`));
+    await expect(page.getByTestId("exam-result")).toContainText(/\d+ %/);
+    await expectStoredCount(SMALL_AREA_CARDS);
     await expectNoSeriousA11yViolations(page);
   });
 });

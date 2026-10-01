@@ -103,8 +103,9 @@ test.describe("granskning", { tag: "@desktop" }, () => {
     await expect(page.getByTestId("review-count-ur-rotation")).toHaveText(String(removed));
     await expect(page.getByTestId("review-count-att-granska")).toHaveText(String(toReview));
 
-    // Granskningsöversikten överst i listan.
-    await page.getByTestId("review-back").click().catch(() => undefined);
+    // Granskningsöversikten överst i listan (efter beslutet går vyn tillbaka till listan när
+    // fliken är tom; annars visas nästa kort).
+    if ((await page.getByTestId("review-back").count()) > 0) await page.getByTestId("review-back").click();
     await expect(page.getByTestId("review-overview")).toBeVisible();
 
     // Reglaget English: flikar och knappar på engelska, och tillbaka.

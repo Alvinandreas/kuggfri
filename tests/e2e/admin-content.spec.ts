@@ -168,7 +168,7 @@ test.describe("examinator", () => {
     await page.goto(categoryHref!);
     const cardHref = await page.getByTestId("admin-card-list").getByTestId("admin-card-front").first().getAttribute("href");
     await page.goto(cardHref!);
-    const hint = page.getByLabel("Ledtråd (valfritt)");
+    const hint = page.getByLabel("Ledtråd (valfri)");
     const original = await hint.inputValue();
     await hint.fill(original ? original : "");
     await page.getByTestId("card-save").click();

@@ -18,8 +18,16 @@ export type CourseManifest = {
   exam_date?: string | null;
   published?: boolean;
   sort_order?: number;
+  /**
+   * Kursen på Canvas som `kuggfri canvas` får hämta material från (scripts/canvas.ts). Bara kurser
+   * med fältet får hämtas. Hör till verktygen, inte till kursen: ingår inte i ContentCourse och
+   * därmed inte i kurshashen; saveCourse bevarar det från filen på disk.
+   */
+  canvas?: CanvasSource;
   categories: { key: string; file: string }[];
 };
+
+export type CanvasSource = { base: string; courseId: number };
 
 export type LoadIssue = { file: string; line: number; message: string };
 
@@ -99,9 +107,26 @@ export function loadCourse(root: string, key: string): LoadedCourse {
   return { course, issues };
 }
 
+function readManifest(root: string, key: string): CourseManifest | null {
+  const path = join(courseDir(root, key), "kurs.json");
+  return existsSync(path) ? (JSON.parse(readFileSync(path, "utf8")) as CourseManifest) : null;
+}
+
+/** Kursens Canvaskoppling ur kurs.json, eller null om kursen saknas eller inte har någon. */
+export function courseCanvas(root: string, key: string): CanvasSource | null {
+  const canvas = readManifest(root, key)?.canvas;
+  if (!canvas) return null;
+  if (typeof canvas.base !== "string" || !/^https:\/\/[^/]+$/.test(canvas.base) || !Number.isInteger(canvas.courseId) || canvas.courseId <= 0) {
+    throw new Error(`Ogiltigt fält canvas i content/${key}/kurs.json: ange { "base": "https://…", "courseId": <heltal> }.`);
+  }
+  return { base: canvas.base, courseId: canvas.courseId };
+}
+
 /** Skriver hela kursen: kurs.json och en fil per kategori. Filer som inte längre hör till kursen tas bort. */
 export function saveCourse(root: string, course: ContentCourse): string[] {
   const dir = courseDir(root, course.key);
+  // Fält som bara finns i filen (inte i ContentCourse) följer med från den befintliga kurs.json.
+  const canvas = readManifest(root, course.key)?.canvas;
   mkdirSync(dir, { recursive: true });
   const written: string[] = [];
 
@@ -114,6 +139,7 @@ export function saveCourse(root: string, course: ContentCourse): string[] {
     exam_date: course.exam_date,
     published: course.published,
     sort_order: course.sort_order,
+    ...(canvas ? { canvas } : {}),
     categories: course.categories.map((c) => ({ key: c.key, file: c.file })),
   };
   writeFileSync(join(dir, "kurs.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");

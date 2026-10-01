@@ -1,3 +1,4 @@
+import { SITE_HOST } from "@/lib/contact";
 import type { Args } from "./args";
 import type { Target } from "./db";
 import { C, dim, say } from "./output";
@@ -11,7 +12,7 @@ export async function revalidate(args: Args, target: Target): Promise<void> {
   const secret = process.env.REVALIDATE_SECRET ?? process.env.CRON_SECRET;
   const site =
     (typeof args.flags.sajt === "string" ? args.flags.sajt : undefined) ??
-    (target.kind === "linked" ? process.env.NEXT_PUBLIC_SITE_URL ?? "https://kuggfri.com" : "http://localhost:3000");
+    (target.kind === "linked" ? process.env.NEXT_PUBLIC_SITE_URL ?? `https://${SITE_HOST}` : "http://localhost:3000");
   if (!secret) {
     say(dim(`Cachen rensas inom fem minuter. Sätt REVALIDATE_SECRET för att rensa direkt (${site}).`));
     return;

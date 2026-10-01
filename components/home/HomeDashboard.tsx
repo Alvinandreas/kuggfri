@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CircleCheckBig, Flame, GraduationCap, Target } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
+import { courseConfig } from "@/lib/courses";
 import { estimateKnowledge } from "@/lib/fsrs/scheduler";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { useCardProgress } from "@/lib/progress/use-card-progress";
@@ -53,11 +54,12 @@ type DeckView = {
   exam: Date | null;
 };
 
-/** Tentor på Chalmers börjar oftast 08.30; nedräkningen siktar dit. */
-function examStart(date: string | null): Date | null {
+/** Nedräkningen siktar på när tentan börjar: kursens examStart (standard 08.30, lib/courses). */
+function examStart(date: string | null, slug: string): Date | null {
   const d = parseExamDate(date);
   if (!d) return null;
-  d.setHours(8, 30, 0, 0);
+  const { hour, minute } = courseConfig(slug).examStart;
+  d.setHours(hour, minute, 0, 0);
   return d;
 }
 
@@ -114,7 +116,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
         categoryStats: perCategory,
         trickyPlan: planDeckSession({ deck, cards: deck.cards, progress, reviews, mode: "tricky", selectedIds: [], dailyNew: prefs.dailyNew, now }),
         lastActivity: reviews.reduce((max, r) => (idSet.has(r.card_id) ? Math.max(max, Date.parse(r.reviewed_at)) : max), 0),
-        exam: examStart(deck.exam_date),
+        exam: examStart(deck.exam_date, deck.slug),
       };
     });
   }, [decks, progress, reviews, prefs.dailyNew, prefs.weekdaysOnly]);

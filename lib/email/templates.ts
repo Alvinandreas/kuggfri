@@ -2,6 +2,7 @@
  * Mejlinnehåll. Ren modul (inga beroenden på server eller databas) så att den kan testas.
  * Tonen följer docs/OMVARLDSANALYS.md: ett mejl med faktiskt värde, aldrig skuld.
  */
+import { SITE_HOST } from "@/lib/contact";
 import { daysUntil, estimateMinutes, parseExamDate } from "@/lib/study/plan";
 import { firstLine } from "@/lib/text/first-line";
 import type { DeckDigest } from "@/lib/supabase/database.types";
@@ -48,7 +49,7 @@ export function buildReminderEmail(input: { name: string | null; decks: Reminder
     lines.push(`${line}\n${url}`);
     htmlLines.push(`${esc(line)}<br><a href="${url}" style="color:#1f7a4d">Starta passet</a>`);
   }
-  const footerText = "Du får högst ett mejl per dag, bara när det finns kort att repetera, och inget efter tentan. Stäng av under Konto på kuggfri.com.";
+  const footerText = `Du får högst ett mejl per dag, bara när det finns kort att repetera, och inget efter tentan. Stäng av under Konto på ${SITE_HOST}.`;
   const text = [hello, "", ...lines, "", footerText].join("\n");
   const html = layout(hello, htmlLines, `${esc(footerText)} <a href="${input.siteUrl}/konto" style="color:#676259">Konto</a>`);
   return { subject, text, html };
@@ -60,7 +61,7 @@ export function buildReminderStopEmail(input: { name: string | null; siteUrl: st
   return {
     subject: "Vi slutar skicka påminnelser",
     text: [hello, "", body, "", `${input.siteUrl}/konto`].join("\n"),
-    html: layout(hello, [esc(body)], `<a href="${input.siteUrl}/konto" style="color:#676259">Konto på kuggfri.com</a>`),
+    html: layout(hello, [esc(body)], `<a href="${input.siteUrl}/konto" style="color:#676259">Konto på ${SITE_HOST}</a>`),
   };
 }
 

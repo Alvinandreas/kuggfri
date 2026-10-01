@@ -9,23 +9,18 @@
  * Token: CANVAS_TOKEN i .env.local (Alvins personliga TA-token, skapas under Konto → Inställningar).
  *
  * Integritet: token når allt Alvin når i Canvas, även studentdata. Verktyget gör därför bara
- * GET-anrop, bara mot kurser i KURSER nedan, och vägrar alla sökvägar som rör användare,
- * inlämningar eller betyg. Materialet stannar lokalt (material/ är gitignorerad).
+ * GET-anrop, bara mot kurser som har fältet canvas i content/<kurs>/kurs.json, och vägrar
+ * alla sökvägar som rör användare, inlämningar eller betyg. Materialet stannar lokalt (material/ är gitignorerad).
  */
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, extname, join } from "node:path";
 import { serializeCardFile } from "@/lib/content/markdown";
 import { slugifyKey, uniqueKey, type ContentCard } from "@/lib/content/model";
-import { loadCourse } from "@/lib/content/store";
+import { courseCanvas, listCourseKeys, loadCourse } from "@/lib/content/store";
 import { lines } from "@/lib/text/newlines";
 import { ROOT } from "./cli/args";
 import { say } from "./cli/output";
-
-/** Tillåtelselistan: kursnyckel i content/ → Canvaskurs. Lägg till en rad per ny kurs. */
-const KURSER: Record<string, { base: string; courseId: number }> = {
-  materialteknik: { base: "https://chalmers.instructure.com", courseId: 40969 },
-};
 
 /** Filer som aldrig laddas ner: video, ljud och 3D-modeller (stora och utan text). */
 const HOPPA_OVER = new Set([".mp4", ".m4v", ".mov", ".mp3", ".usdz", ".reality", ".zip"]);
@@ -47,10 +42,15 @@ function token(): string {
 
 type Kurs = { key: string; base: string; courseId: number; dir: string };
 
+/**
+ * Tillåtelselistan är kurserna i content/ med fältet canvas i kurs.json:
+ *   "canvas": { "base": "https://chalmers.instructure.com", "courseId": 40969 }
+ * En kurs utan fältet får aldrig hämtas.
+ */
 function kurs(key: string | undefined): Kurs {
-  if (!key) throw new Error(`Ange kurs: ${Object.keys(KURSER).join(", ")}`);
-  const k = KURSER[key];
-  if (!k) throw new Error(`Kursen "${key}" finns inte på tillåtelselistan i scripts/canvas.ts.`);
+  if (!key) throw new Error(`Ange kurs: ${listCourseKeys(ROOT).filter((c) => courseCanvas(ROOT, c)).join(", ")}`);
+  const k = listCourseKeys(ROOT).includes(key) ? courseCanvas(ROOT, key) : null;
+  if (!k) throw new Error(`Kursen "${key}" saknar fältet canvas i content/${key}/kurs.json och får inte hämtas.`);
   return { key, ...k, dir: join(ROOT, "material", key) };
 }
 

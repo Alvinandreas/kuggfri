@@ -7,6 +7,7 @@
  *   källa: Rättelse: <vad som var fel>; Canvas, <dokument>, s. <sida>
  * Kort utan källa är originalkort (före 28 sep 2026) eller skrivna i admin.
  */
+import { ALL_COURSES } from "@/lib/courses";
 
 export const SOURCE_KINDS = ["forelasning", "tenta", "quiz", "ovning", "labb", "bok", "ordlista", "kursdokument", "ovrigt"] as const;
 export type SourceKind = (typeof SOURCE_KINDS)[number];
@@ -39,20 +40,34 @@ export type ParsedSource = {
   correction: string | null;
 };
 
-/** Ordningen spelar roll: första träffen vinner (t.ex. "Quiz Polymeric materials" före föreläsning). */
-const RULES: [SourceKind, RegExp][] = [
+/**
+ * De generiska reglerna, som gäller alla kurser. Ordningen spelar roll: första träffen vinner
+ * (t.ex. "Quiz Polymeric materials" före föreläsning). "bok" har ingen generisk regel: bokens
+ * namn är alltid kursens eget och står bland kursens källtips.
+ */
+const GENERIC_RULES: [SourceKind, RegExp | null][] = [
   ["quiz", /\bquiz\b/i],
   ["tenta", /tentamen|\bsvar\b|svarsförslag|formelblad/i],
   ["ordlista", /dictionary|ordlista/i],
   ["labb", /lab[-_ ]?pm|laboration/i],
   ["ovning", /tutorials?|turorials|övning|ovning|exercise/i],
   ["kursdokument", /läsanvisning|lasanvisning|kurs-?pm|kursplan|kursintroduktion|lärmål/i],
-  ["bok", /05142_|osswald|ashby|booklet/i],
-  ["forelasning", /kapitel|(?:^|[^a-zåäö])glu(?:[^a-zåäö]|$)|\bf[öo] ?\d|\bf[öo]\d|lecture|\bl\d|\bpm \d|polymeric materials|sammanfattning|föreläsning/i],
+  ["bok", null],
+  ["forelasning", /kapitel|\bf[öo] ?\d|\bf[öo]\d|lecture|\bl\d|sammanfattning|föreläsning/i],
 ];
 
+/**
+ * Reglerna med kursernas källtips (lib/courses) inlagda på sin källtyps plats. Källan på ett
+ * kort vet inte vilken kurs den hör till, så tipsen från alla kurser gäller överallt; det är
+ * ofarligt så länge tipsen är kursens egna dokumentnamn.
+ */
+const RULES: [SourceKind, RegExp[]][] = GENERIC_RULES.map(([kind, generic]) => {
+  const hints = ALL_COURSES.flatMap((c) => c.sourceHints[kind] ?? []);
+  return [kind, generic ? [generic, ...hints] : hints];
+});
+
 export function sourceKindOf(document: string): SourceKind {
-  for (const [kind, re] of RULES) if (re.test(document)) return kind;
+  for (const [kind, patterns] of RULES) if (patterns.some((re) => re.test(document))) return kind;
   return "ovrigt";
 }
 

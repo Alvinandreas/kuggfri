@@ -1,12 +1,12 @@
 import { Mail } from "lucide-react";
-import { CONTACTS } from "@/lib/contact";
+import { CONTACTS, EXAMINERS } from "@/lib/contact";
 import { Card } from "@/components/ui/Card";
 
-/** Två kontaktkort: den som driver tjänsten och kursens examinator. */
+/** Kontaktkorten: den som driver tjänsten och sedan kursernas examinatorer (lib/courses). */
 export function ContactCards() {
   return (
     <div className="grid gap-3 sm:grid-cols-2" data-testid="contact-cards">
-      {[CONTACTS.operator, CONTACTS.examiner].map((c) => (
+      {[CONTACTS.operator, ...EXAMINERS].map((c) => (
         <Card key={c.email} padding="md" className="flex gap-4">
           <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent-ink">
             <Mail size={19} aria-hidden />

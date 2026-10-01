@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Link2, QrCode } from "lucide-react";
+import { SITE_HOST } from "@/lib/contact";
 import { sv } from "@/lib/i18n/sv";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -67,7 +68,7 @@ export function ShareDeck({ slug }: Props) {
           {qrSvg ? (
             <div
               role="img"
-              aria-label={sv.deck.qrAlt(`kuggfri.com/d/${slug}`)}
+              aria-label={sv.deck.qrAlt(`${SITE_HOST}/d/${slug}`)}
               className="h-44 w-44 shrink-0 rounded-md bg-white p-2 [&_svg]:h-full [&_svg]:w-full"
               dangerouslySetInnerHTML={{ __html: qrSvg }}
             />

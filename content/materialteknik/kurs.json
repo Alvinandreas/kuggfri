@@ -7,6 +7,10 @@
   "exam_date": null,
   "published": true,
   "sort_order": 0,
+  "canvas": {
+    "base": "https://chalmers.instructure.com",
+    "courseId": 40969
+  },
   "categories": [
     {
       "key": "materialgrupper-och-egenskaper",

@@ -215,6 +215,9 @@ test.describe("konto", () => {
     await page.locator('input[name="password"]').fill(PASSWORD);
     await page.getByTestId("login-submit").click();
     await expect(page.getByTestId("login-unconfirmed")).toContainText("inte bekräftad");
+    // Auth tillåter ett mejl per adress och sekund (max_frequency i supabase/config.toml). Mot
+    // produktionsbygget hinner testet hit inom sekunden efter välkomstmejlet; en människa gör inte det.
+    await page.waitForTimeout(1_100);
     await page.getByTestId("resend-confirmation").click();
     await expect(page.getByRole("status").filter({ hasText: "nytt bekräftelsemejl" })).toBeVisible();
   });

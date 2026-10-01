@@ -67,6 +67,29 @@ export async function removeE2eDecks(options: { slug?: string; db?: SupabaseClie
   return doomed;
 }
 
+/** E-postadresserna som `uniqueEmail()` i helpers.ts skapar: `<prefix>-<ms>-<slump>@kuggfri.test`. */
+export const E2E_USER_EMAIL = /^[a-z0-9]+(-[a-z0-9]+)*-\d{13}-\d+@kuggfri\.test$/;
+
+/**
+ * Studenter som testerna registrerat. De räknas annars in i kursens statistik (adminöversikten),
+ * som då växer för varje körning. Seed-kontona och det visuella testets konton har andra adresser.
+ */
+export async function removeE2eUsers(db: SupabaseClient = serviceClient()): Promise<number> {
+  if (!isLocalSupabase()) return 0;
+  const doomed: string[] = [];
+  for (let page = 1; ; page++) {
+    const { data, error } = await db.auth.admin.listUsers({ page, perPage: 1000 });
+    if (error) throw new Error(`Kunde inte lista användarna: ${error.message}`);
+    doomed.push(...data.users.filter((u) => u.email && E2E_USER_EMAIL.test(u.email)).map((u) => u.id));
+    if (data.users.length < 1000) break;
+  }
+  for (const id of doomed) {
+    const { error } = await db.auth.admin.deleteUser(id);
+    if (error) throw new Error(`Kunde inte ta bort en E2E-användare: ${error.message}`);
+  }
+  return doomed.length;
+}
+
 /** Felrapporter som reports.spec.ts skickar ("E2E-rapport <tid>: …"); de hamnar annars bland kursens åtgärdade rapporter. */
 export async function removeE2eReports(db: SupabaseClient = serviceClient()): Promise<number> {
   if (!isLocalSupabase()) return 0;

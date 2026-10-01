@@ -1,12 +1,13 @@
 /**
  * Körs en gång efter E2E-testerna, även när tester fallerat: tar bort alla kurser som testerna
  * skapat (adressen börjar med e2e-, titeln med E2E), så att "Alla kurser" inte fylls på mellan
- * körningarna, och felrapporterna de skickat ("E2E-rapport …"). Materialteknik rörs aldrig, och
+ * körningarna, felrapporterna de skickat ("E2E-rapport …") och studenterna de registrerat (se
+ * removeE2eUsers), så att kursens statistik inte växer mellan körningarna. Materialteknik rörs aldrig, och
  * bara en lokal Supabase städas (se cleanup.ts).
  *
  * Fristående: `npx tsx tests/e2e/global-teardown.ts`.
  */
-import { isLocalSupabase, removeE2eDecks, removeE2eReports } from "./cleanup";
+import { isLocalSupabase, removeE2eDecks, removeE2eReports, removeE2eUsers } from "./cleanup";
 
 export default async function globalTeardown() {
   // Mot produktion (E2E_BASE_URL satt, E2E_SKIP_SETUP=1) skapas inga kurser och inget städas.
@@ -16,6 +17,8 @@ export default async function globalTeardown() {
     if (removed.length > 0) console.log(`E2E-städning: tog bort ${removed.length} testkurs(er): ${removed.map((d) => d.slug).join(", ")}`);
     const reports = await removeE2eReports();
     if (reports > 0) console.log(`E2E-städning: tog bort ${reports} testrapport(er).`);
+    const users = await removeE2eUsers();
+    if (users > 0) console.log(`E2E-städning: tog bort ${users} teststudent(er).`);
   } catch (error) {
     // En misslyckad städning ska synas men inte göra en grön körning röd.
     console.warn(`E2E-städning misslyckades: ${error instanceof Error ? error.message : String(error)}`);

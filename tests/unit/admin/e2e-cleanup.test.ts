@@ -1,10 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { isE2eDeck, isLocalSupabase } from "../../e2e/cleanup";
+import { E2E_USER_EMAIL, isE2eDeck, isLocalSupabase } from "../../e2e/cleanup";
 import { ACTIVE_ADMIN_COURSE_SLUG, pickActiveAdminCourse } from "@/lib/admin/active-course";
 
 const deck = (slug: string, title: string, id = "1fd9bb0d-b779-540f-bbbd-604e02cdaf6b") => ({ id, slug, title });
 
 describe("E2E-städningen", () => {
+  it("tar bara testernas egna studenter, aldrig seed-kontona eller det visuella testets konton", () => {
+    expect(E2E_USER_EMAIL.test("plugg-1790831883590-731252@kuggfri.test")).toBe(true);
+    expect(E2E_USER_EMAIL.test("e2e-1790831883590-1@kuggfri.test")).toBe(true);
+    expect(E2E_USER_EMAIL.test("konto-mobile-1789378988086@kuggfri.test")).toBe(false);
+    expect(E2E_USER_EMAIL.test("admin@kuggfri.test")).toBe(false);
+    expect(E2E_USER_EMAIL.test("visual-student@kuggfri.test")).toBe(false);
+    expect(E2E_USER_EMAIL.test("plugg-1790831883590-731252@chalmers.se")).toBe(false);
+  });
+
   it("känner igen kurser som testerna skapat", () => {
     expect(isE2eDeck(deck("e2e-deck-123", "Något"))).toBe(true);
     expect(isE2eDeck(deck("en-kurs", "E2E-deck 123"))).toBe(true);

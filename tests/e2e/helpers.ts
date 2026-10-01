@@ -1,14 +1,46 @@
-import { expect, type Page } from "@playwright/test";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-// Adressen och service role-nyckeln bor i cleanup.ts, som också körs fristående med tsx.
-import { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } from "./cleanup";
+// Adressen, service role-nyckeln och klienten bor i cleanup.ts, som också körs fristående med tsx.
+import { serviceClient, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } from "./cleanup";
 
-export { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL };
+export { serviceClient, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL };
 
 export const ADMIN_USER = { email: "admin@kuggfri.test", password: "admin-losenord-123" };
 
 export const DECK_SLUG = "materialteknik";
+
+/** Adminens inloggade session (kakor), sparad av global-setup.ts en gång per körning. */
+export const ADMIN_STATE = join(__dirname, ".auth", "admin.json");
+
+/**
+ * Gör sidans kontext inloggad som admin med sessionen från global-setup, i stället för att logga
+ * in via formuläret i varje test. Bara den här kontexten påverkas; andra kontexter i testet
+ * (studenter, gäster) förblir utloggade. Saknas filen, eller är den så gammal att åtkomsttoken
+ * (en timme lokalt) kan ha gått ut, loggar den in via formuläret som förr. Med `next` öppnas den
+ * sidan efteråt, som login() gör.
+ */
+export async function loginAsAdmin(page: Page, next?: string) {
+  const fresh = existsSync(ADMIN_STATE) && Date.now() - statSync(ADMIN_STATE).mtimeMs < 50 * 60_000;
+  if (!fresh) {
+    await login(page, ADMIN_USER.email, ADMIN_USER.password, next ?? "/hem");
+    return;
+  }
+  const state = JSON.parse(readFileSync(ADMIN_STATE, "utf8")) as { cookies: Parameters<BrowserContext["addCookies"]>[0] };
+  await page.context().addCookies(state.cookies);
+  if (next) await page.goto(next);
+}
+
+/** Öppnar Materialteknik från adminens kurslista och returnerar kursens adminadress. */
+export async function openAdminCourse(page: Page): Promise<string> {
+  await page.goto("/admin/deck");
+  await page.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
+  // Första kompileringen av admin-sidan i dev-läge kan ta en stund.
+  await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+  return page.url();
+}
 
 export function uniqueEmail(prefix = "e2e"): string {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@kuggfri.test`;
@@ -131,8 +163,7 @@ type StoredProgress = { card_id: string; due: string; self_rating: number | null
 
 /** Kontots progress direkt ur databasen (service role, bara i testerna). */
 export async function accountProgress(email: string): Promise<Record<string, StoredProgress>> {
-  const { createClient } = await import("@supabase/supabase-js");
-  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const admin = serviceClient();
   const { data: users } = await admin.auth.admin.listUsers({ perPage: 1000 });
   const id = users?.users.find((u) => u.email === email)?.id;
   if (!id) throw new Error(`Hittade inte ${email}`);
@@ -141,12 +172,12 @@ export async function accountProgress(email: string): Promise<Record<string, Sto
   return Object.fromEntries((data ?? []).map((r) => [r.card_id, r as StoredProgress]));
 }
 
-export async function login(page: Page, email: string, password: string, next = "/hem") {
+export async function login(page: Page, email: string, password: string, next = "/hem", timeout = 20_000) {
   await page.goto(`/logga-in?next=${encodeURIComponent(next)}`);
   await page.getByLabel("E-postadress").fill(email);
   await page.locator('input[name="password"]').fill(password);
   await page.getByTestId("login-submit").click();
-  await page.waitForURL((url) => !url.pathname.startsWith("/logga-in"), { timeout: 20_000 });
+  await page.waitForURL((url) => !url.pathname.startsWith("/logga-in"), { timeout });
 }
 
 /** "N av M kort sedda" från hemsidan, där all statistik ligger sedan Kuggfri 2.0. */

@@ -1,13 +1,15 @@
 /**
- * Körs en gång före E2E-testerna.
+ * Körs en gång före E2E-testerna (efter att webbservern startat).
  * - Kontrollerar att lokala Supabase svarar (annars tydligt fel).
  * - Skapar admin-testanvändaren om den saknas och sätter is_admin = true
  *   via service role-nyckeln (bara här, aldrig i appen).
+ * - Loggar in admin en gång via formuläret och sparar sessionen i ADMIN_STATE, som
+ *   admintesterna återanvänder med loginAsAdmin() i stället för att logga in var för sig.
  */
-import { createClient } from "@supabase/supabase-js";
-import { ADMIN_USER, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } from "./helpers";
+import { chromium, type FullConfig } from "@playwright/test";
+import { ADMIN_STATE, ADMIN_USER, login, serviceClient, SUPABASE_URL } from "./helpers";
 
-export default async function globalSetup() {
+export default async function globalSetup(config: FullConfig) {
   // Mot produktion (E2E_BASE_URL satt) skapas inga testkonton: kör bara public.spec.ts.
   if (process.env.E2E_SKIP_SETUP === "1") return;
   let healthy = false;
@@ -23,9 +25,7 @@ export default async function globalSetup() {
     );
   }
 
-  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
+  const admin = serviceClient();
 
   // Skapa admin-användaren (ignorera om den redan finns).
   const { data: created, error } = await admin.auth.admin.createUser({
@@ -45,4 +45,18 @@ export default async function globalSetup() {
 
   const { error: updateError } = await admin.from("profiles").update({ is_admin: true }).eq("id", userId);
   if (updateError) throw new Error(`Kunde inte sätta is_admin: ${updateError.message}`);
+
+  // Adminens session, en gång för hela körningen.
+  const use = config.projects[0]?.use ?? {};
+  const browser = await chromium.launch();
+  try {
+    const context = await browser.newContext({ baseURL: use.baseURL, locale: use.locale });
+    const page = await context.newPage();
+    // Första kompileringen av sidorna i dev-läge kan ta en stund.
+    page.setDefaultTimeout(60_000);
+    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin", 60_000);
+    await context.storageState({ path: ADMIN_STATE });
+  } finally {
+    await browser.close();
+  }
 }

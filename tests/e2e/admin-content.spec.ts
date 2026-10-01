@@ -1,35 +1,26 @@
-import { expect, test, type Page } from "@playwright/test";
-import { createClient } from "@supabase/supabase-js";
-import { ADMIN_USER, DECK_SLUG, expectNoSeriousA11yViolations, login, registerStudent, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, uniqueEmail } from "./helpers";
+import { expect, test } from "@playwright/test";
+import { DECK_SLUG, expectNoSeriousA11yViolations, login, loginAsAdmin, openAdminCourse, registerStudent, serviceClient, uniqueEmail } from "./helpers";
 
 /**
  * Adminflöden som Johan använder: områden (skapa, byt namn, ordna, ta bort), kort (ta bort),
  * export, och examinatorrollen (ser bara sin kurs, kan redigera, kan inte skapa deck).
  */
 
-const service = () => createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
-
 async function cleanup() {
-  const db = service();
+  const db = serviceClient();
   await db.from("cards").delete().like("front", "E2E-innehåll%");
   await db.from("categories").delete().like("title", "E2E-kat%");
 }
 
-async function openDeckAdmin(page: Page): Promise<string> {
-  await page.goto("/admin/deck");
-  await page.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
-  await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  return page.url();
-}
-
-test.describe("admin: innehåll", () => {
+// Bara desktop (playwright.config.ts): inget här skiljer sig på mobil.
+test.describe("admin: innehåll", { tag: "@desktop" }, () => {
   test.afterEach(async () => {
     await cleanup();
   });
 
   test("område: skapa, byt namn, ordna om och ta bort; korten hamnar under Utan område för studenten", async ({ page, browser }) => {
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin");
-    const deckUrl = await openDeckAdmin(page);
+    await loginAsAdmin(page);
+    const deckUrl = await openAdminCourse(page);
     await page.goto(`${deckUrl}/innehall`);
 
     // Skapa
@@ -108,8 +99,8 @@ test.describe("admin: innehåll", () => {
   });
 
   test("export ger hela decket som JSON, bara för inloggad redaktör", async ({ page, browser }) => {
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin");
-    const deckUrl = await openDeckAdmin(page);
+    await loginAsAdmin(page);
+    const deckUrl = await openAdminCourse(page);
     const res = await page.request.get(`${deckUrl}/export`);
     expect(res.status()).toBe(200);
     const json = (await res.json()) as { deck: { slug: string }; cards: unknown[]; categories: unknown[] };
@@ -129,7 +120,7 @@ test.describe("examinator", () => {
   let userId: string | null = null;
 
   test.beforeAll(async () => {
-    const db = service();
+    const db = serviceClient();
     const { data, error } = await db.auth.admin.createUser({ email: examiner.email, password: examiner.password, email_confirm: true });
     if (error) throw error;
     userId = data.user.id;
@@ -139,7 +130,7 @@ test.describe("examinator", () => {
   });
 
   test.afterAll(async () => {
-    if (userId) await service().auth.admin.deleteUser(userId);
+    if (userId) await serviceClient().auth.admin.deleteUser(userId);
   });
 
   test("ser bara sin kurs, kan redigera ett kort, men varken skapa deck eller ta bort det", async ({ page }) => {

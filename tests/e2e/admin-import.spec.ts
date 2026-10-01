@@ -1,16 +1,16 @@
 import { expect, test } from "@playwright/test";
-import { createClient } from "@supabase/supabase-js";
-import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, expectNoSeriousA11yViolations, login, registerStudent } from "./helpers";
+import { DECK_SLUG, expectNoSeriousA11yViolations, loginAsAdmin, openAdminCourse, registerStudent, serviceClient } from "./helpers";
 import { removeE2eDecks } from "./cleanup";
 
 /** Städar bort det importtestet lägger in i det riktiga decket, så att lokala databasen inte fylls på. */
 async function cleanupImportedCards() {
-  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const admin = serviceClient();
   await admin.from("cards").delete().like("front", "E2E-fråga%");
   await admin.from("categories").delete().eq("title", "E2E-kategori");
 }
 
-test.describe("admin", () => {
+// Bara desktop (playwright.config.ts): inget här skiljer sig på mobil.
+test.describe("admin", { tag: "@desktop" }, () => {
   /** Kursen som skapa-testet lägger upp; tas bort efter testet även om det fallerar. */
   let createdDeckSlug: string | null = null;
 
@@ -23,16 +23,13 @@ test.describe("admin", () => {
   });
 
   test("6. admin importerar en CSV och korten dyker upp i decket", async ({ page }) => {
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
+    await loginAsAdmin(page, "/admin/deck");
     await expect(page.getByRole("heading", { name: "Kurser" })).toBeVisible();
     // Titeln strömmas efter skelettet i dev-läge; vänta in den innan axe körs.
     await expect(page).toHaveTitle(/./);
     await expectNoSeriousA11yViolations(page);
 
-    await page.goto("/admin/deck");
-    await page.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
-    // Första kompileringen av admin-sidan i dev-läge kan ta en stund.
-    await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+    await openAdminCourse(page);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Materialteknik");
     // Kursöversikten: nyckeltal och kluriga frågor syns för admin. Titeln strömmas efter skelettet,
     // så vänta in den innan axe körs.
@@ -112,7 +109,7 @@ test.describe("admin", () => {
   });
 
   test("admin kan skapa, redigera och ta bort ett deck", async ({ page, browser }) => {
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck/ny");
+    await loginAsAdmin(page, "/admin/deck/ny");
     const slug = `e2e-deck-${Date.now()}`;
     const title = `E2E-deck ${Date.now()}`;
     createdDeckSlug = slug;

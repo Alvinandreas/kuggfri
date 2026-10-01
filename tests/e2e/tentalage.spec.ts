@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { createClient } from "@supabase/supabase-js";
 import { parseExamFile } from "@/lib/tentor/format";
-import { ADMIN_USER, DECK_SLUG, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, login, registerStudent } from "./helpers";
+import { DECK_SLUG, loginAsAdmin, registerStudent, serviceClient } from "./helpers";
 
 /**
  * Tentaläget (docs/TENTOR.md): låst för studenter tills examinatorn öppnar det, och sedan ett helt
@@ -78,7 +77,7 @@ Förklara skjuvförtunning.
 Viskositeten minskar med ökande skjuvhastighet.
 `;
 
-const service = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+const service = serviceClient();
 
 async function deckId(): Promise<string> {
   const { data, error } = await service.from("decks").select("id").eq("slug", DECK_SLUG).single();
@@ -228,12 +227,12 @@ test.describe("Tentaläget", () => {
     await expect(page.getByTestId(`exam-row-${KEY}`).getByTestId("exam-row-result")).toContainText("5/8 p, betyg 4");
   });
 
-  test("redaktör: förhandsgranskning från admin leder tillbaka dit, och studentvyn visar tentaläget som studenten ser det", async ({ page }) => {
+  // Bara desktop (playwright.config.ts): ett rent admintest där inget skiljer sig på mobil.
+  test("redaktör: förhandsgranskning från admin leder tillbaka dit, och studentvyn visar tentaläget som studenten ser det", { tag: "@desktop" }, async ({ page }) => {
     await setExamMode(false);
     await service.from("exams").update({ status: "utkast" }).eq("key", KEY);
     const deck = await deckId();
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, `/admin/deck/${deck}/tentor`);
-    await page.goto(`/admin/deck/${deck}/tentor`);
+    await loginAsAdmin(page, `/admin/deck/${deck}/tentor`);
     await page.locator(`a[href="/d/${DECK_SLUG}/tenta/${KEY}?fran=admin"]`).click();
     await expect(page.getByTestId("exam-back")).toHaveAttribute("href", `/admin/deck/${deck}/tentor`);
     await page.getByTestId("exam-back").click();

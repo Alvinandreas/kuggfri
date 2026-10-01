@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { ADMIN_USER, expectNoSeriousA11yViolations, login } from "./helpers";
+import { expectNoSeriousA11yViolations, loginAsAdmin, openAdminCourse } from "./helpers";
 
 /**
  * Granskningen som inkorg (30 sep): flikarna Att granska, Granskade och Flaggade, kortvyn med
@@ -8,16 +8,15 @@ import { ADMIN_USER, expectNoSeriousA11yViolations, login } from "./helpers";
  */
 
 async function openReview(page: Page) {
-  await login(page, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
-  await page.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
-  await page.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  await page.goto(`${page.url()}/granskning`);
+  await loginAsAdmin(page);
+  await page.goto(`${await openAdminCourse(page)}/granskning`);
   await expect(page.getByTestId("review-tabs")).toBeVisible();
 }
 
 const count = async (page: Page, tab: string) => Number((await page.getByTestId(`review-count-${tab}`).textContent())?.trim());
 
-test.describe("granskning", () => {
+// Bara desktop (playwright.config.ts): inget här skiljer sig på mobil.
+test.describe("granskning", { tag: "@desktop" }, () => {
   test("godkänn och ångra, flagga och åtgärda", async ({ page }) => {
     await openReview(page);
     // Ingen gemensam flikrad för kurssidorna, bara granskningens egna flikar.

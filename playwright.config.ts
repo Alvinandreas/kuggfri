@@ -22,6 +22,8 @@ export default defineConfig({
   projects: [
     {
       name: "mobile",
+      // Rena admintester utan något mobilspecifikt (taggade @desktop) körs bara i desktop.
+      grepInvert: /@desktop/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 375, height: 812 },

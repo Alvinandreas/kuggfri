@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { ADMIN_USER, expectNoSeriousA11yViolations, login, registerStudent, startSession } from "./helpers";
+import { expectNoSeriousA11yViolations, loginAsAdmin, openAdminCourse, registerStudent, startSession } from "./helpers";
 
 test.describe("felrapporter", () => {
   test("student rapporterar fel på ett kort, admin ser, åtgärdar och tar bort rapporten", async ({ browser, page }) => {
@@ -25,11 +25,9 @@ test.describe("felrapporter", () => {
     const ctx = await browser.newContext();
     const admin = await ctx.newPage();
     try {
-      await login(admin, ADMIN_USER.email, ADMIN_USER.password, "/admin/deck");
-      await admin.getByTestId("admin-deck-list").getByRole("link", { name: "Materialteknik", exact: true }).click();
+      await loginAsAdmin(admin);
       // Kurssidorna i admin nås från sidomenyn (på mobil i den utdragbara menyn); gå direkt.
-      await admin.waitForURL(/\/admin\/deck\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-      await admin.goto(`${admin.url()}/rapporter`);
+      await admin.goto(`${await openAdminCourse(admin)}/rapporter`);
       await expect(admin.getByRole("heading", { name: /^Felrapporter/ }).first()).toBeVisible();
 
       const row = admin.getByTestId("report-row").filter({ hasText: text });

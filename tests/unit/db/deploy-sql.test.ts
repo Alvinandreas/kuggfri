@@ -6,21 +6,12 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { anon, type RawDb } from "./harness";
+import { anon, createPglite, type RawDb } from "./harness";
 
 let db: RawDb;
 
 beforeAll(async () => {
-  const { PGlite } = await import("@electric-sql/pglite");
-  const pg = new PGlite();
-  const wrap = (t: { exec: (s: string) => Promise<unknown>; query: (s: string, p?: unknown[]) => Promise<{ rows: unknown[] }> }) => ({
-    exec: async (sql: string) => {
-      await t.exec(sql);
-    },
-    query: async <T extends Record<string, unknown>>(sql: string, params?: unknown[]) => (await t.query(sql, params)).rows as T[],
-  });
-  const base = wrap(pg);
-  db = { ...base, transaction: (fn) => pg.transaction((tx) => fn(wrap(tx))), close: () => pg.close() };
+  db = await createPglite();
   await db.exec(readFileSync(join(__dirname, "supabase-shim.sql"), "utf8"));
   await db.exec(readFileSync(join(__dirname, "..", "..", "..", "supabase", "deploy", "full.sql"), "utf8"));
 });

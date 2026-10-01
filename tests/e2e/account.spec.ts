@@ -1,15 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { createClient } from "@supabase/supabase-js";
 import {
   latestMailText,
   DECK_SLUG,
-  SUPABASE_SERVICE_ROLE_KEY,
-  SUPABASE_URL,
   login,
   logout,
   readLocalProgress,
   register,
   seenCountText,
+  serviceClient,
   studyCards,
   submitRegistration,
   uniqueEmail,
@@ -19,7 +17,7 @@ const PASSWORD = "testlosenord-123";
 
 /** Id:n för några kort i decket, för att bygga gammal lokal progress. */
 async function someCardIds(n: number): Promise<string[]> {
-  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const admin = serviceClient();
   const { data: deck } = await admin.from("decks").select("id").eq("slug", DECK_SLUG).single();
   const { data } = await admin.from("cards").select("id").eq("deck_id", deck!.id).eq("is_active", true).order("sort_order").limit(n);
   return (data ?? []).map((c) => c.id);

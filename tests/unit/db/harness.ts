@@ -31,7 +31,8 @@ export interface ScopedDb {
 
 const ROOT = join(__dirname, "..", "..", "..");
 
-async function createPglite(): Promise<RawDb> {
+/** En tom PGlite-databas (utan shim och migrationer), inlindad som RawDb. */
+export async function createPglite(): Promise<RawDb> {
   const { PGlite } = await import("@electric-sql/pglite");
   const db = new PGlite();
   const wrap = (target: { exec: (s: string) => Promise<unknown>; query: (s: string, p?: unknown[]) => Promise<{ rows: unknown[] }> }) => ({

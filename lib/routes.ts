@@ -86,6 +86,8 @@ export const routes = {
     reports: (id: string) => `${adminDeck(id)}/rapporter`,
     import: (id: string) => `${adminDeck(id)}/import`,
     export: (id: string) => `${adminDeck(id)}/export`,
+    /** Statistiken som CSV: per område eller per kort. */
+    statsCsv: (id: string, level: "omraden" | "kort") => `${adminDeck(id)}/export/statistik${query([["niva", level]])}`,
     settings: (id: string) => `${adminDeck(id)}/installningar`,
     /** Ett område; "ingen" för kort utan område. */
     category: (id: string, categoryId: string) => `${adminDeck(id)}/kategori/${categoryId}`,

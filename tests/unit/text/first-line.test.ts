@@ -10,12 +10,25 @@ describe("firstLine", () => {
   });
 
   it("gör KaTeX läsbart i stället för att visa syntax", () => {
-    expect(firstLine("Vad är $\\sigma$?")).toBe("Vad är sigma?");
+    expect(firstLine("Vad är $\\sigma$?")).toBe("Vad är σ?");
     // Multiplikationspunkten blir ett gångertecken (mittpunkten används inte i Kuggfri).
     expect(plainText("$a \\cdot b$")).toBe("a × b");
     expect(plainText("$a \\times b$")).toBe("a × b");
     expect(plainText("$K_{1c}$")).toBe("K1c");
-    expect(plainText("$\\frac{a}{b}$")).toBe("ab");
+    expect(plainText("$\\frac{a}{b}$")).toBe("a/b");
+    expect(plainText("$\\dfrac{E^{1/2}}{\\rho}$")).toBe("E1/2/ρ");
+    expect(plainText("$\\cos\\theta \\approx 1$")).toBe("cosθ ≈ 1");
+  });
+
+  it("visar Millerindex och riktningar med klamrar och streck", () => {
+    expect(plainText("riktningsfamiljen $\\langle 111 \\rangle$")).toBe("riktningsfamiljen ⟨ 111 ⟩");
+    expect(plainText("planfamiljen $\\{100\\}$")).toBe("planfamiljen {100}");
+    expect(plainText("planet $(1\\bar{1}0)$")).toBe("planet (11̄0)");
+  });
+
+  it("tar bort bilder och behåller länktext", () => {
+    expect(firstLine("Vilket plan är markerat? ![Kub med axlarna x, y och z](/bilder/kub.png)")).toBe("Vilket plan är markerat?");
+    expect(plainText("Se [kursboken](https://example.com) s. 12")).toBe("Se kursboken s. 12");
   });
 
   it("kapar vid längdtaket utan att lämna blanksteg i slutet", () => {

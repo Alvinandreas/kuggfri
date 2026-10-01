@@ -13,7 +13,7 @@ export const landing = {
   lead: "Kuggfri visar rätt kort på rätt dag, så att det du lär dig sitter kvar till tentan. Gratis och utan reklam.",
   points: [
     { title: "Repetition i rätt tid", body: "Schemat lär sig vad du kan och tar fram det du håller på att glömma." },
-    { title: "Kurser från examinatorn", body: "Korten bygger på kursens eget material, granskat av den som skriver tentan." },
+    { title: "Kurser från examinatorn", body: "Korten bygger på kursens eget material, med källa på varje kort, och granskas av kursens examinatorer." },
     { title: "Se hur du ligger till", body: "Inlärd kunskap per område och nedräkning till tentadagen." },
   ],
   formLabel: "Konto",

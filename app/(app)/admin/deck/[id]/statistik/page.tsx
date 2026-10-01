@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { firstLine } from "@/lib/text/first-line";
 import { getDeckForAdmin, getDeckOverviewStats, getDeckStats } from "@/lib/admin/queries";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
 import { CourseDistributions } from "@/components/admin/CourseOverview";
 import { StatBlock } from "@/components/admin/StatBlock";
-import { Card } from "@/components/ui/Card";
+import { Card, CardHeader } from "@/components/ui/Card";
 import { AreaLink } from "@/components/admin/AreaLink";
 import { formatCount, formatDecimal } from "@/lib/admin/format";
 import { routes } from "@/lib/routes";
+import { buttonClass } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: sv.admin.allCardsDetail };
 
@@ -33,6 +34,22 @@ export default async function StatsPage({ params }: { params: Promise<{ id: stri
         </Link>
       </nav>
       <CourseDistributions stats={overview} />
+      <Card padding="lg">
+        <CardHeader title={sv.admin.statsCsvTitle} description={sv.admin.statsCsvHelp} spacing="sm" />
+        <div className="flex flex-wrap gap-2">
+          {(
+            [
+              ["omraden", sv.admin.statsCsvAreas],
+              ["kort", sv.admin.statsCsvCards],
+            ] as const
+          ).map(([level, label]) => (
+            <a key={level} href={routes.admin.statsCsv(id, level)} download className={buttonClass("secondary", "sm")} data-testid={`stats-csv-${level}`}>
+              <Download size={15} aria-hidden />
+              {label}
+            </a>
+          ))}
+        </div>
+      </Card>
       <div>
         <h2 className="text-xl font-bold tracking-tight">{sv.admin.allCardsDetail}</h2>
         <p className="mt-1 text-sm text-muted">{sv.admin.statsDetailHelp}</p>

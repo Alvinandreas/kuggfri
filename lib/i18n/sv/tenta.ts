@@ -14,7 +14,7 @@ export const tenta = {
   toSettings: "Ändra i Inställningar",
   draft: "Utkast, syns inte för studenter",
   empty: "Inga tentor ännu.",
-  emptyEditor: "Tentabanken är tom. Tentorna synkas med innehållsverktyget (npm run kuggfri -- tentor).",
+  emptyEditor: "Tentabanken är tom. Gamla tentor läggs in av Kuggfri tillsammans med facit och källor; hör av dig om du vill lägga till en.",
   questionCount: (n: number) => (n === 1 ? "1 uppgift" : `${n} uppgifter`),
   points: (p: string) => `${p} p`,
   pointsLong: (p: string) => `${p} poäng`,

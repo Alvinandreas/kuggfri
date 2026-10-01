@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_REVIEW_FILTER,
+  reviewProgress,
   activeFilterCount,
   approvalIssues,
   cleanFlagNote,
@@ -240,5 +241,42 @@ describe("contentMatrix", () => {
   it("visar tomma områden men ingen rad utan område om alla kort har ett", () => {
     const m = contentMatrix([card({ review_status: null, is_active: true })], areas);
     expect(m.rows.map((r) => r.title)).toEqual(["Metaller", "Polymerer"]);
+  });
+});
+
+describe("reviewProgress", () => {
+  const areas = [
+    { id: "a", title: "Område A" },
+    { id: "b", title: "Område B" },
+  ];
+  const card = (category_id: string | null, review_status: "utkast" | "avvisad" | null, is_active: boolean, flag_note: string | null = null) => ({
+    category_id,
+    review_status,
+    is_active,
+    flag_note,
+  });
+
+  it("räknar publicerade, att granska och flaggade utkast per område i områdenas ordning", () => {
+    const p = reviewProgress(
+      [
+        card("a", null, true),
+        card("a", null, true, "misstänkt fel"), // publicerat med flagga är fortfarande publicerat
+        card("a", "utkast", false),
+        card("b", "utkast", false, "kolla värdet"),
+        card("b", "utkast", false),
+      ],
+      areas,
+    );
+    expect(p.rows.map((r) => [r.areaId, r.published, r.toReview, r.flagged])).toEqual([
+      ["a", 2, 1, 0],
+      ["b", 0, 1, 1],
+    ]);
+    expect(p.total).toEqual({ published: 2, toReview: 2, flagged: 1 });
+  });
+
+  it("hoppar över inaktiva, avvisade och kort utan område, men visar tomma områden", () => {
+    const p = reviewProgress([card("a", null, false), card("a", "avvisad", false), card(null, "utkast", false), card("x", "utkast", false)], areas);
+    expect(p.total).toEqual({ published: 0, toReview: 0, flagged: 0 });
+    expect(p.rows).toHaveLength(2);
   });
 });

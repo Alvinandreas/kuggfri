@@ -118,7 +118,7 @@ export const summary = {
   needsWorkEmpty: "Inga kort fick lågt betyg.",
   nextDue: "Nästa schemalagda repetition",
   nextDueNone: "Inget kort är schemalagt ännu.",
-  nextDueCount: (n: number, when: string) => (n === 1 ? `1 kort ${when}` : `${n} kort ${when}`),
+  nextDueCount: (n: number, when: string) => (n === 1 ? `1 kort ${when}.` : `${n} kort ${when}.`),
   freeModeNote: "Fri repetition räknas in i schemat, precis som schemalagd repetition.",
   randomModeNote: "Slumpad genomkörning räknas in i schemat, precis som schemalagd repetition.",
   trickyModeNote: "Skattningarna räknas in i schemat. Kort du nu kan slutar räknas som kluriga.",

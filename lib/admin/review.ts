@@ -348,3 +348,44 @@ export function contentMatrix(cards: readonly Pick<ReviewCard, "category_id" | "
   if (none) ordered.push(none);
   return { rows: ordered, total };
 }
+
+// ---------------------------------------------------------------------------
+// Granskningsläget per område (panelen i Översikt)
+// ---------------------------------------------------------------------------
+
+export type ReviewProgressRow = {
+  areaId: string;
+  title: string;
+  /** I rotation hos studenterna (aktiva, utan status). */
+  published: number;
+  /** Utkast utan flagga: väntar på ett godkännande. */
+  toReview: number;
+  /** Utkast med flagga: en fråga att ta ställning till först. */
+  flagged: number;
+};
+
+export type ReviewProgress = {
+  rows: ReviewProgressRow[];
+  total: Omit<ReviewProgressRow, "areaId" | "title">;
+};
+
+/**
+ * Hur långt granskningen har kommit i varje område, i områdenas ordning. Kort utan område och
+ * inaktiva eller avvisade kort räknas inte: panelen visar vad studenterna ser och vad som återstår.
+ */
+export function reviewProgress(
+  cards: readonly Pick<ReviewCard, "category_id" | "is_active" | "review_status" | "flag_note">[],
+  areas: readonly ReviewArea[],
+): ReviewProgress {
+  const rows = new Map<string, ReviewProgressRow>(areas.map((a) => [a.id, { areaId: a.id, title: a.title, published: 0, toReview: 0, flagged: 0 }]));
+  const total = { published: 0, toReview: 0, flagged: 0 };
+  for (const c of cards) {
+    const row = c.category_id === null ? undefined : rows.get(c.category_id);
+    if (!row) continue;
+    const key = c.review_status === "utkast" ? (c.flag_note ? "flagged" : "toReview") : c.review_status === null && c.is_active ? "published" : null;
+    if (!key) continue;
+    row[key]++;
+    total[key]++;
+  }
+  return { rows: areas.map((a) => rows.get(a.id)!), total };
+}

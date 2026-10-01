@@ -31,3 +31,9 @@ export function localDayKey(d: Date): string {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
+
+/** Tillbaka från YYYY-MM-DD till lokal midnatt den dagen (motsatsen till localDayKey). */
+export function parseDayKey(key: string): Date {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y as number, (m as number) - 1, d as number);
+}

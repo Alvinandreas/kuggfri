@@ -24,23 +24,5 @@ export type StudyCard = {
   original: boolean;
 };
 
-/** Dagsläget efter en schemalagd session: underlag för "Klar för i dag". */
-export type TodaySummary = {
-  reviewsToday: number;
-  streak: number;
-  freezesLeft: number;
-  freezeUsedRecently: boolean;
-  /** Uppskattat antal kort studenten kan just nu. */
-  known: number;
-  total: number;
-  /** Inget förfallet kvar och dagsmålet nått: en tydlig slutpunkt. */
-  done: boolean;
-  /** Länk för att ta fler nya kort utöver dagsmålet, eller null. */
-  continueHref: string | null;
-  continueCount: number;
-  /** Plugga vidare: nästa extra pass (kort närmast att förfalla, sedan nya), eller null. */
-  extraHref: string | null;
-  extraCount: number;
-  /** Passet som just tog slut var ett Plugga vidare-pass. */
-  extraPass: boolean;
-};
+/** Dagsläget efter en schemalagd session. Definieras i lib, där det räknas fram. */
+export type { TodaySummary } from "@/lib/study/session-result";

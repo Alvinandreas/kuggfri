@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BookOpen } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import type { ProgressMap, ReviewEntry, StudyMode } from "@/lib/progress/types";
+import type { StudyMode } from "@/lib/progress/types";
+import { useCardProgress } from "@/lib/progress/use-card-progress";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { categoryStats, learnedRatio, type SelectableCard, UNCATEGORIZED_ID } from "@/lib/study/selection";
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
@@ -54,8 +55,6 @@ type Props = {
  */
 export function DeckOverview({ deck, categories, cards: allCards, userId, initialMode = "fsrs", initialAreaId = null }: Props) {
   const store = useProgressStore(userId);
-  const [progress, setProgress] = useState<ProgressMap | null>(null);
-  const [reviews, setReviews] = useState<ReviewEntry[]>([]);
   const [pick, setPick] = useState<PickerMode>(initialMode);
   const mode = runMode(pick);
   const [starredOpen, setStarredOpen] = useState(false);
@@ -139,24 +138,7 @@ export function DeckOverview({ deck, categories, cards: allCards, userId, initia
   );
   const colorIndex = useMemo(() => categoryColorIndex(tableCategories), [tableCategories]);
 
-  useEffect(() => {
-    if (!store) return;
-    let cancelled = false;
-    Promise.all([store.load(cardIds), store.loadReviews(cardIds)])
-      .then(([p, r]) => {
-        if (cancelled) return;
-        setProgress(p);
-        setReviews(r);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setProgress({});
-        setReviews([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [store, cardIds]);
+  const { progress, reviews } = useCardProgress(store, cardIds);
 
   const firstVisit = progress !== null && reviews.length === 0 && !cardIds.some((id) => progress[id]);
 

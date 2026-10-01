@@ -5,8 +5,8 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, CircleCheckBig, Flame, GraduationCap, Target } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { estimateKnowledge } from "@/lib/fsrs/scheduler";
-import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
+import { useCardProgress } from "@/lib/progress/use-card-progress";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { buildProgressStats, type ProgressStats } from "@/lib/stats/progress-stats";
 import { planDeckSession, type DeckPlan } from "@/lib/study/deck-plan";
@@ -24,6 +24,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { Card, CardHeader, CardLink, SectionTitle } from "@/components/ui/Card";
 import { Countdown } from "@/components/ui/Countdown";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export type HomeDeck = {
   id: string;
@@ -60,10 +61,6 @@ function examStart(date: string | null): Date | null {
   return d;
 }
 
-function Skeleton({ className }: { className: string }) {
-  return <div aria-hidden className={`animate-pulse rounded-lg bg-surface-2 ${className}`} />;
-}
-
 /**
  * Hemsidan: dagens pass, hur det går i kursen (inlärd kunskap, nyckeltal), kunskap per
  * område i radardiagrammet och aktiviteten de senaste två veckorna. Progressen laddas i
@@ -71,8 +68,6 @@ function Skeleton({ className }: { className: string }) {
  */
 export function HomeDashboard({ userId, firstName, decks }: Props) {
   const store = useProgressStore(userId);
-  const [progress, setProgress] = useState<ProgressMap | null>(null);
-  const [reviews, setReviews] = useState<ReviewEntry[]>([]);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [hour, setHour] = useState<number | null>(null);
   const [axisHover, setAxisHover] = useState<number | null>(null);
@@ -87,24 +82,7 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
     setHour(new Date().getHours());
   }, []);
 
-  useEffect(() => {
-    if (!store) return;
-    let cancelled = false;
-    Promise.all([store.load(allIds), store.loadReviews(allIds)])
-      .then(([p, r]) => {
-        if (cancelled) return;
-        setProgress(p);
-        setReviews(r);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setProgress({});
-        setReviews([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [store, allIds]);
+  const { progress, reviews } = useCardProgress(store, allIds);
 
   const overall = useMemo(
     () => (progress ? buildProgressStats({ cardIds: allIds, progress, reviews, weekdaysOnly: prefs.weekdaysOnly }) : null),

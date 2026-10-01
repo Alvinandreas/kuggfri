@@ -5,7 +5,7 @@
  */
 import type { ReviewEntry } from "@/lib/progress/types";
 import { computeStreak, localDayKey } from "@/lib/stats/progress-stats";
-import { startOfDay } from "@/lib/time/day";
+import { parseDayKey, startOfDay } from "@/lib/time/day";
 
 /** Mer än så här långt mellan två repetitioner räknas som ett nytt pass. */
 export const SESSION_GAP_MS = 30 * 60 * 1000;
@@ -134,11 +134,6 @@ export function buildMyStats(input: {
     comebacks: comebacks.size,
     perDay,
   };
-}
-
-function parseDayKey(key: string): Date {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y as number, (m as number) - 1, d as number);
 }
 
 /**

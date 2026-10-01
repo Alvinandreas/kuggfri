@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, ChartColumn } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
-import type { ProgressMap, ReviewEntry } from "@/lib/progress/types";
 import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
+import { useCardProgress } from "@/lib/progress/use-card-progress";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { buildProgressStats } from "@/lib/stats/progress-stats";
 import { buildMilestones, buildMyStats, rankAreas, weeklyTotals, type RankedArea } from "@/lib/stats/my-stats";
 import { categoryStats } from "@/lib/study/selection";
-import { DAY_MS, startOfDay } from "@/lib/time/day";
+import { DAY_MS, parseDayKey, startOfDay } from "@/lib/time/day";
 import { percent } from "@/lib/text/percent";
 import type { HomeDeck } from "@/components/home/HomeDashboard";
 import { ActivityHeatmap } from "@/components/stats/ActivityHeatmap";
@@ -20,6 +20,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { Card, CardHeader, SectionTitle } from "@/components/ui/Card";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Select } from "@/components/ui/Select";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { AreaCard, type AreaItem } from "./AreaCard";
 import { MilestonesCard } from "./MilestonesCard";
 import { RatingsCard } from "./RatingsCard";
@@ -31,15 +32,6 @@ type Period = "30" | "90" | "all";
 
 const HEATMAP_WEEKS = 20;
 
-function Skeleton({ className }: { className: string }) {
-  return <div aria-hidden className={`animate-pulse rounded-lg bg-surface-2 ${className}`} />;
-}
-
-function parseDay(key: string): Date {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y as number, (m as number) - 1, d as number);
-}
-
 /**
  * Min statistik: nyckeltal, aktivitetskarta med rekord, utvecklingen över tid, pluggrytmen,
  * skattningarna, starkaste och svagaste områdena och milstolpar. Progress och historik
@@ -47,8 +39,6 @@ function parseDay(key: string): Date {
  */
 export function MyStatsDashboard({ userId, decks }: Props) {
   const store = useProgressStore(userId);
-  const [progress, setProgress] = useState<ProgressMap | null>(null);
-  const [reviews, setReviews] = useState<ReviewEntry[]>([]);
   const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
   const [scope, setScope] = useState<string>("all");
   const [period, setPeriod] = useState<Period>("30");
@@ -59,24 +49,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
     setPrefs(readPrefs(window.localStorage));
   }, []);
 
-  useEffect(() => {
-    if (!store) return;
-    let cancelled = false;
-    Promise.all([store.load(allIds), store.loadReviews(allIds)])
-      .then(([p, r]) => {
-        if (cancelled) return;
-        setProgress(p);
-        setReviews(r);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setProgress({});
-        setReviews([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [store, allIds]);
+  const { progress, reviews } = useCardProgress(store, allIds);
 
   const scoped = useMemo(() => (scope === "all" ? decks : decks.filter((d) => d.id === scope)), [decks, scope]);
   const ids = useMemo(() => scoped.flatMap((d) => d.cards.map((c) => c.id)), [scoped]);
@@ -93,7 +66,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
   const days = useMemo(() => {
     if (period !== "all") return Number(period);
     if (!mine?.firstDay || !now) return 30;
-    const span = Math.round((startOfDay(now).getTime() - parseDay(mine.firstDay).getTime()) / DAY_MS) + 1;
+    const span = Math.round((startOfDay(now).getTime() - parseDayKey(mine.firstDay).getTime()) / DAY_MS) + 1;
     return Math.min(365, Math.max(14, span));
   }, [period, mine, now]);
 
@@ -163,7 +136,7 @@ export function MyStatsDashboard({ userId, decks }: Props) {
     ? sv.myStats.loading
     : empty || !mine.firstDay
       ? sv.myStats.leadEmpty
-      : sv.myStats.lead(mine.totalReviews, mine.activeDays, sv.myStats.dateShort(parseDay(mine.firstDay)));
+      : sv.myStats.lead(mine.totalReviews, mine.activeDays, sv.myStats.dateShort(parseDayKey(mine.firstDay)));
 
   return (
     <div>
@@ -270,14 +243,14 @@ export function MyStatsDashboard({ userId, decks }: Props) {
                 <StatTile
                   label={sv.myStats.activeDays}
                   value={`${mine.activeDays}`}
-                  sub={mine.firstDay ? sv.myStats.activeDaysSub(sv.myStats.dateShort(parseDay(mine.firstDay))) : ""}
+                  sub={mine.firstDay ? sv.myStats.activeDaysSub(sv.myStats.dateShort(parseDayKey(mine.firstDay))) : ""}
                   tone="green"
                 />
                 <StatTile label={sv.myStats.longestStreak} value={`${mine.longestStreak}`} sub={sv.myStats.longestStreakSub} tone="navy" />
                 <StatTile
                   label={sv.myStats.bestDay}
                   value={`${mine.bestDay?.reviews ?? 0}`}
-                  sub={mine.bestDay ? sv.myStats.date(parseDay(mine.bestDay.day)) : ""}
+                  sub={mine.bestDay ? sv.myStats.date(parseDayKey(mine.bestDay.day)) : ""}
                   tone="teal"
                 />
                 <StatTile label={sv.myStats.studyTime} value={sv.myStats.studyTimeValue(mine.studyMinutes)} sub={sv.myStats.studyTimeSub(mine.studyMinutes)} tone="violet" />

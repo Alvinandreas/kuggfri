@@ -5,42 +5,31 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Timer, X } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { percent } from "@/lib/text/percent";
-import { applyRating } from "@/lib/fsrs/apply-rating";
 import { previewIntervals, type ScheduleOptions } from "@/lib/fsrs/scheduler";
-import {
-  canGoPrevious,
-  createSession,
-  currentCardId,
-  goPrevious,
-  rateCurrent,
-  remaining,
-  skipCurrent,
-  summarize,
-  type SessionState,
-} from "@/lib/fsrs/session";
-import { SELF_RATINGS, type ProgressMap, type ReviewEntry, type SelfRating, type StudyMode } from "@/lib/progress/types";
-import { DEFAULT_PREFS, readPrefs, type StudyPrefs } from "@/lib/progress/prefs";
+import { canGoPrevious, currentCardId, goPrevious, rateCurrent, remaining, skipCurrent, summarize } from "@/lib/fsrs/session";
+import { SELF_RATINGS, type SelfRating, type StudyMode } from "@/lib/progress/types";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
-import { filterCards, selectCardIds, serializeSelection, type Selection } from "@/lib/study/selection";
-import { EXTRA_SESSION_SIZE, examPhase, parseExamDate, planNewCards, type ExamPhase, type NewCardPlan } from "@/lib/study/plan";
+import { serializeSelection, type Selection } from "@/lib/study/selection";
 import { buildSessionResult, type SessionResult } from "@/lib/study/session-result";
 import { settingsQuery, sizeLimit, type SessionSettings, type SettingsMode } from "@/lib/study/session-settings";
-import { readStars, useStars } from "@/lib/progress/stars";
+import { useStars } from "@/lib/progress/stars";
 import { playRatingSound } from "@/lib/ui/sound";
-import { countIntroducedToday } from "@/lib/stats/progress-stats";
 import { formatRelative } from "@/lib/time/format";
 import { categoryColorIndex } from "@/lib/ui/tag-colors";
-import { autoRating, isAutoGraded, isCorrectAnswer } from "@/lib/cards/kinds";
 import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Flashcard } from "./Flashcard";
-import { QuizCard, type QuizResult } from "./QuizCard";
+import { QuizCard } from "./QuizCard";
 import { ReportDialog } from "./ReportDialog";
 import { RatingButtons } from "./RatingButtons";
 import { SessionHelpDialog } from "./SessionHelpDialog";
 import { SessionSummary } from "./SessionSummary";
 import { SessionToolbar } from "./SessionToolbar";
+import { usePersistRating } from "./session/usePersistRating";
+import { useQuizAnswer } from "./session/useQuizAnswer";
+import { useSessionQueue } from "./session/useSessionQueue";
+import { useStudyKeyboard } from "./session/useStudyKeyboard";
 import type { StudyCard } from "./types";
 
 export type { StudyCard };
@@ -67,22 +56,6 @@ type Props = {
   /** Bara originalkorten (den beprövade uppsättningen). */
   onlyOriginal?: boolean;
 };
-
-type SessionPlan = {
-  phase: ExamPhase;
-  plan: NewCardPlan;
-  /** Tak på nya kort som sessionen byggdes med. */
-  maxNew: number | undefined;
-  finalReview: boolean;
-  /** Plugga vidare-pass. */
-  extra: boolean;
-};
-
-function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
-}
 
 /** "4:07" eller "1:02:09". */
 function clock(ms: number): string {
@@ -113,11 +86,6 @@ export function StudySession({
   // Bara originalkorten: allt i passet (kö, dagsplan, sammanfattning) räknar på dem.
   const cards = useMemo(() => (onlyOriginal ? allCards.filter((c) => c.original) : allCards), [allCards, onlyOriginal]);
   const store = useProgressStore(userId);
-  const [progress, setProgress] = useState<ProgressMap | null>(null);
-  const [reviews, setReviews] = useState<ReviewEntry[]>([]);
-  const [prefs, setPrefs] = useState<StudyPrefs>(DEFAULT_PREFS);
-  const [session, setSession] = useState<SessionState | null>(null);
-  const [sessionPlan, setSessionPlan] = useState<SessionPlan | null>(null);
   /** Nyckel (kort + position) för det kort som är vänt. Ett nytt kort börjar alltid på framsidan. */
   const [flippedKey, setFlippedKey] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
@@ -138,58 +106,20 @@ export function StudySession({
   );
   const colorIndex = useMemo(() => categoryColorIndex(categories), [categories]);
 
-  // Ladda progress och historik och bygg kön en gång per lager/läge/urval. Kortlistan läses
-  // via ref så att en ny arrayidentitet från servern inte startar om sessionen.
-  const cardsRef = useRef(cards);
-  cardsRef.current = cards;
-  const selectionKey = `${mode}|${serializeSelection(selection)}|${extraNew ?? ""}|${extra}|${JSON.stringify(settings)}|${onlyStarred}|${onlyOriginal}`;
-  useEffect(() => {
-    if (!store) return;
-    let cancelled = false;
-    (async () => {
-      // Bara stjärnmärkta: urvalet krymper till de kort studenten markerat.
-      const starred = onlyStarred ? new Set(readStars()) : null;
-      const pool = starred ? cardsRef.current.filter((c) => starred.has(c.id)) : cardsRef.current;
-      const ids = cardsRef.current.map((c) => c.id);
-      let loaded: ProgressMap = {};
-      let history: ReviewEntry[] = [];
-      try {
-        [loaded, history] = await Promise.all([store.load(ids), store.loadReviews(ids)]);
-      } catch {
-        loaded = {};
-        history = [];
-      }
-      if (cancelled) return;
-      const now = new Date();
-      const currentPrefs = readPrefs(window.localStorage);
-      const phase = examPhase(parseExamDate(deck.exam_date), now);
-      const inSelection = filterCards(pool, loaded, selection);
-      const newRemaining = inSelection.filter((c) => !loaded[c.id] || loaded[c.id]?.state === 0).length;
-      const plan = planNewCards({
-        newRemaining,
-        introducedToday: countIntroducedToday(history, now, loaded),
-        dailyGoal: currentPrefs.dailyNew,
-        phase,
-      });
-      // Plugga vidare har ingen dos och ingen slutrepetition: kön är kort närmast att förfalla, sedan nya.
-      const isExtra = mode === "fsrs" && extra;
-      const finalReview = mode === "fsrs" && !isExtra && phase.kind === "final";
-      const maxNew = mode === "fsrs" && !finalReview && !isExtra ? (extraNew ?? plan.limit) : undefined;
-      // Plugga vidare tar lika många kort som passets antal, annars ett block på EXTRA_SESSION_SIZE.
-      const extraSize = isExtra ? (sizeLimit(settings.size) ?? EXTRA_SESSION_SIZE) : undefined;
-      const order = selectCardIds({ cards: pool, progress: loaded, mode, selection, now, maxNew, finalReview, extraSize, settings });
-      setPrefs(currentPrefs);
-      setProgress(loaded);
-      setReviews(history);
-      setSessionPlan({ phase, plan, maxNew, finalReview, extra: isExtra });
-      setSession(createSession(order, mode));
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // selection och extraNew ingår via selectionKey.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store, mode, selectionKey, deck.exam_date]);
+  // Kön (progress, historik, inställningar och planen) laddas här, efter övriga tillstånd, så att
+  // effekterna körs i samma ordning som förut.
+  const { progress, setProgress, reviews, setReviews, prefs, session, setSession, sessionPlan } = useSessionQueue({
+    store,
+    cards,
+    mode,
+    selection,
+    extraNew,
+    extra,
+    settings,
+    onlyStarred,
+    onlyOriginal,
+    examDate: deck.exam_date,
+  });
 
   const timing = !!dugga?.timer && !!session && !session.finished;
   useEffect(() => {
@@ -240,31 +170,7 @@ export function StudySession({
     if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
   }, []);
 
-  /** Sparar en skattning (progress enligt läget + historik). Delas av vändkort och automaträttade kort. */
-  const persistRating = useCallback(
-    (cardId: string, rating: SelfRating) => {
-      if (!store || !progress) return;
-      const now = new Date();
-      // Varje skattning räknas, i alla lägen: FSRS schemalägger om kortet (tidiga repetitioner
-      // och flera samma dag hanteras i lib/fsrs/scheduler.ts).
-      const next = applyRating({ mode, cardId, rating, progress, now, schedule });
-      setProgress((p) => ({ ...(p ?? {}), [cardId]: next }));
-      store
-        .save(next)
-        .then(() => setQueued(store.pending()))
-        .catch(() => setSaveError(true));
-      // Historiken loggas i alla lägen, med samma skattning som schemat fick.
-      const entry: ReviewEntry = { card_id: cardId, rating, mode, reviewed_at: now.toISOString() };
-      setReviews((r) => [...r, entry]);
-      store
-        .logReview(entry)
-        .then(() => setQueued(store.pending()))
-        .catch(() => {
-          // Historik är inte kritisk.
-        });
-    },
-    [store, progress, mode, schedule],
-  );
+  const persistRating = usePersistRating({ store, progress, mode, schedule, setProgress, setReviews, setQueued, setSaveError });
 
   const rate = useCallback(
     (rating: SelfRating) => {
@@ -280,67 +186,23 @@ export function StudySession({
         setSession((s) => (s ? rateCurrent(s, rating) : s));
       }, 960);
     },
-    [session, card, flipped, store, progress, feedback, persistRating],
+    // setSession är en stabil setter (från useSessionQueue).
+    [session, card, flipped, store, progress, feedback, persistRating, setSession],
   );
 
-  // Automaträttade kort (Sant/Falskt, Alternativ). Resultatet hör till kortets plats i kön,
-  // så att ett nytt kort alltid börjar obesvarat.
-  const quiz = card !== null && isAutoGraded(card.kind) && card.options !== null && card.options.length >= 2;
-  const [quizState, setQuizState] = useState<{ key: string; selected: number[]; result: QuizResult | null } | null>(null);
-  const quizSelected = useMemo(() => (quizState && quizState.key === cardKey ? quizState.selected : []), [quizState, cardKey]);
-  const quizResult = quizState && quizState.key === cardKey ? quizState.result : null;
-  const quizMulti = quiz && card.kind === "alternativ" && (card.options?.filter((o) => o.correct).length ?? 0) > 1;
+  const { quiz, quizSelected, quizResult, quizMulti, toggleQuizOption, continueQuiz, quizPrimary } = useQuizAnswer({
+    card,
+    cardKey,
+    store,
+    progress,
+    mode,
+    persistRating,
+    setAnnounce,
+    setSession,
+  });
 
-  const submitQuiz = useCallback(
-    (chosen: number[]) => {
-      if (!card || !cardKey || !card.options || !store || !progress || quizResult) return;
-      if (chosen.length === 0) return;
-      const correct = isCorrectAnswer(card.options, chosen);
-      // Schemat får Alvins trappa 3 → 4 → 5 (lib/cards/kinds.ts) i alla lägen, även i duggan:
-      // ett enda rätt svar på en flervalsfråga ska inte göra kortet "Klockrent". Duggans
-      // resultat räknar ändå bara rätt eller fel (se continueQuiz).
-      const rating: SelfRating = autoRating(correct, progress[card.id]?.self_rating);
-      persistRating(card.id, rating);
-      setQuizState({ key: cardKey, selected: chosen, result: { chosen, correct, rating } });
-      setAnnounce(sv.quiz.answeredAnnounce(correct));
-      playRatingSound(rating);
-    },
-    [card, cardKey, store, progress, quizResult, persistRating],
-  );
-
-  const toggleQuizOption = useCallback(
-    (index: number) => {
-      if (!card || !cardKey || !card.options || quizResult) return;
-      if (index < 0 || index >= card.options.length) return;
-      if (!quizMulti) {
-        submitQuiz([index]);
-        return;
-      }
-      setQuizState((prev) => {
-        const selected = prev && prev.key === cardKey ? prev.selected : [];
-        const next = selected.includes(index) ? selected.filter((i) => i !== index) : [...selected, index].sort((a, b) => a - b);
-        return { key: cardKey, selected: next, result: null };
-      });
-    },
-    [card, cardKey, quizResult, quizMulti, submitQuiz],
-  );
-
-  const continueQuiz = useCallback(() => {
-    if (!quizResult) return;
-    // En dugga är ett prov: sammanfattningen räknar rätt (5) eller fel (1).
-    const rating: SelfRating = mode === "exam" ? (quizResult.correct ? 5 : 1) : quizResult.rating;
-    setQuizState(null);
-    setSession((s) => (s ? rateCurrent(s, rating, { requeue: false }) : s));
-  }, [quizResult, mode]);
-
-  /** Mittenknappen och Enter på ett automaträttat kort: svara, eller gå vidare efter svaret. */
-  const quizPrimary = useCallback(() => {
-    if (quizResult) continueQuiz();
-    else if (quizMulti) submitQuiz(quizSelected);
-  }, [quizResult, quizMulti, quizSelected, continueQuiz, submitQuiz]);
-
-  const next = useCallback(() => setSession((s) => (s ? skipCurrent(s) : s)), []);
-  const previous = useCallback(() => setSession((s) => (s ? goPrevious(s) : s)), []);
+  const next = useCallback(() => setSession((s) => (s ? skipCurrent(s) : s)), [setSession]);
+  const previous = useCallback(() => setSession((s) => (s ? goPrevious(s) : s)), [setSession]);
 
   // Logga sessionen en gång när den är klar.
   useEffect(() => {
@@ -353,67 +215,21 @@ export function StudySession({
   }, [session, store, deck.id, mode]);
 
   // Tangentbord.
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
-      if (isTypingTarget(e.target)) return;
-      if (document.querySelector("dialog[open]")) return;
-      const onButton = e.target instanceof HTMLElement && (e.target.tagName === "BUTTON" || e.target.tagName === "A");
-      if (quiz) {
-        // Automaträttat kort: siffror väljer alternativ, Enter/mellanslag svarar eller går vidare.
-        if (/^[1-9]$/.test(e.key)) {
-          e.preventDefault();
-          toggleQuizOption(Number(e.key) - 1);
-          return;
-        }
-        // Enter på ett alternativ (fokus kvar efter ett musklick) ska svara, inte klicka om alternativet.
-        const onOption = e.target instanceof HTMLElement && e.target.closest("[data-testid='quiz-option']") !== null;
-        if ((e.key === "Enter" && onOption) || ((e.key === "Enter" || e.key === " ") && !onButton)) {
-          e.preventDefault();
-          quizPrimary();
-          return;
-        }
-        if (e.key === "ArrowRight" && quizResult) {
-          e.preventDefault();
-          continueQuiz();
-          return;
-        }
-      }
-      switch (e.key) {
-        case " ":
-          if (onButton) return;
-          e.preventDefault();
-          flip();
-          break;
-        case "1":
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-          e.preventDefault();
-          rate(Number(e.key) as SelfRating);
-          break;
-        case "ArrowRight":
-          e.preventDefault();
-          next();
-          break;
-        case "ArrowLeft":
-          e.preventDefault();
-          if (mode !== "exam") previous();
-          break;
-        case "h":
-        case "H":
-          if (card?.hint && hintAllowed) {
-            e.preventDefault();
-            setShowHint((v) => !v);
-          }
-          break;
-        default:
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [flip, rate, next, previous, card, mode, hintAllowed, quiz, quizResult, toggleQuizOption, quizPrimary, continueQuiz]);
+  useStudyKeyboard({
+    flip,
+    rate,
+    next,
+    previous,
+    card,
+    mode,
+    hintAllowed,
+    quiz,
+    quizResult,
+    toggleQuizOption,
+    quizPrimary,
+    continueQuiz,
+    setShowHint,
+  });
 
   const canRate = flipped && !!card && feedback === null;
 

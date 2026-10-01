@@ -51,10 +51,10 @@ describe("seed", () => {
     }
   });
 
-  it("gäster (anon) kan läsa hela det publicerade innehållet, men inga utkast", async () => {
+  it("gäster (anon) kan läsa hela det publicerade innehållet, men inga utkast eller inaktiva kort", async () => {
     const cards = await anon(db).query(`select id from public.cards`);
-    const drafts = courses.reduce((n, c) => n + flattenCards(c).filter(({ card }) => card.review !== null).length, 0);
-    expect(cards).toHaveLength(expectedCards - drafts);
+    const visible = courses.reduce((n, c) => n + flattenCards(c).filter(({ card }) => card.review === null && card.active).length, 0);
+    expect(cards).toHaveLength(visible);
     const cats = await anon(db).query(`select id from public.categories`);
     expect(cats).toHaveLength(expectedCategories);
   });

@@ -210,6 +210,17 @@ describe("cards", () => {
     expect(await db.query(`select id from public.card_versions where card_id = $1`, [k!.id])).toHaveLength(0);
   });
 
+  it("inaktiverade kort i ett publicerat deck syns bara för redaktörer", async () => {
+    const [inaktivt] = await db.query<{ id: string }>(
+      `insert into public.cards (deck_id, front, back, is_active) values ($1, 'Inaktivt', 'Svar', false) returning id`,
+      [publishedDeck],
+    );
+    expect(await anon(db).query(`select id from public.cards where id = $1`, [inaktivt!.id])).toHaveLength(0);
+    expect(await user(db, alice).query(`select id from public.cards where id = $1`, [inaktivt!.id])).toHaveLength(0);
+    expect(await user(db, admin).query(`select id from public.cards where id = $1`, [inaktivt!.id])).toHaveLength(1);
+    await db.query(`delete from public.cards where id = $1`, [inaktivt!.id]);
+  });
+
   it("utkast i ett publicerat deck syns bara för redaktörer, och kan aldrig vara aktiva", async () => {
     const [utkast] = await db.query<{ id: string }>(
       `insert into public.cards (deck_id, front, back, is_active, review_status, kind, options)

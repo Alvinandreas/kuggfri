@@ -228,7 +228,13 @@ export function RadarBars({
 }) {
   const sv = useT();
   return (
-    <ol className={`grid gap-x-6 gap-y-1 ${columns === 2 ? "sm:grid-cols-2" : ""}`} aria-label={sv.deck.selectionCategory} data-testid="radar-bars">
+    // Två kolumner läses uppifrån och ner: 1–7 till vänster, 8–14 till höger.
+    <ol
+      className={`grid gap-x-6 gap-y-1 ${columns === 2 ? "sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-[repeat(var(--rader),auto)]" : ""}`}
+      style={columns === 2 ? ({ "--rader": Math.ceil(axes.length / 2) } as React.CSSProperties) : undefined}
+      aria-label={sv.deck.selectionCategory}
+      data-testid="radar-bars"
+    >
       {axes.map((a, i) => {
         const learned = a.total === 0 ? 0 : (a.learned / a.total) * 100;
         const partial = a.total === 0 ? 0 : (a.partial / a.total) * 100;

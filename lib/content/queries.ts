@@ -7,7 +7,7 @@ import type { CardRow, CategoryRow, Database, DeckRow } from "@/lib/supabase/dat
 
 /**
  * Publikt innehåll (publicerade deck, kategorier, aktiva kort) cachas på servern i fem minuter
- * och ogiltigförklaras direkt när admin ändrar något (taggen CONTENT_TAG i lib/admin/actions.ts).
+ * och ogiltigförklaras direkt när admin ändrar något (taggen CONTENT_TAG töms i lib/cache/revalidate.ts).
  * Hämtningen görs med en klient utan session, så bara det anon får se hamnar i cachen:
  * ett opublicerat deck kan aldrig läcka via cachen till en gäst.
  */

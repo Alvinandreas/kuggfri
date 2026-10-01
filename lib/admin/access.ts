@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
+import { loadExaminerDeckIds } from "@/lib/auth/admin-gate";
 
 export type AdminContext = {
   userId: string;
@@ -19,9 +20,7 @@ export const getAdminContext = cache(async (): Promise<AdminContext | null> => {
   if (!session) return null;
   const isAdmin = session.profile?.is_admin === true;
   if (isAdmin) return { userId: session.user.id, isAdmin: true, examinerDeckIds: [] };
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.from("deck_examiners").select("deck_id").eq("user_id", session.user.id);
-  const examinerDeckIds = (data ?? []).map((r) => r.deck_id);
+  const examinerDeckIds = await loadExaminerDeckIds(await createSupabaseServerClient(), session.user.id);
   if (examinerDeckIds.length === 0) return null;
   return { userId: session.user.id, isAdmin: false, examinerDeckIds };
 });

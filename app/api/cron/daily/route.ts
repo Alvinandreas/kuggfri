@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/lib/supabase/database.types";
-import { getSiteUrl, getSupabaseEnv } from "@/lib/supabase/env";
+import { getSiteUrl } from "@/lib/supabase/env";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 import { createMailer, readMailerConfig, type Mailer } from "@/lib/email/mailer";
 import { buildDigestEmail, buildReminderEmail, buildReminderStopEmail, decideReminder, type DigestData, type ReminderDeck } from "@/lib/email/templates";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
@@ -27,12 +26,10 @@ export async function GET(request: Request) {
   if (!bearerMatches(request.headers.get("authorization"), process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceKey) {
+  const supabase = createServiceRoleClient();
+  if (!supabase) {
     return NextResponse.json({ error: "SUPABASE_SERVICE_ROLE_KEY saknas" }, { status: 500 });
   }
-  const { url } = getSupabaseEnv();
-  const supabase = createClient<Database>(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const config = readMailerConfig();
   const mailer: Mailer | null = config ? createMailer(config) : null;
   const siteUrl = getSiteUrl();

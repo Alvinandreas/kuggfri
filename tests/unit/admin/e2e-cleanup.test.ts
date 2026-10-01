@@ -29,11 +29,19 @@ describe("adminvyns låsta kurs", () => {
   it("är Materialteknik även när andra kurser kommer först", () => {
     const decks = [deck("e2e-deck-1", "E2E-deck 1", "a"), deck(ACTIVE_ADMIN_COURSE_SLUG, "Materialteknik", "b")];
     expect(ACTIVE_ADMIN_COURSE_SLUG).toBe("materialteknik");
-    expect(pickActiveAdminCourse(decks)?.id).toBe("b");
+    expect(pickActiveAdminCourse(decks, "forsta")?.id).toBe("b");
+    expect(pickActiveAdminCourse(decks, "enda")?.id).toBe("b");
   });
 
-  it("faller tillbaka på den första kursen för den som inte får redigera Materialteknik", () => {
-    expect(pickActiveAdminCourse([deck("annan", "Annan", "c")])?.id).toBe("c");
-    expect(pickActiveAdminCourse([])).toBeUndefined();
+  it("sidomenyn faller tillbaka på den första kursen för den som inte får redigera Materialteknik", () => {
+    expect(pickActiveAdminCourse([deck("annan", "Annan", "c")], "forsta")?.id).toBe("c");
+    expect(pickActiveAdminCourse([deck("annan", "Annan", "c"), deck("tredje", "Tredje", "d")], "forsta")?.id).toBe("c");
+    expect(pickActiveAdminCourse([], "forsta")).toBeUndefined();
+  });
+
+  it("ingången /admin faller tillbaka bara när det finns exakt en annan kurs", () => {
+    expect(pickActiveAdminCourse([deck("annan", "Annan", "c")], "enda")?.id).toBe("c");
+    expect(pickActiveAdminCourse([deck("annan", "Annan", "c"), deck("tredje", "Tredje", "d")], "enda")).toBeUndefined();
+    expect(pickActiveAdminCourse([], "enda")).toBeUndefined();
   });
 });

@@ -1,0 +1,427 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`middleware > admin på /admin släpps in 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-next",
+      "1",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+  ],
+  "location": null,
+  "queried": [
+    "profiles",
+  ],
+  "status": 200,
+}
+`;
+
+exports[`middleware > examinator på /admin släpps in 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-next",
+      "1",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+  ],
+  "location": null,
+  "queried": [
+    "profiles",
+    "deck_examiners",
+  ],
+  "status": 200,
+}
+`;
+
+exports[`middleware > examinator utan profil på /admin släpps in 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-next",
+      "1",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+  ],
+  "location": null,
+  "queried": [
+    "profiles",
+    "deck_examiners",
+  ],
+  "status": 200,
+}
+`;
+
+exports[`middleware > inloggad student på vanlig sida 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-next",
+      "1",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+  ],
+  "location": null,
+  "queried": [],
+  "status": 200,
+}
+`;
+
+exports[`middleware > kod på /auth/ släpps igenom 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-next",
+      "1",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+  ],
+  "location": null,
+  "queried": [],
+  "status": 200,
+}
+`;
+
+exports[`middleware > kod på annan sida skickas till /auth/confirm 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "location",
+      "https://kuggfri.test/auth/confirm?code=abc&next=%2Fd%2Fmaterialteknik",
+    ],
+  ],
+  "location": "https://kuggfri.test/auth/confirm?code=abc&next=%2Fd%2Fmaterialteknik",
+  "queried": [],
+  "status": 307,
+}
+`;
+
+exports[`middleware > kod på startsidan skickas till /auth/confirm 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "location",
+      "https://kuggfri.test/auth/confirm?code=abc&next=%2F",
+    ],
+  ],
+  "location": "https://kuggfri.test/auth/confirm?code=abc&next=%2F",
+  "queried": [],
+  "status": 307,
+}
+`;
+
+exports[`middleware > student på /admin nekas 1`] = `
+{
+  "body": "<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Åtkomst nekad – Kuggfri</title>
+<style>
+  body{font-family:ui-sans-serif,system-ui,sans-serif;background:#f6f5f1;color:#1d1c19;margin:0;display:grid;place-items:center;min-height:100vh}
+  main{max-width:28rem;padding:2rem;text-align:center}
+  a{color:#2f5d62}
+  @media (prefers-color-scheme:dark){body{background:#151514;color:#ebe8e1}a{color:#8dbdc2}}
+</style>
+</head>
+<body>
+<main>
+<h1>Åtkomst nekad</h1>
+<p>Du har inte behörighet till den här sidan.</p>
+<p><a href="/">Till startsidan</a></p>
+</main>
+</body>
+</html>",
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "content-type",
+      "text/html; charset=utf-8",
+    ],
+  ],
+  "location": null,
+  "queried": [
+    "profiles",
+    "deck_examiners",
+  ],
+  "status": 403,
+}
+`;
+
+exports[`middleware > student utan profil på /admin nekas 1`] = `
+{
+  "body": "<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Åtkomst nekad – Kuggfri</title>
+<style>
+  body{font-family:ui-sans-serif,system-ui,sans-serif;background:#f6f5f1;color:#1d1c19;margin:0;display:grid;place-items:center;min-height:100vh}
+  main{max-width:28rem;padding:2rem;text-align:center}
+  a{color:#2f5d62}
+  @media (prefers-color-scheme:dark){body{background:#151514;color:#ebe8e1}a{color:#8dbdc2}}
+</style>
+</head>
+<body>
+<main>
+<h1>Åtkomst nekad</h1>
+<p>Du har inte behörighet till den här sidan.</p>
+<p><a href="/">Till startsidan</a></p>
+</main>
+</body>
+</html>",
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "content-type",
+      "text/html; charset=utf-8",
+    ],
+  ],
+  "location": null,
+  "queried": [
+    "profiles",
+    "deck_examiners",
+  ],
+  "status": 403,
+}
+`;
+
+exports[`middleware > utloggad på /admin skickas till startsidan 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "location",
+      "https://kuggfri.test/?next=%2Fadmin%2Fdeck",
+    ],
+  ],
+  "location": "https://kuggfri.test/?next=%2Fadmin%2Fdeck",
+  "queried": [],
+  "status": 307,
+}
+`;
+
+exports[`middleware > utloggad på kurslänk behåller förnyade kakor 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "set-cookie",
+      "sb-test-auth-token=fornyad; Path=/",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+    [
+      "x-middleware-rewrite",
+      "https://kuggfri.test/kurs/materialteknik",
+    ],
+    [
+      "x-middleware-set-cookie",
+      "sb-test-auth-token=fornyad; Path=/",
+    ],
+  ],
+  "location": null,
+  "queried": [],
+  "status": 200,
+}
+`;
+
+exports[`middleware > utloggad på kurslänk får inbjudan (omskrivning) 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+    [
+      "x-middleware-rewrite",
+      "https://kuggfri.test/kurs/materialteknik",
+    ],
+  ],
+  "location": null,
+  "queried": [],
+  "status": 200,
+}
+`;
+
+exports[`middleware > utloggad på publik sida släpps igenom 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-next",
+      "1",
+    ],
+    [
+      "x-middleware-override-headers",
+      "content-security-policy,x-nonce",
+    ],
+    [
+      "x-middleware-request-content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "x-middleware-request-x-nonce",
+      "testnonce",
+    ],
+  ],
+  "location": null,
+  "queried": [],
+  "status": 200,
+}
+`;
+
+exports[`middleware > utloggad på skyddad sida skickas till startsidan 1`] = `
+{
+  "body": null,
+  "headers": [
+    [
+      "content-security-policy",
+      "<CSP>",
+    ],
+    [
+      "location",
+      "https://kuggfri.test/?next=%2Fhem%3Fflik%3D1",
+    ],
+  ],
+  "location": "https://kuggfri.test/?next=%2Fhem%3Fflik%3D1",
+  "queried": [],
+  "status": 307,
+}
+`;

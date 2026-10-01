@@ -8,11 +8,21 @@
  * aldrig behöver undra vilken kurs de administrerar.
  *
  * När fler kurser blir aktiva: byt låsningen mot ett kursval (till exempel kursen i adressen)
- * i `lib/admin/nav.ts` och `app/(app)/admin/page.tsx`, som är de enda som läser konstanten.
+ * i `pickActiveAdminCourse` nedan, som `lib/admin/nav.ts` och `app/(app)/admin/page.tsx` använder.
  */
 export const ACTIVE_ADMIN_COURSE_SLUG = "materialteknik";
 
-/** Den låsta kursen bland dem användaren får redigera; annars den första (en examinator för en annan kurs). */
-export function pickActiveAdminCourse<T extends { slug: string }>(decks: readonly T[]): T | undefined {
-  return decks.find((d) => d.slug === ACTIVE_ADMIN_COURSE_SLUG) ?? decks[0];
+/**
+ * Vad som gäller när användaren inte får redigera den låsta kursen (en examinator för en annan kurs):
+ * - `"forsta"`: den första av kurserna (sidomenyn, lib/admin/nav.ts);
+ * - `"enda"`: kursen bara om den är den enda, annars ingen (ingången /admin, som då visar listan).
+ */
+export type AdminCourseFallback = "forsta" | "enda";
+
+/** Den låsta kursen bland dem användaren får redigera; annars enligt `fallback`. */
+export function pickActiveAdminCourse<T extends { slug: string }>(decks: readonly T[], fallback: AdminCourseFallback): T | undefined {
+  const locked = decks.find((d) => d.slug === ACTIVE_ADMIN_COURSE_SLUG);
+  if (locked) return locked;
+  if (fallback === "enda") return decks.length === 1 ? decks[0] : undefined;
+  return decks[0];
 }

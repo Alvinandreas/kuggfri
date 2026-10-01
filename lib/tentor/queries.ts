@@ -1,7 +1,6 @@
 import "server-only";
-import { createClient } from "@supabase/supabase-js";
-import type { Database, ExamRow } from "@/lib/supabase/database.types";
-import { getSupabaseEnv } from "@/lib/supabase/env";
+import type { ExamRow } from "@/lib/supabase/database.types";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 import type { Exam, ExamQuestion, QuestionKind } from "./model";
 import { kindCounts } from "./session";
 
@@ -15,10 +14,9 @@ import { kindCounts } from "./session";
  * Facit lämnar aldrig servern före inlämning: sidorna skickar `forStudent(exam)` till webbläsaren.
  */
 function serviceClient() {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY saknas (krävs för tentaläget).");
-  const { url } = getSupabaseEnv();
-  return createClient<Database>(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const client = createServiceRoleClient();
+  if (!client) throw new Error("SUPABASE_SERVICE_ROLE_KEY saknas (krävs för tentaläget).");
+  return client;
 }
 
 export function examFromRow(row: ExamRow): Exam {
@@ -99,12 +97,6 @@ export async function getExamRecord(deckId: string, key: string, access: ExamAcc
  */
 export function attemptsAsServer() {
   return serviceClient().from("exam_attempts");
-}
-
-/** Tentans databas-id (för försöken). */
-export async function getExamId(deckId: string, key: string): Promise<string | null> {
-  const { data } = await serviceClient().from("exams").select("id").eq("deck_id", deckId).eq("key", key).maybeSingle();
-  return data?.id ?? null;
 }
 
 /** En tenta med facit via databas-id (försökets exam_id). Åtkomsten avgör anroparen med mayView. */

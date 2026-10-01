@@ -3,7 +3,7 @@ import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminContext } from "./access";
 import { pickActiveAdminCourse } from "./active-course";
-import { countOpenReports } from "./queries";
+import { countOpenReports, getEditableDecks } from "./queries";
 
 /** Kursen som sidomenyns adminsektion gäller, med räknarna (att granska, öppna felrapporter). */
 export type AdminNavDeck = { id: string; title: string; pendingDrafts: number; openReports: number };
@@ -28,13 +28,11 @@ export type AdminNav = {
 export const getAdminNav = cache(async (): Promise<AdminNav | null> => {
   const ctx = await getAdminContext();
   if (!ctx) return null;
-  const supabase = await createSupabaseServerClient();
-  let query = supabase.from("decks").select("id, slug, title").order("sort_order").order("title");
-  if (!ctx.isAdmin) query = query.in("id", ctx.examinerDeckIds);
-  const { data } = await query;
-  const decks = data ?? [];
-  const active = pickActiveAdminCourse(decks);
+  // Går uppslaget fel visas adminsektionen inte (som när användaren inte får redigera något).
+  const decks = await getEditableDecks().catch(() => []);
+  const active = pickActiveAdminCourse(decks, "forsta");
   if (!active) return { isAdmin: ctx.isAdmin, deckIds: [], activeDeck: null };
+  const supabase = await createSupabaseServerClient();
   const [drafts, openReports] = await Promise.all([
     supabase.from("cards").select("id", { count: "exact", head: true }).eq("deck_id", active.id).eq("review_status", "utkast").is("flag_note", null),
     countOpenReports(active.id).catch(() => 0),

@@ -4,25 +4,37 @@ import { parseOverviewStats } from "@/lib/admin/parse-overview";
 import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { CardRow, CategoryRow, DeckOverviewStats, DeckReportRow, DeckRow } from "@/lib/supabase/database.types";
-import { sortCardsByCategory } from "@/lib/content/queries";
+import { sortCardsByCategory, type DeckSummary } from "@/lib/content/queries";
 import { canEditDeck, getAdminContext } from "./access";
 
-export type AdminDeckSummary = DeckRow & { cardCount: number };
+/** Samma form som kurslistans DeckSummary: decket med antal aktiva kort. */
+export type AdminDeckSummary = DeckSummary;
 
 /**
- * Deck som den inloggade får redigera: admin ser alla (även opublicerade, RLS
- * släpper igenom), en examinator bara sina.
+ * Deck som den inloggade får redigera, i kursordning: admin ser alla (även opublicerade,
+ * RLS släpper igenom), en examinator bara sina. Tom lista för den som inte får redigera
+ * något. Memoiserad per request: sidomenyn (lib/admin/nav.ts) och adminsidorna delar
+ * ett anrop. Kastar databasfelet.
  */
-export async function getAllDecksForAdmin(): Promise<AdminDeckSummary[]> {
+export const getEditableDecks = cache(async (): Promise<DeckRow[]> => {
   const ctx = await getAdminContext();
   if (!ctx) return [];
   const supabase = await createSupabaseServerClient();
   let query = supabase.from("decks").select("*").order("sort_order").order("title");
   if (!ctx.isAdmin) query = query.in("id", ctx.examinerDeckIds);
-  const [{ data: decks, error }, { data: counts }] = await Promise.all([query, supabase.rpc("deck_card_counts")]);
+  const { data, error } = await query;
   if (error) throw error;
+  return data ?? [];
+});
+
+/** Deck som den inloggade får redigera (getEditableDecks), med antal aktiva kort. */
+export async function getAllDecksForAdmin(): Promise<AdminDeckSummary[]> {
+  const ctx = await getAdminContext();
+  if (!ctx) return [];
+  const supabase = await createSupabaseServerClient();
+  const [decks, { data: counts }] = await Promise.all([getEditableDecks(), supabase.rpc("deck_card_counts")]);
   const byDeck = new Map((counts ?? []).map((c) => [c.deck_id, Number(c.active_cards)] as const));
-  return (decks ?? []).map((d) => ({ ...d, cardCount: byDeck.get(d.id) ?? 0 }));
+  return decks.map((d) => ({ ...d, cardCount: byDeck.get(d.id) ?? 0 }));
 }
 
 export type AdminDeck = { deck: DeckRow; categories: CategoryRow[]; cards: CardRow[] };

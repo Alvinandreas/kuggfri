@@ -18,8 +18,6 @@ export type Outbox = {
 
 type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
-const EMPTY: Outbox = { progress: {}, reviews: [] };
-
 function isReview(value: unknown): value is ReviewEntry {
   if (!value || typeof value !== "object") return false;
   const r = value as Record<string, unknown>;
@@ -76,10 +74,6 @@ export function queueReview(storage: StorageLike, entry: ReviewEntry): void {
 export function outboxSize(storage: StorageLike): number {
   const box = readOutbox(storage);
   return Object.keys(box.progress).length + box.reviews.length;
-}
-
-export function clearOutbox(storage: StorageLike): void {
-  writeOutbox(storage, EMPTY);
 }
 
 /** Det som behövs för att tömma utkorgen mot kontot. */

@@ -71,13 +71,6 @@ export function clearLocalProgress(storage: StorageLike): void {
   }
 }
 
-export function upsertLocalProgress(storage: StorageLike, progress: CardProgress): ProgressMap {
-  const all = readLocalProgress(storage);
-  all[progress.card_id] = progress;
-  writeLocalProgress(storage, all);
-  return all;
-}
-
 export function hasLocalProgress(storage: StorageLike): boolean {
   return Object.keys(readLocalProgress(storage)).length > 0;
 }

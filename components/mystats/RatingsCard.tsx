@@ -22,8 +22,7 @@ export function RatingsCard({ stats, index, className }: { stats: MyStats; index
         />
         <StatTile label={sv.myStats.comebacks} value={`${stats.comebacks}`} sub={sv.myStats.comebacksSub} tone="violet" />
       </dl>
-      {/* Egna staplar i stället för HorizontalBars: etiketterna är korta, och i den smala
-          kolumnen ska stapeln få bredden. */}
+      {/* Egna staplar: etiketterna är korta, och i den smala kolumnen ska stapeln få bredden. */}
       <ol className="grid gap-3" aria-label={sv.myStats.ratings}>
         {[5, 4, 3, 2, 1].map((r) => {
           const share = shares[r - 1] ?? 0;

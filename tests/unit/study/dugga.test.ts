@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_DUGGA, duggaCount, duggaExamSize, duggaQuery, parseDugga } from "@/lib/study/dugga";
+import { DEFAULT_DUGGA, duggaExamSize, duggaQuery, parseDugga } from "@/lib/study/dugga";
 
 describe("dugga", () => {
   it("läser standardreglerna när adressen saknar dem", () => {
@@ -17,9 +17,7 @@ describe("dugga", () => {
     expect(parseDugga({ antal: "999" }).size).toBe(DEFAULT_DUGGA.size);
   });
 
-  it("antal frågor begränsas av urvalet", () => {
-    expect(duggaCount(20, 6)).toBe(6);
-    expect(duggaCount("alla", 144)).toBe(144);
+  it("alla frågor ger ett obegränsat urval", () => {
     expect(duggaExamSize("alla")).toBe(Number.POSITIVE_INFINITY);
   });
 });

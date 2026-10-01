@@ -201,8 +201,6 @@ export function filterKinds<T extends { kind?: CardKind }>(cards: readonly T[], 
 /** Sparade val per läge i webbläsaren, så att studenten slipper ställa om varje gång. */
 export const SETTINGS_STORAGE_KEY = "kuggfri:passinstallningar:v1";
 
-export type StoredSettings = Partial<Record<SettingsMode, SessionSettings>>;
-
 const MODES: readonly SettingsMode[] = ["fsrs", "tricky", "free", "random", "exam", "starred"];
 
 /** Läser alla sparade val. Trasig eller saknad lagring ger standardvärden. */

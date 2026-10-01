@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { cleanupDiff, diffSequence, diffSides, diffText, tokenizeLines, tokenizeWords, type DiffPart } from "@/lib/admin/diff";
+import { cleanupDiff, diffSequence, diffText, tokenizeLines, tokenizeWords, type DiffPart } from "@/lib/admin/diff";
 
 const changes = (parts: DiffPart[]) => parts.filter((p) => p.type !== "same");
+
+/** Texten före (same + del) respektive efter (same + add), för att kontrollera att diffen inte tappar något. */
+const sides = (parts: DiffPart[]) => ({
+  before: parts.filter((p) => p.type !== "add").map((p) => p.text).join(""),
+  after: parts.filter((p) => p.type !== "del").map((p) => p.text).join(""),
+});
 
 describe("tokenizeWords", () => {
   it("delar i ord, blanksteg och skiljetecken, även med å, ä och ö", () => {
@@ -51,7 +57,7 @@ describe("diffText", () => {
   it("bevarar båda texterna exakt", () => {
     const before = "Fe–C: $\\alpha$-ferrit\nlöser lite kol.\n\nAustenit löser mer.";
     const after = "Fe–C: $\\alpha$-ferrit löser mycket lite kol.\n\nAustenit (γ) löser mer.";
-    expect(diffSides(diffText(before, after))).toEqual({ before, after });
+    expect(sides(diffText(before, after))).toEqual({ before, after });
   });
 
   it("faller tillbaka på rader när orden blir för många", () => {

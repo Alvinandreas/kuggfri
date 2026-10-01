@@ -4,7 +4,6 @@ import {
   clearLocalProgress,
   hasLocalProgress,
   readLocalProgress,
-  upsertLocalProgress,
   writeLocalProgress,
 } from "@/lib/progress/local-store";
 import { LocalProgressStore } from "@/lib/progress/store";
@@ -39,7 +38,7 @@ describe("localStorage-progress", () => {
   it("skriver och läser tillbaka samma struktur som card_progress", () => {
     const storage = new FakeStorage();
     const p = reviewCard("k1", undefined, 4, NOW);
-    upsertLocalProgress(storage, p);
+    writeLocalProgress(storage, { k1: p });
     const all = readLocalProgress(storage);
     expect(all).toEqual({ k1: p });
     expect(Object.keys(all.k1 ?? {}).sort()).toEqual(

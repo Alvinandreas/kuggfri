@@ -146,14 +146,3 @@ export function diffText(before: string, after: string, maxCells = MAX_DIFF_CELL
 export function diffSequence(before: readonly string[], after: readonly string[]): DiffPart[] {
   return lcsDiff(before, after, Number.POSITIVE_INFINITY)!;
 }
-
-/** Texten före (same + del) respektive efter (same + add), t.ex. för att kontrollera en diff. */
-export function diffSides(parts: readonly DiffPart[]): { before: string; after: string } {
-  let before = "";
-  let after = "";
-  for (const p of parts) {
-    if (p.type !== "add") before += p.text;
-    if (p.type !== "del") after += p.text;
-  }
-  return { before, after };
-}

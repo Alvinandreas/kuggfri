@@ -11,14 +11,7 @@ export type DuggaSettings = {
   timer: boolean;
 };
 
-export const DUGGA_SIZES: readonly DuggaSize[] = [10, 20, 30, "alla"];
-
 export const DEFAULT_DUGGA: DuggaSettings = { size: 20, hints: false, timer: true };
-
-/** Antal frågor för ett urval med `available` kort. */
-export function duggaCount(size: DuggaSize, available: number): number {
-  return size === "alla" ? available : Math.min(size, available);
-}
 
 /** Antalet som selectCardIds och planDeckSession ska använda (Infinity = alla). */
 export function duggaExamSize(size: DuggaSize): number {

@@ -11,7 +11,6 @@ import { flattenCards } from "@/lib/content/model";
  */
 const ROOT = join(__dirname, "..", "..", "..");
 const courses = listCourseKeys(ROOT).map((key) => loadCourse(ROOT, key).course);
-const expectedCards = courses.reduce((n, c) => n + flattenCards(c).length, 0);
 const expectedCategories = courses.reduce((n, c) => n + c.categories.length, 0);
 
 let db: RawDb;

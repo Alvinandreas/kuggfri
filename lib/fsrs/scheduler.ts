@@ -236,10 +236,6 @@ export function isDue(progress: CardProgress | undefined, now: Date = new Date()
   return new Date(progress.due).getTime() <= now.getTime();
 }
 
-export function isNew(progress: CardProgress | undefined): boolean {
-  return !progress || progress.state === 0;
-}
-
 export type QueueStats = { due: number; new: number; total: number };
 
 export type QueueOptions = {

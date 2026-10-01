@@ -5,8 +5,9 @@
  *
  * Översättningarna ligger i content/<kurs>/engelska.json och synkas till cards.translation_en med
  * `npm run kuggfri -- engelska`. Fingeravtrycket (sv) är den svenska texten som översattes, så att
- * granskningen kan säga till när kortet ändrats efteråt. Samma funktion körs i CLI:t och på
- * servern; den är ren JavaScript utan beroenden.
+ * granskningen kan säga till när kortet ändrats efteråt. Flaggornas anteckningar översätts på samma
+ * sätt, med ett eget fingeravtryck (englishFlag). Samma funktioner körs i CLI:t och på servern;
+ * de är ren JavaScript utan beroenden.
  */
 import type { CardOption } from "@/lib/cards/kinds";
 import type { CardTranslation } from "@/lib/supabase/database.types";
@@ -50,13 +51,29 @@ export function englishFace(card: SwedishText & { translation_en?: CardTranslati
   return { front: t.front, back: t.back, hint: t.hint ?? null, options };
 }
 
-/** En rad i content/<kurs>/engelska.json. */
-export type TranslationEntry = { front: string; back: string; hint?: string | null; options?: string[] | null; sv: string };
+/** Fingeravtrycket av en flaggas svenska anteckning; blanksteg och radbrytningar räknas inte. */
+export function flagFingerprint(note: string): string {
+  return cyrb53(note.replace(/\s+/g, " ").trim());
+}
+
+/**
+ * Flaggans anteckning på engelska, bara om den översattes från anteckningen som står på kortet nu.
+ * Har någon ändrat anteckningen efteråt (eller flaggat på nytt) gäller den, och null returneras.
+ */
+export function englishFlag(card: { flag_note: string | null; translation_en?: CardTranslation | null }): string | null {
+  const t = card.translation_en;
+  if (!card.flag_note || !t?.flag || !t.flag_sv) return null;
+  return t.flag_sv === flagFingerprint(card.flag_note) ? t.flag : null;
+}
+
+/** En rad i content/<kurs>/engelska.json. flag och flag_sv: flaggans anteckning (se englishFlag). */
+export type TranslationEntry = { front: string; back: string; hint?: string | null; options?: string[] | null; sv: string; flag?: string | null; flag_sv?: string | null };
 
 /** Filens form: kursens beskrivning, områdenas namn per områdesnyckel och korten per kortnyckel. */
 export type TranslationFile = { deck?: { description?: string | null }; areas: Record<string, string>; cards: Record<string, TranslationEntry> };
 
 /** Ett kort ur filen som det lagras i databasen. */
 export function toStored(entry: TranslationEntry): CardTranslation {
-  return { front: entry.front, back: entry.back, hint: entry.hint ?? null, options: entry.options ?? null, sv: entry.sv };
+  const stored: CardTranslation = { front: entry.front, back: entry.back, hint: entry.hint ?? null, options: entry.options ?? null, sv: entry.sv };
+  return entry.flag && entry.flag_sv ? { ...stored, flag: entry.flag, flag_sv: entry.flag_sv } : stored;
 }

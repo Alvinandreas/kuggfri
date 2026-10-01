@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, Check, CheckCheck, ChevronLeft, ChevronRight, Ellipsis, FlagTriangleRight, History, Info, Languages, MessageSquareWarning, Pencil, RotateCcw, Undo2, X } from "lucide-react";
 import { cardSources } from "@/lib/admin/sources";
 import { useT } from "@/lib/i18n/client";
-import { englishFace, translationState } from "@/lib/cards/translation";
+import { englishFace, englishFlag, translationState } from "@/lib/cards/translation";
 import { shouldIgnoreShortcut } from "@/lib/ui/keyboard";
 import { reviewTab, type ReviewArea, type ReviewCard, type ReviewTab } from "@/lib/admin/review";
 import { Badge } from "@/components/ui/Badge";
@@ -88,6 +88,9 @@ export function ReviewCardView(props: Props) {
   const english = t.lang === "en" && !showSwedish;
   const translation = t.lang === "en" ? translationState(card) : null;
   const face = (english ? englishFace(card) : null) ?? card;
+  // Flaggans anteckning på engelska när den är översatt (och anteckningen inte ändrats sedan).
+  const flagEnglish = english ? englishFlag(card) : null;
+  const flagNote = flagEnglish ?? card.flag_note ?? "";
   const sourceLabels = { tags: t.source, originalHelp: t.admin.originalHelp, sourceOriginalHelp: t.admin.sourceOriginalHelp, sourceNoneHelp: t.admin.sourceNoneHelp };
   const sources = cardSources(card);
   const sourceCount = sources.groups.length;
@@ -134,7 +137,7 @@ export function ReviewCardView(props: Props) {
       props.onEdit(true);
     } else if (key === "f" && !removed) {
       e.preventDefault();
-      setPanel({ type: "flag", note: flagged ? (card.flag_note ?? "") : "", edit: flagged });
+      setPanel({ type: "flag", note: flagged ? flagNote : "", edit: flagged });
     }
   };
   useEffect(() => {
@@ -200,10 +203,12 @@ export function ReviewCardView(props: Props) {
           <FlagTriangleRight size={18} aria-hidden className="mt-0.5 shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold">{flaggedLine}</p>
-            <p className="mt-0.5 whitespace-pre-wrap break-words">{card.flag_note}</p>
+            <p className="mt-0.5 whitespace-pre-wrap break-words" lang={flagEnglish ? "en" : t.lang === "en" ? "sv" : undefined} data-testid="review-flag-text">
+              {flagNote}
+            </p>
           </div>
           {!editing ? (
-            <Button variant="ghost" size="sm" className="-mr-2 -mt-1 shrink-0 hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })} data-testid="review-flag-change">
+            <Button variant="ghost" size="sm" className="-mr-2 -mt-1 shrink-0 hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setPanel({ type: "flag", note: flagNote, edit: true })} data-testid="review-flag-change">
               <Pencil size={14} aria-hidden />
               <span className="max-sm:sr-only">{g.changeFlag}</span>
             </Button>
@@ -376,7 +381,7 @@ export function ReviewCardView(props: Props) {
                       )}
                     >
                       {flagged ? (
-                        <MenuItem icon={<Pencil size={16} />} onSelect={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })}>
+                        <MenuItem icon={<Pencil size={16} />} onSelect={() => setPanel({ type: "flag", note: flagNote, edit: true })}>
                           {g.changeFlag}
                         </MenuItem>
                       ) : null}

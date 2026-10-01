@@ -151,7 +151,7 @@ export function matchesReviewFilter(card: FilterFields, filter: ReviewFilter): b
   if (words.length === 0) return true;
   // Den engelska översättningen räknas också, så att en examinator kan söka på engelska.
   const en = card.translation_en;
-  const english = en ? [en.front, en.back, en.hint ?? "", ...(en.options ?? [])] : [];
+  const english = en ? [en.front, en.back, en.hint ?? "", ...(en.options ?? []), en.flag ?? ""] : [];
   const haystack = norm([card.front, card.back, card.hint ?? "", ...(card.options ?? []).map((o) => o.text), card.source ?? "", card.flag_note ?? "", ...english].join("\n"));
   return words.every((w) => haystack.includes(w));
 }

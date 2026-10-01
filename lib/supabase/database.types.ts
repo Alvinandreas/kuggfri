@@ -114,7 +114,16 @@ export type CategoryRow = {
 };
 
 /** Engelsk översättning av ett kort för granskningen i admin (lib/cards/translation.ts). */
-export type CardTranslation = { front: string; back: string; hint: string | null; options: string[] | null; sv: string };
+export type CardTranslation = {
+  front: string;
+  back: string;
+  hint: string | null;
+  options: string[] | null;
+  sv: string;
+  /** Flaggans anteckning på engelska, och fingeravtrycket av den svenska anteckningen den översattes från. */
+  flag?: string | null;
+  flag_sv?: string | null;
+};
 
 /** En global inställning (tabellen app_settings), t.ex. dolda flikar i sidomenyn. */
 export type AppSettingRow = {

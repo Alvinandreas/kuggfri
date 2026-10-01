@@ -7,6 +7,7 @@ import { tagBgClass } from "@/lib/ui/tag-colors";
 import type { ReviewCard, ReviewTab } from "@/lib/admin/review";
 import { sourceTags } from "@/lib/admin/sources";
 import type { CardKind } from "@/lib/cards/kinds";
+import { englishFlag } from "@/lib/cards/translation";
 import { cx } from "@/components/ui/cx";
 import { KIND_ICON } from "../KindBadge";
 import { useReviewT } from "./ReviewLanguage";
@@ -34,6 +35,7 @@ export function ReviewRow({
   const t = useReviewT();
   const KindIcon = KIND_ICON[card.kind as CardKind];
   const tags = sourceTags(card);
+  const flagEnglish = t.lang === "en" ? englishFlag(card) : null;
   return (
     <a
       href={href}
@@ -65,7 +67,7 @@ export function ReviewRow({
             <FlagTriangleRight size={14} aria-hidden className="mt-0.5 shrink-0 text-chart-3" />
             <span className="line-clamp-2 break-words">
               {tab === "flaggade" ? null : <span className="font-semibold">{t.g.flaggedBadge}: </span>}
-              {card.flag_note}
+              <span lang={flagEnglish ? "en" : t.lang === "en" ? "sv" : undefined}>{flagEnglish ?? card.flag_note}</span>
             </span>
           </span>
         ) : null}

@@ -87,7 +87,9 @@
       "back": "* Stiffness\n  - How much a material\ndeforms under a given load.\n* Yield strength\n  - The load (stress) at which a\nmaterial deforms\npermanently.\n* Fracture toughness ($K_{1c}$)\n  - The material's resistance to\ncrack growth.",
       "hint": null,
       "options": null,
-      "sv": "o4pk4ifjn9"
+      "sv": "o4pk4ifjn9",
+      "flag": "Correction of the original card: fracture toughness was described as \"the load at which a material breaks\" (verbatim Lecture 1 HT25 p. 28), which rather describes the fracture strength. It now says \"the material's resistance to crack growth (K1c)\" following Kapitel_02 p. 26 and Kapitel_08 p. 7. Is the correction approved?",
+      "flag_sv": "272az3hzj1d"
     },
     "ge-minst-tva-exempel-pa-elektriska": {
       "front": "Give at least two examples of electrical, magnetic and optical properties.",
@@ -122,14 +124,18 @@
       "back": "During wear, the materials bond together through atomic bonds, and material is torn away when the surfaces slide against each other. The two materials are welded together at points and torn apart.",
       "hint": null,
       "options": null,
-      "sv": "1tn0y9dwf6e"
+      "sv": "1tn0y9dwf6e",
+      "flag": "The card has no source in the 2025 and 2026 lectures: wear (Ashby ch. 11) is not in the 2026 reading instructions, and the back is largely the answer key to the exam of 2019-10-26 problem 1f. Is adhesive wear part of this year's course, or should the card be deactivated?",
+      "flag_sv": "x8itvkuwem"
     },
     "abrasiv-forslitning": {
       "front": "Abrasive wear",
       "back": "Wear that occurs when a hard material/medium cuts away the surface.",
       "hint": null,
       "options": null,
-      "sv": "2c03lgnfyps"
+      "sv": "2c03lgnfyps",
+      "flag": "The card has no source in the 2025 and 2026 lectures: wear (Ashby ch. 11) is not in the 2026 reading instructions, and the back is verbatim the answer key to the exam of 2016-10-29 problem 1c. Is abrasive wear part of this year's course, or should the card be deactivated?",
+      "flag_sv": "26rfb4k5f3i"
     },
     "quiz-vad-ar-sant-for-atombindningar-tva": {
       "front": "Which statements about atomic bonds are true?",
@@ -153,7 +159,9 @@
         "Ceramics are compounds between inorganic and organic materials.",
         "Brittle ceramics have poor wear resistance."
       ],
-      "sv": "7u6x8mg1ju"
+      "sv": "7u6x8mg1ju",
+      "flag": "The quiz's correct option \"All ceramics are crystalline except glass\" is too strong and has been reworded to \"Ceramics are mostly crystalline; glass is an exception\", as Lecture 1 HT25 p. 17 says. Is the rewording approved, and should Quiz week 1 question 2 in Canvas be changed in the same way?",
+      "flag_sv": "aclflh9tpf"
     },
     "quiz-mer-keramer-vad-ar-sant-tva-ratta-svar": {
       "front": "Ceramics: which statements are true?",
@@ -177,7 +185,9 @@
         "Steel is an alloy of iron and phosphorus.",
         "The only metal that corrodes is steel."
       ],
-      "sv": "17j01opr6oq"
+      "sv": "17j01opr6oq",
+      "flag": "The quiz's correct options are simplified: \"All metals can be cast\" has become \"Metals can be cast\" (Lecture 1 HT25 p. 20), and \"higher fracture toughness than plastics and ceramics\" has been restricted to ceramics, since the comparison with plastics is not in the lecture text. Is the rewording approved, and should Quiz week 1 question 9 be changed in the same way?",
+      "flag_sv": "g1xe3j2y4x"
     },
     "quiz-vad-ar-sant-for-kompositer-tva-ratta": {
       "front": "Which statements about composites are true?",
@@ -227,7 +237,9 @@
       "back": "1. Translate\n2. Screen\n3. Rank\n4. Seek documentation\n\nIn addition to the four steps, one iterates: the material choice often needs to be refined in several steps before a good solution is found.",
       "hint": null,
       "options": null,
-      "sv": "5rycze0haj"
+      "sv": "5rycze0haj",
+      "flag": "Correction of the original card: \"5. Iterate\" was listed as a fifth step, but Kapitel_03 pp. 26 and 42 number four steps and treat iteration separately, and the suggested solutions to the exam of 2025-10-30 speak of four steps. Lecture 2 Materials selection 2025 p. 9, however, has \"Iterate\" as a slide of its own after step 4. Is it approved that the card gives four steps plus iteration?",
+      "flag_sv": "21fw6dxgp5h"
     },
     "beskriv-vad-man-gor-i": {
       "front": "Describe what is done in the materials selection step: \"Translate\".",
@@ -262,14 +274,18 @@
       "back": "The material choice often has to be refined and improved in several steps before a good solution is found. It is good to start with the material groups first and then narrow down. In CES (Granta EduPack) you start with Level 1 to find material groups and then move on to Levels 2 and 3.",
       "hint": null,
       "options": null,
-      "sv": "bvx488gyu9"
+      "sv": "bvx488gyu9",
+      "flag": "Correction of the original card: it said that one usually expands the set of materials after the first iteration, but Kapitel_03 p. 26 and Lecture 2 Materials selection p. 9 say that one starts broadly with the material groups and then narrows down (CES Level 1, then Levels 2 and 3). The front no longer calls the iteration a step. Is the new text approved?",
+      "flag_sv": "1e6qn2fueoa"
     },
     "vad-ar-ett-lastfall-och-varfor-ar-det": {
       "front": "What is a load case and why is it important in the materials selection process?",
       "back": "* A load case is an isolated loading situation that the material can be subjected to.\n* E.g.: A bar in compression/tension/torsion, a beam in bending/buckling or subjected to a distributed load, a pressure vessel subjected to pressure differences.\n* The load case (together with what is to be optimised) determines which material index is appropriate. All cases of bending of a beam, for example, have the same influence of the material, so for the material choice one only needs to determine the type of load case.\n* Examples for minimum weight: tie $\\rho/E$ (stiffness) or $\\rho/\\sigma_y$ (strength), beam in bending $\\rho/E^{1/2}$ or $\\rho/\\sigma_y^{2/3}$; choose materials with the lowest value.",
       "hint": null,
       "options": null,
-      "sv": "w472w7wm93"
+      "sv": "w472w7wm93",
+      "flag": "Correction of the original card: the claim that one should use \"the load case that occurs most often\" has no support in the course material and has been removed; instead the card says that only the type of load case is needed (Lecture 7 Stiffness p. 15), with index examples from Kapitel_03 p. 35. The duplicate, the card vad-har-lastfall-for-inverkan-pa, has at the same time been deactivated. Are the correction and the deactivation approved?",
+      "flag_sv": "16jklvxeu3k"
     },
     "beskriv-ingaende-vad-ett-materialindex": {
       "front": "Describe in detail what a material index is and how it is used.",
@@ -307,7 +323,9 @@
         "Translation means translating the material requirements into Danish.",
         "Free variables are things that are not necessary."
       ],
-      "sv": "jvabpiwnb7"
+      "sv": "jvabpiwnb7",
+      "flag": "The quiz's correct option \"All materials remaining after screening can be used to make the product\" is ambiguous, since it is the ranking that decides which material is best. The card now says that the materials \"meet the constraints and can therefore be used in the component\" (Lecture 2 Materials selection pp. 5 to 7). Is the rewording approved, and should Quiz week 1 question 5 be changed in the same way?",
+      "flag_sv": "222lrh7j91e"
     },
     "quiz-for-att-bestamma-materialindex-behover": {
       "front": "What do you need to know to determine a material index?",
@@ -331,7 +349,9 @@
         "Several material indices may be needed to arrive at a good material choice.",
         "All material indices must contain the density of the material."
       ],
-      "sv": "22oqk3wmvxh"
+      "sv": "22oqk3wmvxh",
+      "flag": "The quiz's incorrect option \"material indices rank materials by how well they meet the constraints\" was wrong only in the word constraints (indices rank by the objective) and could be read as correct. It has been replaced by \"Material indices are used in screening to remove the materials that do not meet the constraints\" (Lecture 2 Materials selection pp. 6, 7; Kapitel_03 p. 26), so the card departs from Quiz week 3 question 9. Is the replacement approved?",
+      "flag_sv": "1cgeal7odic"
     },
     "materialval-krav-eller-mal": {
       "front": "Which of the following are constraints (and not objectives) in a translation?",
@@ -437,7 +457,9 @@
         "$\\sigma_y^{2/3}/C_m$",
         "$\\sigma_y/(C_m\\rho)$"
       ],
-      "sv": "5k168s09en"
+      "sv": "5k168s09en",
+      "flag": "The card rejects the distractor σy^(2/3)/Cm because the density is missing, in line with Kapitel_03 p. 34 (Cm times ρ). The course's own solutions write cost indices without ρ (Övning 3 m lösningar p. 5 answer 10d and Materialval Flera mål p. 4), so a student who follows the solutions may choose the distractor. Are the solutions an abbreviation or an error, and should the card mention it?",
+      "flag_sv": "27ac8glorud"
     },
     "materialindex-lutning-hallfast-balk": {
       "front": "Materials for a light, strong beam are ranked with $\\sigma_y^{2/3}/\\rho$. What slope do lines of constant index value have in a chart of $\\log\\sigma_y$ against $\\log\\rho$?",
@@ -501,14 +523,18 @@
       "back": "![The unit cells BCC, FCC and HCP with atomic packing factors 0.68, 0.74 and 0.74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)\n\n* Face centered cubic\n* Face-centred cubic\n* E.g.: Al, Cu, Ni, Au, Ag, austenitic stainless steel (austenite = FCC iron)\n* Edge length a, angle 90 degrees\n* Close-packed face diagonal\n* Close-packed structure: atomic packing factor 0.74, stacking sequence ABCABC",
       "hint": null,
       "options": null,
-      "sv": "11uq4q519g1"
+      "sv": "11uq4q519g1",
+      "flag": "Correction of the original card: the example \"Stainless steel\" has been changed to \"austenitic stainless steel\", since ferritic and martensitic stainless steels are not FCC (Lecture 12 Steel p. 28); atomic packing factor 0.74 and ABCABC have been added (GLU 01 p. 11). GLU 01 2026 p. 15 itself writes only \"Stainless steel\". Is the more precise wording approved?",
+      "flag_sv": "yv2hbwtr8z"
     },
     "vad-kannetecknar-enhetscellen-bcc": {
       "front": "What characterises the unit cell: \"BCC\"?",
       "back": "![The unit cells BCC, FCC and HCP with atomic packing factors 0.68, 0.74 and 0.74](/kort/materialteknik/enhetsceller-bcc-fcc-hcp.svg)\n\n* Body centered cubic\n* Body-centred cubic\n* E.g.: Fe (ferrite, $\\alpha$-iron) from room temperature up to approx. 913 °C; above that the iron is FCC (austenite). Near the melting point (1394–1538 °C) the iron is BCC again, $\\delta$-ferrite.\n* Edge length a, angle 90 degrees\n* Close-packed body diagonal\n* Not a close-packed structure: atomic packing factor 0.68",
       "hint": null,
       "options": null,
-      "sv": "17i94xlm76p"
+      "sv": "17i94xlm76p",
+      "flag": "Correction of the original card: \"E.g.: Fe\" has been given temperature limits (BCC up to approx. 913 °C, FCC above that and BCC again as δ-ferrite between 1394 and 1538 °C) and atomic packing factor 0.68. The course material gives the transformation as 913 °C (GLU 01 p. 2), 912 °C (Lab_PM_M2_v2026 p. 4) and 910 °C (Lecture 4 2025 p. 14). Is the correction approved, and which temperature should the cards use?",
+      "flag_sv": "1zupx6n2xtu"
     },
     "det-finns-olika-typer-av-hal-i": {
       "front": "There are different types of holes in crystal structures; what does this mean?",
@@ -522,7 +548,9 @@
       "back": "![The planes (100), (110) and (111) marked in one cube each with the axes x, y and z](/kort/materialteknik/millerindex-plan.svg)\n\nMiller indices describe the orientation of an atomic plane in the crystal (compare with the normal of the plane). The unit cell defines the coordinate system. This is how the indices of a plane are obtained:\n1. Determine the intercepts of the plane with the coordinate axes\n2. Invert\n3. Convert to integers → Miller indices (hkl)\n\n(hkl) = specific plane\n{hkl} = family of planes\n\nDirections are described by direction vectors in the same coordinate system, converted to integers (only the direction matters, not the length). In GLU 1 they are called \"Miller indices for directions\", also called direction indices:\n[hkl] = specific direction\n\\<hkl> = family of directions\n\n![The directions 100, 110 and 111 as arrows from the origin in one cube each](/kort/materialteknik/millerindex-riktningar.svg)",
       "hint": null,
       "options": null,
-      "sv": "uum1dvp0ax"
+      "sv": "uum1dvp0ax",
+      "flag": "Correction of the original card: the claim that directions \"are no longer called Miller indices\" has been removed, since GLU 01 p. 20 has the heading \"Miller indices for directions\"; \"the position of the plane\" has been changed to orientation (GLU 01 p. 19), and the sentence about the origin in a corner has been removed. The learning objectives (GLU 01 p. 1, Lecture 3 2025) and several exams, however, distinguish between \"direction indices\" and \"Miller indices\". Which name should the card use?",
+      "flag_sv": "18h4q3lh1n0"
     },
     "kristallin": {
       "front": "Crystalline",
@@ -552,7 +580,9 @@
         "Polymers can be both amorphous and crystalline.",
         "All ceramics except glass are amorphous."
       ],
-      "sv": "1544uu8ez33"
+      "sv": "1544uu8ez33",
+      "flag": "The quiz's correct option \"Metals are always crystalline\" has been changed to \"Metals are as a rule crystalline\", since GLU 01 p. 11 writes \"most metals are crystalline\". Is the change approved, and should Quiz week 2 question 2 be changed in the same way?",
+      "flag_sv": "1d1451dt0cs"
     },
     "quiz-kristaller-och-enhetsceller-tva-ratt": {
       "front": "Crystals and unit cells: which statements are true?",
@@ -564,7 +594,9 @@
         "To describe an amorphous material, special unit cells with more atoms are needed.",
         "The FCC structure is close-packed but the BCC structure is not."
       ],
-      "sv": "1yrwtq748nf"
+      "sv": "1yrwtq748nf",
+      "flag": "The quiz's correct option \"Unit cells are a way of describing crystals, but do not exist in reality\" has been reworded to the definition in GLU 01 p. 10, the smallest volume that can describe the whole crystal, since the course material does not say that unit cells do not exist in reality. Is the rewording approved, and should Quiz week 2 question 3 be changed?",
+      "flag_sv": "21z3nsslwyc"
     },
     "tatpackade-strukturer-fcc-hcp": {
       "front": "Which structures are close-packed (atomic packing factor 0.74)?",
@@ -688,7 +720,9 @@
         "B",
         "C"
       ],
-      "sv": "8jxiyqezxh"
+      "sv": "8jxiyqezxh",
+      "flag": "The card shows three unlabelled unit cells in a figure of its own and asks which one is BCC, which is the same problem type as the exam of 2024-01 problem 11 (name three unit cells in a figure) and resembles 2025-10-30 problem 2a. Is the card too close to the exam?",
+      "flag_sv": "zwkhfaf7ig"
     },
     "millerindex-negativt-index": {
       "front": "A plane intersects the x-axis at 1 and the y-axis at −1/2 and is parallel to the z-axis. What are the Miller indices of the plane?",
@@ -780,21 +814,27 @@
       "back": "![The unary phase diagram of iron with ferrite, austenite, delta ferrite, liquid and vapour](/kort/materialteknik/jarn-unart-fasdiagram.svg)\n\nFerrite ($\\alpha$-iron) is iron with a BCC structure. In pure iron it is the stable phase up to approx. 913 °C. Ferrite has a low solubility of carbon.\n\nAbove approx. 1394 °C pure iron becomes BCC again, then called $\\delta$-ferrite.\n\nThe figure follows the phase diagram in the Lab PM (912 °C); GLU 02 gives 913 °C.",
       "hint": null,
       "options": null,
-      "sv": "seu31b9y0v"
+      "sv": "seu31b9y0v",
+      "flag": "Correction of the original card: \"pure iron up to 910 °C\" (Lecture 4 2025 p. 14) has been changed to approx. 913 °C (GLU 02 p. 4), and the δ-ferrite above approx. 1394 °C has been added following the phase diagram in the lab instructions, which shows 912 °C (Lab_PM_M2_v2026 p. 4); the card itself explains the difference. Is the correction approved, and should the cards give 910, 912 or 913 °C?",
+      "flag_sv": "12fj69b8rok"
     },
     "vad-ar-austenit-och-nar-uppstar-det": {
       "front": "What is Austenite and when does it form?",
       "back": "![The unary phase diagram of iron with ferrite, austenite, delta ferrite, liquid and vapour](/kort/materialteknik/jarn-unart-fasdiagram.svg)\n\nAustenite ($\\gamma$-iron) is iron with an FCC structure. In pure iron it is the stable phase between approx. 913 °C and approx. 1394 °C. Austenite can dissolve up to approx. 2.1 % carbon.\n\nThe figure follows the phase diagram in the Lab PM (912 °C); GLU 02 gives 913 °C.",
       "hint": null,
       "options": null,
-      "sv": "1k3v8nxhdqv"
+      "sv": "1k3v8nxhdqv",
+      "flag": "Correction of the original card: \"pure iron above 910 °C\" did not hold above approx. 1394 °C, where the iron becomes δ-ferrite, so the card now gives austenite between approx. 913 °C (GLU 02 p. 4) and approx. 1394 °C (Lab_PM_M2_v2026 p. 4); the solubility of approx. 2.1 % C remains from Lecture 4 p. 14. The figure shows 912 °C. Are the correction and the temperature approved?",
+      "flag_sv": "1dv3bw98pzy"
     },
     "vad-ar-cementit-och-nar-uppstar-det": {
       "front": "What is cementite and when does it form?",
       "back": "Cementite, Fe₃C, intermediate phase, 6.67 % C, very hard",
       "hint": null,
       "options": null,
-      "sv": "2494qhvlvec"
+      "sv": "2494qhvlvec",
+      "flag": "The card calls cementite an \"intermediate phase\", as Lecture 12 Steel p. 17 does, but GLU 02 p. 18 and the card intermetall use intermediate for phases with a wide composition range, and Fe3C has an exact composition (6.67 % C). In addition, the back does not say when cementite forms, even though the question asks that. Which term should the card use, and should the back be supplemented?",
+      "flag_sv": "u33s31d5e9"
     },
     "metastabil": {
       "front": "Metastable",
@@ -808,7 +848,9 @@
       "back": "An in-between phase in the phase diagram that consists only of metals (at least two). It has an exact or nearly stoichiometric composition, e.g. CuAl₂ in Al-Cu, and appears as a narrow single-phase region. In-between phases with a wider composition range are called intermediate phases.",
       "hint": null,
       "options": null,
-      "sv": "1e61b0djyzp"
+      "sv": "1e61b0djyzp",
+      "flag": "Correction of the original card: the definition has been extended to say that the phase has an exact or nearly stoichiometric composition and that phases with a wider range are called intermediate (GLU 02 p. 18). Lecture 4 Phase diagrams 2025 p. 13 instead uses intermediate phase as a collective term and says that an intermetallic phase can have a range, and the cementite card calls the stoichiometric Fe3C an intermediate phase. Which definition should apply?",
+      "flag_sv": "hirwtnd5mi"
     },
     "eutektikum": {
       "front": "Eutectic structure",
@@ -825,7 +867,9 @@
         "True",
         "False"
       ],
-      "sv": "oaofwmajy2"
+      "sv": "oaofwmajy2",
+      "flag": "The original card gave the eutectoid temperature as approx. 727 °C, but the rewrite as true/false says approx. 0.8 % C and approx. 723 °C, as GLU 02 p. 19 does, while Lab_PM_M2_v2026 p. 11 uses 0.77 % C and 727 °C. The statement and the answer (false) are otherwise unambiguous. Which values should the Fe-C cards use?",
+      "flag_sv": "183jwq94kdp"
     },
     "loslighetsgrans": {
       "front": "Solubility limit",
@@ -882,7 +926,9 @@
         "A phase diagram shows which phases are stable at a given temperature and composition.",
         "Metastable phases are usually marked in red in the phase diagram."
       ],
-      "sv": "2cetkuphn6v"
+      "sv": "2cetkuphn6v",
+      "flag": "The quiz's correct options \"Two single-phase regions always have a two-phase region between them\" and \"A phase diagram shows only stable phases\" have been reworded without \"always\" and \"only\"; the first now applies only to binary diagrams, since the unary diagram of iron (Lab_PM_M2_v2026 p. 4) has no two-phase regions. Is the rewording approved, and should Quiz week 2 question 6 be changed?",
+      "flag_sv": "14rydp0qda6"
     },
     "quiz-stals-fasdiagram-vad-ar-sant-tva-ratt": {
       "front": "The phase diagram of steel: which statements are true?",
@@ -894,7 +940,9 @@
         "Pearlite is not a phase, but its carbon content and fraction can still be determined from the phase diagram.",
         "Austenite is ferrite with dissolved carbon."
       ],
-      "sv": "yqzk8jem0m"
+      "sv": "yqzk8jem0m",
+      "flag": "The quiz's incorrect option \"If carbon is dissolved in ferrite, austenite forms\" can be read as true (at approx. 850 °C pure iron is ferrite but a steel with 0.3 % C is austenite, GLU_5-8 p. 15) and has been replaced by \"Austenite is ferrite with dissolved carbon\". Is the replacement approved, and should Quiz week 2 question 7 be changed?",
+      "flag_sv": "1tcozq67jle"
     },
     "quiz-eutektiska-och-eutektoida-reaktioner": {
       "front": "Eutectic and eutectoid reactions: which statements are true?",
@@ -906,7 +954,9 @@
         "Eutectoid reactions require heat to be supplied, otherwise nothing happens.",
         "Eutectoid reactions require diffusion; without diffusion no eutectoid reaction takes place."
       ],
-      "sv": "23x8sduwnh1"
+      "sv": "23x8sduwnh1",
+      "flag": "The quiz's correct option \"Eutectoid reactions require diffusion, otherwise nothing happens\" is not literally true, since martensite forms on rapid cooling; the card now says \"without diffusion no eutectoid reaction takes place\". Is the rewording approved, and should Quiz week 2 question 8 be changed?",
+      "flag_sv": "2azvhjh63am"
     },
     "quiz-fasdiagram-vad-ar-sant-tva-ratta-svar": {
       "front": "Phase diagrams: which statements about solubility and the lever rule are true?",
@@ -983,7 +1033,9 @@
         "True",
         "False"
       ],
-      "sv": "2d9pnsdgnqa"
+      "sv": "2d9pnsdgnqa",
+      "flag": "The card and the figure give the eutectoid point as approx. 0.8 % C and 723 °C and refer to Lab_PM_M2_v2026 pp. 10 to 12, but the lab instructions use 0.77 % C and 727 °C (GLU 02 p. 19 has 0.8 % and 723 °C). The same values are on all Fe-C cards, and the students encounter both in the lab. Should the cards mention the values in the lab instructions, as the ferrite and austenite cards do for 912/913 °C?",
+      "flag_sv": "27hazeazwt9"
     },
     "undereutektoidiskt-stal-strukturbestandsdelar": {
       "front": "Which microconstituents does a hypoeutectoid steel (below approx. 0.8 % C) have after slow cooling?",
@@ -1075,7 +1127,9 @@
         "True",
         "False"
       ],
-      "sv": "zslxejgyjn"
+      "sv": "zslxejgyjn",
+      "flag": "The card gives the eutectic temperature in Al-Si as approx. 577 °C, as Lab_PM_M2_v2026 p. 9 does, but the figure in Exempel fasdiagram p. 8 shows 557 °C according to the review. Is 577 °C correct, and should the figure in Exempel fasdiagram be corrected?",
+      "flag_sv": "11uvlj5ql0g"
     },
     "avsvalningskurvor-former": {
       "front": "What does the cooling curve look like when a pure metal, an alloy that solidifies as a single phase, and an alloy with a primary phase and eutectic solidify?",
@@ -1106,7 +1160,9 @@
         "Approx. 35 % pearlite and 65 % primary ferrite",
         "100 % pearlite"
       ],
-      "sv": "16qbd1hellt"
+      "sv": "16qbd1hellt",
+      "flag": "The card applies the lever rule correctly (0.35 % C gives approx. 56 % primary ferrite), but GLU_5-8 p. 15 says that a steel with 0.3 % C gets \"approx. 30 %\" primary ferrite, whereas the lever rule gives approx. 63 %. Students who compare the card with the slide get different answers. Is the number on the slide wrong, and should it be corrected in Canvas?",
+      "flag_sv": "binnavxkzd"
     },
     "stal-austenit-blir-perlit-andel": {
       "front": "The fraction of pearlite in a hypoeutectoid steel after slow cooling is equal to the fraction of austenite just above the eutectoid temperature.",
@@ -1174,7 +1230,9 @@
         "True",
         "False"
       ],
-      "sv": "upwnpnayjl"
+      "sv": "upwnpnayjl",
+      "flag": "The card says that the fraction of eutectic does not change when a Pb-Sn alloy cools from 183 °C to room temperature. GLU_5-8 p. 10 only describes that Sn-rich phase separates out in the Pb-rich phase, and that the fraction of eutectic is unchanged is stated explicitly only in the suggested solutions to the exam of 24-10 problem 3c. Is that sufficient evidence?",
+      "flag_sv": "cl8otkrnv7"
     },
     "havstang-faser-i-eutektikum": {
       "front": "What fraction of the eutectic itself in Pb–Sn is $\\beta$ phase just below 183 °C, when the eutectic has just formed? ![The Pb–Sn phase diagram with 18.3 %, 61.9 % and 97.8 % Sn at 183 °C](/kort/materialteknik/pb-sn-fasdiagram.svg)",
@@ -1198,7 +1256,9 @@
         "Approx. 54 % Cu",
         "Approx. 1 % Cu"
       ],
-      "sv": "x9qvxi9fqf"
+      "sv": "x9qvxi9fqf",
+      "flag": "The answer \"Just under 6 % Cu\" and the figure al-cu-alhornet.svg are based on a reading of Exempel fasdiagram p. 7, where the maximum solubility is not written out, whereas the suggested solutions to the exam of 2025-01 problem 8c say \"below 5.5 % Cu\". The card tests the same knowledge as 25-01 problem 8c and 24-08 problem 3a, but with its own wording. Is the reading correct, and is the card far enough from the exams?",
+      "flag_sv": "p5vlljb2es"
     },
     "al-cu-havstang-andel-theta": {
       "front": "An Al–3 % Cu alloy has cooled slowly to room temperature. Approximately what weight fraction of $\\theta$ (CuAl₂) does it have? ($\\alpha$ then has almost 0 % Cu and $\\theta$ approx. 54 % Cu.)",
@@ -1210,7 +1270,9 @@
         "Approx. 9 %",
         "Approx. 94 %"
       ],
-      "sv": "2ew3y54yzq"
+      "sv": "2ew3y54yzq",
+      "flag": "The card assumes that θ (CuAl2) has approx. 54 % Cu, a value read off Exempel fasdiagram p. 7, where it is not written out; the answer becomes approx. 6 % θ and the calculation is correct. Is the reading correct?",
+      "flag_sv": "13vryttddt2"
     },
     "vad-beror-ett-materials-densitet-pa-for": {
       "front": "What factors does the density of a material depend on?",
@@ -1224,7 +1286,9 @@
       "back": "Atomic bonds are usually likened to linear springs because they have similar properties.\nIf:\nS = the stiffness of the atomic bond\nn = the number of bonds/area\nWe get:\nYoung's modulus = S x n\n\n* Elastic behaviour = the material behaves\nlike a spring, springs back on\nunloading\n* A deep bond energy curve gives:\n  - High Young's modulus\n  - High melting temperature",
       "hint": null,
       "options": null,
-      "sv": "186790iyabi"
+      "sv": "186790iyabi",
+      "flag": "The card states \"Young's modulus = S x n\" with S as the stiffness of the bond and n as the number of bonds per area, verbatim from Lecture 7 Stiffness 2025. The relation does not work dimensionally (N/m times 1/m² gives N/m³, not Pa); the spring model gives E ≈ S/r0, where r0 is the atomic spacing (Ashby). Should the formula be corrected, or written as a proportionality?",
+      "flag_sv": "dglkugwvui"
     },
     "vad-har-ett-materials-atombindningar": {
       "front": "What influence do a material's atomic bonds have on its properties?",
@@ -1245,14 +1309,18 @@
       "back": "* Elastic behaviour up to\nthe yield strength\n* Yield strength = the stress at which\nthe material starts to yield\n* Ultimate tensile strength = the highest stress\n* Elastic unloading even in the plastic\nregion\n* Metals, semicrystalline thermoplastics (between Tg and Tm)",
       "hint": null,
       "options": null,
-      "sv": "6u4wcwml42"
+      "sv": "6u4wcwml42",
+      "flag": "Correction of the original card: the examples of ductile materials were \"Metals, polymers\" (verbatim Lecture 7 Stiffness p. 7), but amorphous thermoplastics (except e.g. PC) and thermosets are brittle at room temperature (L6 pp. 7, 8; Polymer lab instructions p. 2). It now says \"Metals, semicrystalline thermoplastics (between Tg and Tm)\", which departs from the slide in the metals part of the course. Is the correction approved?",
+      "flag_sv": "o26b7cwplb"
     },
     "vilka-egenskaper-kan-observeras": {
       "front": "Which properties can be observed/determined by means of a tensile test?",
       "back": "![Stress–strain curve from a tensile test with E, Rp0.2, Rm and elongation at break](/kort/materialteknik/dragprovkurva.svg)\n\n* Young's modulus (stiffness) GPa\n* Yield strength (starts to yield) MPa\n* Ultimate tensile strength (highest stress before fracture) MPa\n* Elongation at break (plastic strain after fracture) %\n* The area under the curve: the work of fracture, i.e. the energy per unit volume up to fracture. (Toughness in the sense of resistance to crack growth, fracture toughness, however, cannot be measured with a tensile test, since the specimen has no crack.)",
       "hint": null,
       "options": null,
-      "sv": "1at7nmuki0w"
+      "sv": "1at7nmuki0w",
+      "flag": "Correction of the original card: \"Toughness = the area under the tensile test curve\" (Lecture 7 Stiffness 2025 p. 9) conflicts with the 2026 definition of toughness as resistance to crack growth, which according to Kapitel_08 p. 2 cannot be obtained from a tensile test. The area is now called the work of fracture (Lecture 9 p. 11). Is the correction approved?",
+      "flag_sv": "13ahu9lwo7j"
     },
     "dragprov-rp02-bestamning": {
       "front": "How is the yield strength $R_{p0.2}$ determined from a tensile test curve?",
@@ -1288,14 +1356,18 @@
       "back": "Strain is a geometric quantity: the relative change in length, $\\varepsilon = (L - L_0)/L_0$. It is dimensionless and is often given in per cent (0.05 = 5 %). Tensile stress gives positive strain and compressive stress negative.\n\n* Strain can be caused by:\n\nMechanical loads:\n$\\sigma = E\\,\\varepsilon$\nTemperature:\n$\\varepsilon = \\alpha\\,\\Delta T$\n$\\alpha$ = the coefficient of linear thermal expansion\nElectric and magnetic fields\nMoisture etc.",
       "hint": null,
       "options": null,
-      "sv": "1fouahgff1j"
+      "sv": "1fouahgff1j",
+      "flag": "Correction of the original card: strain was described as \"the percentage elongation\", but according to Kapitel_04 pp. 6 and 7 it is the relative change in length ΔL/L0, dimensionless and negative in compression, and often given in per cent. Is the correction approved?",
+      "flag_sv": "1fjzp75h2tc"
     },
     "vad-kannetecknar-ett-isotropt-material": {
       "front": "What characterises an isotropic material?",
       "back": "An isotropic material has the same properties regardless of the direction in which they are measured. Its elastic behaviour is described by two elastic constants:\n\n* Young's modulus\n* Poisson's ratio, lateral contraction\n\nThe other moduli follow from them, e.g. the shear modulus $G = E/(2(1+\\nu))$. More elastic constants are needed in e.g. composites and wood → anisotropic material.",
       "hint": null,
       "options": null,
-      "sv": "admz0mxtzv"
+      "sv": "admz0mxtzv",
+      "flag": "Correction of the original card: isotropy was defined as the material \"can be described with at least two elastic constants\" (a reading of Lecture 7 Stiffness 2025 p. 13), but the definition is that the properties are the same in all directions (Kapitel_04 p. 23); E and ν remain and G = E/(2(1+ν)) has been added (Kapitel_04 p. 21). Is the correction approved?",
+      "flag_sv": "1ur5i5sc1zi"
     },
     "anisotropt": {
       "front": "Anisotropic",
@@ -1503,7 +1575,9 @@
         "Polymers have a low yield strength because they always contain many dislocations.",
         "Dislocations move most easily in directions close to 45 degrees to the loading direction."
       ],
-      "sv": "1m4rkpkhpyo"
+      "sv": "1m4rkpkhpyo",
+      "flag": "The quiz's correct option \"it must move on an atomic plane close to 45 degrees\" is too strong: Lecture 8 Plasticity p. 9 says that the dislocations move \"most easily\" close to 45 degrees, and Kapitel_06 p. 20 that slip occurs when the shear stress on the slip system becomes sufficiently high. The card has reworded the option to \"move most easily\" and kept it as correct. Is the rewording approved, and should Quiz week 3 question 4 be changed?",
+      "flag_sv": "kjclfqqouk"
     },
     "quiz-hardningsmekanismer-vad-ar-ratt-2-ratta": {
       "front": "Hardening mechanisms: which statements are correct?",
@@ -1515,7 +1589,9 @@
         "Precipitation hardening can only be applied to alloys, not to pure metals.",
         "Larger grains (fewer grain boundaries) give higher strength."
       ],
-      "sv": "13yqplvq8w8"
+      "sv": "13yqplvq8w8",
+      "flag": "The quiz's two incorrect options could be read as true (\"When metals are heat treated, the dislocations lock and the yield strength increases\" holds for precipitation hardening, Kapitel_06 p. 35; \"If the amount of crystal defects is reduced, the strength increases\" holds in the limit towards the ideal strength, Kapitel_06 pp. 14, 15) and have been replaced with unambiguously incorrect ones about recrystallisation and coarse grains. Is the replacement approved, and should Quiz week 3 question 5 be changed?",
+      "flag_sv": "1bmc08izpkb"
     },
     "quiz-kristalstorningar-kristalldefekter-vad": {
       "front": "Crystal imperfections (crystal defects): which statements are correct?",
@@ -1601,7 +1677,9 @@
         "The planes $\\{110\\}$ and the body diagonals $\\langle 111\\rangle$",
         "All planes and directions, since the entire FCC structure is close-packed"
       ],
-      "sv": "wrzfmqsvvv"
+      "sv": "wrzfmqsvvv",
+      "flag": "That the slip systems in FCC are {111}<110> is not stated verbatim in the text of the course material; the card derives it from Kapitel_06 p. 28 (the slip systems follow the most close-packed planes and directions) and GLU 01 p. 19, and the notation appears explicitly only in the exam of 2015-10-26 problem 4a. Is the derivation sufficient as evidence?",
+      "flag_sv": "pzwq7qw8ma"
     },
     "plastisk-deformation-onskvard": {
       "front": "In which situations is plastic deformation desirable?",
@@ -1627,21 +1705,27 @@
       "back": "At low temperatures some metals and all polymers become brittle. When the temperature falls, the yield strength of most materials increases, which reduces the plastic zone at the crack tip and thereby the toughness. Only metals with an FCC structure remain ductile at the lowest temperatures.\n\nThe transition between ductile and brittle behaviour (the transition temperature) is determined by impact testing.",
       "hint": null,
       "options": null,
-      "sv": "4rseh7wv2o"
+      "sv": "4rseh7wv2o",
+      "flag": "Correction of the original card: it said that materials generally become more brittle when the temperature falls, but metals with an FCC structure remain ductile. The text now follows Kapitel_08 p. 31 (some metals and all polymers become brittle, the yield strength increases, the plastic zone shrinks). Is the correction approved?",
+      "flag_sv": "1uge7zftd2q"
     },
     "vad-ar-skillnaden-mellan-ett-segt": {
       "front": "What is the difference between a ductile and a brittle fracture?",
       "back": "* **Ductile fracture** is preceded by clear plastic deformation and large changes of shape. Voids form at inclusions, grow and coalesce into fracture. The fracture surface is dull and uneven (cup-and-cone shaped). Typical of most metals at room temperature.\n* **Brittle fracture** occurs without significant plastic deformation, often suddenly. The fracture surface is relatively flat and shiny with a granular structure. Occurs mainly at low temperatures, high loading rates and in brittle materials such as ceramics and hardened steel.",
       "hint": null,
       "options": null,
-      "sv": "1swdfm29486"
+      "sv": "1swdfm29486",
+      "flag": "Correction of the original card: it said that a ductile material deforms plastically \"over a longer time\", but it is the amount of plastic deformation and not the time that distinguishes the fractures (Kapitel_08 pp. 27, 28). The new back follows almost verbatim the suggested solution to the exam of 2025-10-30 problem 4 (e.g. \"relatively flat and shiny with a granular structure\"). Is the correction approved, or should the back be rewritten in the card's own words?",
+      "flag_sv": "2fi7z7hrpu5"
     },
     "vad-anvander-man-for-typ-av-test-for": {
       "front": "What type of test is used to investigate a material's fracture toughness?",
       "back": "The fracture toughness $K_{1c}$ is determined with specimens that have a sharp crack, e.g. CT specimens (compact tension) or SENB specimens (single edge notched beam). Both specimen types have a fatigue crack. The specimen must be wide enough for plane strain to prevail along the crack front; only then does $K_{1c}$ become a pure material property.\n\nImpact testing (Charpy) with a notched specimen instead measures impact energy, the energy needed to break the specimen. It makes it possible to compare the toughness of materials and determine the transition temperature, but provides no way of expressing toughness as a material property.",
       "hint": null,
       "options": null,
-      "sv": "k7bnh9rq9"
+      "sv": "k7bnh9rq9",
+      "flag": "Correction of the original card: it said that fracture toughness is determined with impact testing, but impact testing gives impact energy and not toughness as a material property (Kapitel_08 p. 8). It now says CT and SENB specimens with a sharp crack and plane strain (Kapitel_08 pp. 16, 21), pages that are marked \"Know about, no detailed questions on the exam\". Is the correction approved, and is the level of detail reasonable?",
+      "flag_sv": "1223ni417yn"
     },
     "hogcykelutmattning": {
       "front": "High-cycle fatigue",
@@ -1665,7 +1749,9 @@
         "True",
         "False"
       ],
-      "sv": "1ik0j55n5rw"
+      "sv": "1ik0j55n5rw",
+      "flag": "The original card (the exam of 2020-10-24 problem 1e, answer key yes) said \"stainless steel\"; the statement has now been made more precise as \"ordinary (ferritic) steel\" and \"austenitic stainless steel\", since only FCC metals remain ductile (Kapitel_08 p. 31) and ferritic and martensitic stainless steels have a transition temperature. The source line lacks \"Rättelse:\" (Correction:). Is the clarification approved?",
+      "flag_sv": "6ixaqngp6s"
     },
     "ja-nej-utmattningsgransen-ar-antalet": {
       "front": "The fatigue limit is the number of cycles to failure at a given stress.",
@@ -1704,7 +1790,9 @@
       "back": "The stress below which fatigue does not occur.",
       "hint": null,
       "options": null,
-      "sv": "1q9e8qdbhdf"
+      "sv": "1q9e8qdbhdf",
+      "flag": "The card says that fatigue does not occur at all below the fatigue limit, but Kapitel_09 Utmattning p. 5 says that failure occurs not at all or only after a very large number of cycles (e.g. more than 10^7), which the card ja-nej-utmattningsgransen-ar-antalet in the same file also says. Should the definition be written as on the slide?",
+      "flag_sv": "1b3vtqz5vmm"
     },
     "segt-brott": {
       "front": "Ductile fracture",
@@ -1723,7 +1811,9 @@
         "Materials with a high yield strength always have high fracture toughness.",
         "A crack grows when the stress intensity factor exceeds the fracture toughness."
       ],
-      "sv": "lwp85ih10r"
+      "sv": "lwp85ih10r",
+      "flag": "The quiz's correct option \"Ductile fracture is obtained when the stress intensity factor is greater than the fracture toughness\" has been reworded to \"A crack grows when the stress intensity factor exceeds the fracture toughness\", since the condition applies to crack growth in general and not specifically to ductile fracture (Kapitel_08 p. 14). Is the rewording approved, and should Quiz week 3 question 7 be changed?",
+      "flag_sv": "2gfygtq1ydo"
     },
     "quiz-brott-2-ratta-svar": {
       "front": "Fracture in metals and brittle materials: which statements are true?",
@@ -1735,7 +1825,9 @@
         "In metals the fracture only exceptionally follows the grain boundaries, e.g. when impurities have weakened them.",
         "In brittle materials, the size of defects such as cracks and pores is decisive for the fracture stress."
       ],
-      "sv": "2egb20aszjv"
+      "sv": "2egb20aszjv",
+      "flag": "The correct option has been reworded to \"In metals the fracture only exceptionally follows the grain boundaries\", but \"only exceptionally\" is not in the course: Kapitel_08 p. 32 says that impurities normally collect in the grain boundaries, and Lecture 9 Fracture and fracture toughness p. 16 shows intergranular fracture as one of two common brittle fracture surfaces. Does the examiner agree, or should it say e.g. \"mainly when the grain boundaries have been weakened\"?",
+      "flag_sv": "fqhyuhaits"
     },
     "brott-seghet-definition": {
       "front": "What is meant by toughness in the course?",
@@ -1831,7 +1923,9 @@
         "The life is not affected; only the stress amplitude matters",
         "The mean stress only affects low-cycle fatigue"
       ],
-      "sv": "lw9sp8ics5"
+      "sv": "lw9sp8ics5",
+      "flag": "The card gives approx. 11 550 cycles for example 9.2, but without rounding it becomes approx. 11 260 (200 000 times 0.75^10); 11 550 is obtained only if the corrected stress range is rounded to 266 MPa. Is 11 550 on the slide in Kapitel_09 Utmattning p. 10, or should the figure be changed to approx. 11 300?",
+      "flag_sv": "5b5r6mp94s"
     },
     "utm-battre-utmattningsegenskaper": {
       "front": "Which measures give better fatigue properties in a metal component?",
@@ -1872,7 +1966,9 @@
         "The fracture surface is relatively flat and shiny with a granular structure",
         "Voids form at inclusions and coalesce into fracture"
       ],
-      "sv": "1vculd8drms"
+      "sv": "1vculd8drms",
+      "flag": "The card is essentially the exam of 2025-10-30 problem 4 turned into multiple choice: the correct options are the suggested solution's sentences about brittle fracture and the incorrect ones its sentences about ductile fracture (Svarsförslag uppgift 4-6 IMS085 251030 p. 1), and the appearance of the fracture surfaces is not given on Kapitel_08 pp. 27, 28. Should the card be rewritten based on the lecture, or removed?",
+      "flag_sv": "h9brxuvnok"
     },
     "brott-weibullmodul": {
       "front": "What does a high value of the Weibull modulus $m$ mean for a ceramic?",
@@ -1903,21 +1999,27 @@
       "back": "A material's resistance to crack growth. The fracture toughness $K_{1c}$ ($\\text{MPa}\\sqrt{\\text{m}}$; 1 for loading mode 1, c for critical) is the critical value of the stress intensity factor.\n\n* A crack grows when the stress intensity factor $K_1$ exceeds $K_{1c}$. Under static load the crack does not grow as long as $K_1$ is less than $K_{1c}$ (under cyclic load, however, a fatigue crack can grow a little with each cycle, see Paris's law).\n* $K_1 = Y\\sigma\\sqrt{\\pi c}$ takes account of both the load (the stress $\\sigma$) and the crack length $c$.\n* The fracture toughness depends on the energy required to drive the crack: $K_{1c} = \\sqrt{E\\,G_c}$.",
       "hint": null,
       "options": null,
-      "sv": "9zaatqbpkw"
+      "sv": "9zaatqbpkw",
+      "flag": "Correction of the original card: the fracture condition was reversed, \"Fracture when K1c > K1\", as it says on Lecture 9 Fracture and fracture toughness 2025 p. 7. The card now says that the crack grows when K1 exceeds K1c (Lecture 9 p. 10, Kapitel_08 p. 14), with the addition \"under static load\", since a fatigue crack can grow below K1c. Is the correction approved, and should the slide Lecture 9 p. 7 be corrected in Canvas?",
+      "flag_sv": "jbnwgbn0fl"
     },
     "vad-hander-med-material-nar": {
       "front": "What happens to materials when the temperature is raised?",
       "back": "* The atoms vibrate with a larger amplitude\n* The atomic bonds weaken slightly\n* The atoms move more easily (diffusion)\n* Phase transformations at specific temperatures or temperature ranges\n* Chemical reactions proceed faster, often with an exponential increase",
       "hint": null,
       "options": null,
-      "sv": "7u1l6c998v"
+      "sv": "7u1l6c998v",
+      "flag": "Correction of the original card: \"the atoms start to vibrate\" (Lecture 10 Materials and heat 2025 p. 2) was wrong; the atoms already vibrate and it is the amplitude that increases. The card now follows Kapitel_12 Material och värme 2026 p. 2 verbatim. Is the correction approved?",
+      "flag_sv": "h1woc67b9j"
     },
     "beskriv-utforligt-vad-smalttemperatur": {
       "front": "Describe in detail what the melting temperature and the glass transition temperature are and which materials each is relevant for.",
       "back": "Melting temperature:\n\n* Crystalline materials\n* Metals, ceramics, semicrystalline thermoplastics (which have both Tm and Tg)\n* Go from solid to \"low-viscosity\"\nliquid at the melting temperature, \"Tm\"\n\nGlass transition temperature\n\n* Amorphous materials\n* Thermoplastics, glass\n* Gradual transition from solid to \"viscous\" at\nthe glass transition temperature \"Tg\".",
       "hint": null,
       "options": null,
-      "sv": "lljdqssbin"
+      "sv": "lljdqssbin",
+      "flag": "Correction of the original card: thermoplastics were listed only under glass transition temperature, but semicrystalline thermoplastics have both Tg and Tm (MTT085 PM 2 p. 4, Lecture 16 2025 p. 21), so they are now also listed under melting temperature. The slide from the metals part of the course, Kapitel_12 p. 4, has the original's division. Is the addition approved?",
+      "flag_sv": "19o88ikktqq"
     },
     "vad-definierar-ett-materials-relevanta": {
       "front": "What defines a material's relevant service temperature?",
@@ -1931,42 +2033,54 @@
       "back": "**Thermal expansion:** a solid expands on heating because the atoms move further apart. The thermal strain is $\\varepsilon_T = \\alpha\\,(T - T_0)$, where $\\alpha$ is the coefficient of thermal expansion (weakly temperature-dependent) and $T_0$ a reference temperature. The volume expansion is approximately three times as large as the linear one.\n\n**Thermal stresses:** thermal expansion gives rise to stresses, for example\n\n* when two joined materials have different $\\alpha$, so that one expands more than the other\n* from temperature gradients, i.e. when different parts of the material have different temperatures\n\nRepeated temperature variations can give thermal fatigue.",
       "hint": null,
       "options": null,
-      "sv": "e694xt0wo4"
+      "sv": "e694xt0wo4",
+      "flag": "Correction of the original card: \"thermal gradients\" were described as the size and direction of the expansion in vector form, but they are temperature differences in the material (Kapitel_12 pp. 13, 16); the card also says that α is weakly temperature-dependent and that the volume expansion is approximately three times the linear one. The formula for thermal strain on the slide p. 13 lacks the parentheses; the card's is correct. Is the correction approved?",
+      "flag_sv": "gggu5dns6i"
     },
     "vad-har-atombindningar-med-termisk": {
       "front": "What do atomic bonds have to do with thermal expansion?",
       "back": "A solid expands on heating because the atoms move further apart. Strong atomic bonds (a deep bond energy curve) give both a high Young's modulus and a high melting temperature, and empirically materials with a high Young's modulus (stiff springs) have a low expansion coefficient.\n\nAll crystalline solids expand approximately 2 % from absolute zero to the melting point. Therefore $\\alpha$ is approximately inversely proportional to $T_m$: weak bonds give a low melting temperature and large thermal expansion.",
       "hint": null,
       "options": null,
-      "sv": "1g7ui1qlynq"
+      "sv": "1g7ui1qlynq",
+      "flag": "Correction of the original card: it said that α depends on temperature because the bond strength does, an explanation that is not in the material (Lecture 10 2025 p. 8 only says that α depends on temperature, Kapitel_12 p. 13 calls it weakly temperature-dependent). The card is now based on Kapitel_12 pp. 14, 15 and 26 (strong bonds give high E and high Tm, α approximately inversely proportional to Tm). Is the correction approved?",
+      "flag_sv": "1d2rap5if56"
     },
     "vilka-faktorer-ar-avgorande-for-ett": {
       "front": "Which factors are decisive for a material's thermal conductivity?",
       "back": "Heat is conducted by two mechanisms:\n\n* Lattice vibrations (phonons): elastic wave packets that travel at the speed of sound but only a short distance (mean free path, usually less than 0.01 µm) before they are scattered\n* Electrons, which make metals conduct heat very well\n\nBoth phonons and electrons transfer energy from regions of high temperature to regions of low temperature.\n\nThe phonons are impeded and scattered by crystal imperfections, e.g. dislocations and solute atoms. Dissolved alloying atoms are such imperfections, so alloying does not improve a metal's thermal conductivity.",
       "hint": null,
       "options": null,
-      "sv": "22e2g2s9d4y"
+      "sv": "22e2g2s9d4y",
+      "flag": "Correction of the original card: \"Pure alloys have the best thermal conductivity\" was self-contradictory, and \"to a region of low energy\" has been changed to low temperature; it now says that alloying does not improve thermal conduction (Lecture 10 2025 pp. 10, 11; Kapitel_12 p. 20; Quiz week 4 question 9). The explanation goes via phonons, but in metals heat is conducted mainly by free electrons, which are also scattered by solute atoms. Is the correction approved, and is the phonon explanation sufficient?",
+      "flag_sv": "1d6zqvu1gxp"
     },
     "beskriv-kort-vad-varmeflode-ar-och-hur": {
       "front": "Describe briefly what heat flux is and how it is calculated",
       "back": "The heat flux $q$ (W/m²) is the amount of heat per unit time and area that is conducted through the material. At steady state it is given by Fourier's law, $q = -\\lambda\\,\\Delta T/\\Delta x$, where $\\lambda$ is the thermal conductivity (W/(m K)) and $\\Delta T/\\Delta x$ the temperature gradient. The minus sign indicates that the heat flows from high to low temperature.\n\nFor a wall of thickness $t$ with the temperatures $T_i$ and $T_o$ on either side, the power loss is $q = \\lambda\\,(T_i - T_o)/t$.\n\nIf the temperature instead changes with time (transient heat conduction), the process is governed by the thermal diffusivity $a = \\lambda/(\\rho C_p)$ (m²/s).",
       "hint": null,
       "options": null,
-      "sv": "2g23z3to1e"
+      "sv": "2g23z3to1e",
+      "flag": "Correction of the original card: it said that calculation of heat flux is not part of the course, but the 2026 reading instructions p. 5 require being able to calculate heat flux at steady state. The card now shows Fourier's law, the wall formula and thermal diffusivity (Kapitel_12 pp. 21, 22, 29). Is the correction approved?",
+      "flag_sv": "e8652ntbm2"
     },
     "vad-ar-diffusion": {
       "front": "What is diffusion?",
       "back": "Diffusion in a solid material is the temperature-dependent process by which atoms move through the crystal structure via atomic jumps. The motion is random but goes, on net, from high to low concentration, so diffusion evens out concentration differences. Note in particular that:\n\n* The diffusion rate increases exponentially with temperature\n* It depends on which atom is moving in which crystal; small atoms move faster than large ones",
       "hint": null,
       "options": null,
-      "sv": "tas1utqway"
+      "sv": "tas1utqway",
+      "flag": "Correction of the original card: it confused atomic diffusion with the spreading of temperature and said that diffusion mainly applies to gases and liquids. Diffusion in a solid material is now defined as atoms moving \"via atomic jumps\", almost verbatim the correct option in the exam of 2025-10-30 problem 1j, whereas GLU 02 p. 7 only says \"random motion of atoms\". Is the correction approved, or should the first sentence be rewritten following GLU 02 p. 7?",
+      "flag_sv": "1o7lq5nafke"
     },
     "vilka-ar-ficks-1-a-och-2-a-lag": {
       "front": "What are Fick's 1st and 2nd laws?",
       "back": "Fick's laws describe how diffusion behaves in a material. The constant of proportionality in them is the diffusion coefficient D, which increases exponentially with temperature, $D = D_0 e^{-Q/RT}$.\n\nFick's 1st law describes how the flux (J) is proportional to the partial derivative of the concentration, and Fick's 2nd describes how the partial derivative of the concentration with respect to time is proportional to the second derivative of the concentration.\n\nThe first law is used at steady state, when the concentration profile does not change with time; the second is needed when the concentration changes with time (non-steady state).",
       "hint": null,
       "options": null,
-      "sv": "j3pm0tk5se"
+      "sv": "j3pm0tk5se",
+      "flag": "Correction of the original card: it said that Fick's laws need not have anything to do with temperature and that the equations are best solved numerically; it now says that D increases exponentially with temperature (Lecture 10 2025 p. 13) and when the first and second laws are used. Fick is mentioned only in the 2025 reading instructions for chapters 12 and 13, and chapter 13 is not in the preliminary 2026 reading instructions. Is the correction approved, and are Fick's laws part of this year's course?",
+      "flag_sv": "l1dk7etbah"
     },
     "beskriv-narmare-vad-diffusionskrypning": {
       "front": "Describe in more detail what diffusion creep is.",
@@ -1994,7 +2108,9 @@
       "back": "![Creep curve: strain versus time with primary creep, steady-state creep and tertiary creep up to fracture](/kort/materialteknik/krypkurva.svg)\n\nSlow plastic (permanent) deformation that depends on temperature, time and load. In metals it occurs at temperatures above about half the melting temperature (in kelvin), and the creep rate increases exponentially with temperature.\n\nTwo mechanisms: diffusion creep and power-law creep (dislocation creep). Which mechanism dominates depends on temperature and stress. The process is divided into primary creep (rapid deformation until the dislocations meet obstacles), steady-state creep with a constant strain rate and tertiary creep, in which damage arises in the material.",
       "hint": null,
       "options": null,
-      "sv": "wm8yz44r8m"
+      "sv": "wm8yz44r8m",
+      "flag": "The card and the creep curve (krypkurva.svg) are based only on Lecture 10 Materials and heat 2025 pp. 14 to 17; creep is mentioned only in passing in the 2026 material (Kapitel_12 p. 3), and chapter 13 is missing from the preliminary 2026 reading instructions. The same question applies to the other creep cards (krypning-pastaenden, vad-ar-ett-krypbrott, diffusion creep and dislocation creep). Is creep part of this year's course?",
+      "flag_sv": "16n7v9rsr48"
     },
     "kryp-konstant-tojningshastighet": {
       "front": "In which stage of the creep curve is the strain rate constant?",
@@ -2006,7 +2122,9 @@
         "Tertiary creep",
         "The initial elastic strain"
       ],
-      "sv": "t36ahvt7en"
+      "sv": "t36ahvt7en",
+      "flag": "The card's only source is Lecture 10 Materials and heat 2025 p. 14, and the creep curve is not in the 2026 material; the answer (steady state) agrees with the source. Should the card be included this year? This follows from the same decision as for the card krypning.",
+      "flag_sv": "hfbb1rktqu"
     },
     "aktiveringsenergi": {
       "front": "Activation energy",
@@ -2037,7 +2155,9 @@
         "True",
         "False"
       ],
-      "sv": "x5xfc9pqk2"
+      "sv": "x5xfc9pqk2",
+      "flag": "The original card (the exam of 2020-10-24 problem 1g, \"Creep is a phenomenon that only occurs at high temperatures\", answer key yes) has been reworded to \"Creep in metals occurs at temperatures above approximately half the melting temperature, measured in kelvin\", since \"high temperatures\" is only unambiguous in relation to Tm and polymers creep at room temperature. Lecture 10 p. 14 says ½ Tm and the suggested solution of 2023-10-25 says 0.4 to 0.5 Tm; the source line lacks \"Rättelse:\" (Correction:). Is the rewording approved?",
+      "flag_sv": "25yowrvfdts"
     },
     "quiz-vad-ar-ratt-for-temperatur-tva-ratta": {
       "front": "What is true about temperature?",
@@ -2061,7 +2181,9 @@
         "The maximum service temperature is the temperature at which the mechanical properties have decreased to 50 %.",
         "Specific heat is the energy required to raise the temperature by 1 K for 1 kg of material."
       ],
-      "sv": "kbkj7995ol"
+      "sv": "kbkj7995ol",
+      "flag": "The quiz's correct option \"Only pure crystalline materials have a well-defined melting temperature\" has been reworded to \"Pure metals have a distinct melting temperature, whereas alloys generally have a melting range\" (GLU 02 p. 9, GLU_5-8 p. 9), and specific heat has been made more precise as per kg and K (Kapitel_12 p. 8). The incorrect option \"The glass transition temperature is the temperature at which a material is transformed into glass\" can moreover be read as true, since an amorphous material below Tg is in the glassy state. Is the rewording approved, and should the Tg option be replaced?",
+      "flag_sv": "qpv8n0fwm4"
     },
     "quiz-nar-man-hojer-temperaturen-2-ratt": {
       "front": "What happens when the temperature of a solid material is raised?",
@@ -2073,7 +2195,9 @@
         "Materials whose properties change exponentially with temperature should be avoided.",
         "The yield strength decreases but the ultimate tensile strength increases."
       ],
-      "sv": "1198lxfd16m"
+      "sv": "1198lxfd16m",
+      "flag": "The quiz's correct option \"The diffusion rate increases exponentially with temperature for all materials\" is too strong, and \"for all materials\" has been deleted from the card. Is the change approved, and should Quiz week 4 question 3 be changed in the same way?",
+      "flag_sv": "238q5gs3p9u"
     },
     "quiz-diffusion-2-ratt": {
       "front": "What is true about diffusion?",
@@ -2085,7 +2209,9 @@
         "Large atoms diffuse more slowly than small ones.",
         "Alloying with Cr is the best way to reduce diffusion in steel."
       ],
-      "sv": "1zd87ot3bj4"
+      "sv": "1zd87ot3bj4",
+      "flag": "The explanation says that chromium is added to steel for the oxide layer, \"not to reduce diffusion\", but Lecture 12 Steel p. 24 says that alloying also increases hardenability, since large alloying atoms delay pearlite formation, i.e. the diffusion; the option is wrong only because of \"the best way\". The sentence about polymer chains having to diffuse across the weldline is supported only by the suggested solution to the exam of 2025-10-30. Should the explanation be rewritten?",
+      "flag_sv": "2a19qnm6p0i"
     },
     "quiz-termiska-egenskaper-2-ratt": {
       "front": "Thermal properties: which statements are true?",
@@ -2162,7 +2288,9 @@
         "The creep deformation is fully recovered when the load is removed.",
         "Creep requires dislocation motion and can therefore only occur in crystalline materials."
       ],
-      "sv": "afdp1zntol"
+      "sv": "afdp1zntol",
+      "flag": "Three of the four options correspond to the statements in the exam of 2023-10-23 problem 1b (above half the melting temperature, only crystalline materials, elastic deformation that is recovered), reworded and made more precise for metals. Is the card too close to the exam?",
+      "flag_sv": "1h4gn42h1vf"
     },
     "vad-utgor-stal": {
       "front": "What is steel?",
@@ -2176,7 +2304,9 @@
       "back": "Tempering is carried out after martensitic hardening, since martensite is very hard but often too brittle. The hardened steel is heated to a moderate temperature, below the eutectoid temperature, approx. 723 °C (727 °C in the lab instructions). In the lecture's example the tempering temperature is approx. 200 to 650 °C, in the lab instructions approx. 500 °C.\n\n* The martensite decomposes into tempered martensite: ferrite with very small cementite particles (not pearlite)\n* The hardness and yield strength decrease somewhat, but the toughness increases considerably\n* Temperature and time determine the size of the cementite particles, so the hardness can be controlled through the tempering temperature",
       "hint": null,
       "options": null,
-      "sv": "1l8cqutvofe"
+      "sv": "1l8cqutvofe",
+      "flag": "Correction of the original card: tempering was stated to take place just below approx. 910 °C and to give \"pearlite + cementite\". It now says a moderate temperature below the eutectoid temperature, approx. 723 °C (727 °C in the lab instructions), with the examples approx. 200 to 650 °C, and ferrite with very small cementite particles (Lecture 12 Steel p. 16, GLU_5-8 p. 25), but Lecture 12 Steel p. 22, which is listed among the sources, still says \"pearlite + cementite\". Is the correction approved, and should the slide Lecture 12 p. 22 be corrected?",
+      "flag_sv": "mqj7bn5aro"
     },
     "vilken-inverkan-har-kolhalten-pa": {
       "front": "What effect does the carbon content have on the properties of steel?",
@@ -2232,28 +2362,36 @@
       "back": "Cold working, also called cold deformation, is a process that strengthens metal through plastic deformation, such as cold rolling and wire drawing.\n\nMuch higher dislocation density after\ncold working → higher yield strength\n(strain hardening)",
       "hint": null,
       "options": null,
-      "sv": "1nxw64qiygj"
+      "sv": "1nxw64qiygj",
+      "flag": "Correction of the original card: it said that cold working \"is also known as strain hardening\" and thus equated the process with the hardening mechanism. It now says \"also called cold deformation\", and the strain hardening is described as the consequence of the higher dislocation density (Lecture 12 Steel p. 4, Kapitel_06 p. 36). Is the correction approved?",
+      "flag_sv": "28b3773do97"
     },
     "vad-innebar-rekristallation": {
       "front": "What is meant by recrystallisation?",
       "back": "Recrystallisation is a process in metalworking in which a deformed metal restructures its internal crystal structure in order to reduce stresses and restore its original properties. When the metal is plastically deformed, for example by rolling or forging, its crystal structure and dislocations become disturbed, which leads to harder and more brittle properties (this is called cold working).\nRecrystallisation occurs when a deformed metal is heated to a specific temperature, called the recrystallisation temperature. At this temperature new, undeformed grains start to form inside the material. These new grains replace the old, deformed grains and contribute to:\n\n* Lowering the hardness of the metal and increasing its ductility – the metal becomes softer and more formable.\n* Reducing internal stresses – that have built up during the deformation.\n* Improving the structure of the material – it gets a more even and more homogeneous grain structure.",
       "hint": null,
       "options": null,
-      "sv": "1gq0ujhpmnf"
+      "sv": "1gq0ujhpmnf",
+      "flag": "The card has no source and calls the property after deformation cold working (\"harder and more brittle properties (this is called cold working)\"), while Lecture 12 Steel p. 5 says that cold working gives a higher yield strength and reduced elongation at fracture, not a brittle material in the course's sense. \"Restore its original properties\" is not in the material either. Should the card be shortened to the lecture's wording (new small grains with few dislocations, lower yield strength, increased elongation at fracture)?",
+      "flag_sv": "1zyak3euauy"
     },
     "vad-innebar-varmdeformation": {
       "front": "What is meant by hot deformation?",
       "back": "Hot deformation is a process in which metals are deformed at temperatures higher than their recrystallisation temperature (often above approximately 0.5 times the melting temperature in kelvin). At these temperatures the crystal structure of the metal can be reconstructed at the same time as the deformation takes place, which allows new grains to form continuously during the working. This means that the material is not hardened, and it retains its ductility and formability. Hot deformation is often used for large changes of shape, for example in forging and rolling at high temperatures.\n\nIn brief:\n\n* Gives deformation without raising the yield strength\n* Large deformations are possible",
       "hint": null,
       "options": null,
-      "sv": "7lwxn0ujml"
+      "sv": "7lwxn0ujml",
+      "flag": "The card says that hot deformation often takes place above approximately 0.5 times the melting temperature in kelvin, but Lecture 12 Steel p. 6 only says \"above the recrystallisation temperature\", and the figure on Lecture 10 2025 p. 17 shows hot working at roughly 0.55 to 0.75 Tm. Should the number be deleted or changed?",
+      "flag_sv": "1mk8e7k5xf7"
     },
     "beskriv-kortfattat-vad-skillnaden": {
       "front": "Briefly describe the difference between cold and hot deformation.",
       "back": "Differences in brief:\n\n* Hot deformation: High temperature, no stresses build up, the material retains its formability and large dimensional changes can take place during one and the same treatment.\n* Cold deformation: Low temperature, stresses and hardness increase, the material becomes stronger but at the same time more brittle.",
       "hint": null,
       "options": null,
-      "sv": "1sfnu8l4qzk"
+      "sv": "1sfnu8l4qzk",
+      "flag": "The card says that cold-deformed material becomes \"stronger but at the same time more brittle\" and that no stresses build up during hot deformation, while Lecture 12 Steel pp. 5 and 6 say higher yield strength and reduced elongation at fracture, and deformation without raising the yield strength, respectively. Should the wording be changed to the lecture's?",
+      "flag_sv": "2dampmbnzum"
     },
     "ge-exempel-pa-minst-tva-plastiska": {
       "front": "Give examples of at least two plastic forming methods.",
@@ -2288,7 +2426,9 @@
       "back": "* Normalising: austenitising + slow cooling → primary ferrite or cementite + pearlite. The fraction of pearlite is given by the carbon content. Gives a ”normal” microstructure, suitable for structures where the stiffness is important.\n* Soft annealing: heating to a temperature below the austenite temperature (723 C) → diffusion and grain growth, spheroidised pearlite, lower yield strength. Used for\nsteel that is to be machined and then hardened.\n* Martensitic hardening:\n1. Heating to the austenite region\n2. Quenching → martensite\n3. Tempering → tempered martensite = ferrite with very small cementite particles\nThe carbon content determines the fraction of cementite. The temperature and time of the tempering determine the size of the cementite particles. Used when hardness and yield strength are important.",
       "hint": null,
       "options": null,
-      "sv": "23fw4v97aqy"
+      "sv": "23fw4v97aqy",
+      "flag": "The card says of normalising that it is \"suitable for structures where the stiffness is important\" (Lecture 12 Steel p. 15), but according to Kapitel_04 p. 12 heat treatment does not change Young's modulus in metals. Should the clause be deleted or clarified, in the same way as on the card stal-normalisering?",
+      "flag_sv": "vo4omuzu4b"
     },
     "ttt-diagram": {
       "front": "TTT diagram",
@@ -2309,7 +2449,9 @@
       "back": "High-alloy steel with a high carbon content. Used in the hardened condition. Hard and heat-resistant.",
       "hint": null,
       "options": null,
-      "sv": "6ioxrangjm"
+      "sv": "6ioxrangjm",
+      "flag": "The card calls tool steel \"high-alloy steel with a high carbon content\", verbatim the answer key to the exam of 2016-10-29 problem 1d, but the answer key to the exam of 2022-11-29 says that tool steel \"is often alloyed\", Lecture 12 Steel p. 14 places it under high carbon content without a requirement for high alloying, and there are unalloyed carbon tool steels. Should \"high-alloy\" be changed to e.g. \"often alloyed\"?",
+      "flag_sv": "ngfumc61lt"
     },
     "ja-nej-nar-ett-material-varmvalsas-sa": {
       "front": "When a material is hot rolled, the yield strength increases.",
@@ -2329,7 +2471,9 @@
         "True",
         "False"
       ],
-      "sv": "16tsgdnarit"
+      "sv": "16tsgdnarit",
+      "flag": "The exam of 2020-10-24 problem 1j (\"In steel carbon forms cementite, but in cast iron the carbon is present as pure graphite\", answer key yes) has been rewritten as \"In grey cast iron and nodular cast iron, all the carbon is present as pure graphite\" with the answer key false, since Lecture 12 Steel p. 29 gives pearlite and graphite. But the answer depends on the matrix: in ferritic grey iron and nodular iron practically all the carbon is present as graphite, so the question mostly tests the word \"all\". Does the examiner agree with the answer key false, or should the statement be reworded so that it becomes unambiguous?",
+      "flag_sv": "287qnvdyj87"
     },
     "quiz-ttt-diagram-tva-ratt": {
       "front": "TTT diagram: which statements are true?",
@@ -2372,7 +2516,9 @@
       "back": "Heat treatment of steel: austenitising followed by slow cooling in air. The equilibrium structure is obtained, primary ferrite or cementite plus pearlite, where the fraction of pearlite is given by the carbon content. Normalising gives a \"normal\" microstructure, suitable for structures where the stiffness is important.",
       "hint": null,
       "options": null,
-      "sv": "sbkvvo499w"
+      "sv": "sbkvvo499w",
+      "flag": "The card says that normalising gives a microstructure \"suitable for structures where the stiffness is important\", as on Lecture 12 Steel p. 15, but according to Kapitel_04 p. 12 heat treatment does not affect Young's modulus in metals (and the 2020 exam, problem 1a, has the answer key no to the statement that heat treatment increases Young's modulus). Does the slide mean strength or toughness, and should the clause be deleted or clarified?",
+      "flag_sv": "1nxex2tvrom"
     },
     "stal-hardbarhet-legering": {
       "front": "Why do alloying elements increase the hardenability of steel?",
@@ -2430,7 +2576,9 @@
         "Approx. 84 % martensite and 16 % cementite",
         "Pearlite and cementite"
       ],
-      "sv": "1lq36cmrrkx"
+      "sv": "1lq36cmrrkx",
+      "flag": "The carbon content was changed after the review from 1.2 to 1.1 % C so as not to give the same answer as the 2023 exam, problem 3b, but 1.1 % C is the alloy in the exam of 2016-10-29 problem 4b, where the suggested solution gets the same 95/5 split with the same lever rule. The change has not been independently reviewed. Is the card acceptable, or should the carbon content be changed again?",
+      "flag_sv": "1sl1es8s7kl"
     },
     "anlopning-andel-cementit": {
       "front": "A steel with 0.45 % C is hardened to 100 % martensite and then tempered. Approximately what fraction of cementite does it contain after tempering? (Cementite has 6.67 % C; the carbon content of the ferrite can be neglected.)",
@@ -2442,7 +2590,9 @@
         "Approx. 45 %",
         "0 %, since the cementite dissolves during tempering"
       ],
-      "sv": "2w5bv19wk8"
+      "sv": "2w5bv19wk8",
+      "flag": "The card calculates the fraction of cementite in tempered martensite with the lever rule between ferrite and cementite (0.45/6.67, approx. 7 %), as in the answer key to the exam of 2020-10-24 problem 4b. The answer key to the exam of 2023-10-23 problem 3c gives no fractions, and Lecture 12 Steel p. 16 only says that the carbon content determines the fraction of cementite. Is this a calculation the course expects?",
+      "flag_sv": "9hfyqu5dd9"
     },
     "ttt-avbruten-perlitomvandling": {
       "front": "A eutectoid steel is cooled rapidly from the austenite region to a temperature at which pearlite forms, held there until about a quarter of the austenite has transformed, and then quenched to room temperature. What structure does it get?",
@@ -2466,7 +2616,9 @@
         "Both samples have the same fractions of ferrite and cementite.",
         "The soft-annealed sample has a higher fraction of ferrite, since the cementite has dissolved."
       ],
-      "sv": "1ftvtbnpcij"
+      "sv": "1ftvtbnpcij",
+      "flag": "The card concerns the same situation as the exam of 2024-10-31 problems 4c and 4d (eutectoid steel, soft annealed versus normalised, same fraction of ferrite), and two of the options correspond to the exam's options in 4d. Is the card too close to the exam?",
+      "flag_sv": "m1485y2wuc"
     },
     "stal-varmebehandling-strackgrans-ordning": {
       "front": "The same medium-carbon steel is heat treated in three ways: soft annealing, normalising, and hardening followed by tempering. Which order applies to the yield strength, from lowest to highest?",
@@ -2499,7 +2651,9 @@
       "back": "* Medium density 4.1 kg/dm3\n* Excellent strength\n* Excellent corrosion protection\n* Expensive because of the manufacturing process\n* Used in pure form or alloyed\n* Biocompatible (not harmful to the body), used e.g. in implants",
       "hint": null,
       "options": null,
-      "sv": "1zu7z6fi3f4"
+      "sv": "1zu7z6fi3f4",
+      "flag": "Correction of the original card: \"Titanium is the only metal that is biocompatible\" (verbatim Lecture 13 Aluminium and other metals p. 13) has been changed to \"biocompatible\", as in the exam answers of 2019 problem 5b and 2021 problem 5. The card also gives the density of titanium as 4.1 kg/dm³ as on the same slide, but the value is usually given as approx. 4.5 kg/dm³. Is the correction approved, and is the density on the slide correct?",
+      "flag_sv": "29yt14jdb34"
     },
     "vad-kannetecknar-koppar-och-dess": {
       "front": "What characterises Copper and its alloys?",
@@ -2558,7 +2712,9 @@
         "It can be precipitation hardened if it is alloyed with copper.",
         "It has an HCP structure and therefore limited plastic formability."
       ],
-      "sv": "13cjd178wp0"
+      "sv": "13cjd178wp0",
+      "flag": "The quiz option \"does not corrode\" has been made more precise as \"is protected against corrosion by an oxide layer (Al₂O₃)\", and the joke option with an invented alloy name has been replaced with the incorrect \"HCP structure\" (Lecture 13 Aluminium p. 3). Are the changes approved, and should Quiz week 4 question 6 be changed?",
+      "flag_sv": "3o4d95usoe"
     },
     "quiz-indelning-och-legering-av-aluminium-2": {
       "front": "Classification and alloying of aluminium: which statements are true?",
@@ -2570,7 +2726,9 @@
         "Casting alloys are alloyed with Si to increase the service temperature.",
         "An advantage of aluminium is that it is easy to machine."
       ],
-      "sv": "1s8k9naipp9"
+      "sv": "1s8k9naipp9",
+      "flag": "The quiz's correct option \"The only way to raise the yield strength of pure aluminium is to strain harden\" is too strong, since finer grains also give a higher yield strength (GLU_5-8 p. 5); the card now says \"in practice hardened by strain hardening\" (Kapitel_06 p. 43, table 6.1). Is the softening approved, and should Quiz week 4 question 7 be changed?",
+      "flag_sv": "1oojwk83kfu"
     },
     "al-varmebehandlingsbara-legeringar": {
       "front": "Which wrought aluminium alloys are heat-treatable, i.e. can be precipitation hardened?",
@@ -2635,35 +2793,45 @@
       "back": "![The Al corner of the Al–Cu phase diagram with the aluminium phase (Al), eutectic line at 548 °C and the phase θ = CuAl₂](/kort/materialteknik/al-cu-alhornet.svg)\n\n1. **The solution treatment** dissolves all the Cu in the aluminium, so that only $\\alpha$ remains. The alloy is heated into the single-phase region $\\alpha$: above the solvus line (approx. 500 °C for 4 % Cu) but below the solidus, so that nothing melts. In the course's example it is done just below the eutectic temperature 548 °C.\n2. **The quenching** to room temperature keeps all the Cu in solution: the Cu does not have time to diffuse and form $\\theta$, so a metastable, supersaturated $\\alpha$ phase forms. On slow cooling, $\\theta$ would instead form as coarse particles, mainly in the grain boundaries.\n3. **The ageing** at moderately elevated temperature (or at room temperature, natural ageing) lets the Cu diffuse short distances, so that small, uniformly distributed $\\theta$ precipitates form in $\\alpha$. They obstruct dislocation motion and raise the yield strength. Time and temperature determine the size of the precipitates: underaged, peak-aged or overaged.",
       "hint": null,
       "options": null,
-      "sv": "21xk1btv1d5"
+      "sv": "21xk1btv1d5",
+      "flag": "The card gives the solvus for Al with 4 % Cu as approx. 500 °C, a value read from the diagram in Exempel fasdiagram (phase diagram examples) p. 7 and not stated in text anywhere; the solution treatment is given as in the course's example, 540 to 548 °C. Is the reading correct?",
+      "flag_sv": "21cxqilzflf"
     },
     "vad-i-materialtillverkningsprocessen": {
       "front": "What in the materials production process requires energy, and what does this mean for the environment?",
       "back": "Energy-intensive processes:\n\n* Energy for reduction of mineral to metal\n* Other energy for manufacturing and forming, transport, use. Can be reduced by reusing heat.\n\nEnvironmental impact:\n\n* Intrusion into nature\n* Emissions of CO₂\n* Other emissions and pollutants\n* CO₂ is used as a measure of environmental impact (carbon footprint)",
       "hint": null,
       "options": null,
-      "sv": "231bmjitda4"
+      "sv": "231bmjitda4",
+      "flag": "The line \"Can be reduced by reusing heat\" cannot be substantiated in the course material; the rest of the card is supported by Lecture 12 Steel p. 12 and Lecture 13 Sustainability p. 6. Should the line stay?",
+      "flag_sv": "2f9lm9fpeaz"
     },
     "hur-ateranvandningsbara-ar-egentligen": {
       "front": "How recyclable are metals really? What challenges are there?",
       "back": "* Metal scrap is an excellent raw material for metal production\n* Requires less energy than production from ore\n* Gives a lower environmental impact\n* Metal produced from scrap can give as good a material as metal produced from mineral\n\nChallenges:\n\n* The alloy content must be controlled – problems with mixed scrap and metal impurities\n* Copper and tin ruin steel\n* Fe embrittles Al\n* Lead, cadmium and mercury are often undesirable in\nalloys\n* The scrap must be collected, transported, sorted",
       "hint": null,
       "options": null,
-      "sv": "nzn3x8yn7x"
+      "sv": "nzn3x8yn7x",
+      "flag": "Correction of the original card: \"has the same properties\" as metal from ore has been changed to \"can give as good a material\" (Lecture 13 Sustainability p. 21), and the energy figures 1/10 for Al and 1/3 for steel have been deleted since they are not in the text of the course material. The lines \"Copper and tin ruin steel\", \"Fe embrittles Al\" and \"Lead, cadmium and mercury are often undesirable in alloys\" remain without a source (Lecture 13 Sustainability p. 2 mentions lead and cadmium only as hazardous to health). Is the correction approved, and should the three lines be sourced or deleted?",
+      "flag_sv": "27bopkmm2rn"
     },
     "hur-bra-ar-aluminium-sett-ur-ett": {
       "front": "How good is aluminium from a sustainability perspective?",
       "back": "Aluminium:\n\n* Al is one of the elements that are in good supply\n* Production of primary aluminium requires a lot of energy, considerably more per kilo than steel\n* Remelting during recycling requires much less energy, partly because the melting temperature is lower than that of steel → suitable for products that can be recycled, less suitable for products that cannot be recycled\n\nProblems in recycling aluminium:\n\n* The alloy content must lie within the tolerances for the alloy, so scrap of different alloys must be sorted and kept separate.",
       "hint": null,
       "options": null,
-      "sv": "20fq8v8oka9"
+      "sv": "20fq8v8oka9",
+      "flag": "Correction of the original card: \"The most common element in the Earth's crust\" (it is oxygen) has been replaced with Al being in good supply (Lecture 13 Sustainability p. 13), and the lines about 8 to 14 % Si and Fe contamination have been deleted since they are missing from the material. The card also explains the low energy for remelting by Al having a lower melting temperature than steel (Kapitel_03 p. 45), but Kapitel_12 p. 8 says that roughly as much energy is needed to remelt 1 kg of steel as 1 kg of aluminium. Is the correction approved, and which explanation should the card give?",
+      "flag_sv": "1rtshyiku68"
     },
     "hur-bra-ar-stal-respektive-rostfritt": {
       "front": "How good are steel and stainless steel, respectively, from a sustainability perspective?",
       "back": "Steel:\n\n* Good supply in the Earth's crust\n* Relatively low environmental impact per kg\n* High strength in relation to environmental impact\n* Corrodes, often requires surface treatment\n* High-strength steels can be used in lightweight structures\n\nStainless steel:\n\n* Alloy of iron, Cr (approx. 18 %), Ni (approx. 8 %), possibly Mo (2 %)\n* The supply of the alloying elements in the Earth's crust is comparatively small\n* The alloying elements can be unhealthy and allergenic in free form.\nUsually not bound in stainless steel.\n* Good corrosion resistance and service life. Should be recycled.",
       "hint": null,
       "options": null,
-      "sv": "imysgauuo8"
+      "sv": "imysgauuo8",
+      "flag": "The composition Cr approx. 18 %, Ni approx. 8 % and possibly Mo 2 % is not in the course material; Lecture 12 Steel p. 28 only says that stainless steel is alloyed with Cr and Ni, and the figures apply to common austenitic stainless steels, not ferritic and martensitic ones. Should the figures stay, e.g. as an example of austenitic stainless steel?",
+      "flag_sv": "23y2p6b3iq8"
     },
     "vad-finns-det-for-problem-med": {
       "front": "What problems are there with recycling mixed scrap?",
@@ -2684,14 +2852,18 @@
       "back": "* The most common metals are present in large quantities in the Earth's crust: Fe, Al, Mg, Ti\n* Some alloying elements are present in limited quantities in the Earth's crust\n* 69 elements are considered strategic or critical: rare\nearth metals, the platinum group, fissile elements (U, Th, Pu), W, Ta, Nb, Ga, In",
       "hint": null,
       "options": null,
-      "sv": "1j0fvjlnbym"
+      "sv": "1j0fvjlnbym",
+      "flag": "The statement that 69 elements are considered strategic or critical, and the list including U, Th, Pu, W, Ta and Nb, is not in the course material; Lecture 13 Sustainability p. 8 mentions critical metals without a number, and p. 13 lists Ti, Fe and Al (not Mg) as available. Plutonium hardly occurs naturally. Is there a source, or should the card be simplified to what is on the slides?",
+      "flag_sv": "1c6io8bnk3c"
     },
     "sammanfatta-lite-kort-hur-metaller": {
       "front": "Summarise briefly how well suited metals are for recycling.",
       "back": "* Metals are well suited for recycling\n  - Saves resources and energy\n  - Can give as good a material\n* Problems with impurities and alloying elements\n* CO₂ footprint and embodied energy give some\nguidance – can be used in material indices\n* Should look at the total environmental impact over the\nlife cycle",
       "hint": null,
       "options": null,
-      "sv": "yen9wkgvnv"
+      "sv": "yen9wkgvnv",
+      "flag": "Correction of the original card: \"Gives as good a material\" has been changed to \"Can give as good a material\", verbatim Lecture 13 Sustainability p. 21. The suggested solution to the exam of 2025-10-30 problem 6c, however, says that recycling always gives losses and a decline in quality, while the 2022 exam, problem 5b, says that in principle no properties deteriorate. Is the correction approved, and which line should the cards follow?",
+      "flag_sv": "12im8wqxoff"
     },
     "quiz-miljoegenskaper-vad-ar-sant-tva-ratta": {
       "front": "Environmental properties: which statements are true?",
@@ -2768,7 +2940,9 @@
         "Metals always lose their properties when they are recycled.",
         "Critical metals such as gallium and indium are already recycled to a very high degree."
       ],
-      "sv": "1ab2yigo7lg"
+      "sv": "1ab2yigo7lg",
+      "flag": "The incorrect option \"Metals always lose their properties when they are recycled\" follows Lecture 13 Sustainability p. 21 (\"can give as good a material\"), but the suggested solution to the exam of 2025-10-30 problem 6c says that there are always losses and a decline in quality in recycling, so a student who has read the suggested solution may choose the option. Is the option unambiguously wrong?",
+      "flag_sv": "15zfftvsnwf"
     },
     "hallbara-produkter-kombination": {
       "front": "According to the course there are no sustainable materials. How can a product nevertheless be made more sustainable?",
@@ -2782,7 +2956,9 @@
       "back": "* Thermoplastics\n  - Long polymer chains\n  - Weak forces between\nthe chains\n  - Can be shaped with heat\n  - Recyclable\n* Thermosets\n  - Network of molecules\n  - Covalent bonds\n  - Cannot be shaped with heat\n  - Not recyclable\n* Rubbers (elastomers)\n  - Weakly crosslinked\npolymer chains\n  - Cannot be shaped with heat\n  - Not recyclable",
       "hint": null,
       "options": null,
-      "sv": "rejnl0v7lg"
+      "sv": "rejnl0v7lg",
+      "flag": "The card gives \"Covalent bonds\" as a characteristic of thermosets, but the chains of thermoplastics are also held together by covalent bonds; what distinguishes them is covalent crosslinks between the chains (MTT085 PM 1 p. 10). Should it say \"covalent crosslinks between the chains\"?",
+      "flag_sv": "1klj2qcwyqb"
     },
     "quiz-a-semi-crystalline-polymer-en": {
       "front": "What is true about a semi-crystalline polymer?",
@@ -2830,7 +3006,9 @@
         "They have no glass transition temperature but have a melting temperature",
         "They are defined as the group of polymers developed for high temperature applications"
       ],
-      "sv": "xx1b74byy8"
+      "sv": "xx1b74byy8",
+      "flag": "The quiz's incorrect option \"are made for high temperature applications\" can be read as partly correct (thermosets are used both above and below Tg, the polymer lab instructions p. 2) and has been reworded to \"They are defined as the group of polymers developed for high temperature applications\". Is the rewording approved, or should the quiz's wording remain?",
+      "flag_sv": "22vxrjaieuq"
     },
     "polymer-mn-mw-berakning": {
       "front": "A polymer consists of equal numbers of chains with molecular weights 100 000, 200 000 and 300 000 g/mol. What are Mn and Mw?",
@@ -2902,7 +3080,9 @@
         "Above Tm",
         "Between Tm and the degradation temperature"
       ],
-      "sv": "29mcym8bo66"
+      "sv": "29mcym8bo66",
+      "flag": "The option \"Below Tg\" is marked as incorrect according to MTT085 PM 2 p. 4, but there are semi-crystalline thermoplastics that are used below their Tg, e.g. PET (Tg approx. 75 °C) in bottles, so the distractor is not unambiguously incorrect. Should the question specify \"typically\" or should the distractor be replaced?",
+      "flag_sv": "w60493nj8f"
     },
     "polymer-skjuvmodul-amorf-vid-tg": {
       "front": "What happens to the shear modulus of an amorphous thermoplastic, e.g. PS, when the temperature passes Tg?",
@@ -2976,7 +3156,9 @@
         "True",
         "False"
       ],
-      "sv": "1i3gkek6tik"
+      "sv": "1i3gkek6tik",
+      "flag": "The statement merges two of the correct statements in the exam of 2025-10-30 problem 7a (covalent bonds in the chain, van der Waals between the chains), and the explanation follows the answer key to the exam of 2016-10-29 problem 7.2; the same facts are in PM 1 p. 3. Is the card too close to the exam?",
+      "flag_sv": "29x9c3a1zto"
     },
     "polymer-hdpe-ldpe-kristallinitet": {
       "front": "HDPE has higher crystallinity than LDPE because the long chain branches of LDPE prevent the chains from packing closely.",
@@ -3049,7 +3231,9 @@
       "back": "In metals heat is conducted as waves of lattice vibrations (phonons). A long polymer molecule can be seen as atoms with bonds that are not equal in all directions, so a temperature increase can be distributed over a very large number of vibration modes in the molecule. That is why polymers insulate. Foams insulate best, e.g. styrofoam (PS-foam), because they contain a lot of air.",
       "hint": null,
       "options": null,
-      "sv": "cwsyokmvdy"
+      "sv": "cwsyokmvdy",
+      "flag": "The card says that heat in metals is conducted as lattice vibrations (phonons), as in MTT085 PM 2 p. 1, but in metals heat is conducted mainly by the free electrons, which the cards in area 01 also say (the electron cloud gives thermal conduction). Should the sentence be deleted or rewritten so that the cards do not contradict each other?",
+      "flag_sv": "1mur1338j0o"
     },
     "polymer-transparens-amorf-delkristallin": {
       "front": "Why are amorphous thermoplastics transparent while semi-crystalline ones are often translucent or opaque?",
@@ -3093,7 +3277,9 @@
         "B",
         "C"
       ],
-      "sv": "29r73bdo3pn"
+      "sv": "29r73bdo3pn",
+      "flag": "The card shows three schematic polymer structures A, B and C in a figure of its own and asks which one is a thermoset, which is essentially the exam of 2024-08 problem 7 (match the structures A, B and C to semi-crystalline thermoplastic, amorphous thermoplastic and thermoset). Is the card too close to the exam?",
+      "flag_sv": "16nvol3qbz7"
     },
     "polymer-modulkurva-delkristallin": {
       "front": "A DMTA measurement shows, as the temperature is raised: first a moderate drop in the modulus, then a plateau where the material is still solid, and finally a very steep drop. Which type of polymer is it most likely?",
@@ -3131,7 +3317,9 @@
         "PMMA, polymethylmethacrylate",
         "PP, polypropylene"
       ],
-      "sv": "14g2e6gaz31"
+      "sv": "14g2e6gaz31",
+      "flag": "The card says that 80 % of thermosets are used as matrix in composites, as in MTT085 PM 1 p. 10, but Polymeric materials L4-5 p. 1 uses the same 80 % for the claim that thermosets make up approx. 80 % of the production volume of composites, which is a different statement. Which statement is correct, or should the figure be deleted?",
+      "flag_sv": "236g16ywycv"
     },
     "polymer-begrepp-tillsatser": {
       "front": "Additives in plastics",
@@ -3234,7 +3422,9 @@
         "The pressure is built up in the solids conveying zone at the hopper.",
         "It melts the pellets directly in the hopper."
       ],
-      "sv": "1smgks88tim"
+      "sv": "1smgks88tim",
+      "flag": "The quiz's distractor \"connected to an injection mold via runners and a sprue\" was replaced because the plasticizing unit in an injection molding machine is a kind of single screw extruder (L4-5 p. 6). The new distractor \"The pressure is built up in the solids conveying zone at the hopper\" follows L4-5 p. 3, but the course book says that friction gives a pressure increase already in the solids conveying zone and that it accounts for the pressure build-up in grooved feed extruders (Osswald 05142_06a-3 p. 8, 9). Is the distractor unambiguously incorrect, or should it be replaced?",
+      "flag_sv": "1tmpcg5571f"
     },
     "quiz-injection-molding-machines": {
       "front": "Which statements about injection molding machines are correct?",
@@ -3402,7 +3592,9 @@
       "back": "Film blowing is a secondary shaping operation after extrusion. The melt is pushed through an annular die (film blowing die) and forms a tube. Air is blown in through the center of the die and inflates the tube, which is simultaneously drawn, so that the wall thickness decreases considerably. The film is cooled by air from the outside and solidifies before it reaches the nip rollers. The nip rollers squeeze the film together so that the overpressure in the bubble is maintained, and pull the film in the axial direction. Finally, the film is wound up.",
       "hint": null,
       "options": null,
-      "sv": "ayxellib49"
+      "sv": "ayxellib49",
+      "flag": "The back closely follows the suggested solution to the exam of 2013-08-20 problem 10c (inflation, the film solidifies before the nip rollers, the nip rollers maintain the overpressure and pull the film), although the same content is in L4-5 p. 5, 6 and Tutorials Part 3-5 p. 2. Is the back too close to the answer key, or may it remain?",
+      "flag_sv": "w6rhg55tmd"
     },
     "reo-sf-smalta-amorf": {
       "front": "In the molten state all polymers are amorphous, even those that are semi-crystalline in the solid state.",
@@ -3422,7 +3614,9 @@
         "True",
         "False"
       ],
-      "sv": "1hn3f4xvf9r"
+      "sv": "1hn3f4xvf9r",
+      "flag": "The card writes η ∝ 1/T from Lecture 17 2024 p. 27, but the temperature dependence is exponential (Arrhenius, or WLF for amorphous polymers; Osswald ch. 5 p. 4, 11), and the slide only shows the direction. That the viscosity decreases when the temperature is raised is supported (PM 3 p. 6). Should the proportionality sign be deleted?",
+      "flag_sv": "2g51avgg17o"
     },
     "reo-sf-viskositet-molekylvikt": {
       "front": "All else being equal, a polymer melt with a higher molecular weight has a higher viscosity.",
@@ -3432,7 +3626,9 @@
         "True",
         "False"
       ],
-      "sv": "daakc372wb"
+      "sv": "daakc372wb",
+      "flag": "The card writes η ∝ Mw as on the lecture slide Lecture 17 2024 p. 27 (the slide is not in the 2025 material), but the course book (Osswald ch. 3 p. 5, fig. 3.7) shows that above a critical molecular weight the zero shear viscosity grows roughly as Mw to the power of 3.4. Is it enough for the card to say that the viscosity increases strongly with the molecular weight, without the proportionality sign?",
+      "flag_sv": "4ytkq8qzq6"
     },
     "reo-sf-nollskjuv-orientering": {
       "front": "At low shear rates, in the zero-shear region, the polymer chains are strongly oriented in the flow direction.",
@@ -3668,7 +3864,9 @@
         "The strain continues to increase at the same rate as during loading",
         "The strain becomes negative"
       ],
-      "sv": "1o7xevj8fje"
+      "sv": "1o7xevj8fje",
+      "flag": "The card says that a viscoelastic material gets a residual strain and that full recovery applies \"only\" to a purely elastic material, but a viscoelastic solid (the Kelvin model) recovers fully (Osswald ch. 9 p. 12), and the card polymer-elastomer-reversibel says that the deformation of an elastomer is reversed. Should the question be limited to e.g. a thermoplastic or a melt, and the word \"only\" be deleted?",
+      "flag_sv": "19a4o31yxag"
     },
     "polymer-var-star-polymerer-ut": {
       "front": "Where do polymeric materials stand out?",
@@ -3730,7 +3928,9 @@
         "True",
         "False"
       ],
-      "sv": "1lyxd5l0e22"
+      "sv": "1lyxd5l0e22",
+      "flag": "The explanation says without reservation that brittle fracture in a short-term tensile test \"applies to thermoplastics below Tg and highly crosslinked polymers\", but Lecture 21 2025 p. 7 says \"usually\" and PC is an exception (the polymer lab instructions p. 2); this very question is disputed in the exam of 2024-10-31 problem 9. Should \"generally\" be added, as on the card polymer-dragkurvor-fyra-typer?",
+      "flag_sv": "18xoxn2vl6m"
     },
     "polymer-slagprov-elastiskt-langtid-viskoelastiskt": {
       "front": "In impact tests polymers can most often be considered purely elastic, whereas in long-term tests such as creep tests they behave viscoelastically.",
@@ -3782,7 +3982,9 @@
       "back": "In linear viscoelasticity the deformation is the sum of the strains that each load change gives rise to, independently of the loads already acting. For stepwise stress changes $\\Delta\\sigma_i$ at the times $t_i$ the strain becomes\n\n$\\varepsilon(t) = \\sum_i \\Delta\\sigma_i\\,J(t - t_i)$,\n\nwhere $J$ is the creep compliance. Each step contributes according to how long it has been acting, so the strain depends on the entire loading history and not only on the stress acting at this moment. The principle holds as long as the polymer behaves linearly viscoelastically.",
       "hint": null,
       "options": null,
-      "sv": "283iokjyjnw"
+      "sv": "283iokjyjnw",
+      "flag": "The Boltzmann Superposition Principle was in the reading instructions for PM 6 in 2020 and on the 2020 exam, but is not in PM 6 for 2024 and 2025 (Lecture 20 2025 p. 22 only refers to the book's pages on creep tests and isochronous diagrams); the card's only source is Osswald ch. 9 p. 8, 9. Is the principle part of this year's course, or should the card be removed?",
+      "flag_sv": "2boni9q7zwt"
     },
     "polymer-boltzmann-tvastegs": {
       "front": "A polymer has the creep compliance $J(t)$. The stress $\\sigma_0$ is applied at $t = 0$ and raised to $2\\sigma_0$ at $t_1$. Which expression gives the strain at $t > t_1$ (linear viscoelasticity)?",
@@ -3794,7 +3996,9 @@
         "$2\\sigma_0 J(t - t_1)$",
         "$\\sigma_0 J(t) + 2\\sigma_0 J(t - t_1)$"
       ],
-      "sv": "10d3b32jtgi"
+      "sv": "10d3b32jtgi",
+      "flag": "The calculation problem is based on the Boltzmann Superposition Principle, which is not in the reading instructions for PM 6 2024 and 2025 (Lecture 20 2025 p. 22); the calculation agrees with Osswald ch. 9 p. 8, 9. Should the card remain if the principle is not included this year (same decision as for the card polymer-begrepp-boltzmann-superposition)?",
+      "flag_sv": "1jcm3icp5j7"
     },
     "polymer-smalta-kryp-aterhamtning": {
       "front": "A polymer melt and a solid polymer are each loaded in a creep test (constant stress, linear viscoelastic region). What distinguishes the strain curve of the melt from that of the solid polymer?",
@@ -3806,7 +4010,9 @@
         "The strain of the solid polymer is always fully recovered when the load is removed, that of the melt is not.",
         "The strain of the melt is constant during the entire loading, since the melt is a liquid."
       ],
-      "sv": "1zstez3c6fu"
+      "sv": "1zstez3c6fu",
+      "flag": "The card says, according to L6 p. 1, 4, 5 and Lecture 20 2025 p. 16, 17, that a polymer melt gives a liquid-like response where the strain increases linearly, whereas the suggested solution to the exam of 2023-10-23 problem 9b points out the solid-like curve for the melt. The explanation also calls the response of the solid polymer Kelvin-Voigt with an initial elastic response and residual strain, but the Kelvin model has no instantaneous strain and recovers fully (Osswald ch. 9 p. 11, 12). Which answer applies, and should the model name be removed?",
+      "flag_sv": "25i6bwqsujz"
     },
     "polymer-dragkurvor-fyra-typer": {
       "front": "Describe the typical stress-strain curve at room temperature for an amorphous thermoplastic, a semi-crystalline thermoplastic, a thermoset and an elastomer.",

@@ -90,7 +90,7 @@ export const quiz = {
 export const summary = {
   title: "Passet är klart",
   examTitle: "Duggan är klar",
-  examScore: (ok: number, total: number) => `${ok} av ${total} kort kunde du bra eller direkt.`,
+  examScore: (ok: number, total: number) => `Du kunde ${ok} av ${total} kort bra eller direkt.`,
   examNote: "Svaren räknas in i schemat, precis som i de andra lägena. Det som tog emot kommer tillbaka snart.",
   doneTitle: "Klar för i dag",
   doneBody: "Dagens kort är repeterade och schemat har koll på resten. Har du mer energi kan du plugga vidare.",
@@ -115,7 +115,7 @@ export const summary = {
   needsWork: "Behöver mest arbete",
   colQuestion: "Fråga",
   colRating: "Skattning",
-  needsWorkEmpty: "Inga kort fick lågt betyg.",
+  needsWorkEmpty: "Inga kort fick låg skattning.",
   nextDue: "Nästa schemalagda repetition",
   nextDueNone: "Inget kort är schemalagt ännu.",
   nextDueCount: (n: number, when: string) => (n === 1 ? `1 kort ${when}.` : `${n} kort ${when}.`),

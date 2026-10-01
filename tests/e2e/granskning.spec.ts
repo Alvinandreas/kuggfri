@@ -82,19 +82,21 @@ test.describe("granskning", { tag: "@desktop" }, () => {
     const view = page.getByTestId("review-card-view");
     const first = await view.getAttribute("data-card-id");
 
-    // Ta ur rotation (i menyn): kortet hamnar under Ur rotation.
-    await page.getByTestId("review-more").click();
-    await page.getByRole("menuitem", { name: "Ta ur rotation" }).click();
-    await page.getByTestId("review-reject-panel-confirm").click();
+    // Ta ur rotation (en knapp): kortet hamnar under Ur rotation.
+    await page.getByTestId("review-reject").click();
     await expect(view).not.toHaveAttribute("data-card-id", first ?? "");
     await expect(page.getByTestId("review-count-ur-rotation")).toHaveText(String(removed + 1));
 
-    // Sätt tillbaka: i rotation igen och ogranskat.
+    // Markera som ogranskad: i rotation igen, tillbaka under Att granska.
     await page.getByTestId("review-tab-ur-rotation").click();
     await page.locator(`[data-review-row="${first}"]`).click();
-    await page.getByTestId("review-put-back").click();
+    await page.getByTestId("review-unreview").click();
     await expect(page.getByTestId("review-count-ur-rotation")).toHaveText(String(removed));
     await expect(page.getByTestId("review-count-att-granska")).toHaveText(String(toReview));
+
+    // Granskningsöversikten överst i listan.
+    await page.getByTestId("review-back").click().catch(() => undefined);
+    await expect(page.getByTestId("review-overview")).toBeVisible();
 
     // Reglaget English: flikar och knappar på engelska, och tillbaka.
     const toggle = page.getByTestId("review-language").getByRole("switch");

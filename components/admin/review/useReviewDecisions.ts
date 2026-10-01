@@ -153,11 +153,11 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
    * Tar kortet ur rotation, eller (restore) återställer originalet för ett rättat originalkort:
    * den senast publicerade versionen gäller igen, godkänd av granskaren.
    */
-  function reject(card: ReviewCard, note: string, mode: "remove" | "restore" = "remove") {
+  function reject(card: ReviewCard, mode: "remove" | "restore" = "remove") {
     const snaps = [snapshot(card)];
     const at = Date.now();
     const reviewedAt = new Date(at).toISOString();
-    const text = note.trim();
+    const text = "";
     const versionId = mode === "restore" ? card.published_version_id : null;
     if (typeof versionId === "number") {
       // En rättelse av ett publicerat kort: tillbaka till den publicerade versionen, som
@@ -212,8 +212,11 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
     void run([card.id], () => rejectCardAction(deckId, card.id, text), () => restoreLocal(snaps));
   }
 
-  /** Sätter tillbaka ett kort som tagits ur rotation: i rotation igen och ogranskat. */
-  function putBack(card: ReviewCard) {
+  /**
+   * Markerar kortet som ogranskat: från Granskade eller Ur rotation tillbaka till Att granska, i
+   * rotation och utan granskningsdatum. En flagga ligger kvar.
+   */
+  function unreview(card: ReviewCard) {
     const snaps = [snapshot(card)];
     const at = Date.now();
     const back = { review_status: null, review_note: null, is_active: true, reviewed_by: null, reviewed_at: null } as const;
@@ -222,7 +225,7 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
       card,
       at,
     );
-    setStatus({ id: at, text: t.g.putBackDone(label(card)), undo: () => undoDecision(snaps) });
+    setStatus({ id: at, text: t.g.unreviewed(label(card)), undo: () => undoDecision(snaps) });
     void run([card.id], () => restoreReviewAction(deckId, [{ ...snapshot(card), ...back }]), () => restoreLocal(snaps));
   }
 
@@ -264,5 +267,5 @@ export function useReviewDecisions({ deckId, userId, areas, tab, filter, listIds
     }
   }
 
-  return { approve, flag, resolve, reject, putBack, saveEdit };
+  return { approve, flag, resolve, reject, unreview, saveEdit };
 }

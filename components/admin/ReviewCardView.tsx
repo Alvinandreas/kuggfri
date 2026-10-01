@@ -22,7 +22,7 @@ import { useReviewT } from "./review/ReviewLanguage";
 /** Senaste beslutet eller felet, med Ångra när det går. */
 export type ReviewStatus = { id: number; text: string; undo?: () => void; tone?: "default" | "danger" };
 
-type Panel = { type: "flag"; note: string; edit: boolean } | { type: "reject"; note: string; mode: "remove" | "restore" } | null;
+type Panel = { type: "flag"; note: string; edit: boolean } | null;
 
 type Props = {
   card: ReviewCard;
@@ -48,9 +48,9 @@ type Props = {
   onSave: (edit: ReviewEdit, approve: boolean) => Promise<string | null>;
   onFlag: (note: string) => void;
   /** Ta ur rotation, eller (restore) återställ originalet för ett rättat originalkort. */
-  onReject: (note: string, mode: "remove" | "restore") => void;
-  /** Sätt tillbaka ett kort som tagits ur rotation. */
-  onPutBack: () => void;
+  onReject: (mode: "remove" | "restore") => void;
+  /** Markera som ogranskad: från Granskade eller Ur rotation tillbaka till Att granska. */
+  onUnreview: () => void;
 };
 
 /** Tangenter räknas inte medan man skriver eller står i en lista, meny eller dialog. */
@@ -60,11 +60,13 @@ const TYPING_SELECTOR = 'input, textarea, select, [contenteditable="true"], [rol
  * Ett kort i taget i granskningen. Överst tillbaka till listan och var i kön man är, sedan en
  * kort instruktion (Att granska) eller flaggans anteckning (Flaggade), kortets område, typ och
  * källor, och kortet som studenten ser det, tydligt uppdelat i Fråga och Svar. Åtgärderna står
- * i en fast rad i nederkant: Godkänn (går direkt till nästa kort), Redigera, Flagga och en meny
- * med Ta ur rotation (och Återställ originalet för rättade originalkort). Under Ur rotation:
- * Sätt tillbaka. Med reglaget English visas kortet på engelska, med en rad som säger att det är
- * en översättning (och om kortet ändrats sedan dess). Kortkommandon: G godkänn, R redigera,
- * F flagga, J/K eller pilarna nästa och föregående, Esc tillbaka till listan, Ctrl+Z ångra.
+ * i en fast rad i nederkant. Varje övergång mellan flikarna är en knapp, och beslutet går direkt
+ * vidare till nästa kort (Ångra tar tillbaka det): Godkänn (också från Ur rotation), Markera som
+ * ogranskad (från Granskade och Ur rotation), Åtgärdad (flaggan), Redigera (Spara och godkänn
+ * finns i alla flikar), Flagga och Ta ur rotation. Återställ originalet och Ändra anteckningen
+ * ligger i menyn. Med reglaget English visas kortet på engelska. Kortkommandon: G godkänn,
+ * O ogranskad, T ta ur rotation, R redigera, F flagga, J/K eller pilarna nästa och föregående,
+ * Esc tillbaka till listan, Ctrl+Z ångra.
  */
 export function ReviewCardView(props: Props) {
   const { card, tab, position, total, areas, areaTitle, areaColor, reviewedLine, flaggedLine, issues, editing, status } = props;
@@ -75,7 +77,8 @@ export function ReviewCardView(props: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const flagged = card.flag_note !== null && card.flag_note !== "";
   const removed = tab === "ur-rotation";
-  const canApprove = tab === "att-granska" || tab === "flaggade";
+  const reviewed = tab === "granskade";
+  const canApprove = !reviewed;
   const correcting = !removed && typeof card.published_version_id === "number";
   const english = t.lang === "en" && !showSwedish;
   const translation = t.lang === "en" ? translationState(card) : null;
@@ -115,6 +118,12 @@ export function ReviewCardView(props: Props) {
     } else if (key === "g" && canApprove) {
       e.preventDefault();
       if (issues.length === 0) props.onApprove();
+    } else if (key === "o" && (reviewed || removed)) {
+      e.preventDefault();
+      props.onUnreview();
+    } else if (key === "t" && !removed) {
+      e.preventDefault();
+      props.onReject("remove");
     } else if (key === "r") {
       e.preventDefault();
       props.onEdit(true);
@@ -176,7 +185,7 @@ export function ReviewCardView(props: Props) {
         <p className="flex gap-2.5 rounded-md bg-surface-2 px-4 py-3 text-sm" data-testid="review-instruction">
           <Info size={17} aria-hidden className="mt-0.5 shrink-0 text-muted" />
           <span>
-            {g.instruction} <span className="text-muted">{g.instructionApprove}</span>
+            {g.instruction}
           </span>
         </p>
       ) : null}
@@ -240,7 +249,7 @@ export function ReviewCardView(props: Props) {
       ) : null}
 
       {editing ? (
-        <ReviewEditor key={card.id} card={card} areas={areas} canApprove={canApprove || flagged} onSave={props.onSave} onCancel={() => props.onEdit(false)} />
+        <ReviewEditor key={card.id} card={card} areas={areas} canApprove onSave={props.onSave} onCancel={() => props.onEdit(false)} />
       ) : (
         <>
           {translation ? (
@@ -296,36 +305,20 @@ export function ReviewCardView(props: Props) {
                   onCancel={() => setPanel(null)}
                   testId="review-flag-panel"
                 />
-              ) : panel?.type === "reject" ? (
-                <NotePanel
-                  key={`avvisa-${panel.mode}`}
-                  label={g.rejectNote}
-                  help={panel.mode === "restore" ? g.rejectHelpCorrection : card.original ? g.rejectHelpOriginal : card.review_status === null ? g.rejectHelpActive : g.rejectHelpNew}
-                  value={panel.note}
-                  onChange={(note) => setPanel({ ...panel, note })}
-                  confirm={panel.mode === "restore" ? g.restoreConfirm : g.rejectConfirm}
-                  confirmIcon={panel.mode === "restore" ? <History size={16} aria-hidden /> : <X size={16} aria-hidden />}
-                  danger={panel.mode === "remove"}
-                  onConfirm={() => {
-                    props.onReject(panel.note, panel.mode);
-                    setPanel(null);
-                  }}
-                  onCancel={() => setPanel(null)}
-                  testId="review-reject-panel"
-                />
               ) : (
                 <div role="group" aria-label={g.actions} className="flex flex-wrap items-center gap-2">
-                  {removed ? (
-                    <Button onClick={props.onPutBack} title={g.putBackHelp} className="flex-1 @2xl:flex-none" data-testid="review-put-back">
-                      <Undo2 size={17} aria-hidden />
-                      {g.putBack}
-                    </Button>
-                  ) : null}
                   {canApprove ? (
                     <Button onClick={props.onApprove} disabled={issues.length > 0} aria-keyshortcuts="G" className="flex-1 @2xl:flex-none" data-testid="review-approve">
                       <Check size={17} aria-hidden />
-                      {g.approve}
+                      {removed ? g.approveBack : g.approve}
                       <KeyHint>G</KeyHint>
+                    </Button>
+                  ) : null}
+                  {reviewed || removed ? (
+                    <Button variant={reviewed ? "primary" : "secondary"} onClick={props.onUnreview} aria-keyshortcuts="O" className="flex-1 @2xl:flex-none" data-testid="review-unreview">
+                      <Undo2 size={16} aria-hidden />
+                      {g.markUnreviewed}
+                      <KeyHint>O</KeyHint>
                     </Button>
                   ) : null}
                   {tab === "flaggade" ? (
@@ -339,7 +332,7 @@ export function ReviewCardView(props: Props) {
                     {g.edit}
                     <KeyHint>R</KeyHint>
                   </Button>
-                  {tab !== "flaggade" && !removed ? (
+                  {tab === "att-granska" || reviewed ? (
                     <Button
                       variant="secondary"
                       onClick={() => setPanel({ type: "flag", note: "", edit: false })}
@@ -353,38 +346,42 @@ export function ReviewCardView(props: Props) {
                     </Button>
                   ) : null}
                   {removed ? null : (
-                  <Menu
-                    label={g.more}
-                    placement="top-end"
-                    width="15rem"
-                    trigger={(t) => (
-                      <button
-                        {...t}
-                        type="button"
-                        aria-label={g.more}
-                        title={g.more}
-                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
-                        data-testid="review-more"
-                      >
-                        <Ellipsis size={18} aria-hidden />
-                      </button>
-                    )}
-                  >
-                    {flagged ? (
-                      <MenuItem icon={<Pencil size={16} />} onSelect={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })}>
-                        {g.changeFlag}
-                      </MenuItem>
-                    ) : null}
-                    {correcting ? (
-                      <MenuItem icon={<History size={16} />} onSelect={() => setPanel({ type: "reject", note: "", mode: "restore" })}>
-                        {g.restoreOriginal}
-                      </MenuItem>
-                    ) : null}
-                    <MenuItem icon={<X size={16} />} tone="danger" onSelect={() => setPanel({ type: "reject", note: "", mode: "remove" })}>
+                    <Button variant="secondary" onClick={() => props.onReject("remove")} aria-keyshortcuts="T" className="flex-1 @2xl:flex-none" data-testid="review-reject">
+                      <X size={16} aria-hidden />
                       {g.reject}
-                    </MenuItem>
-                  </Menu>
+                      <KeyHint>T</KeyHint>
+                    </Button>
                   )}
+                  {flagged || correcting ? (
+                    <Menu
+                      label={g.more}
+                      placement="top-end"
+                      width="15rem"
+                      trigger={(t) => (
+                        <button
+                          {...t}
+                          type="button"
+                          aria-label={g.more}
+                          title={g.more}
+                          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
+                          data-testid="review-more"
+                        >
+                          <Ellipsis size={18} aria-hidden />
+                        </button>
+                      )}
+                    >
+                      {flagged ? (
+                        <MenuItem icon={<Pencil size={16} />} onSelect={() => setPanel({ type: "flag", note: card.flag_note ?? "", edit: true })}>
+                          {g.changeFlag}
+                        </MenuItem>
+                      ) : null}
+                      {correcting ? (
+                        <MenuItem icon={<History size={16} />} onSelect={() => props.onReject("restore")}>
+                          {g.restoreOriginal}
+                        </MenuItem>
+                      ) : null}
+                    </Menu>
+                  ) : null}
                 </div>
               )}
             </div>

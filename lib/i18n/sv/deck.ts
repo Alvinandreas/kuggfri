@@ -65,7 +65,7 @@ export const deck = {
   showQr: "Visa QR-kod",
   hideQr: "Dölj QR-kod",
   qrAlt: (url: string) => `QR-kod som leder till ${url}`,
-  qrHelp: "För föreläsningsbilden eller anslagstavlan. Skanna med mobilkameran.",
+  qrHelp: "Skanna med mobilkameran.",
   firstVisitTitle: "Så funkar det",
   firstVisitBody: (n: number, minutes: number) =>
     `Första passet är ${n} kort, cirka ${minutes} minuter. Skatta ärligt efter varje kort: det är så schemat lär känna dig och visar rätt kort rätt dag.`,

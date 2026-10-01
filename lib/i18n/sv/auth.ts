@@ -44,7 +44,7 @@ export const auth = {
   invalidEmail: "E-postadressen ser inte giltig ut.",
   rateLimited: "För många försök på kort tid. Vänta en stund och försök igen.",
   signupDisabled: "Det går inte att skapa konton just nu.",
-  notConfirmed: "E-postadressen är inte bekräftad ännu. Öppna länken i välkomstmejlet från Kuggfri, eller få ett nytt mejl med knappen nedanför.",
+  notConfirmed: "E-postadressen är inte bekräftad ännu. Öppna länken i mejlet från Kuggfri, eller skicka ett nytt med knappen nedanför.",
   weakPassword: "Lösenordet är för kort.",
   passwordSame: "Det nya lösenordet måste skilja sig från det gamla.",
   privacyNote: "Vi sparar bara ditt namn, din e-post och din studieprogress. Ingen reklam, ingen spårning.",
@@ -52,8 +52,7 @@ export const auth = {
   migrated: (n: number) =>
     n === 1 ? "1 kort flyttades till ditt konto." : `${n} kort flyttades till ditt konto.`,
   callbackError: "Länken är ogiltig eller har gått ut. Försök igen.",
-  confirmLinkError:
-    "Bekräftelselänken har redan använts eller gått ut. Har du redan bekräftat loggar du in som vanligt. Annars loggar du in så får du skicka ett nytt mejl.",
+  confirmLinkError: "Bekräftelselänken har redan använts eller gått ut. Har du bekräftat loggar du in som vanligt, annars loggar du in och skickar ett nytt mejl.",
 } as const;
 
 export const account = {

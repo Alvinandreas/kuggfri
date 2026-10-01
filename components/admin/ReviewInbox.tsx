@@ -15,6 +15,7 @@ import {
   matchesReviewFilter,
   relativeDay,
   reviewList,
+  reviewProgress,
   reviewTab,
   step,
   type OriginFilter,
@@ -38,6 +39,7 @@ import { useOptimisticDecisions } from "./review/useOptimisticDecisions";
 import { useReviewDecisions } from "./review/useReviewDecisions";
 import { useReviewView, viewQuery } from "./review/useReviewView";
 import { LanguageToggle, useReviewT } from "./review/ReviewLanguage";
+import { ReviewOverview } from "./review/ReviewOverview";
 
 type Props = {
   deckId: string;
@@ -166,7 +168,7 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
   // Beslut (optimistiska, se useOptimisticDecisions och useReviewDecisions)
   // -------------------------------------------------------------------------
 
-  const { approve, flag, resolve, reject, putBack, saveEdit } = useReviewDecisions({ deckId, userId, areas, tab, filter, listIds, navigate, setStatus, setEditing, decisions, t });
+  const { approve, flag, resolve, reject, unreview, saveEdit } = useReviewDecisions({ deckId, userId, areas, tab, filter, listIds, navigate, setStatus, setEditing, decisions, t });
 
   // -------------------------------------------------------------------------
   // Navigering
@@ -274,8 +276,8 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
           onEdit={setEditing}
           onSave={(edit, approveAfter) => saveEdit(current, edit, approveAfter)}
           onFlag={(note) => flag(current, note)}
-          onReject={(note, mode) => reject(current, note, mode)}
-          onPutBack={() => putBack(current)}
+          onReject={(mode) => reject(current, mode)}
+          onUnreview={() => unreview(current)}
         />
       </div>
     );
@@ -283,9 +285,16 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
 
   const groups = groupReviewList(list, tab, areas);
   const total = counts[tab];
+  const progress = reviewProgress(cards, areas);
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-5" data-testid="review-inbox" data-saving={saving}>
+      <ReviewOverview
+        progress={progress}
+        areaColor={areaColor}
+        areaHref={(id) => `${pathname}${viewQuery({ tab, cardId: null, filter: { ...filter, area: filter.area === id ? "alla" : id } })}`}
+        activeArea={filter.area}
+      />
       {tabs}
       <p className="-mt-1 text-sm text-muted">{TAB_HELP[tab]}</p>
 

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { sv } from "@/lib/i18n/sv";
 import { getDeckForAdmin, getDeckOverviewStats, getDeckReports } from "@/lib/admin/queries";
 import { CourseOverview } from "@/components/admin/CourseOverview";
-import { reviewProgress } from "@/lib/admin/review";
 
 type Params = Promise<{ id: string }>;
 
@@ -29,10 +28,6 @@ export default async function AdminDeckPage({ params }: { params: Params }) {
       stats={stats}
       categories={categories.map((c) => ({ id: c.id, title: c.title, cardCount: counts.get(c.id) ?? 0 }))}
       openReports={reports.filter((r) => r.status === "open")}
-      reviewProgress={reviewProgress(
-        cards,
-        categories.map((c) => ({ id: c.id, title: c.title, title_en: c.title_en ?? null })),
-      )}
     />
   );
 }

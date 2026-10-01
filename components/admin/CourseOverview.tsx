@@ -13,8 +13,6 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { MIN_STUDENTS } from "@/lib/admin/thresholds";
 import { formatCount, formatDecimal } from "@/lib/admin/format";
 import { AreaLink } from "./AreaLink";
-import { ReviewProgressPanel } from "./ReviewProgressPanel";
-import type { ReviewProgress } from "@/lib/admin/review";
 import { StatBlock } from "./StatBlock";
 import { routes } from "@/lib/routes";
 
@@ -26,8 +24,6 @@ type Props = {
   categories: Category[];
   /** Öppna felrapporter, nyast först (de tre senaste visas). */
   openReports: DeckReportRow[];
-  /** Granskningsläget per område; panelen visas så länge något väntar på granskning. */
-  reviewProgress?: ReviewProgress;
 };
 
 export { MIN_STUDENTS };
@@ -59,7 +55,7 @@ const th = "py-3 text-xs font-semibold text-subtle";
  * senaste felrapporterna. Fördelningarna ligger under "Mer statistik". Allt är aggregerat
  * och anonymt.
  */
-export function CourseOverview({ deckId, stats, categories, openReports, reviewProgress }: Props) {
+export function CourseOverview({ deckId, stats, categories, openReports }: Props) {
   const colorIndex = categoryColorIndex(categories);
   const titleOf = new Map(categories.map((c) => [c.id, c.title] as const));
   const students = stats.students;
@@ -119,8 +115,6 @@ export function CourseOverview({ deckId, stats, categories, openReports, reviewP
           </Card>
         ) : null}
       </section>
-
-      {reviewProgress && reviewProgress.total.toReview + reviewProgress.total.flagged > 0 ? <ReviewProgressPanel deckId={deckId} progress={reviewProgress} /> : null}
 
       {students > 0 ? (
         <>

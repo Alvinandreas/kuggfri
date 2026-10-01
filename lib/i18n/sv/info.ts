@@ -8,14 +8,12 @@ export const about = {
   intro:
     "Kuggfri är en fri flashcard-tjänst för kurser på Chalmers. Den är byggd av en student, för studenter, och kostar ingenting.",
   why: "Varför",
-  whyBody:
-    "Tjänsten ersätter ett tidigare upplägg i en kommersiell flashcard-app där åtkomst krävde manuell hantering och där grundläggande funktioner som att nollställa sin progress låg bakom en betalvägg. Här är allt öppet, gratis och utan spårning.",
+  whyBody: "Allt är öppet, gratis och utan spårning.",
   how: "Hur det fungerar",
   howBody:
     "Kort repeteras enligt FSRS, en algoritm för spaced repetition som anpassar intervallen efter hur väl du kunde varje kort. Du kan också plugga fritt, i slumpad ordning eller med duggor, och plugga vidare när dagens pass är klart. Allt du pluggar räknas in i schemat.",
   sources: "Innehåll och källor",
-  sourcesBody:
-    "Innehållet i varje kurs är sammanställt av studenter utifrån kursmaterial. Kreditering per kurs:",
+  sourcesBody: "Korten bygger på kursens material. Kreditering per kurs:",
   noSource: "Ingen källa angiven.",
   teachers: "För kursansvariga",
   teachersIntro:
@@ -24,7 +22,7 @@ export const about = {
     "Innehållet ägs av kursen. Alla kort kan exporteras när som helst som en vanlig fil, ingen inlåsning.",
     "Studenterna rapporterar fel direkt från kortet. Rapporterna samlas per kurs med länk rakt in i kortet, så granskningen görs där felet finns.",
     "Kursansvarig får en egen examinatorsvy med kursöversikt: svåraste områdena, kluriga frågor, hur långt studenterna kommit och hur många som repeterar varje vecka. Allt är sammanställt och anonymt, och visas först när minst fem studenter skattat.",
-    "Examinatorn redigerar innehållet själv: kort, områden och ordning, med förhandsvisning. Rätten gäller bara den egna kursen.",
+    "Examinatorn redigerar kort, områden och ordning själv. Rätten gäller bara den egna kursen.",
     "Redigering sker i webbläsaren med förhandsvisning av formler och formatering. Import från CSV eller JSON visar vad som ändras innan något sparas.",
     "Inga kostnader, ingen reklam, ingen spårning. Studenterna skapar ett konto med namn och e-post; all data lagras inom EU.",
   ],

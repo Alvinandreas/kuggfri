@@ -38,7 +38,6 @@ export default async function AdminSettingsPage({ params }: { params: Params }) 
           <h2 id="tentalaget" className="text-xl font-bold tracking-tight">
             {sv.tenta.title}
           </h2>
-          <p className="mt-1 text-sm text-muted">{sv.tenta.intro}</p>
         </div>
         <ExamModeToggle deckId={data.deck.id} open={data.deck.exam_mode_open === true} />
       </section>

@@ -63,8 +63,7 @@ export const help = {
       body: "Streaken räknar dagar i rad med minst en repetition. Två frysningar täcker enstaka missade dagar, och du får en ny frysning var sjunde aktiva dag. Pluggar du helst vardagar kan du välja det under Konto, så räknas helger inte som missade.",
     },
   ],
-  modesLead:
-    "Du väljer läge på kursens sida. Under Inställningar i Ditt pass ställer du in passet för just det läget, till exempel hur många kort du vill ta. Valen sparas i webbläsaren till nästa gång. Alla lägen räknas: varje skattning uppdaterar kortets schema, oavsett läge. Schemalagd repetition ser till att du hinner det du behöver, och allt du pluggar utöver det gör de kommande passen lättare.",
+  modesLead: "Du väljer läge på kursens sida och ställer in passet under Inställningar i Ditt pass. Valen sparas till nästa gång. Varje skattning räknas i schemat, oavsett läge.",
   modes: {
     fsrs: "Nya och förfallna kort. Din skattning styr när kortet kommer tillbaka, och kort du skattar 1 eller 2 kommer igen senare i samma pass. Du kan ta färre kort än dagens, hoppa över nya kort och bara repetera, eller ta ett område i taget. När dagens pass är klart kan du plugga vidare så länge du vill.",
     tricky: "Bara kort du skattat 1 eller 2, och kort du aldrig sett. Ett kort du nu kan slutar räknas som klurigt. Du väljer antal, om de svåraste ska komma först och om osedda kort ska vara med.",
@@ -73,8 +72,7 @@ export const help = {
     exam: "Innan duggan väljer du antal frågor (10, 20, 30 eller alla), om ledtrådar är tillåtna och om en timer ska visas. Efteråt ser du hur du ligger till.",
   },
   affectsSchedule: "Räknas i schemat",
-  ratingLead:
-    "Efter varje kort skattar du hur väl du kunde det, i alla lägen. Knapparna visar också när kortet kommer tillbaka (utom i duggan). Att ett kort kommer igen i samma pass gäller schemalagd repetition.",
+  ratingLead: "Efter varje kort skattar du hur väl du kunde det. Knapparna visar när kortet kommer tillbaka (utom i duggan).",
   rating: {
     1: "Du kom inte på svaret. Kortet kommer igen i samma pass och snart därefter.",
     2: "Nära, men inte rätt. Räknas som en miss: kortet kommer igen i samma pass.",
@@ -148,7 +146,7 @@ export const help = {
       a: "Inlärda kort är kort vars senaste skattning är 5. Inlärd kunskap (”Kan nu” när du öppnar ett område) är schemats uppskattning av hur stor del av korten du minns just nu.",
     },
     {
-      q: "Hittade ett fel i ett kort?",
+      q: "Hittade du ett fel på ett kort?",
       a: "Tryck på flaggan under skattningsknapparna och beskriv vad som är fel. Rapporten går till kursens examinator. Vill du ha svar kan du lämna din e-post, men det är frivilligt.",
     },
     {

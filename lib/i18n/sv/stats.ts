@@ -57,7 +57,7 @@ export const myStats = {
   timesOfDay: {
     morning: { label: "Morgon", range: "05–10", persona: "Morgonpigg" },
     day: { label: "Dag", range: "10–17", persona: "Dagpluggare" },
-    evening: { label: "Kväll", range: "17–22", persona: "Kvällsplugg" },
+    evening: { label: "Kväll", range: "17–22", persona: "Kvällspluggare" },
     night: { label: "Natt", range: "22–05", persona: "Nattuggla" },
   },
   persona: "Din pluggtyp",

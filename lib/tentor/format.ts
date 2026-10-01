@@ -2,6 +2,7 @@
  * Tentafiler (docs/TENTOR.md): markdown in, Exam ut, med problem och radnummer. Ren modul.
  */
 import { QUESTION_KINDS, type Exam, type ExamQuestion, type GradeLimit, type NumericKey, type Pair, type QuestionKind } from "./model";
+import { lines as splitLines } from "@/lib/text/newlines";
 
 export type ExamIssue = { line: number; message: string };
 export type ExamParse = { exam: Exam; issues: ExamIssue[] };
@@ -69,7 +70,7 @@ function readAttrs(lines: string[], start: number): { attrs: Block["attrs"]; nex
 }
 
 export function parseExamFile(text: string, key: string): ExamParse {
-  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const lines = splitLines(text);
   const issues: ExamIssue[] = [];
   const at = (line: number, message: string) => issues.push({ line, message });
 

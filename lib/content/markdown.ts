@@ -49,6 +49,7 @@ import {
   type CardOption,
   type ReviewStatus,
 } from "@/lib/cards/kinds";
+import { lines as splitLines } from "@/lib/text/newlines";
 
 export type CardFile = {
   title: string;
@@ -122,7 +123,7 @@ type Pending = {
 };
 
 export function parseCardFile(text: string): ParseResult {
-  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const lines = splitLines(text);
   const issues: ParseIssue[] = [];
   let title = "";
   const cards: ContentCard[] = [];

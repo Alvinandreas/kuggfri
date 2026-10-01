@@ -16,16 +16,14 @@
  * Ett område som blir tomt tas inte bort automatiskt; ta bort det ur kurs.json när du vill
  * (apply raderar det i databasen när det saknas i filerna och inte har kort kvar).
  */
-import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { CARD_KIND_LABEL, CARD_KINDS, isAutoGraded, isCardKind, type CardKind } from "@/lib/cards/kinds";
 import { isValidKey, type ContentCard, type ContentCategory, type ContentCourse } from "@/lib/content/model";
-import { loadCourse, saveCourse } from "@/lib/content/store";
-
-const ROOT = process.cwd();
-const say = (s = "") => process.stdout.write(s + "\n");
-
-type Args = { positional: string[]; flags: Record<string, string | boolean> };
+import { categoryFileName, loadCourse, saveCourse } from "@/lib/content/store";
+import { lines } from "@/lib/text/newlines";
+import { ROOT, type Args } from "./cli/args";
+import { gitLines } from "./cli/git";
+import { say } from "./cli/output";
 
 function load(courseKey: string | undefined): ContentCourse {
   if (!courseKey) throw new Error("Ange kurs.");
@@ -52,7 +50,7 @@ function findArea(course: ContentCourse, key: string): ContentCategory {
 
 /** Filnamn efter ordningen: 01-nyckel.md, 02-… */
 function renumber(course: ContentCourse): ContentCourse {
-  return { ...course, categories: course.categories.map((c, i) => ({ ...c, file: `${String(i + 1).padStart(2, "0")}-${c.key}.md` })) };
+  return { ...course, categories: course.categories.map((c, i) => ({ ...c, file: categoryFileName(i + 1, c.key) })) };
 }
 
 /** Flyttar kort (nycklar) till målområdet, sist i den ordning de anges. Returnerar ny kurs. */
@@ -169,8 +167,7 @@ function cmdMappa(args: Args): void {
   const [, courseKey, file] = args.positional;
   if (!file) throw new Error("kuggfri mappa <kurs> <fil.tsv> [--skapa]");
   let course = load(courseKey);
-  const rows = readFileSync(file, "utf8")
-    .split(/\r?\n/)
+  const rows = lines(readFileSync(file, "utf8"))
     .map((l) => l.split("\t").map((c) => c.trim()))
     .filter((r) => r[0] && !r[0].startsWith("#") && r[0] !== "kortnyckel");
   const byArea = new Map<string, string[]>();
@@ -236,8 +233,7 @@ function cmdMarkeraOriginal(args: Args): void {
   const commit = args.flags.commit;
   if (!courseKey || typeof commit !== "string") throw new Error("kuggfri markera-original <kurs> --commit <sha>");
   const course = load(courseKey);
-  const out = execFileSync("git", ["grep", "-h", "^key: ", commit, "--", `content/${courseKey}`], { encoding: "utf8" });
-  const keys = new Set(out.split(/\r?\n/).map((l) => l.replace(/^key:\s*/, "").trim()).filter(Boolean));
+  const keys = new Set(gitLines(["grep", "-h", "^key: ", commit, "--", `content/${courseKey}`]).map((l) => l.replace(/^key:\s*/, "").trim()).filter(Boolean));
   let marked = 0;
   const found = new Set<string>();
   const categories = course.categories.map((c) => ({

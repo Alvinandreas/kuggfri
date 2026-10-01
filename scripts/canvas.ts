@@ -18,8 +18,9 @@ import { dirname, extname, join } from "node:path";
 import { serializeCardFile } from "@/lib/content/markdown";
 import { slugifyKey, uniqueKey, type ContentCard } from "@/lib/content/model";
 import { loadCourse } from "@/lib/content/store";
-
-const ROOT = process.cwd();
+import { lines } from "@/lib/text/newlines";
+import { ROOT } from "./cli/args";
+import { say } from "./cli/output";
 
 /** Tillåtelselistan: kursnyckel i content/ → Canvaskurs. Lägg till en rad per ny kurs. */
 const KURSER: Record<string, { base: string; courseId: number }> = {
@@ -33,8 +34,6 @@ const MAX_BYTES = 200 * 1024 * 1024;
 const FORBJUDET = /\/(users|enrollments|submissions|students|grades|gradebook|analytics|conversations|sections|groups|recipients|search_users|participants|results|quiz_submissions|sessions)\b/i;
 
 // ---------------------------------------------------------------------------
-
-const say = (s = "") => process.stdout.write(s + "\n");
 
 function token(): string {
   if (process.env.CANVAS_TOKEN) return process.env.CANVAS_TOKEN.trim();
@@ -282,7 +281,7 @@ async function cmdHamta(k: Kurs): Promise<void> {
 const TAR = process.platform === "win32" ? "C:/Windows/System32/tar.exe" : "tar";
 
 function unzipXmlText(file: string, pattern: string): string {
-  const listing = execFileSync(TAR, ["-tf", file], { encoding: "utf8" }).split(/\r?\n/).filter((n) => new RegExp(pattern).test(n));
+  const listing = lines(execFileSync(TAR, ["-tf", file], { encoding: "utf8" })).filter((n) => new RegExp(pattern).test(n));
   listing.sort((a, b) => Number(a.match(/(\d+)\.xml$/)?.[1] ?? 0) - Number(b.match(/(\d+)\.xml$/)?.[1] ?? 0));
   return listing
     .map((entry, i) => {

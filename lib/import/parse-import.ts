@@ -1,4 +1,5 @@
 import { parseCsv } from "./csv";
+import { normalizeNewlines } from "@/lib/text/newlines";
 
 /** Ett kort så som det ser ut efter tolkning, före diff mot databasen. */
 export type ImportCard = {
@@ -42,7 +43,7 @@ function findColumn(headers: string[], key: keyof typeof COLUMN_ALIASES): number
 
 function cleanText(value: unknown): string {
   if (value === null || value === undefined) return "";
-  return String(value).replace(/\r\n/g, "\n").trim();
+  return normalizeNewlines(String(value)).trim();
 }
 
 function parseSortOrder(value: unknown, row: number, errors: ImportError[]): number | null {

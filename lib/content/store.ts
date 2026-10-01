@@ -29,6 +29,11 @@ export function courseDir(root: string, key: string): string {
   return join(root, CONTENT_DIR, key);
 }
 
+/** Kategorifilens namn efter dess plats i kursen (1-baserad): 01-nyckel.md, 02-… */
+export function categoryFileName(position: number, key: string): string {
+  return `${String(position).padStart(2, "0")}-${key}.md`;
+}
+
 export function listCourseKeys(root: string): string[] {
   const dir = join(root, CONTENT_DIR);
   if (!existsSync(dir)) return [];

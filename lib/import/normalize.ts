@@ -1,3 +1,5 @@
+import { lines as splitLines } from "@/lib/text/newlines";
+
 /**
  * Städar text från Brainscape-exporter till giltig markdown.
  * Används av innehållspipelinens konvertering (lib/content/convert.ts). Admin-importen rör inte texten.
@@ -9,7 +11,7 @@
  * - Windows-radbrytningar och avslutande blanksteg tas bort.
  */
 export function normalizeBrainscapeMarkdown(text: string): string {
-  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const lines = splitLines(text);
   const out: string[] = [];
   /** Vilken typ av lista vi befinner oss i: "star" (* eller 1.) nästlar streckrader under sig. */
   let list: "star" | "dash" | null = null;

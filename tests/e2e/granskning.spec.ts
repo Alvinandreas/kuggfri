@@ -13,6 +13,12 @@ async function openReview(page: Page) {
   await expect(page.getByTestId("review-tabs")).toBeVisible();
 }
 
+/** Områdena i listan är ihopfällda från början: fäll ut alla innan en rad söks. */
+async function expandAll(page: Page) {
+  const toggle = page.getByTestId("review-toggle-all");
+  if ((await toggle.count()) > 0 && (await toggle.textContent())?.includes("Fäll ut")) await toggle.click();
+}
+
 const count = async (page: Page, tab: string) => Number((await page.getByTestId(`review-count-${tab}`).textContent())?.trim());
 
 // Bara desktop (playwright.config.ts): inget här skiljer sig på mobil.
@@ -54,6 +60,7 @@ test.describe("granskning", { tag: "@desktop" }, () => {
     await expect(page.getByTestId("review-count-flaggade")).toHaveText(String(flagged + 1));
 
     await page.getByTestId("review-tab-flaggade").click();
+    await expandAll(page);
     const row = page.locator(`[data-review-row="${first}"]`);
     await expect(row).toContainText("E2E: kontrollera enheten");
     await row.click();
@@ -63,6 +70,7 @@ test.describe("granskning", { tag: "@desktop" }, () => {
     await page.getByTestId("review-resolve").click();
     await page.getByTestId("review-tab-att-granska").click();
     await expect(page.getByTestId("review-count-att-granska")).toHaveText(String(toReview));
+    await expandAll(page);
     await expect(page.locator(`[data-review-row="${first}"]`)).toBeVisible();
 
     // Bakåtknappen följer flikarna.
@@ -89,6 +97,7 @@ test.describe("granskning", { tag: "@desktop" }, () => {
 
     // Markera som ogranskad: i rotation igen, tillbaka under Att granska.
     await page.getByTestId("review-tab-ur-rotation").click();
+    await expandAll(page);
     await page.locator(`[data-review-row="${first}"]`).click();
     await page.getByTestId("review-unreview").click();
     await expect(page.getByTestId("review-count-ur-rotation")).toHaveText(String(removed));

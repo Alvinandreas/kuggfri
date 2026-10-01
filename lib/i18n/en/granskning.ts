@@ -102,6 +102,8 @@ export const granskningEn: GranskningText = {
   approveResolve: "Approve and remove the flag",
   approvedResolved: (front: string) => `Approved, flag removed: ${front}`,
   flaggedBadge: "Flagged",
+  expandAll: "Expand all",
+  collapseAll: "Collapse all",
   markUnreviewed: "Mark as unreviewed",
   approveBack: "Approve and put in rotation",
   unreviewed: (front: string) => `Marked as unreviewed: ${front}`,

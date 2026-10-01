@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
-import { ArrowRight, FlagTriangleRight, ListFilter, Search, X } from "lucide-react";
+import { ArrowRight, ChevronDown, FlagTriangleRight, ListFilter, Search, X } from "lucide-react";
 import { categoryColorIndex, tagBgClass } from "@/lib/ui/tag-colors";
 import {
   DEFAULT_REVIEW_FILTER,
@@ -11,6 +11,7 @@ import {
   countByTab,
   formatDay,
   formatTime,
+  groupKey,
   groupReviewList,
   matchesReviewFilter,
   relativeDay,
@@ -39,8 +40,8 @@ import { useListKeyboard } from "./review/useListKeyboard";
 import { useOptimisticDecisions } from "./review/useOptimisticDecisions";
 import { useReviewDecisions } from "./review/useReviewDecisions";
 import { useReviewView, viewQuery } from "./review/useReviewView";
-import { LanguageToggle, useReviewT } from "./review/ReviewLanguage";
-import { ReviewOverview } from "./review/ReviewOverview";
+import { useReviewT } from "./review/ReviewLanguage";
+import { ReviewBar, ReviewOverview, reviewedOf } from "./review/ReviewOverview";
 
 type Props = {
   deckId: string;
@@ -76,6 +77,8 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState<ReviewStatus | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  // Områdena i listan är ihopfällda från början, så att alla områden syns på en gång.
+  const [openGroups, setOpenGroups] = useState<ReadonlySet<string>>(() => new Set());
   const decisions = useOptimisticDecisions(serverCards, serverNow, setStatus);
   const { cards, now, saving } = decisions;
   const { pathname, view, navigate, query, setQuery } = useReviewView({ areas, inFlight: decisions.inFlight, saving });
@@ -177,7 +180,19 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
 
   function openCard(id: string) {
     setStatus(null);
+    // Området står utfällt när man kommer tillbaka till listan.
+    const card = cards.find((c) => c.id === id);
+    if (card) setOpenGroups((prev) => new Set(prev).add(groupKey(card, areas)));
     navigate({ tab, cardId: id }, "push");
+  }
+
+  function toggleGroup(key: string) {
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   }
 
   function backToList() {
@@ -207,7 +222,6 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
   const filtered = activeFilters > 0 || filter.query.trim() !== "";
 
   const tabs = (
-    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
     <nav aria-label={g.tabsLabel} className="-mx-4 min-w-0 max-w-full overflow-x-auto px-4 sm:mx-0 sm:px-0" data-testid="review-tabs">
       <ul className="inline-flex min-w-max gap-0.5 rounded-full bg-surface-2 p-1 text-sm">
         {TABS.map((tabKey) => {
@@ -242,8 +256,6 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
         })}
       </ul>
     </nav>
-    <LanguageToggle />
-    </div>
   );
 
   if (current) {
@@ -284,18 +296,18 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
     );
   }
 
-  const groups = groupReviewList(list, tab, areas);
+  const groups = groupReviewList(list, areas);
   const total = counts[tab];
   const progress = reviewProgress(cards, areas);
+  const progressOf = new Map(progress.rows.map((r) => [r.areaId, r] as const));
+  // Med en sökning eller ett valt område står allt utfällt; annars det man fällt ut.
+  const expandAll = filter.query.trim() !== "" || filter.area !== "alla";
+  const isOpen = (key: string) => expandAll || openGroups.has(key);
+  const allOpen = groups.every((grp) => isOpen(grp.key));
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-5" data-testid="review-inbox" data-saving={saving}>
-      <ReviewOverview
-        progress={progress}
-        areaColor={areaColor}
-        areaHref={(id) => `${pathname}${viewQuery({ tab, cardId: null, filter: { ...filter, area: filter.area === id ? "alla" : id } })}`}
-        activeArea={filter.area}
-      />
+      <ReviewOverview progress={progress} />
       {tabs}
       <p className="-mt-1 text-sm text-muted">{TAB_HELP[tab]}</p>
 
@@ -397,9 +409,21 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm font-semibold tabular-nums" data-testid="review-list-count">
-              {filtered ? g.countOf(list.length, total) : g.count(list.length)}
-            </p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <p className="text-sm font-semibold tabular-nums" data-testid="review-list-count">
+                {filtered ? g.countOf(list.length, total) : g.count(list.length)}
+              </p>
+              {expandAll ? null : (
+                <button
+                  type="button"
+                  onClick={() => setOpenGroups(allOpen ? new Set() : new Set(groups.map((grp) => grp.key)))}
+                  className="text-sm font-semibold text-accent underline-offset-2 hover:underline"
+                  data-testid="review-toggle-all"
+                >
+                  {allOpen ? g.collapseAll : g.expandAll}
+                </button>
+              )}
+            </div>
             {tab === "att-granska" || tab === "flaggade" ? (
               <Button size="sm" onClick={() => openCard(list[0]!.id)} data-testid="review-start">
                 {tab === "att-granska" ? g.startReview : g.startFlagged}
@@ -409,39 +433,57 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
           </div>
           <div className="overflow-clip rounded-lg border border-line bg-surface dark:border-transparent" data-testid="review-list">
             <p className="sr-only">{g.list}</p>
-            {groups.map((grp) => (
-              <section key={grp.key} aria-label={grp.type === "area" ? (grp.areaId ? areaTitle(grp.areaId) : g.noArea) : grp.type === "day" ? dayHeading(grp.day, now) : g.originalGroup}>
-                <h3 className="sticky top-14 z-10 flex items-center gap-2 border-b border-line bg-surface-2/95 px-4 py-2 text-sm font-semibold backdrop-blur lg:top-0 dark:bg-surface-2/95">
-                  {grp.type === "area" ? (
-                    <>
-                      <span aria-hidden className={cx("h-2.5 w-2.5 shrink-0 rounded-full", grp.areaId ? tagBgClass(areaColor(grp.areaId)) : "bg-line-strong")} />
-                      <span className="min-w-0 truncate">{grp.areaId ? areaTitle(grp.areaId) : g.noArea}</span>
-                    </>
-                  ) : grp.type === "day" ? (
-                    <span>{dayHeading(grp.day, now)}</span>
-                  ) : (
-                    <span title={g.originalGroupHelp}>{g.originalGroup}</span>
-                  )}
-                  <span className="font-medium text-muted tabular-nums">{grp.cards.length}</span>
-                </h3>
-                <ul className="divide-y divide-line">
-                  {grp.cards.map((c) => (
-                    <li key={c.id}>
-                      <ReviewRow
-                        card={c}
-                        tab={tab}
-                        href={`${pathname}${viewQuery({ tab, cardId: c.id, filter })}`}
-                        onClick={(e) => onRowClick(e, c.id)}
-                        showArea={grp.type !== "area"}
-                        areaTitle={areaTitle}
-                        areaColor={areaColor}
-                        rightLabel={rowLabel(c, tab)}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
+            {groups.map((grp) => {
+              const open = isOpen(grp.key);
+              const row = grp.areaId ? progressOf.get(grp.areaId) : undefined;
+              const reviewed = row ? reviewedOf(row) : null;
+              const title = grp.areaId ? areaTitle(grp.areaId) : g.noArea;
+              return (
+                <section key={grp.key} aria-label={title} className="border-b border-line last:border-b-0" data-testid="review-group">
+                  <h3>
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(grp.key)}
+                      aria-expanded={open}
+                      aria-controls={`omrade-${grp.key}`}
+                      disabled={expandAll}
+                      className={cx(
+                        "grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 px-4 py-3 text-left transition-colors duration-150 enabled:hover:bg-surface-2 sm:grid-cols-[auto_minmax(0,1fr)_minmax(8rem,14rem)_auto]",
+                        open && "bg-surface-2/60",
+                      )}
+                      data-testid="review-group-toggle"
+                    >
+                      <ChevronDown size={17} aria-hidden className={cx("shrink-0 text-muted transition-transform duration-200", open ? "" : "-rotate-90")} />
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span aria-hidden className={cx("h-2.5 w-2.5 shrink-0 rounded-full", grp.areaId ? tagBgClass(areaColor(grp.areaId)) : "bg-line-strong")} />
+                        <span className="min-w-0 truncate font-semibold">{title}</span>
+                        <span className="shrink-0 text-sm font-medium text-muted tabular-nums">{grp.cards.length}</span>
+                      </span>
+                      {row && reviewed ? <ReviewBar counts={row} size="sm" className="max-sm:col-span-3 max-sm:col-start-2 max-sm:row-start-2" /> : <span className="max-sm:hidden" />}
+                      <span className="text-right text-sm text-muted tabular-nums">{reviewed ? g.overviewOf(reviewed.done, reviewed.all) : null}</span>
+                    </button>
+                  </h3>
+                  {open ? (
+                    <ul id={`omrade-${grp.key}`} className="divide-y divide-line border-t border-line">
+                      {grp.cards.map((c) => (
+                        <li key={c.id}>
+                          <ReviewRow
+                            card={c}
+                            tab={tab}
+                            href={`${pathname}${viewQuery({ tab, cardId: c.id, filter })}`}
+                            onClick={(e) => onRowClick(e, c.id)}
+                            showArea={false}
+                            areaTitle={areaTitle}
+                            areaColor={areaColor}
+                            rightLabel={rowLabel(c, tab)}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </section>
+              );
+            })}
           </div>
         </>
       )}
@@ -452,16 +494,11 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
 
   function rowLabel(c: ReviewCard, tabKey: ReviewTab): string {
     if (tabKey === "att-granska") return typeof c.published_version_id === "number" ? g.labelCorrected : c.original ? g.labelOriginal : g.labelNew;
-    if (tabKey === "granskade") return c.reviewed_at ? formatTime(c.reviewed_at) : g.labelOriginal;
+    if (tabKey === "granskade") return c.reviewed_at ? capitalize(dayText(c.reviewed_at, true)) : g.labelOriginal;
     if (tabKey === "ur-rotation") return c.reviewed_at ? capitalize(dayText(c.reviewed_at)) : "";
     return c.flagged_at ? capitalize(dayText(c.flagged_at)) : "";
   }
 
-  function dayHeading(day: string, at: number): string {
-    const iso = `${day}T12:00:00+02:00`;
-    const rel = relativeDay(iso, at);
-    return rel === "today" ? g.today : rel === "yesterday" ? g.yesterday : capitalize(formatDay(iso, at));
-  }
 }
 
 function capitalize(text: string): string {

@@ -97,6 +97,8 @@ export const granskning = {
   approveResolve: "Godkänn och ta bort flaggan",
   approvedResolved: (front: string) => `Godkänt, flaggan borttagen: ${front}`,
   flaggedBadge: "Flaggat",
+  expandAll: "Fäll ut alla",
+  collapseAll: "Fäll ihop alla",
   markUnreviewed: "Markera som ogranskad",
   approveBack: "Godkänn och sätt i rotation",
   unreviewed: (front: string) => `Markerat som ogranskat: ${front}`,

@@ -11,6 +11,7 @@ import {
   countByTab,
   formatDay,
   groupByArea,
+  groupKey,
   groupReviewList,
   matchesReviewFilter,
   nextAfterDecision,
@@ -120,21 +121,27 @@ describe("listan under en flik", () => {
     expect(reviewList([old, fresh, o1], "att-granska", DEFAULT_REVIEW_FILTER, areas).map((x) => x.id)).toEqual([o1.id]);
   });
 
-  it("grupperar Granskade per dag i svensk tid", () => {
-    const sent = reviewed(0, { reviewed_at: "2026-09-29T22:30:00Z" }); // 00:30 den 30:e i Stockholm
-    const tidig = reviewed(0, { reviewed_at: "2026-09-29T21:30:00Z" }); // 23:30 den 29:e
-    const groups = groupReviewList(reviewList([tidig, sent], "granskade", DEFAULT_REVIEW_FILTER, areas), "granskade", areas);
-    expect(groups.map((g) => (g.type === "day" ? g.day : g.type))).toEqual(["2026-09-30", "2026-09-29"]);
+  it("Granskade grupperas per område, senast granskade först inom området", () => {
+    const old = reviewed(30, { category_id: "a1" });
+    const fresh = reviewed(1, { category_id: "a1" });
+    const other = reviewed(0, { category_id: "a2" });
+    const ordered = reviewList([other, old, fresh], "granskade", DEFAULT_REVIEW_FILTER, areas);
+    expect(ordered.map((x) => x.id)).toEqual([fresh.id, old.id, other.id]);
+    expect(groupReviewList(ordered, areas).map((grp) => [grp.key, grp.cards.length])).toEqual([
+      ["a1", 2],
+      ["a2", 1],
+    ]);
   });
 
-  it("grupperar övriga flikar per område; okända områden räknas som utan område", () => {
+  it("grupperar per område; okända områden räknas som utan område", () => {
     const list = orderByArea([card({ category_id: "a2" }), card({ category_id: "okänt" }), card({ category_id: "a1" })], areas);
     expect(groupByArea(list, areas).map((g) => [g.title, g.cards.length])).toEqual([
       ["Metaller", 1],
       ["Polymerer", 1],
       [null, 1],
     ]);
-    expect(groupReviewList(list, "att-granska", areas).every((g) => g.type === "area")).toBe(true);
+    expect(groupReviewList(list, areas).map((grp) => grp.key)).toEqual(["a1", "a2", "ingen"]);
+    expect(groupKey(card({ category_id: "okänt" }), areas)).toBe("ingen");
   });
 });
 

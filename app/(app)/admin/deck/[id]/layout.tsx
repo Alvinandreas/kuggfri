@@ -1,11 +1,9 @@
 import { forbidden, notFound } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
 import { sv } from "@/lib/i18n/sv";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
-import { LinkButton } from "@/components/ui/Button";
-import { routes } from "@/lib/routes";
+import { LanguageToggle } from "@/components/admin/review/ReviewLanguage";
 
 type Params = Promise<{ id: string }>;
 
@@ -44,10 +42,8 @@ export default async function DeckLayout({ children, params }: { children: React
             </Badge>
           </p>
         </div>
-        <LinkButton href={routes.deck(deck.slug)} variant="outline" size="sm">
-          {sv.admin.viewDeck}
-          <ArrowUpRight size={15} aria-hidden />
-        </LinkButton>
+        {/* Språkreglaget (English) för examinatorer som inte läser svenska; studenternas kurssida nås från sidomenyn. */}
+        <LanguageToggle />
       </div>
       <div className="min-w-0">{children}</div>
     </div>

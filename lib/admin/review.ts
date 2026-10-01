@@ -170,9 +170,9 @@ export function orderByArea<C extends Pick<ReviewCard, "category_id" | "sort_ord
 }
 
 /**
- * Korten under en flik med filtret, i flikens ordning: Att granska och Flaggade i områdenas
- * ordning (så att ett område kan gås igenom i ett svep), Granskade senast granskade först och
- * kort utan granskningsdatum (oförändrade originalkort) sist i områdenas ordning.
+ * Korten under en flik med filtret, i områdenas ordning (listan visar ett område i taget, och
+ * ett område kan gås igenom i ett svep). Under Granskade står det senast granskade kortet först
+ * inom varje område.
  */
 export function reviewList<C extends ReviewCard>(cards: readonly C[], tab: ReviewTab, filter: ReviewFilter, areas: readonly ReviewArea[]): C[] {
   const ordered = orderByArea(
@@ -180,11 +180,11 @@ export function reviewList<C extends ReviewCard>(cards: readonly C[], tab: Revie
     areas,
   );
   if (tab !== "granskade") return ordered;
-  const time = (c: C) => (c.reviewed_at ? Date.parse(c.reviewed_at) : Number.NaN);
-  const dated = ordered.filter((c) => Number.isFinite(time(c)));
-  const undated = ordered.filter((c) => !Number.isFinite(time(c)));
-  // Stabil sortering: samma tidpunkt (massgodkännande) behåller områdenas ordning.
-  return [...dated.sort((a, b) => time(b) - time(a)), ...undated];
+  const rank = new Map(areas.map((a, i) => [a.id, i] as const));
+  const areaRank = (c: C) => (c.category_id !== null && rank.has(c.category_id) ? rank.get(c.category_id)! : areas.length);
+  const time = (c: C) => (c.reviewed_at ? Date.parse(c.reviewed_at) : 0);
+  // Stabil sortering: samma tidpunkt (massgodkännande) behåller ordningen inom området.
+  return [...ordered].sort((a, b) => areaRank(a) - areaRank(b) || time(b) - time(a));
 }
 
 export type AreaGroup<C> = { areaId: string | null; title: string | null; cards: C[] };
@@ -208,26 +208,17 @@ export function groupByArea<C extends Pick<ReviewCard, "category_id">>(orderedCa
   return groups;
 }
 
-/** En grupp i inkorgens lista: ett område, en dag (Granskade) eller originalkorten (Granskade). */
-export type ListGroup<C> =
-  | { key: string; type: "area"; areaId: string | null; title: string | null; cards: C[] }
-  | { key: string; type: "day"; day: string; cards: C[] }
-  | { key: "original"; type: "original"; cards: C[] };
+/** En grupp i inkorgens lista: ett område (null = utan område), med en nyckel för vyn. */
+export type ListGroup<C> = { key: string; areaId: string | null; title: string | null; cards: C[] };
 
-/** Listans grupper för redan ordnade kort (reviewList): per dag under Granskade, annars per område. */
-export function groupReviewList<C extends ReviewCard>(orderedCards: readonly C[], tab: ReviewTab, areas: readonly ReviewArea[]): ListGroup<C>[] {
-  if (tab !== "granskade") return groupByArea(orderedCards, areas).map((g) => ({ key: g.areaId ?? "ingen", type: "area" as const, ...g }));
-  const groups: ListGroup<C>[] = [];
-  for (const card of orderedCards) {
-    const day = card.reviewed_at ? stockholmDay(card.reviewed_at) : null;
-    const last = groups[groups.length - 1];
-    if (day === null) {
-      if (last?.type === "original") last.cards.push(card);
-      else groups.push({ key: "original", type: "original", cards: [card] });
-    } else if (last?.type === "day" && last.day === day) last.cards.push(card);
-    else groups.push({ key: day, type: "day", day, cards: [card] });
-  }
-  return groups;
+/** Listans grupper för redan ordnade kort (reviewList): ett område per grupp, i alla flikar. */
+export function groupReviewList<C extends ReviewCard>(orderedCards: readonly C[], areas: readonly ReviewArea[]): ListGroup<C>[] {
+  return groupByArea(orderedCards, areas).map((g) => ({ key: g.areaId ?? "ingen", ...g }));
+}
+
+/** Gruppnyckeln för ett kort (samma som groupReviewList ger). */
+export function groupKey(card: Pick<ReviewCard, "category_id">, areas: readonly ReviewArea[]): string {
+  return card.category_id !== null && areas.some((a) => a.id === card.category_id) ? card.category_id : "ingen";
 }
 
 // ---------------------------------------------------------------------------

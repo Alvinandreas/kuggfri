@@ -19,7 +19,7 @@ import {
   writeLocalReviews,
 } from "./local-store";
 import { mergeProgress } from "./migrate";
-import { flushOutbox, outboxSize, queueProgress, queueReview } from "./outbox";
+import { flushOutbox, outboxRatings, queueProgress, queueReview } from "./outbox";
 import { isSelfRating, isStudyMode, type CardProgress, type ProgressMap, type ReviewEntry, type StudyMode } from "./types";
 
 /** Vilket deck en nollställning gäller, uttryckt för båda lagren (se resetDeck). */
@@ -29,8 +29,10 @@ export type AllDecks = { deckId: null; cardIds: null };
 
 export interface ProgressStore {
   readonly kind: "local" | "account";
-  /** Antal skrivningar som väntar på att skickas (tappad anslutning). Gäster: alltid 0. */
+  /** Antal skattningar som väntar på att skickas (tappad anslutning). Gäster: alltid 0. */
   pending(): number;
+  /** Skickar det som väntar. Returnerar antal skickade poster (0 om inget, vid fel och för gäster). */
+  flush(): Promise<number>;
   /** Progress för angivna kort. Kort utan progress saknas i svaret. */
   load(cardIds: readonly string[]): Promise<ProgressMap>;
   save(progress: CardProgress): Promise<void>;
@@ -68,6 +70,10 @@ export class LocalProgressStore implements ProgressStore {
   constructor(private readonly storage: Storage) {}
 
   pending(): number {
+    return 0;
+  }
+
+  async flush(): Promise<number> {
     return 0;
   }
 
@@ -140,17 +146,22 @@ export class SupabaseProgressStore implements ProgressStore {
   ) {}
 
   pending(): number {
-    return this.storage ? outboxSize(this.storage) : 0;
+    return this.storage ? outboxRatings(this.storage) : 0;
   }
 
+  /** Pågående tömning: två samtidiga (sidladdning, online, passet) skulle skicka historiken två gånger. */
+  private flushing: Promise<number> | null = null;
+
   /** Skickar det som ligger i utkorgen. Returnerar antal skickade poster (0 om inget eller vid fel). */
-  async flush(): Promise<number> {
-    if (!this.storage) return 0;
-    try {
-      return await flushOutbox(this.storage, { saveMany: (items) => this.saveMany(items), logReviews: (items) => this.logReviews(items) });
-    } catch {
-      return 0;
-    }
+  flush(): Promise<number> {
+    const storage = this.storage;
+    if (!storage) return Promise.resolve(0);
+    this.flushing ??= flushOutbox(storage, { saveMany: (items) => this.saveMany(items), logReviews: (items) => this.logReviews(items) })
+      .catch(() => 0)
+      .finally(() => {
+        this.flushing = null;
+      });
+    return this.flushing;
   }
 
   async load(cardIds: readonly string[]): Promise<ProgressMap> {

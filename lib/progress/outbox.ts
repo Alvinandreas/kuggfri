@@ -76,6 +76,15 @@ export function outboxSize(storage: StorageLike): number {
   return Object.keys(box.progress).length + box.reviews.length;
 }
 
+/**
+ * Antal skattningar som väntar. En skattning köar både kortets progress och en historikrad, så
+ * summan av posterna (outboxSize) vore dubbelt så stor som det studenten gjort.
+ */
+export function outboxRatings(storage: StorageLike): number {
+  const box = readOutbox(storage);
+  return Math.max(box.reviews.length, Object.keys(box.progress).length);
+}
+
 /** Det som behövs för att tömma utkorgen mot kontot. */
 export type OutboxSink = {
   saveMany(items: readonly CardProgress[]): Promise<void>;

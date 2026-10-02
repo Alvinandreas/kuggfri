@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flushOutbox, LOCAL_OUTBOX_KEY, outboxSize, queueProgress, queueReview, readOutbox } from "@/lib/progress/outbox";
+import { flushOutbox, LOCAL_OUTBOX_KEY, outboxRatings, outboxSize, queueProgress, queueReview, readOutbox } from "@/lib/progress/outbox";
 import { reviewCard } from "@/lib/fsrs/scheduler";
 import type { CardProgress, ReviewEntry } from "@/lib/progress/types";
 
@@ -101,5 +101,16 @@ describe("utkorg", () => {
     });
     expect(n).toBe(0);
     expect(called).toBe(false);
+  });
+
+  it("räknar skattningar, inte poster: progress och historik för samma skattning är en", () => {
+    const s = memStorage();
+    ["a", "b", "c"].forEach((id, i) => {
+      const at = new Date(NOW.getTime() + i * 1000);
+      queueProgress(s, reviewCard(id, undefined, 3, at));
+      queueReview(s, rev(id, at));
+    });
+    expect(outboxSize(s)).toBe(6);
+    expect(outboxRatings(s)).toBe(3);
   });
 });

@@ -172,6 +172,19 @@ export function StudySession({
 
   const persistRating = usePersistRating({ store, progress, mode, schedule, setProgress, setReviews, setQueued, setSaveError });
 
+  // Skattningar som köats under tappad anslutning: försök skicka dem med jämna mellanrum och när
+  // nätet kommer tillbaka, och ta bort beskedet när utkorgen är tom.
+  useEffect(() => {
+    if (!store || queued === 0) return;
+    const retry = () => void store.flush().then(() => setQueued(store.pending()));
+    const timer = window.setInterval(retry, 4000);
+    window.addEventListener("online", retry);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("online", retry);
+    };
+  }, [store, queued]);
+
   const rate = useCallback(
     (rating: SelfRating) => {
       if (!session || session.finished || !card || !flipped || !store || !progress) return;

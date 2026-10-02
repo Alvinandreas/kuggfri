@@ -99,9 +99,11 @@ originalkorten. Alla kort är i rotation från början; ett kort som inte hålle
 - [ ] Omdirigeringstabell för gamla slugs om ett deck byter slug
 - [ ] CSV-export av område- och kortstatistiken till kursutvärderingen
 - [ ] Systemöversikt i admin: senaste cron-körningen, skickade mejl, öppna felrapporter
-- [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort
+- [~] Felvägarna: tappad anslutning mitt i passet (2 okt: beskedet räknade dubbelt och låg kvar efter
+      att allt skickats; rättat lokalt, utkorgen töms aldrig två gånger samtidigt), 404 kontrollerad
 - [~] Tillgänglighetsgenomgång: axe på alla sidor, tre roller, ljust och mörkt (2 okt: ett fel, dämpad text
-      i mörkt läge, rättat i `--subtle`); kvar: tangentbordsrunda genom en hel session
+      i mörkt läge, rättat i `--subtle`); tangentbordsrunda genom ett helt pass gjord (fungerar; Starta på kurssidan
+      nås först efter 40 Tab-tryck förbi områdena, värt att se över)
 - [~] Mellansidan `/bekrafta`: länkar i mejl förbrukas först av knappen (POST), så Outlooks länkskanner
       inte gör dem ogiltiga (lokalt, väntar på Alvins verifiering på 3001)
 - [ ] DMARC med rapportadress hos Hostinger, efter ett par veckor `p=quarantine`

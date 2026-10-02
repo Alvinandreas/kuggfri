@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Meeting 2 October 2026</title><style>
+@font-face { font-family: "Figtree"; font-weight: 300 900; font-style: normal; font-display: block;
+  src: url("../../node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-weight: 300 900; font-style: normal; font-display: block;
+  src: url("../../node_modules/@fontsource-variable/figtree/files/figtree-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+:root { --page: #ffffff; --bg: #f6f5f1; --sidebar: #efede8; --surface: #ffffff; --surface-2: #eeece6; --surface-3: #e4e1da; --fg: #1d1c19; --muted: #676259; --subtle: #6b665c; --line: #dedbd3; --line-strong: #c4c0b6; --accent: #1f7a4d; --accent-hover: #196540; --accent-fg: #ffffff; --accent-soft: #dcefe3; --accent-ink: #17613d; --danger: #a13d3d; --danger-soft: #f6e6e6; --inverse: #1d1c19; --inverse-fg: #ffffff; --chart-1: #1f7a4d; --chart-2: #3b6ea5; --chart-3: #c97a1f; --chart-4: #7657b3; --chart-grid: #e6e3dc; --rate-1: #b0523f; --rate-2: #b9773a; --rate-3: #a3953a; --rate-4: #6d9a4a; --rate-5: #3f8b5c; --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06); --tag-1: oklch(0.9 0.07 20); --tag-2: oklch(0.9 0.08 62); --tag-3: oklch(0.9 0.10 95); --tag-4: oklch(0.9 0.10 140); --tag-5: oklch(0.9 0.10 175); --tag-6: oklch(0.9 0.10 215); --tag-7: oklch(0.9 0.10 255); --tag-8: oklch(0.9 0.10 290); --tag-9: oklch(0.9 0.10 325); --tag-10: oklch(0.9 0.10 355); --radius-md: 12px; --radius-lg: 20px; --radius-tile: 14px; }
+.dark { --page: #101111; --bg: #101111; --sidebar: #161717; --surface: #1c1d1d; --surface-2: #252626; --surface-3: #2f3030; --fg: #f1f1ee; --muted: #a8a8a2; --subtle: #8a8a83; --line: #28292a; --line-strong: #3b3c3c; --accent: #3fb872; --accent-hover: #55c886; --accent-fg: #06140c; --accent-soft: #173121; --accent-ink: #5fcf8e; --danger: #e0827c; --danger-soft: #3a2322; --inverse: #f1f1ee; --inverse-fg: #121313; --chart-1: #3fb872; --chart-2: #4f86c9; --chart-3: #cf7f22; --chart-4: #a48ae0; --chart-grid: #2c2d2d; --rate-1: #c9705d; --rate-2: #cf9455; --rate-3: #bfb15a; --rate-4: #8ab56b; --rate-5: #62a97c; --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35); --tag-1: oklch(0.44 0.09 20); --tag-2: oklch(0.44 0.10 62); --tag-3: oklch(0.44 0.13 95); --tag-4: oklch(0.44 0.13 140); --tag-5: oklch(0.44 0.13 175); --tag-6: oklch(0.44 0.13 215); --tag-7: oklch(0.44 0.13 255); --tag-8: oklch(0.44 0.13 290); --tag-9: oklch(0.44 0.13 325); --tag-10: oklch(0.44 0.13 355); }
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--page); color: var(--fg); font-family: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  font-size: 9.6pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+.dark { color: var(--fg); }
+
+/* Sidmall: A4, 13/14/10 mm marginal, en kolumn med 4,2 mm mellanrum; sidfoten nederst. */
+.page { width: 210mm; height: 297mm; padding: 13mm 14mm 10mm; display: flex; flex-direction: column; gap: 4.2mm; background: var(--page); overflow: hidden; break-after: page; }
+.page:last-child { break-after: auto; }
+.page > * { flex: none; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 8mm; }
+header.top img { height: 11mm; width: auto; display: block; }
+header.top .meta { text-align: right; }
+.eyebrow { font-size: 7.6pt; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+header.top .meta .course { font-size: 9.5pt; font-weight: 600; color: var(--muted); margin-top: 1pt; }
+.foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 3mm; border-top: 1px solid var(--line); font-size: 8.6pt; color: var(--muted); }
+.foot img { height: 6.5mm; width: auto; }
+.foot .url { color: var(--accent); font-weight: 750; }
+
+/* Typografi */
+h1 { font-size: 25pt; line-height: 1.08; letter-spacing: -0.02em; margin: 0; font-weight: 800; }
+h2 { font-size: 14.5pt; line-height: 1.2; letter-spacing: -0.01em; margin: 0; font-weight: 800; }
+h3 { font-size: 10.6pt; margin: 0 0 2.5pt; font-weight: 750; }
+p { margin: 0 0 4pt; } p:last-child { margin-bottom: 0; }
+.lead { font-size: 11.2pt; line-height: 1.5; color: var(--muted); max-width: 165mm; }
+.lead strong { color: var(--fg); }
+.muted { color: var(--muted); }
+.small { font-size: 8.8pt; }
+.tiny { font-size: 7.8pt; }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 8pt; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 0.86em; background: var(--surface-2); border-radius: 4pt; padding: 0.5pt 3pt; }
+
+/* Rutnät */
+.row { display: grid; gap: 3.5mm; }
+.cols-2 { grid-template-columns: 1fr 1fr; } .cols-3 { grid-template-columns: repeat(3, 1fr); } .cols-4 { grid-template-columns: repeat(4, 1fr); }
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 6mm; align-items: start; }
+.start { align-items: start; }
+
+/* Nyckeltal som StatTile (components/stats/StatTile.tsx): grå yta, färgprick, stort värde. */
+.tile { background: var(--surface-2); border-radius: var(--radius-tile); padding: 10pt 12pt 11pt; }
+.tile .k { display: flex; align-items: center; gap: 5pt; font-size: 8pt; font-weight: 600; color: var(--muted); }
+.tile .v { margin-top: 7pt; font-size: 21pt; font-weight: 800; line-height: 1; letter-spacing: -0.02em; white-space: nowrap; }
+.tile .l { margin-top: 5pt; font-size: 8pt; line-height: 1.35; color: var(--muted); }
+.dot { width: 5.5pt; height: 5.5pt; border-radius: 50%; flex: none; display: inline-block; }
+.d-green { background: var(--chart-1); } .d-navy { background: var(--chart-2); } .d-teal { background: var(--chart-3); } .d-violet { background: var(--chart-4); }
+
+/* Block */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 10pt 12pt; }
+.dark .card { border-color: transparent; }
+.callout { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--surface-2); }
+.callout h3 { margin-bottom: 3pt; display: flex; align-items: center; gap: 5pt; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; margin: 0; padding: 0; list-style: none; }
+.steps li { background: var(--surface-2); border-radius: var(--radius-md); padding: 8pt 10pt; }
+.steps .num { margin-bottom: 3pt; }
+.steps p { font-size: 8.7pt; line-height: 1.42; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+.num { display: inline-flex; width: 17pt; height: 17pt; border-radius: 50%; background: var(--accent); color: var(--accent-fg); font-weight: 800; font-size: 9pt; align-items: center; justify-content: center; flex: none; }
+.decisions { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; }
+.decision { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--surface-2); }
+.decision .head { display: flex; align-items: center; gap: 6pt; margin-bottom: 3pt; }
+.decision p { font-size: 8.8pt; line-height: 1.42; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+
+/* Knappar och tangenter */
+.btn { display: inline-flex; align-items: center; gap: 5pt; border-radius: 999px; padding: 3pt 9pt; font-weight: 750; font-size: 9pt; background: var(--surface-3); color: var(--fg); white-space: nowrap; }
+.btn.primary { background: var(--accent); color: var(--accent-fg); }
+.btn.outline { background: var(--surface); border: 1px solid var(--line-strong); }
+kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 13pt; height: 13pt; padding: 0 3pt; border-radius: 4pt;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent); font: 700 7.2pt/1 ui-monospace, Consolas, monospace; }
+.btn kbd { opacity: 0.8; }
+
+/* Listor och tabeller */
+.legend { display: grid; gap: 3pt 6mm; margin: 0; padding: 0; list-style: none; }
+.legend.two { grid-template-columns: 1fr 1fr; }
+.legend li { display: flex; gap: 6pt; align-items: flex-start; font-size: 8.9pt; line-height: 1.4; }
+.legend .num { width: 14pt; height: 14pt; font-size: 7.6pt; margin-top: 0.5pt; }
+.legend b { font-weight: 750; }
+ul.dots { margin: 0; padding: 0; list-style: none; display: grid; gap: 3.2pt; }
+ul.dots li { position: relative; padding-left: 11pt; font-size: 9pt; line-height: 1.42; }
+ul.dots li::before { content: ""; position: absolute; left: 0; top: 0.52em; width: 5pt; height: 5pt; border-radius: 50%; background: var(--accent); }
+ul.dots.dont li::before { background: var(--danger); }
+ul.acts { margin: 0; padding: 0; list-style: none; }
+ul.acts li { display: grid; justify-items: start; gap: 3pt; padding: 6pt 0; border-bottom: 1px solid var(--line); font-size: 9pt; line-height: 1.42; }
+ul.acts li:last-child { border-bottom: 0; padding-bottom: 0; }
+ul.acts li:first-child { padding-top: 2pt; }
+table.t { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+table.t th { text-align: left; font-size: 7.4pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; padding: 0 8pt 4pt 0; border-bottom: 1px solid var(--line); }
+table.t td { padding: 4pt 8pt 4pt 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n { white-space: nowrap; font-weight: 750; }
+table.keys { width: 100%; border-collapse: collapse; font-size: 9pt; }
+table.keys td { padding: 3.6pt 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.keys tr:last-child td { border-bottom: 0; }
+table.keys td.k { width: 1%; white-space: nowrap; padding-right: 8pt; } table.keys td.k kbd { margin-right: 2pt; }
+
+/* Skärmbilder */
+.shot { border-radius: var(--radius-md); border: 1px solid var(--line); box-shadow: var(--shadow-card); overflow: hidden; background: var(--bg); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot.crop img, .shot.croptop img { height: 100%; object-fit: cover; object-position: top left; }
+.shot.croptop img { object-position: bottom left; }
+
+/* Mobilskärmbild: rundad ram som en telefon */
+.phone { border-radius: 16pt; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); overflow: hidden; background: var(--bg); }
+.phone img { display: block; width: 100%; height: auto; }
+.phonecap { text-align: center; font-size: 8pt; color: var(--muted); margin-top: 4pt; }
+
+/* Skattningsskalan: siffran i skalans färg */
+.rate { display: inline-flex; width: 17pt; height: 17pt; border-radius: 6pt; align-items: center; justify-content: center; font-weight: 800; font-size: 9pt; flex: none;
+  border: 1.5px solid currentColor; }
+.rate-1 { color: var(--rate-1); background: color-mix(in oklab, var(--rate-1) 14%, var(--surface)); }
+.rate-2 { color: var(--rate-2); background: color-mix(in oklab, var(--rate-2) 14%, var(--surface)); }
+.rate-3 { color: var(--rate-3); background: color-mix(in oklab, var(--rate-3) 14%, var(--surface)); }
+.rate-4 { color: var(--rate-4); background: color-mix(in oklab, var(--rate-4) 14%, var(--surface)); }
+.rate-5 { color: var(--rate-5); background: color-mix(in oklab, var(--rate-5) 14%, var(--surface)); }
+.qr { width: 100%; max-width: 34mm; display: block; }
+.qr svg { width: 100%; height: auto; display: block; }
+
+/* Diagram */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: "Figtree", sans-serif; font-variant-numeric: tabular-nums; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 3pt 10pt; font-size: 7.8pt; color: var(--muted); margin-top: 5pt; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 4pt; }
+.chart-legend b { color: var(--fg); font-weight: 700; }
+.swatch { width: 10pt; height: 3pt; border-radius: 2pt; display: inline-block; }
+.sharebar { display: flex; overflow: hidden; border-radius: 999px; background: var(--surface-3); }
+.sharebar > div { height: 100%; }
+.areabars { display: grid; gap: 4.5pt; font-size: 8.2pt; }
+.areabars .r { display: grid; grid-template-columns: 13pt minmax(0, 1fr) 24pt; gap: 3pt 6pt; align-items: center; }
+.areabars .n { width: 13pt; height: 13pt; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6.6pt; font-weight: 700; color: var(--fg); }
+.areabars .lbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.areabars .pct { text-align: right; color: var(--muted); }
+.areabars .bar { grid-column: 2 / 4; height: 4.5pt; border-radius: 999px; background: var(--surface-3); display: flex; overflow: hidden; }
+.radarlist { display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; gap: 2.5pt 8pt; margin: 0; padding: 0; list-style: none; font-size: 7.8pt; }
+.radarlist li { display: flex; align-items: center; gap: 4pt; min-width: 0; }
+.radarlist .n { width: 11pt; height: 11pt; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6pt; font-weight: 700; flex: none; }
+.radarlist .lbl { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radarlist .pct { color: var(--muted); }
+
+/* Prov i mörkt tema inne i en ljus sida */
+.panel { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--page); border: 1px solid var(--line); }
+.dark.panel { background: var(--bg); border-color: var(--bg); }
+.panel .cap { font-size: 7.2pt; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6pt; display: flex; justify-content: space-between; }
+.swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2.5mm; }
+.sw { border-radius: 9pt; overflow: hidden; border: 1px solid var(--line); font-size: 7pt; }
+.sw .c { height: 12mm; }
+.sw .t { padding: 3pt 5pt 4pt; background: var(--surface); }
+.sw .t b { display: block; font-size: 7.4pt; color: var(--fg); }
+.sw .t span { color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 6.6pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.progress { height: 6pt; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.progress > div { height: 100%; background: var(--chart-1); border-radius: 999px; }
+table.bars td { vertical-align: middle; }
+table.bars td.bar { width: 34%; }
+.chartblock h3 { margin-bottom: 0; }
+.chartblock .sub { font-size: 8pt; color: var(--muted); margin: 1pt 0 6pt; }
+.chartblock .src { font-size: 7.2pt; color: var(--muted); margin-top: 5pt; }
+td code, li code { white-space: nowrap; }
+</style></head>
+<body>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Meeting, 2 October 2026</div><div class="course">Kuggfri for Materialteknik MTT085</div></div></header>
+  <h1>Kuggfri for Materialteknik</h1>
+  <p class="lead">Every card is now in rotation and waiting for your review. The service opens to students <strong>once every card has been reviewed</strong>. Today we agree on who reviews what, by when, and the launch date.</p>
+  <div class="row cols-4"><div class="tile"><div class="k"><span class="dot d-green"></span>Cards</div><div class="v">405</div><div class="l">in 14 topics, all in rotation</div></div><div class="tile"><div class="k"><span class="dot d-navy"></span>Flagged</div><div class="v">103</div><div class="l">by Kuggfri’s source check</div></div><div class="tile"><div class="k"><span class="dot d-teal"></span>Reviewed</div><div class="v">0</div><div class="l">the review starts after today</div></div><div class="tile"><div class="k"><span class="dot d-violet"></span>Review time</div><div class="v">about 7 h</div><div class="l">5 h for Johan, 2 h for Roland</div></div></div>
+  <h2>Agenda</h2>
+  <div class="card"><table class="t">
+    <tr><td style="width:1%;padding-right:8pt"><span class="num">1</span></td><td><b>Where we are</b><br><span class="small muted">The course content since the first version: 144 cards became 405, every card checked against the course material, with sources.</span></td><td style="text-align:right;white-space:nowrap" class="muted">5 min</td></tr>
+    <tr><td style="width:1%;padding-right:8pt"><span class="num">2</span></td><td><b>Demo: the student’s view</b><br><span class="small muted">Home page, today’s session, a card, the summary and My statistics.</span></td><td style="text-align:right;white-space:nowrap" class="muted">10 min</td></tr>
+    <tr><td style="width:1%;padding-right:8pt"><span class="num">3</span></td><td><b>Demo: the review</b><br><span class="small muted">The review page, one card at a time, the four decisions, flags and the English switch.</span></td><td style="text-align:right;white-space:nowrap" class="muted">10 min</td></tr>
+    <tr><td style="width:1%;padding-right:8pt"><span class="num">4</span></td><td><b>Review plan and launch date</b><br><span class="small muted">Who reviews which topics, by when, and the date the course opens to students.</span></td><td style="text-align:right;white-space:nowrap" class="muted">15 min</td></tr>
+    <tr><td style="width:1%;padding-right:8pt"><span class="num">5</span></td><td><b>Decisions and open questions</b><br><span class="small muted">The exam date, values that differ between sources, and the questions on page 3.</span></td><td style="text-align:right;white-space:nowrap" class="muted">15 min</td></tr>
+    <tr><td style="width:1%;padding-right:8pt"><span class="num">6</span></td><td><b>Next steps</b><br><span class="small muted">Who does what after the meeting.</span></td><td style="text-align:right;white-space:nowrap" class="muted">5 min</td></tr>
+  </table></div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-green"></span>Demo order</h3><ul class="dots "><li>Student view on kuggfri.com, with Alvin’s own study history.</li><li>The review on kuggfri.com, as an examiner sees it, in Swedish and English.</li><li>The course overview locally, with <b>simulated</b> students, to show the statistics examiners will get.</li></ul></div>
+    <div class="callout"><h3><span class="dot d-navy"></span>Handed out today</h3><ul class="dots "><li>Review guide in Swedish (Johan) and English (Roland), three pages each.</li><li>Student guide, eight pages, sent with the launch announcement.</li><li>The link to the service, sent by Alvin by email.</li></ul></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Alvin, alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Page 1 of 3</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Meeting, 2 October 2026</div><div class="course">Kuggfri for Materialteknik MTT085</div></div></header>
+  <div><h2>Review plan</h2><p class="lead" style="margin-top:3pt">Each examiner reviews their own part. A card is done when it is approved or removed from rotation, and a flag is done when it is resolved.</p></div>
+  <div class="row cols-2">
+    <div class="tile"><div class="k"><span class="dot d-green"></span>Johan Ahlström, metals</div><div class="v">297 cards</div><div class="l">topics 1–11, of which 87 flagged. About 5 hours.</div></div>
+    <div class="tile"><div class="k"><span class="dot d-navy"></span>Roland Kádár, polymers</div><div class="v">108 cards</div><div class="l">topics 12–14, of which 16 flagged, all with English notes. About 2 hours.</div></div>
+  </div>
+  <div class="card"><table class="t bars">
+    <tr><th>Topic</th><th>Cards</th><th>Flagged</th><th></th><th style="text-align:right">Reviewer</th></tr>
+    <tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-1)">1</span>Material groups and properties</span></td><td class="muted">24</td><td class="muted">5</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:20.833333333333336%;background:var(--chart-3)"></div><div style="width:79.16666666666666%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-2)">2</span>The materials selection process</span></td><td class="muted">27</td><td class="muted">6</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:22.22222222222222%;background:var(--chart-3)"></div><div style="width:77.77777777777779%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-3)">3</span>Crystal structure</span></td><td class="muted">28</td><td class="muted">6</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:21.428571428571427%;background:var(--chart-3)"></div><div style="width:78.57142857142857%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-4)">4</span>Phase diagrams and microstructure</span></td><td class="muted">45</td><td class="muted">14</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:31.11111111111111%;background:var(--chart-3)"></div><div style="width:68.88888888888889%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-5)">5</span>Stiffness and elastic deformation</span></td><td class="muted">21</td><td class="muted">5</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:23.809523809523807%;background:var(--chart-3)"></div><div style="width:76.19047619047619%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-6)">6</span>Plasticity, dislocations and hardening</span></td><td class="muted">24</td><td class="muted">3</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:12.5%;background:var(--chart-3)"></div><div style="width:87.5%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-7)">7</span>Fracture and fatigue</span></td><td class="muted">30</td><td class="muted">10</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:33.33333333333333%;background:var(--chart-3)"></div><div style="width:66.66666666666666%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-8)">8</span>Thermal properties, diffusion and creep</span></td><td class="muted">29</td><td class="muted">15</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:51.724137931034484%;background:var(--chart-3)"></div><div style="width:48.275862068965516%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-9)">9</span>Steel, heat treatment and processing</span></td><td class="muted">36</td><td class="muted">12</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:33.33333333333333%;background:var(--chart-3)"></div><div style="width:66.66666666666666%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-10)">10</span>Non-ferrous metals</span></td><td class="muted">17</td><td class="muted">4</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:23.52941176470588%;background:var(--chart-3)"></div><div style="width:76.47058823529412%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-1)">11</span>Sustainability and recycling</span></td><td class="muted">16</td><td class="muted">7</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:43.75%;background:var(--chart-3)"></div><div style="width:56.25%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Johan</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-2)">12</span>Structure of Polymers</span></td><td class="muted">37</td><td class="muted">7</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:18.91891891891892%;background:var(--chart-3)"></div><div style="width:81.08108108108108%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Roland</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-3)">13</span>Polymer melt rheology and processing</span></td><td class="muted">44</td><td class="muted">4</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:9.090909090909092%;background:var(--chart-3)"></div><div style="width:90.9090909090909%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Roland</td></tr><tr><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5pt"><span class="n" style="width:13pt;height:13pt;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.6pt;font-weight:700;background:var(--tag-4)">14</span>Mechanical properties of polymers</span></td><td class="muted">27</td><td class="muted">5</td><td class="bar"><div class="sharebar" style="height:4pt"><div style="width:18.51851851851852%;background:var(--chart-3)"></div><div style="width:81.48148148148148%;background:var(--surface-3)"></div></div></td><td style="text-align:right" class="muted">Roland</td></tr>
+  </table></div>
+  <div class="row start" style="grid-template-columns:1.15fr 1fr">
+    <div class="card"><h3>Proposed timeline, to decide today</h3><table class="t">
+      <tr><td class="n">Today, 2 Oct</td><td>Review guides and the link go out. Both examiners create their accounts.</td></tr>
+      <tr><td class="n">By Fri 9 Oct</td><td>Johan and Roland have reviewed their topics. Alvin fixes flagged cards within a day.</td></tr>
+      <tr><td class="n">Mon 12 Oct</td><td>Last check, then the course opens to students and the student guide is sent out.</td></tr>
+    </table><p class="tiny muted" style="margin-top:4pt">The dates are a proposal. The service opens only when the review shows 0 cards left.</p></div>
+    <div class="callout"><h3><span class="dot d-green"></span>What makes the review quick</h3><ul class="dots "><li>One card at a time, with keyboard shortcuts: G approves.</li><li>Every decision saves at once; it can be split over several sittings.</li><li>A flag with a short note is enough: Alvin makes the change and it comes back for approval.</li></ul></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Alvin, alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Page 2 of 3</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Meeting, 2 October 2026</div><div class="course">Kuggfri for Materialteknik MTT085</div></div></header>
+  <div><h2>Decisions and open questions</h2><p class="lead" style="margin-top:3pt">The answers settle many flags at once and let the review go faster.</p></div>
+  <div class="card"><table class="t">
+    <tr><th style="width:4%"></th><th style="width:42%">Question</th><th>Why it matters</th></tr>
+    <tr><td><span class="num">1</span></td><td class="n">The exam date for MTT085</td><td>The schedule plans towards it: every card in time, nothing pushed past the exam, a final review the last days.</td></tr>
+    <tr><td><span class="num">2</span></td><td class="n">Which values should the course use?</td><td>The sources differ: 723 or 727 °C, 0.8 or 0.77 % C for the eutectoid point, and 910, 912 or 913 °C. One decision settles 6 flags and all Fe–C cards.</td></tr>
+    <tr><td><span class="num">3</span></td><td class="n">Cards that follow old exam questions closely: keep or rewrite?</td><td>6 flags ask whether a card is too close to an exam question or its suggested solution.</td></tr>
+    <tr><td><span class="num">4</span></td><td class="n">Is the Boltzmann superposition principle part of this year’s course? <span class="muted" style="font-weight:400">(Roland)</span></td><td>It is not in the reading instructions for PM 6 in 2024 and 2025. Two cards depend on it.</td></tr>
+    <tr><td><span class="num">5</span></td><td class="n">May figures from the course books (Ashby, Osswald) be used in cards?</td><td>Otherwise only our own redrawn diagrams.</td></tr>
+    <tr><td><span class="num">6</span></td><td class="n">Weekly summary by email? <span class="muted" style="font-weight:400">(Johan)</span></td><td>Monday mornings: active students, hardest topics, tricky questions and error reports. Anonymous.</td></tr>
+  </table></div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-teal"></span>Found in the 2025 material on Canvas</h3><p class="small" style="margin-bottom:4pt">The same errors were corrected in the cards. Should the slides be updated too?</p><ul class="dots "><li>Lecture 9 p. 7: the K1c condition.</li><li>Lecture 12 p. 22: tempered martensite.</li><li>Lecture 13 p. 13: titanium as the only biocompatible metal.</li><li>GLU 5-8 p. 15: about 30 % primary ferrite, where the lever rule gives about 60 %.</li></ul></div>
+    <div class="callout"><h3><span class="dot d-navy"></span>For Roland</h3><ul class="dots "><li>Errors in old suggested solutions: the pressure build-up zone in the extruder (IMS085 2023-10-25 p. 6) and “ejection unit” (2021).</li><li>The order of the necking stages: Lecture 21 p. 14 versus L6 p. 10.</li><li>Swedish term choices for metering zone, die swell and holding pressure.</li></ul></div>
+  </div>
+  <div class="row cols-3 start">
+    <div class="callout"><h3><span class="dot d-green"></span>32 corrected originals</h3><p class="small">Original cards from earlier cohorts that the source check corrected. Each can be approved or restored to the original wording.</p></div>
+    <div class="callout"><h3><span class="dot d-violet"></span>Your own feedback</h3><p class="small">On the content, the study modes and the review. Anything you want changed before launch.</p></div>
+    <div class="callout"><h3><span class="dot d-navy"></span>After the meeting</h3><p class="small">Alvin makes the agreed changes, sends the guides and the link, and follows the review until 0 cards are left.</p></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Alvin, alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Page 3 of 3</span></div></section>
+</body>
+</html>

@@ -14,6 +14,7 @@ const DOKUMENT = {
   designsystem: () => require("./designsystem.cjs"),
   granskningsguide: () => require("./granskningsguide.cjs"),
   studentguide: () => require("./studentguide.cjs"),
+  motesunderlag: () => require("./motesunderlag.cjs"),
 };
 
 (async () => {

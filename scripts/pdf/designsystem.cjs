@@ -119,6 +119,8 @@ const PAGES = [
         <tr><td class="n">Designsystem.pdf</td><td class="muted small" style="white-space:nowrap">Det här dokumentet</td></tr>
         <tr><td class="n">granskningsguide-sv.pdf</td><td class="muted small" style="white-space:nowrap">Johan, områdena 1–11</td></tr>
         <tr><td class="n">review-guide-en.pdf</td><td class="muted small" style="white-space:nowrap">Roland, topics 12–14</td></tr>
+        <tr><td class="n">Studentguide.pdf</td><td class="muted small" style="white-space:nowrap">Till studenterna vid lanseringen</td></tr>
+        <tr><td class="n">Infoblad.pdf</td><td class="muted small" style="white-space:nowrap">Till kursansvariga</td></tr>
       </table></div>
     </div>
   </div>

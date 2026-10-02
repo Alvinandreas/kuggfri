@@ -249,7 +249,7 @@ export function ReviewInbox({ deckId, areas, cards: serverCards, reviewerNames, 
               >
                 {tabKey === "flaggade" ? <FlagTriangleRight size={15} aria-hidden className="max-sm:hidden" /> : null}
                 {TAB_LABEL[tabKey]}
-                <span className={cx("tabular-nums", active ? "opacity-75" : "text-subtle")} data-testid={`review-count-${tabKey}`}>
+                <span className={cx("tabular-nums", active ? "opacity-75" : "text-muted")} data-testid={`review-count-${tabKey}`}>
                   {counts[tabKey]}
                 </span>
               </a>

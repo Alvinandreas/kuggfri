@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState, useTransition, type ReactNode } fr
 import { Download } from "lucide-react";
 import type { Dict } from "@/lib/i18n";
 import { useLang, useT } from "@/lib/i18n/client";
-import { deleteAccountAction, updateDisplayNameAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
+import { deleteAccountAction, updateDisplayNameAction, updateEmailAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
 import { DAILY_NEW_CHOICES } from "@/lib/study/plan";
@@ -72,6 +72,10 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
   );
   const [prefsState, prefsAction, prefsPending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateEmailPrefsAction(fd),
+    null,
+  );
+  const [emailState, emailAction, emailPending] = useActionState(
+    async (_prev: AuthResult | null, fd: FormData) => updateEmailAction(fd),
     null,
   );
   const [passwordState, passwordAction, passwordPending] = useActionState(
@@ -237,6 +241,23 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
           />
         </div>
         <p className="text-sm text-muted">{sv.meta.languageHelp}</p>
+      </Card>
+
+      {/* E-postadressen: bytet bekräftas från båda adresserna (Secure email change). */}
+      <Card padding="lg" className="anim-fade-up" style={{ ["--i" as string]: 5 }} role="region" aria-labelledby="epost-rubrik" data-testid="email-change">
+        <CardHeader id="epost-rubrik" title={sv.account.emailTitle} description={sv.account.emailHelp} />
+        <form action={emailAction} className="grid gap-2" key={emailState?.ok ? "sent" : "edit"}>
+          <label htmlFor="new_email" className="text-sm font-semibold">
+            {sv.account.newEmail}
+          </label>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <input id="new_email" name="email" type="email" required autoComplete="email" maxLength={254} placeholder={email} className={cx(inputClass, "h-12 min-w-0 shrink-0 sm:flex-1")} />
+            <Button type="submit" variant="outline" disabled={emailPending}>
+              {sv.account.saveEmail}
+            </Button>
+          </div>
+          <FormStatus state={emailState} />
+        </form>
       </Card>
 
       <Card

@@ -7,6 +7,7 @@ describe("isPublicPath", () => {
     "/logga-in",
     "/registrera",
     "/glomt-losenord",
+    "/bekrafta",
     "/om",
     "/hjalp",
     "/integritet",

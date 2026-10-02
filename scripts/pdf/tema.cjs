@@ -20,7 +20,7 @@ const TAGS_DARK = [20, 62, 95, 140, 175, 215, 255, 290, 325, 355].map((h, i) => 
 
 const LIGHT = {
   page: "#ffffff", bg: "#f6f5f1", sidebar: "#efede8", surface: "#ffffff", "surface-2": "#eeece6", "surface-3": "#e4e1da",
-  fg: "#1d1c19", muted: "#676259", subtle: "#6b665c", line: "#dedbd3", "line-strong": "#c4c0b6",
+  fg: "#1d1c19", muted: "#676259", subtle: "#68635a", line: "#dedbd3", "line-strong": "#c4c0b6",
   accent: "#1f7a4d", "accent-hover": "#196540", "accent-fg": "#ffffff", "accent-soft": "#dcefe3", "accent-ink": "#17613d",
   danger: "#a13d3d", "danger-soft": "#f6e6e6", inverse: "#1d1c19", "inverse-fg": "#ffffff",
   "chart-1": "#1f7a4d", "chart-2": "#3b6ea5", "chart-3": "#c97a1f", "chart-4": "#7657b3", "chart-grid": "#e6e3dc",
@@ -31,7 +31,7 @@ const LIGHT = {
 
 const DARK = {
   page: "#101111", bg: "#101111", sidebar: "#161717", surface: "#1c1d1d", "surface-2": "#252626", "surface-3": "#2f3030",
-  fg: "#f1f1ee", muted: "#a8a8a2", subtle: "#8a8a83", line: "#28292a", "line-strong": "#3b3c3c",
+  fg: "#f1f1ee", muted: "#a8a8a2", subtle: "#98988f", line: "#28292a", "line-strong": "#3b3c3c",
   accent: "#3fb872", "accent-hover": "#55c886", "accent-fg": "#06140c", "accent-soft": "#173121", "accent-ink": "#5fcf8e",
   danger: "#e0827c", "danger-soft": "#3a2322", inverse: "#f1f1ee", "inverse-fg": "#121313",
   "chart-1": "#3fb872", "chart-2": "#4f86c9", "chart-3": "#cf7f22", "chart-4": "#a48ae0", "chart-grid": "#2c2d2d",

@@ -58,6 +58,8 @@ export const routes = {
   authGoogle: (params?: { next?: string }) => `/auth/google${query([["next", enc(params?.next)]])}`,
   authGoogleCallback: () => "/auth/google/callback",
   authConfirm: (params?: { next?: string }) => `/auth/confirm${query([["next", enc(params?.next)]])}`,
+  /** Mellansidan för länkar i mejl (app/(public)/bekrafta). */
+  confirmLink: () => "/bekrafta",
 
   /** Kurssidan. */
   deck: (slug: string, params?: DeckParams) => `${deckPath(slug)}${query([["lage", params?.lage], ["omrade", enc(params?.omrade)]])}`,

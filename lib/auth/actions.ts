@@ -174,6 +174,26 @@ export async function updatePasswordAction(formData: FormData): Promise<AuthResu
   return { ok: true, message: sv.account.passwordSaved };
 }
 
+/**
+ * Byte av e-postadress under Konto. Supabase skickar en bekräftelselänk till båda adresserna
+ * (Secure email change, docs/DEPLOY.md; mallen supabase/templates/email_change.html), och
+ * adressen byts först när båda länkarna öppnats (/auth/confirm, type=email_change).
+ */
+export async function updateEmailAction(formData: FormData): Promise<AuthResult> {
+  const sv = await getT();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) return { ok: false, error: sv.auth.invalidEmail };
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: sv.auth.error };
+  if (email === (user.email ?? "").toLowerCase()) return { ok: false, error: sv.account.emailSame };
+  const { error } = await supabase.auth.updateUser({ email });
+  if (error) return { ok: false, error: authErrorMessage(sv, error, sv.errors.generic) };
+  return { ok: true, message: sv.account.emailChangeSent(email) };
+}
+
 export async function updateDisplayNameAction(formData: FormData): Promise<AuthResult> {
   const sv = await getT();
   const displayName = String(formData.get("display_name") ?? "").trim().slice(0, 80);

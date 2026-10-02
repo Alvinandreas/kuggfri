@@ -53,6 +53,9 @@ export const auth: Dict["auth"] = {
   migrated: (n: number) =>
     n === 1 ? "1 card was moved to your account." : `${n} cards were moved to your account.`,
   callbackError: "The link is invalid or has expired. Try again.",
+  linkTitle: { signup: "Confirm your account", magiclink: "Sign in to Kuggfri", recovery: "Choose a new password", email_change: "Confirm your new email address" },
+  linkButton: { signup: "Confirm account", magiclink: "Sign in", recovery: "Continue", email_change: "Confirm the change" },
+  linkLead: "One more click and you're done.",
   confirmLinkError: "The confirmation link has already been used or has expired. If you have confirmed, sign in as usual; otherwise sign in and send a new email.",
 };
 
@@ -62,6 +65,12 @@ export const account: Dict["account"] = {
   displayName: "Display name",
   save: "Save",
   saved: "Saved.",
+  emailTitle: "Email address",
+  emailHelp: "You sign in with it. A change is confirmed from both your current and your new address.",
+  newEmail: "New email address",
+  saveEmail: "Change email address",
+  emailChangeSent: (email: string) => `We've sent an email to ${email} and to your current address. Open the link in both, and the address changes.`,
+  emailSame: "That is already your email address.",
   passwordTitle: "Password",
   passwordHelp: "Signed in with a link or forgot your password? Choose a new one here.",
   newPassword: "New password",

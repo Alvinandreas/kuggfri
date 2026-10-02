@@ -36,7 +36,10 @@ originalkorten. Alla kort är i rotation från början; ett kort som inte hålle
       oberoende kontrollerade; anteckningar om möjliga fel i `docs/OVERSATTNING-ANTECKNINGAR.md`
 - [?] Alvin verifierar på 3001, sedan push: `supabase db push` (migration 20261001000100),
       `apply --mal prod`, `engelska materialteknik --mal prod`, `git push`
-- [ ] Mötesunderlag och granskningsguide (på engelska för Roland)
+- [x] Mötesunderlag (`docs/Motesunderlag-2-okt.pdf`, engelska) och granskningsguider (svenska och engelska),
+      studentguide och designsystem för PDF:er, alla byggda med `npm run pdf` (scripts/pdf/)
+- [x] Flaggornas anteckningar på engelska (alla 103), språket som kontoinställning för alla (Konto → Språk),
+      veckobrevet på mottagarens språk
 
 ### Tisdag 29 sep: allt användare och admin möter ska vara polerat
 
@@ -91,14 +94,16 @@ originalkorten. Alla kort är i rotation från början; ett kort som inte hålle
 - [ ] Molnlagring av källmaterialet (text och analys ca 5 MB i privat Supabase-bucket; originalen kan hämtas
       om från Canvas eller lagras i R2/Supabase Pro)
 - [ ] Bokfigurer (Ashby, Osswald) bara med Johans uttryckliga ja
-- [ ] Byte av e-postadress på kontosidan (`supabase.auth.updateUser`; mallen email_change finns)
+- [~] Byte av e-postadress på kontosidan (lokalt, väntar på Alvins verifiering på 3001)
 - [ ] Sök eller paginering i admin-kortlistan (kursen har 366 kort)
 - [ ] Omdirigeringstabell för gamla slugs om ett deck byter slug
 - [ ] CSV-export av område- och kortstatistiken till kursutvärderingen
 - [ ] Systemöversikt i admin: senaste cron-körningen, skickade mejl, öppna felrapporter
 - [ ] Felvägarna: tappad anslutning mitt i en session (utkorgen), 404, 500, deck utan kort
-- [ ] Tillgänglighetsgenomgång: axe på varje sida och en tangentbordsrunda genom en hel session
-- [ ] Mellansida med "Fortsätt"-knapp på `/auth/confirm` om Outlooks länkskanner förbrukar återställningslänkar
+- [~] Tillgänglighetsgenomgång: axe på alla sidor, tre roller, ljust och mörkt (2 okt: ett fel, dämpad text
+      i mörkt läge, rättat i `--subtle`); kvar: tangentbordsrunda genom en hel session
+- [~] Mellansidan `/bekrafta`: länkar i mejl förbrukas först av knappen (POST), så Outlooks länkskanner
+      inte gör dem ogiltiga (lokalt, väntar på Alvins verifiering på 3001)
 - [ ] DMARC med rapportadress hos Hostinger, efter ett par veckor `p=quarantine`
 - [ ] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler; beslut om komponenttester
 - [ ] Återställningsövning i Vercel tillsammans (fram och tillbaka) och `docs/DRIFT.md`

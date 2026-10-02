@@ -52,6 +52,10 @@ export const auth = {
   migrated: (n: number) =>
     n === 1 ? "1 kort flyttades till ditt konto." : `${n} kort flyttades till ditt konto.`,
   callbackError: "Länken är ogiltig eller har gått ut. Försök igen.",
+  /** Mellansidan /bekrafta: länken i mejlet förbrukas först när man trycker på knappen. */
+  linkTitle: { signup: "Bekräfta ditt konto", magiclink: "Logga in på Kuggfri", recovery: "Välj ett nytt lösenord", email_change: "Bekräfta din nya e-postadress" },
+  linkButton: { signup: "Bekräfta kontot", magiclink: "Logga in", recovery: "Fortsätt", email_change: "Bekräfta bytet" },
+  linkLead: "Ett klick till, så är du klar.",
   confirmLinkError: "Bekräftelselänken har redan använts eller gått ut. Har du bekräftat loggar du in som vanligt, annars loggar du in och skickar ett nytt mejl.",
 } as const;
 
@@ -61,6 +65,12 @@ export const account = {
   displayName: "Visningsnamn",
   save: "Spara",
   saved: "Sparat.",
+  emailTitle: "E-postadress",
+  emailHelp: "Du loggar in med den. Ett byte bekräftas från både den nuvarande och den nya adressen.",
+  newEmail: "Ny e-postadress",
+  saveEmail: "Byt e-postadress",
+  emailChangeSent: (email: string) => `Vi har skickat ett mejl till ${email} och till din nuvarande adress. Öppna länken i båda, så byts adressen.`,
+  emailSame: "Det är redan din e-postadress.",
   passwordTitle: "Lösenord",
   passwordHelp: "Har du loggat in med länk eller glömt lösenordet? Välj ett nytt här.",
   newPassword: "Nytt lösenord",

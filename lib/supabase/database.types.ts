@@ -103,6 +103,15 @@ export type ExamAttemptRow = {
   grade: string | null;
 };
 
+/** En adress på en kurs deltagarlista; user_id när adressen har ett bekräftat konto. */
+export type DeckEnrollmentRow = {
+  deck_id: string;
+  email: string;
+  user_id: string | null;
+  added_by: string | null;
+  created_at: string;
+};
+
 export type CategoryRow = {
   id: string;
   deck_id: string;
@@ -362,6 +371,13 @@ export type Database = {
         Update: Partial<ExamAttemptRow>;
         Relationships: [];
       };
+      deck_enrollments: {
+        Row: DeckEnrollmentRow;
+        // Läses och skrivs av funktionerna (add_deck_enrollments m.fl.), och av service role i skript och tester.
+        Insert: Optional<DeckEnrollmentRow, "user_id" | "added_by" | "created_at">;
+        Update: Partial<DeckEnrollmentRow>;
+        Relationships: [];
+      };
       card_versions: {
         Row: CardVersionRow;
         // Skrivs bara av triggern record_card_version.
@@ -461,6 +477,14 @@ export type Database = {
       add_deck_examiner: { Args: { p_deck_id: string; p_email: string }; Returns: "added" | "exists" | "invited" };
       remove_deck_examiner_invite: { Args: { p_deck_id: string; p_email: string }; Returns: number };
       remove_deck_examiner: { Args: { p_deck_id: string; p_user_id: string }; Returns: number };
+      is_enrolled: { Args: { p_deck_id: string }; Returns: boolean };
+      can_view_deck: { Args: { p_deck_id: string }; Returns: boolean };
+      my_deck_ids: { Args: Record<string, never>; Returns: string[] };
+      email_may_register: { Args: { p_email: string }; Returns: boolean };
+      add_deck_enrollments: { Args: { p_deck_id: string; p_emails: string[] }; Returns: { added: number; already: number; linked: number }[] };
+      remove_deck_enrollments: { Args: { p_deck_id: string; p_emails: string[] }; Returns: number };
+      list_deck_enrollments: { Args: { p_deck_id: string }; Returns: { email: string; registered: boolean | null; created_at: string }[] };
+      deck_enrollment_counts: { Args: { p_deck_id: string }; Returns: { total: number; registered: number }[] };
       import_cards: {
         Args: {
           p_deck_id: string;

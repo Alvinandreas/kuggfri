@@ -153,6 +153,7 @@ async function createUser(db: SupabaseClient, user: { email: string; password: s
     password: user.password,
     email_confirm: true,
     user_metadata: { display_name: user.name },
+    app_metadata: { kuggfri_skapad_av: "skript" },
   });
   if (error || !data.user) throw new Error(`Kunde inte skapa ${user.email}: ${error?.message}`);
   const { error: profileError } = await db.from("profiles").update({ display_name: user.name }).eq("id", data.user.id);
@@ -187,6 +188,10 @@ export async function seedVisualData(): Promise<Fixture> {
 
   const studentId = await createUser(db, STUDENT);
   const examinerId = await createUser(db, EXAMINER);
+
+  // Studenten står på kursens deltagarlista; utan den ser hen ingen kurs.
+  const { error: enrollError } = await db.from("deck_enrollments").upsert({ deck_id: deckId, email: STUDENT.email.toLowerCase(), user_id: studentId }, { onConflict: "deck_id,email" });
+  if (enrollError) throw new Error(`Kunde inte sätta studenten på deltagarlistan: ${enrollError.message}`);
 
   // Examinatorn för Materialteknik, med fast datum så att listan i Inställningar inte ändras.
   const { error: exError } = await db.from("deck_examiners").insert({ deck_id: deckId, user_id: examinerId, created_at: at(20, 9).toISOString() });

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getT } from "@/lib/i18n/server";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
-import { getPublishedDecks } from "@/lib/content/queries";
+import { getMyDecks } from "@/lib/content/queries";
 import { AccountPanel } from "@/components/account/AccountPanel";
 import { routes } from "@/lib/routes";
 
@@ -17,7 +17,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   if (!session) redirect(routes.login({ next: routes.account() }));
   const supabase = await createSupabaseServerClient();
   const [decks, { data: examinerRows }] = await Promise.all([
-    getPublishedDecks(),
+    getMyDecks(),
     supabase.from("deck_examiners").select("deck_id").eq("user_id", session.user.id).limit(1),
   ]);
   const isExaminer = Boolean(session.profile?.is_admin) || (examinerRows ?? []).length > 0;

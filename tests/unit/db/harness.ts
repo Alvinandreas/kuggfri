@@ -140,13 +140,16 @@ export const anon = (db: RawDb): ScopedDb => as(db, { role: "anon" });
 export async function createUser(
   db: RawDb,
   email: string,
-  opts: { admin?: boolean; displayName?: string; confirmed?: boolean } = {},
+  opts: { admin?: boolean; displayName?: string; confirmed?: boolean; selfSignup?: boolean } = {},
 ): Promise<string> {
   const meta = JSON.stringify(opts.displayName ? { display_name: opts.displayName } : {});
   const confirmed = opts.confirmed ?? true;
+  // Som standard skapas kontot som av ett skript (admin-API:t) och går förbi deltagarlistornas
+  // spärr; selfSignup: true är en vanlig registrering, som spärren prövar.
+  const appMeta = JSON.stringify(opts.selfSignup ? { provider: "email" } : { provider: "email", kuggfri_skapad_av: "skript" });
   const rows = await db.query<{ id: string }>(
-    `insert into auth.users (email, raw_user_meta_data, email_confirmed_at) values ($1, $2::jsonb, case when $3 then now() else null end) returning id`,
-    [email, meta, confirmed],
+    `insert into auth.users (email, raw_user_meta_data, raw_app_meta_data, email_confirmed_at) values ($1, $2::jsonb, $3::jsonb, case when $4 then now() else null end) returning id`,
+    [email, meta, appMeta, confirmed],
   );
   const id = rows[0]?.id;
   if (!id) throw new Error("Kunde inte skapa testanvändare");

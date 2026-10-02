@@ -190,6 +190,21 @@ Två saker som kan se ut som fel men inte är det:
   `--db-url "<connection string från Supabase → Settings → Database>"`, som inte har den gränsen
   (docs/INNEHALL.md 11).
 
+### Deltagarlistan (från oktober 2026)
+
+Bara de som står på kursens deltagarlista kan skapa konto och se kursen
+(`supabase/migrations/20261002000300_deltagarlistor.sql`, `lib/enrollment`). **Utan lista kommer
+ingen student in.** Före utskicket:
+
+- [ ] Hämta listan från examinatorn (export från Ladok eller Canvas, CSV eller Excel). Be om
+      studenternas **Chalmersadresser**; privata adresser i Ladok gör att studenten registrerar sig
+      med en annan adress än den som står på listan.
+- [ ] Admin → kursen → **Deltagare** → välj filen eller klistra in. Kontrollera förhandsvisningen
+      (antal nya, rader utan giltig adress) och lägg till.
+- [ ] Antalet "På listan" stämmer med antalet registrerade på kursen.
+- [ ] Sena tillägg och omregistrerade: lägg till adressen i samma flik när som helst; den som
+      redan har konto får kursen direkt.
+
 ---
 
 ## Steg 5 – rökprov på kuggfri.com (10 min, gör alltid)
@@ -212,7 +227,8 @@ kanske inte hann bli verifierade):
 
 Som **ny student**:
 
-- [ ] Registrera ett konto med en riktig adress → mejlet kommer inom en minut
+- [ ] Registrera med en adress som **inte** står på listan → beskedet "Adressen står inte på någon kurs deltagarlista"
+- [ ] Registrera ett konto med en riktig adress från listan → mejlet kommer inom en minut
 - [ ] Bekräfta via länken → gästprogressen följer med in på kontot
 - [ ] Logga ut och in igen med lösenord
 

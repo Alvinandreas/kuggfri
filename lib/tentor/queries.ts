@@ -38,9 +38,10 @@ export function examFromRow(row: ExamRow): Exam {
 /**
  * Vad besökaren får se. `studentView` sätts bara för redaktörer som valt "Visa som student"
  * (lib/tentor/server.ts kontrollerar behörigheten): sidorna visas då som för en student, med
- * utkasten medtagna. Åtkomsten (canEdit) ändras inte av studentvyn.
+ * utkasten medtagna. Åtkomsten (canEdit) ändras inte av studentvyn. `enrolled`: besökaren står
+ * på kursens deltagarlista (lib/enrollment); bara deltagare ser tentorna när läget är öppet.
  */
-export type ExamAccess = { canEdit: boolean; examModeOpen: boolean; deckPublished: boolean; studentView?: StudentView | null };
+export type ExamAccess = { canEdit: boolean; enrolled: boolean; examModeOpen: boolean; deckPublished: boolean; studentView?: StudentView | null };
 
 /** Redaktörens studentvy: tentaläget som studenterna ser det när det är öppet, eller låst. */
 export type StudentView = "oppen" | "last";
@@ -57,7 +58,7 @@ export type ExamSummary = Omit<Exam, "questions"> & {
 /** Får den här besökaren se tentan? */
 export function mayView(exam: Pick<Exam, "status">, access: ExamAccess): boolean {
   if (access.canEdit) return true;
-  return access.deckPublished && access.examModeOpen && exam.status === "publicerad";
+  return access.enrolled && access.deckPublished && access.examModeOpen && exam.status === "publicerad";
 }
 
 /** Studenterna ser tentaläget (kursen publicerad och läget öppet). */
@@ -67,7 +68,7 @@ export function openForStudents(access: ExamAccess): boolean {
 
 /** Alla tentor för kursen som besökaren får se, nyaste först (utan uppgifter). */
 export async function listExams(deckId: string, access: ExamAccess): Promise<ExamSummary[]> {
-  if (!access.canEdit && !(access.deckPublished && access.examModeOpen)) return [];
+  if (!access.canEdit && !(access.enrolled && access.deckPublished && access.examModeOpen)) return [];
   const { data, error } = await serviceClient().from("exams").select("*").eq("deck_id", deckId).order("exam_date", { ascending: false });
   if (error) throw error;
   return (data ?? [])

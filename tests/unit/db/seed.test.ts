@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { anon, createTestDb, type RawDb } from "./harness";
+import { anon, createTestDb, createUser, user, type RawDb } from "./harness";
 import { listCourseKeys, loadCourse } from "@/lib/content/store";
 import { flattenCards } from "@/lib/content/model";
 
@@ -50,10 +50,14 @@ describe("seed", () => {
     }
   });
 
-  it("gäster (anon) kan läsa hela det publicerade innehållet, men inga utkast eller inaktiva kort", async () => {
-    const cards = await anon(db).query(`select id from public.cards`);
+  it("en deltagare i varje kurs läser hela det publicerade innehållet, men inga utkast eller inaktiva kort; gäster inga kort", async () => {
+    const student = await createUser(db, "deltagare@example.com");
+    await db.query(`insert into public.deck_enrollments (deck_id, email, user_id) select id, 'deltagare@example.com', $1 from public.decks`, [student]);
+    const cards = await user(db, student).query(`select id from public.cards`);
     const visible = courses.reduce((n, c) => n + flattenCards(c).filter(({ card }) => card.review === null && card.active).length, 0);
     expect(cards).toHaveLength(visible);
+    expect(await anon(db).query(`select id from public.cards`)).toHaveLength(0);
+    // Områdenas namn är inte kursmaterial och syns för alla (kursinbjudan visar dem).
     const cats = await anon(db).query(`select id from public.categories`);
     expect(cats).toHaveLength(expectedCategories);
   });

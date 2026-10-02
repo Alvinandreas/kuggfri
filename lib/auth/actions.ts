@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
 import type { Dict } from "@/lib/i18n";
 import { getT } from "@/lib/i18n/server";
@@ -25,6 +26,8 @@ function authErrorMessage(sv: Dict, error: { message: string; code?: string }, f
   if (code.includes("rate_limit") || msg.includes("rate limit")) return sv.auth.rateLimited;
   if (code === "user_already_exists" || code === "email_exists" || msg.includes("already") || msg.includes("registered")) return sv.auth.emailInUse;
   if (code === "signup_disabled" || msg.includes("signups not allowed")) return sv.auth.signupDisabled;
+  // Deltagarlistornas spärr i databasen (guard_registration) svarar så genom Supabase Auth.
+  if (msg.includes("database error saving new user")) return sv.auth.notOnList;
   if (code === "validation_failed" || code === "email_address_invalid" || msg.includes("invalid email") || msg.includes("unable to validate email")) {
     return sv.auth.invalidEmail;
   }
@@ -58,6 +61,23 @@ export async function signInWithPasswordAction(formData: FormData): Promise<Auth
   redirect(next);
 }
 
+/**
+ * Får adressen skapa ett konto: den står på en kurs deltagarlista eller har en examinatorinbjudan
+ * (email_may_register, supabase/migrations/20261002000300_deltagarlistor.sql). Prövas här för ett
+ * begripligt besked; databasens trigger är spärren som gäller även utanför appen. Utan service
+ * role-nyckel (fel konfiguration) avgör triggern ensam.
+ */
+async function mayRegister(email: string): Promise<boolean> {
+  const service = createServiceRoleClient();
+  if (!service) return true;
+  const { data, error } = await service.rpc("email_may_register", { p_email: email });
+  if (error) {
+    console.error("[auth] email_may_register:", error.message);
+    return true;
+  }
+  return data === true;
+}
+
 export async function signUpAction(formData: FormData): Promise<AuthResult> {
   const sv = await getT();
   const email = String(formData.get("email") ?? "").trim();
@@ -67,6 +87,7 @@ export async function signUpAction(formData: FormData): Promise<AuthResult> {
   if (!displayName) return { ok: false, error: sv.auth.nameRequired };
   if (!email) return { ok: false, error: sv.auth.error };
   if (password.length < 8) return { ok: false, error: sv.auth.weakPassword };
+  if (!(await mayRegister(email))) return { ok: false, error: sv.auth.notOnList };
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signUp({

@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { getAdminNav } from "@/lib/admin/nav";
-import { getPublishedDecks } from "@/lib/content/queries";
+import { getMyDecks } from "@/lib/content/queries";
 import { getHiddenTabs } from "@/lib/admin/sidebar-tabs-queries";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ProgressMigrator } from "@/components/auth/ProgressMigrator";
 
 /** Skalet runt allt för inloggade: sidomenyn och en bred, luftig innehållsyta. */
 export async function AppShell({ children }: { children: ReactNode }) {
-  const [session, adminNav, decks, hiddenTabs] = await Promise.all([getCurrentProfile(), getAdminNav().catch(() => null), getPublishedDecks().catch(() => []), getHiddenTabs()]);
+  const [session, adminNav, decks, hiddenTabs] = await Promise.all([getCurrentProfile(), getAdminNav().catch(() => null), getMyDecks().catch(() => []), getHiddenTabs()]);
   const email = session?.user.email ?? "";
   const name = session?.profile?.display_name?.trim() || email.split("@")[0] || "";
   return (

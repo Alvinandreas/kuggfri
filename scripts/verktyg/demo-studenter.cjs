@@ -83,6 +83,7 @@ async function removeDemo(db, pg) {
     const { error } = await db.auth.admin.deleteUser(r.id);
     if (error) throw new Error(`Kunde inte ta bort ${r.id}: ${error.message}`);
   }
+  await pg.query("delete from public.deck_enrollments where email like $1", [EMAIL_LIKE]);
   return rows.length;
 }
 
@@ -121,9 +122,15 @@ async function removeDemo(db, pg) {
       password: `demo-${stamp}-${Math.floor(rnd() * 1e9)}`,
       email_confirm: true,
       user_metadata: { display_name: `Demostudent ${i + 1}` },
+      app_metadata: { kuggfri_skapad_av: "skript" },
     });
     if (error) throw new Error(`Kunde inte skapa ${email}: ${error.message}`);
     const userId = data.user.id;
+    // Demostudenterna står på kursens deltagarlista, som riktiga studenter.
+    await pg.query(
+      `insert into public.deck_enrollments (deck_id, email, user_id) select id, $2, $3 from public.decks where slug = $1 on conflict do nothing`,
+      [DECK_SLUG, email, userId],
+    );
 
     const skill = between(-0.12, 0.12);
     const startDay = Math.floor(between(0, days * 0.4)); // dagar efter periodens början

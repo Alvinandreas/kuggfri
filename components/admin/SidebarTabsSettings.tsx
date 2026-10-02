@@ -24,6 +24,7 @@ export function sidebarTabLabel(sv: Dict, key: SidebarTabKey): string {
     granskning: sv.admin.tabReview,
     tentor: sv.admin.tabExams,
     felrapporter: sv.admin.tabReports,
+    deltagare: sv.admin.tabEnrollments,
     importera: sv.admin.tabImport,
     installningar: sv.admin.tabSettings,
     "alla-kurser": sv.shell.allCourses,

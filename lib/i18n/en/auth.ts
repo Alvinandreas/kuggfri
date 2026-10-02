@@ -45,6 +45,8 @@ export const auth: Dict["auth"] = {
   invalidEmail: "That email address doesn't look valid.",
   rateLimited: "Too many attempts in a short time. Wait a moment and try again.",
   signupDisabled: "Accounts cannot be created right now.",
+  notOnList:
+    "This address is not on any course's participant list. Sign up with the address your course has for you (usually your Chalmers address), or contact the course examiner. Already have an account? Sign in instead.",
   notConfirmed: "The email address is not confirmed yet. Open the link in the email from Kuggfri, or send a new one with the button below.",
   weakPassword: "The password is too short.",
   passwordSame: "The new password must be different from the old one.",

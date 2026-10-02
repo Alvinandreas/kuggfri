@@ -118,6 +118,22 @@ export async function getDeckOverviewStats(deckId: string): Promise<DeckOverview
   return parseOverviewStats(data, MIN_STUDENTS);
 }
 
+/** En adress på deltagarlistan. registered är null för examinatorer (bara admin ser vem som har konto). */
+export type DeckEnrollment = { email: string; registered: boolean | null; created_at: string };
+
+/** Kursens deltagarlista och antalen (admin och kursens examinatorer). */
+export async function getDeckEnrollments(deckId: string): Promise<{ entries: DeckEnrollment[]; total: number; registered: number }> {
+  const supabase = await createSupabaseServerClient();
+  const [list, counts] = await Promise.all([
+    supabase.rpc("list_deck_enrollments", { p_deck_id: deckId }),
+    supabase.rpc("deck_enrollment_counts", { p_deck_id: deckId }),
+  ]);
+  if (list.error) throw list.error;
+  if (counts.error) throw counts.error;
+  const c = counts.data?.[0] ?? { total: 0, registered: 0 };
+  return { entries: list.data ?? [], total: c.total, registered: c.registered };
+}
+
 /** pending = väntar på att personen registrerar sig (user_id är då null). */
 export type DeckExaminer = { user_id: string | null; email: string; display_name: string | null; created_at: string; pending: boolean };
 

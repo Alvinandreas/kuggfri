@@ -29,6 +29,7 @@ const TABLES: { table: string; type: string }[] = [
   { table: "card_versions", type: "CardVersionRow" },
   { table: "exams", type: "ExamRow" },
   { table: "exam_attempts", type: "ExamAttemptRow" },
+  { table: "deck_enrollments", type: "DeckEnrollmentRow" },
   { table: "app_settings", type: "AppSettingRow" },
 ];
 

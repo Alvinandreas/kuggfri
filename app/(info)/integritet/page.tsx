@@ -65,7 +65,7 @@ export default async function PrivacyPage() {
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>Vi har ingen analys, inga annonser och inga spårningskakor. Du loggar in med e-post och lösenord, eller med Google om du vill.</span>
+            <span>Vi har ingen analys, inga annonser och inga spårningskakor. Du loggar in med e-post och lösenord.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
@@ -169,6 +169,12 @@ export default async function PrivacyPage() {
                   why="När en session började och slutade, vilken kurs och hur många kort. Ger dig din statistik."
                   basis="Avtal"
                   retention="Tills du raderar kontot"
+                />
+                <Row
+                  what="Din e-postadress på kursens deltagarlista"
+                  why="Kurserna är bara öppna för dem som läser dem. Examinatorn lägger in deltagarnas e-postadresser, och bara den som står på listan kan skapa konto och se kursen. Bara adressen sparas, aldrig namn eller personnummer."
+                  basis="Berättigat intresse (kursmaterialet får bara nås av kursens deltagare)"
+                  retention="Tills adressen tas bort från listan eller kursen tas bort. Raderar du kontot står adressen kvar på kursens lista, men kopplingen till ditt konto försvinner"
                 />
                 <Row
                   what="Felrapporter du skickar"
@@ -295,11 +301,10 @@ export default async function PrivacyPage() {
             </li>
           </ul>
           <p>
-            <strong>Inloggning med Google.</strong> Väljer du &quot;Fortsätt med Google&quot; loggar du in på Googles
-            egen sida. Google bekräftar vem du är, och vi får ditt namn och din e-postadress. Google skickar också en länk till din profilbild; den
-            lagras i inloggningssystemet men visas och används inte. Google får veta att du loggar in på Kuggfri, men
-            inget om vad du pluggar. För själva inloggningen hos Google gäller Googles integritetspolicy. Du kan
-            alltid välja e-post och lösenord i stället.
+            <strong>Inloggning med Google</strong> är avstängd sedan oktober 2026, eftersom kontot ska höra till
+            adressen på kursens deltagarlista. Konton som skapades med Google tidigare finns kvar och loggar in med
+            e-post (välj Glömt lösenordet). För dem fick vi namnet och e-postadressen från Google, och en länk till
+            profilbilden som lagras i inloggningssystemet men varken visas eller används.
           </p>
           <p>
             Leverantörerna är amerikanska företag med verksamhet i EU. Skulle en överföring till tredjeland ske
@@ -398,11 +403,11 @@ export default async function PrivacyPage() {
             confirmation links).
           </p>
           <p>
-            <strong>Google sign-in.</strong> If you choose &quot;Continue with Google&quot;, we receive your name, email
-            address and a link to your profile picture from Google. We use the name and email address only to create
-            and identify your Kuggfri account; the picture link is stored by the sign-in system but not displayed or
-            used. We request no other Google data, do not use Google data for advertising, and do not transfer it to
-            anyone else. Kuggfri&apos;s use of information received from Google APIs adheres to the Google API
+            <strong>Google sign-in</strong> has been turned off since October 2026. For accounts created with Google
+            before then, we received the name, email address and a link to the profile picture from Google. We use
+            the name and email address only to identify the Kuggfri account; the picture link is stored by the
+            sign-in system but not displayed or used. We do not use Google data for advertising and do not transfer
+            it to anyone else. Kuggfri&apos;s use of information received from Google APIs adheres to the Google API
             Services User Data Policy, including the Limited Use requirements.
           </p>
           <p>

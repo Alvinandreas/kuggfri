@@ -35,7 +35,7 @@ describe("dataexporten är fullständig", () => {
 
   it("hittar de tabeller som knyter data till ett konto", () => {
     // Om den här listan ändras: uppdatera exporten, policyn och docs/PERSONUPPGIFTER.md.
-    expect(tables).toEqual(["card_progress", "card_reports", "deck_examiners", "email_log", "exam_attempts", "review_log", "study_sessions"]);
+    expect(tables).toEqual(["card_progress", "card_reports", "deck_enrollments", "deck_examiners", "email_log", "exam_attempts", "review_log", "study_sessions"]);
   });
 
   for (const table of tables) {
@@ -50,11 +50,14 @@ describe("dataexporten är fullständig", () => {
 
   it("varje sådan tabell försvinner eller kopplas bort vid kontoradering", () => {
     // delete_my_account() raderar raden i auth.users; allt annat måste följa med.
-    // Undantaget är card_reports: texten handlar om kortet och behålls för kursen, men
-    // raden kopplas bort (user_id blir null) och kontaktadressen rensas.
+    // Undantagen: card_reports, där texten handlar om kortet och behålls för kursen, men raden
+    // kopplas bort (user_id blir null) och kontaktadressen rensas; och deck_enrollments, kursens
+    // deltagarlista, där adressen kom från kursen och står kvar men kopplingen till kontot försvinner.
     for (const table of tables) {
       const block = new RegExp(`create table public\\.${table}\\s*\\(([\\s\\S]*?)\\n\\);`).exec(migrations)?.[1] ?? "";
-      if (table === "card_reports") {
+      if (table === "deck_enrollments") {
+        expect(block).toMatch(/user_id uuid references auth\.users\s*\(id\)\s*on delete set null/);
+      } else if (table === "card_reports") {
         expect(block).toMatch(/references auth\.users\s*\(id\)\s*on delete set null/);
         expect(migrations, "delete_my_account() måste rensa kontaktfältet").toMatch(
           /update public\.card_reports set contact = null where user_id = auth\.uid\(\)/,

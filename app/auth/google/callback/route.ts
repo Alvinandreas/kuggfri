@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { decodeFlow, GOOGLE_CALLBACK_PATH, GOOGLE_COOKIE, GOOGLE_TOKEN_URL, googleClientId, sameString } from "@/lib/auth/google";
+import { decodeFlow, GOOGLE_CALLBACK_PATH, GOOGLE_COOKIE, GOOGLE_TOKEN_URL, googleLoginClientId, sameString } from "@/lib/auth/google";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
 import { routes } from "@/lib/routes";
 
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   const state = params.get("state");
   if (!flow || !code || !state || !sameString(state, flow.state)) return fail("state eller kod saknas eller stämmer inte");
 
-  const clientId = googleClientId();
+  const clientId = googleLoginClientId();
   const secret = process.env.GOOGLE_CLIENT_SECRET;
   if (!clientId || !secret) return fail("klient-id eller hemlighet saknas");
 

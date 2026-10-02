@@ -1,4 +1,4 @@
-import { ClipboardCheck, Flag, Layers, LayoutDashboard, ScrollText, Settings2, Upload, type LucideIcon } from "lucide-react";
+import { ClipboardCheck, Flag, Layers, LayoutDashboard, ScrollText, Settings2, Upload, Users, type LucideIcon } from "lucide-react";
 import type { Dict } from "@/lib/i18n";
 import { routes } from "@/lib/routes";
 import type { SidebarTabKey } from "@/lib/admin/sidebar-tabs";
@@ -31,6 +31,7 @@ export const adminTabs = (sv: Dict): readonly AdminTab[] => [
   { key: "granskning", label: sv.admin.tabReview, icon: ClipboardCheck, href: (id) => routes.admin.review(id), counter: { key: "pendingDrafts", label: sv.shell.pendingDrafts } },
   { key: "tentor", label: sv.admin.tabExams, icon: ScrollText, href: routes.admin.exams },
   { key: "felrapporter", label: sv.admin.tabReports, icon: Flag, href: routes.admin.reports, counter: { key: "openReports", label: sv.shell.openReports } },
+  { key: "deltagare", label: sv.admin.tabEnrollments, icon: Users, href: routes.admin.enrollments },
   { key: "importera", label: sv.admin.tabImport, icon: Upload, href: routes.admin.import },
   { key: "installningar", label: sv.admin.tabSettings, icon: Settings2, href: routes.admin.settings },
 ];

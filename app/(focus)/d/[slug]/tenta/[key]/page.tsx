@@ -41,7 +41,8 @@ export default async function ExamPage({ params, searchParams }: { params: Param
   const { deck, access } = ctx;
   const studentView = access.studentView ?? null;
   // Låst för studenten (och i studentvyns låsta läge): tillbaka till startsidan, som visar låsvyn.
-  if (studentView === "last" || (!access.canEdit && !openForStudents(access))) redirect(routes.exam(slug));
+  // Låst, eller inte på kursens deltagarlista: startsidan visar låsvyn respektive varför kursen inte syns.
+  if (studentView === "last" || (!access.canEdit && (!access.enrolled || !openForStudents(access)))) redirect(routes.exam(slug));
   const record = await getExamRecord(deck.id, key, access);
   if (!record) notFound();
   const { exam } = record;

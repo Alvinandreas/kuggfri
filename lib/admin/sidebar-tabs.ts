@@ -17,6 +17,7 @@ export const SIDEBAR_TAB_KEYS = [
   "granskning",
   "tentor",
   "felrapporter",
+  "deltagare",
   "importera",
   "installningar",
   "alla-kurser",
@@ -31,7 +32,7 @@ export type SidebarTabKey = (typeof SIDEBAR_TAB_KEYS)[number];
 /** Flikarna i sidomenyns grupper, i sidomenyns ordning. */
 export const SIDEBAR_TAB_GROUPS: readonly { group: "study" | "admin" | "info"; keys: readonly SidebarTabKey[] }[] = [
   { group: "study", keys: ["hem", "statistik", "kurser", "kurssidan", "tentalaget"] },
-  { group: "admin", keys: ["oversikt", "innehall", "granskning", "tentor", "felrapporter", "importera", "installningar", "alla-kurser", "designsystem"] },
+  { group: "admin", keys: ["oversikt", "innehall", "granskning", "tentor", "felrapporter", "deltagare", "importera", "installningar", "alla-kurser", "designsystem"] },
   { group: "info", keys: ["hjalp", "om", "integritet"] },
 ];
 

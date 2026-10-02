@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getT } from "@/lib/i18n/server";
-import { getDeckBySlug, getPublishedDecks } from "@/lib/content/queries";
+import { getDeckBySlug, getMyDecks } from "@/lib/content/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { MyStatsDashboard } from "@/components/mystats/MyStatsDashboard";
 import type { HomeDeck } from "@/components/home/HomeDashboard";
@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Min statistik: rekord, rytm, skattningar och milstolpar över alla publicerade kurser. */
 export default async function MyStatsPage() {
-  const [session, summaries] = await Promise.all([getCurrentProfile(), getPublishedDecks()]);
+  const [session, summaries] = await Promise.all([getCurrentProfile(), getMyDecks()]);
   const full = await Promise.all(summaries.map((d) => getDeckBySlug(d.slug)));
   const decks: HomeDeck[] = full.flatMap((d) =>
     d

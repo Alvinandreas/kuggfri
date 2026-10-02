@@ -88,6 +88,8 @@ export const routes = {
     exams: (id: string) => `${adminDeck(id)}/tentor`,
     examKey: (id: string, key: string) => `${adminDeck(id)}/tentor/${key}`,
     reports: (id: string) => `${adminDeck(id)}/rapporter`,
+    /** Kursens deltagarlista (lib/enrollment). */
+    enrollments: (id: string) => `${adminDeck(id)}/deltagare`,
     import: (id: string) => `${adminDeck(id)}/import`,
     export: (id: string) => `${adminDeck(id)}/export`,
     /** Statistiken som CSV: per område eller per kort. */

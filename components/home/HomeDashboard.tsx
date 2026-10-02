@@ -131,15 +131,19 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
   const leftToday = views.reduce((n, v) => n + v.plan.sessionCards, 0);
   const anyStarted = views.some((v) => v.stats.seen > 0);
 
-  const lead = loading
-    ? sv.dashboard.loading
-    : !anyStarted
-      ? primary && primary.plan.sessionCards > 0
-        ? sv.dashboard.leadFirst(primary.plan.sessionCards)
-        : sv.dashboard.leadStart
-      : leftToday > 0
-        ? sv.dashboard.leadDue(leftToday)
-        : sv.dashboard.leadDone;
+  // Utan kurser (inte på någon deltagarlista) finns ingen progress att vänta på: bara tomläget.
+  const lead =
+    primary === null
+      ? null
+      : loading
+        ? sv.dashboard.loading
+        : !anyStarted
+          ? primary.plan.sessionCards > 0
+            ? sv.dashboard.leadFirst(primary.plan.sessionCards)
+            : sv.dashboard.leadStart
+          : leftToday > 0
+            ? sv.dashboard.leadDue(leftToday)
+            : sv.dashboard.leadDone;
 
   return (
     <div>
@@ -148,9 +152,11 @@ export function HomeDashboard({ userId, firstName, decks }: Props) {
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
             {hour === null ? sv.dashboard.title : sv.dashboard.greeting(hour, firstName)}
           </h1>
-          <p className="mt-2 text-lg text-muted" data-testid="home-lead">
-            {lead}
-          </p>
+          {lead ? (
+            <p className="mt-2 text-lg text-muted" data-testid="home-lead">
+              {lead}
+            </p>
+          ) : null}
         </div>
         {overall ? (
           <span className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong px-4 font-bold" title={sv.dashboard.streakLabel} data-testid="home-streak">

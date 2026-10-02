@@ -32,7 +32,7 @@ export default async function AdminExamsPage({ params }: { params: Params }) {
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
   const { deck } = data;
-  const exams = await listExams(deck.id, { canEdit: true, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published });
+  const exams = await listExams(deck.id, { canEdit: true, enrolled: true, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published });
   const open = deck.exam_mode_open && deck.is_published;
 
   return (

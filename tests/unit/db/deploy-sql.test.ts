@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { anon, createPglite, type RawDb } from "./harness";
+import { anon, createPglite, createUser, user, type RawDb } from "./harness";
 
 let db: RawDb;
 
@@ -25,13 +25,17 @@ describe("supabase/deploy/full.sql", () => {
     const tables = await db.query<{ table_name: string }>(
       `select table_name from information_schema.tables where table_schema = 'public' order by table_name`,
     );
-    expect(tables.map((t) => t.table_name)).toEqual(["app_settings", "card_progress", "card_reports", "card_versions", "cards", "categories", "deck_examiner_invites", "deck_examiners", "decks", "email_log", "exam_attempts", "exams", "profiles", "review_log", "study_sessions"]);
-    // Utkast (review_status) och inaktiverade kort är dolda för gäster; resten av seedens kort syns.
+    expect(tables.map((t) => t.table_name)).toEqual(["app_settings", "card_progress", "card_reports", "card_versions", "cards", "categories", "deck_enrollments", "deck_examiner_invites", "deck_examiners", "decks", "email_log", "exam_attempts", "exams", "profiles", "review_log", "study_sessions"]);
+    // Utkast (review_status) och inaktiverade kort är dolda; resten av seedens kort syns för kursens
+    // deltagare, och inga kort alls för gäster.
     const [all] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards`);
     const [visible] = await db.query<{ n: number }>(`select count(*)::int as n from public.cards where review_status is null and is_active`);
-    const cards = await anon(db).query(`select id from public.cards`);
+    const student = await createUser(db, "deltagare@example.com");
+    await db.query(`insert into public.deck_enrollments (deck_id, email, user_id) select id, 'deltagare@example.com', $1 from public.decks`, [student]);
+    const cards = await user(db, student).query(`select id from public.cards`);
     expect(all!.n).toBeGreaterThanOrEqual(144);
     expect(cards).toHaveLength(visible!.n);
+    expect(await anon(db).query(`select id from public.cards`)).toHaveLength(0);
   });
 
   it("innehåller varje migrations fullständiga innehåll, inte bara filnamnet", async () => {

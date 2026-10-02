@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useT } from "@/lib/i18n/client";
-import { googleClientId } from "@/lib/auth/google";
+import { googleLoginClientId } from "@/lib/auth/google";
 import { buttonClass } from "@/components/ui/Button";
 import { routes } from "@/lib/routes";
 
@@ -12,12 +12,12 @@ import { routes } from "@/lib/routes";
  * inget förifyllt namn eller profilbild och ingen dialog i webbläsaren.
  *
  * Logotypen är Googles fyrfärgade G, oförändrad, som Googles varumärkesregler kräver.
- * Visas bara när NEXT_PUBLIC_GOOGLE_CLIENT_ID är satt.
+ * Visas bara när Google-inloggningen är påslagen (GOOGLE_LOGIN_ENABLED) och NEXT_PUBLIC_GOOGLE_CLIENT_ID är satt.
  */
 export function GoogleButton({ next }: { next: string }) {
   const sv = useT();
   const [leaving, setLeaving] = useState(false);
-  if (!googleClientId()) return null;
+  if (!googleLoginClientId()) return null;
 
   return (
     <div className="grid gap-4" data-testid="google-signin">

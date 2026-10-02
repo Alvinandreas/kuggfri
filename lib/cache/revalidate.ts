@@ -37,6 +37,11 @@ export function revalidateExaminers(deckId: string) {
   revalidatePath(routes.admin.settings(deckId));
 }
 
+/** Deltagarlistan. Studenternas kurser läses per request (my_deck_ids) och behöver ingen rensning. */
+export function revalidateEnrollments(deckId: string) {
+  revalidatePath(routes.admin.enrollments(deckId));
+}
+
 /** En tentas sidor efter ett försök. */
 export function revalidateExam(slug: string, key: string) {
   revalidatePath(routes.exam(slug));

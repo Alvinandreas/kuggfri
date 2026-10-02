@@ -90,10 +90,11 @@ describe("routes", () => {
       ["/admin/deck/d1/granskning", false, [], "pendingDrafts"],
       ["/admin/deck/d1/tentor", false, [], null],
       ["/admin/deck/d1/rapporter", false, [], "openReports"],
+      ["/admin/deck/d1/deltagare", false, [], null],
       ["/admin/deck/d1/import", false, [], null],
       ["/admin/deck/d1/installningar", false, [], null],
     ]);
-    expect(ADMIN_TABS.map((t) => t.label)).toEqual(["Översikt", "Innehåll", "Granskning", "Tentor", "Felrapporter", "Importera", "Inställningar"]);
+    expect(ADMIN_TABS.map((t) => t.label)).toEqual(["Översikt", "Innehåll", "Granskning", "Tentor", "Felrapporter", "Deltagare", "Importera", "Inställningar"]);
   });
 });
 

@@ -44,6 +44,8 @@ export const auth = {
   invalidEmail: "E-postadressen ser inte giltig ut.",
   rateLimited: "För många försök på kort tid. Vänta en stund och försök igen.",
   signupDisabled: "Det går inte att skapa konton just nu.",
+  notOnList:
+    "Adressen står inte på någon kurs deltagarlista. Registrera dig med den adress kursen har för dig (oftast din Chalmersadress), eller hör av dig till kursens examinator. Har du redan ett konto? Logga in i stället.",
   notConfirmed: "E-postadressen är inte bekräftad ännu. Öppna länken i mejlet från Kuggfri, eller skicka ett nytt med knappen nedanför.",
   weakPassword: "Lösenordet är för kort.",
   passwordSame: "Det nya lösenordet måste skilja sig från det gamla.",

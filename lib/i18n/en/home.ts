@@ -4,7 +4,7 @@ import type { Dict } from "@/lib/i18n/types";
 export const home: Dict["home"] = {
   title: "Courses",
   lead: "All courses are free. Choose one to see the cards and start studying.",
-  empty: "There are no published courses yet.",
+  empty: "You have no courses yet. A course appears here once the examiner has added your email address to the course participant list.",
   cards: (n: number) => (n === 1 ? "1 card" : `${n} cards`),
   courseCode: "Course code",
 };
@@ -29,7 +29,7 @@ export const landing: Dict["landing"] = {
 
 export const invite: Dict["invite"] = {
   eyebrow: "You're invited to a course on Kuggfri",
-  lead: "Create an account in half a minute and the course opens right away. Free, ad-free, and the schedule shows the right card on the right day until the exam.",
+  lead: "Create an account with the email address your course has for you, usually your Chalmers address, and the course opens right away. Free, ad-free, and the schedule shows the right card on the right day until the exam.",
 };
 
 export const dashboard: Dict["dashboard"] = {

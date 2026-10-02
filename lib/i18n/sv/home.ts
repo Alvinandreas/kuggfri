@@ -3,7 +3,7 @@
 export const home = {
   title: "Kurser",
   lead: "Alla kurser är gratis. Välj en för att se korten och börja plugga.",
-  empty: "Det finns inga publicerade kurser ännu.",
+  empty: "Du har inga kurser ännu. En kurs dyker upp här när examinatorn har lagt in din e-postadress på kursens deltagarlista.",
   cards: (n: number) => (n === 1 ? "1 kort" : `${n} kort`),
   courseCode: "Kurskod",
 } as const;
@@ -28,7 +28,7 @@ export const landing = {
 
 export const invite = {
   eyebrow: "Du är inbjuden till en kurs på Kuggfri",
-  lead: "Skapa ett konto på en halv minut, så öppnas kursen direkt. Gratis, utan reklam, och schemat visar rätt kort på rätt dag fram till tentan.",
+  lead: "Skapa ett konto med den e-postadress kursen har för dig, oftast din Chalmersadress, så öppnas kursen direkt. Gratis, utan reklam, och schemat visar rätt kort på rätt dag fram till tentan.",
 } as const;
 
 export const dashboard = {

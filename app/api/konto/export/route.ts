@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 
 /**
  * "Ladda ner mina data" (GDPR art. 15 och 20): allt vi har om kontot, som JSON.
@@ -24,11 +25,15 @@ export async function GET() {
     supabase.from("email_log").select("kind, deck_id, subject, sent_at").eq("user_id", user.id).order("sent_at"),
     supabase.from("exam_attempts").select("exam_id, started_at, submitted_at, answers, self_grades, points, grade").eq("user_id", user.id).order("started_at"),
   ]);
+  // Deltagarlistorna är stängda för användarnas klient (de läses bara via funktioner); servern
+  // hämtar de rader som är kopplade till just det här kontot.
+  const service = createServiceRoleClient();
+  const enrollments = service ? await service.from("deck_enrollments").select("deck_id, email, created_at").eq("user_id", user.id).order("created_at") : { data: [] };
 
   const body = {
     exported_at: new Date().toISOString(),
     om_filen:
-      "Allt Kuggfri har sparat om ditt konto. Progressen i card_progress är algoritmens tillstånd per kort, review_log är dina repetitioner, study_sessions är när du pluggat, exam_attempts är dina försök i tentaläget. Läs mer på /integritet.",
+      "Allt Kuggfri har sparat om ditt konto. Progressen i card_progress är algoritmens tillstånd per kort, review_log är dina repetitioner, study_sessions är när du pluggat, exam_attempts är dina försök i tentaläget, deck_enrollments är kurserna vars deltagarlista du står på. Läs mer på /integritet.",
     account: { id: user.id, email: user.email ?? null, created_at: user.created_at, last_sign_in_at: user.last_sign_in_at ?? null },
     profile: profile.data,
     card_progress: progress.data ?? [],
@@ -38,6 +43,7 @@ export async function GET() {
     deck_examiners: examiner.data ?? [],
     email_log: emails.data ?? [],
     exam_attempts: attempts.data ?? [],
+    deck_enrollments: enrollments.data ?? [],
   };
 
   return new NextResponse(JSON.stringify(body, null, 2), {

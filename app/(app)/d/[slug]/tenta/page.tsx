@@ -4,6 +4,7 @@ import { getT } from "@/lib/i18n/server";
 import { listExams, openForStudents } from "@/lib/tentor/queries";
 import { listMyAttempts, loadExamDeck } from "@/lib/tentor/server";
 import { ExamModeHome, ExamModeLocked } from "@/components/tenta/ExamModeHome";
+import { NoCourseAccess } from "@/components/study/NoCourseAccess";
 
 type Params = Promise<{ slug: string }>;
 
@@ -24,6 +25,7 @@ export default async function ExamModePage({ params }: { params: Params }) {
   const ctx = await loadExamDeck(slug);
   if (!ctx) notFound();
   const { deck, access } = ctx;
+  if (!access.canEdit && !access.enrolled) return <NoCourseAccess deck={deck} />;
   const studentsCanSee = openForStudents(access);
   const studentView = access.studentView ?? null;
   if (studentView === "last") return <ExamModeLocked deck={deck} studentView />;

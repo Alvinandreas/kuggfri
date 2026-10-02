@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDeckBySlug } from "@/lib/content/queries";
+import { canViewDeck } from "@/lib/enrollment/access";
+import { NoCourseAccess } from "@/components/study/NoCourseAccess";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { DeckOverview } from "@/components/study/DeckOverview";
 import { getT } from "@/lib/i18n/server";
@@ -31,6 +33,7 @@ export default async function DeckPage({ params, searchParams }: { params: Param
   const rawArea = first(query.omrade);
   const [data, user] = await Promise.all([getDeckBySlug(slug), getCurrentUser()]);
   if (!data) notFound();
+  if (!(await canViewDeck(data.deck.id))) return <NoCourseAccess deck={data.deck} />;
 
   return (
     <>

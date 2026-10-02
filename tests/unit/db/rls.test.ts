@@ -49,6 +49,9 @@ beforeAll(async () => {
   publishedCard = cards.find((c) => c.deck_id === publishedDeck)!.id;
   draftCard = cards.find((c) => c.deck_id === draftDeck)!.id;
 
+  // Alice läser den publicerade kursen (står på dess deltagarlista); Bob gör det inte.
+  await db.query(`insert into public.deck_enrollments (deck_id, email, user_id) values ($1, 'alice@example.com', $2)`, [publishedDeck, alice]);
+
   await db.query(
     `insert into public.card_progress (user_id, card_id, self_rating, reps) values ($1, $3, 2, 1), ($2, $3, 5, 3)`,
     [alice, bob, publishedCard],
@@ -149,9 +152,11 @@ describe("categories", () => {
 });
 
 describe("cards", () => {
-  it("anon ser bara kort i publicerade deck", async () => {
-    const rows = await anon(db).query<{ front: string }>("select front from public.cards order by front");
+  it("kursens deltagare ser bara kort i publicerade deck; gäster och andra inloggade ser inga", async () => {
+    const rows = await user(db, alice).query<{ front: string }>("select front from public.cards order by front");
     expect(rows.map((r) => r.front)).toEqual(["Fråga 1"]);
+    expect(await anon(db).query("select id from public.cards")).toHaveLength(0);
+    expect(await user(db, bob).query("select id from public.cards")).toHaveLength(0);
   });
 
   it("vanlig användare ser inte kort i opublicerade deck", async () => {
@@ -310,12 +315,12 @@ describe("cards", () => {
 describe("profiles", () => {
   it("konto via Google får namnet från Google-profilen; formulärets namn går före", async () => {
     const [g] = await db.query<{ id: string }>(
-      `insert into auth.users (email, raw_user_meta_data, email_confirmed_at) values ('gunnar@example.com', '{"full_name":"Gunnar Google","name":"G"}'::jsonb, now()) returning id`,
+      `insert into auth.users (email, raw_user_meta_data, raw_app_meta_data, email_confirmed_at) values ('gunnar@example.com', '{"full_name":"Gunnar Google","name":"G"}'::jsonb, '{"kuggfri_skapad_av":"skript"}'::jsonb, now()) returning id`,
     );
     const [p] = await db.query<{ display_name: string | null }>(`select display_name from public.profiles where id = $1`, [g!.id]);
     expect(p?.display_name).toBe("Gunnar Google");
     const [f] = await db.query<{ id: string }>(
-      `insert into auth.users (email, raw_user_meta_data) values ('form@example.com', '{"display_name":"Från formuläret","full_name":"Annat"}'::jsonb) returning id`,
+      `insert into auth.users (email, raw_user_meta_data, raw_app_meta_data) values ('form@example.com', '{"display_name":"Från formuläret","full_name":"Annat"}'::jsonb, '{"kuggfri_skapad_av":"skript"}'::jsonb) returning id`,
     );
     const [q] = await db.query<{ display_name: string | null }>(`select display_name from public.profiles where id = $1`, [f!.id]);
     expect(q?.display_name).toBe("Från formuläret");
@@ -529,9 +534,11 @@ describe("mejl (profiles.reminder_email, email_log, deck_digest)", () => {
 });
 
 describe("card_reports", () => {
-  it("gäst (anon) kan rapportera kort i publicerat deck, men inte i utkast", async () => {
-    await anon(db).query(`insert into public.card_reports (card_id, message) values ($1, 'Fel enhet i svaret')`, [publishedCard]);
-    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message) values ($1, 'Smyg')`, [draftCard]));
+  it("kursens deltagare kan rapportera kort i publicerat deck, men inte i utkast; gäster och andra inte alls", async () => {
+    await user(db, alice).query(`insert into public.card_reports (card_id, message) values ($1, 'Fel enhet i svaret')`, [publishedCard]);
+    await expectDenied(user(db, alice).query(`insert into public.card_reports (card_id, message) values ($1, 'Smyg')`, [draftCard]));
+    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message) values ($1, 'Gäst')`, [publishedCard]));
+    await expectDenied(user(db, bob).query(`insert into public.card_reports (card_id, message) values ($1, 'Utanför kursen')`, [publishedCard]));
   });
 
   it("gäst kan inte sätta user_id eller status, och inte läsa", async () => {
@@ -551,7 +558,7 @@ describe("card_reports", () => {
   });
 
   it("för kort meddelande avvisas", async () => {
-    await expectDenied(anon(db).query(`insert into public.card_reports (card_id, message) values ($1, '  ')`, [publishedCard]), /check|violates/i);
+    await expectDenied(user(db, alice).query(`insert into public.card_reports (card_id, message) values ($1, '  ')`, [publishedCard]), /check constraint/i);
   });
 
   it("admin läser, åtgärdar och tar bort", async () => {

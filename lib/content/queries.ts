@@ -1,24 +1,29 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getSupabaseEnv } from "@/lib/supabase/env";
-import type { CardRow, CategoryRow, Database, DeckRow } from "@/lib/supabase/database.types";
+import { createServiceRoleClient } from "@/lib/supabase/service";
+import type { CardRow, CategoryRow, DeckRow } from "@/lib/supabase/database.types";
 import { getLang } from "@/lib/i18n/server";
+import { getViewableDeckIds } from "@/lib/enrollment/access";
 import { localizeCard, localizeCategory, localizeDeckRow } from "./localize";
 
 /**
- * Publikt innehåll (publicerade deck, kategorier, aktiva kort) cachas på servern i fem minuter
- * och ogiltigförklaras direkt när admin ändrar något (taggen CONTENT_TAG töms i lib/cache/revalidate.ts).
- * Hämtningen görs med en klient utan session, så bara det anon får se hamnar i cachen:
- * ett opublicerat deck kan aldrig läcka via cachen till en gäst.
+ * Publicerat innehåll (publicerade deck, kategorier, aktiva granskade kort) cachas på servern i fem
+ * minuter och ogiltigförklaras direkt när admin ändrar något (taggen CONTENT_TAG töms i
+ * lib/cache/revalidate.ts).
+ *
+ * Cachen hämtas med serverns nyckel (service role), eftersom korten bara får läsas av kursens
+ * deltagare och cachen delas av alla. Filtren nedan är därför det som håller opublicerade kurser,
+ * utkast och inaktiva kort borta, och sidorna kontrollerar åtkomsten per kurs innan något visas
+ * (lib/enrollment/access.ts): getMyDecks för listorna, canViewDeck för kurssidorna.
  */
 export const CONTENT_TAG = "content";
 const CONTENT_TTL_SECONDS = 300;
 
-function publicClient() {
-  const { url, anonKey } = getSupabaseEnv();
-  return createClient<Database>(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
+function contentClient() {
+  const client = createServiceRoleClient();
+  if (!client) throw new Error("SUPABASE_SERVICE_ROLE_KEY saknas (krävs för kursinnehållet).");
+  return client;
 }
 
 export type DeckSummary = DeckRow & { cardCount: number };
@@ -29,10 +34,10 @@ export type DeckWithContent = {
   cards: CardRow[];
 };
 
-/** Publicerade deck med antal aktiva kort. Cachat; RLS ser till att opublicerade aldrig läcker. */
+/** Publicerade deck med antal aktiva kort. Cachat. */
 const getPublishedDecksCached = unstable_cache(
   async (): Promise<DeckSummary[]> => {
-    const supabase = publicClient();
+    const supabase = contentClient();
     const [{ data: decks, error }, { data: counts }] = await Promise.all([
       supabase.from("decks").select("*").eq("is_published", true).order("sort_order").order("title"),
       supabase.rpc("deck_card_counts"),
@@ -45,33 +50,38 @@ const getPublishedDecksCached = unstable_cache(
   { tags: [CONTENT_TAG], revalidate: CONTENT_TTL_SECONDS },
 );
 
-/** Publicerade deck, med beskrivningen på engelska för den som slagit på English. */
-export async function getPublishedDecks(): Promise<DeckSummary[]> {
-  const [decks, lang] = await Promise.all([getPublishedDecksCached(), getLang()]);
-  return decks.map((d) => localizeDeckRow(d, lang));
+/**
+ * De publicerade kurser den inloggade får läsa (står på deltagarlistan eller redigerar kursen),
+ * med beskrivningen på engelska för den som slagit på English.
+ */
+export async function getMyDecks(): Promise<DeckSummary[]> {
+  const [decks, mine, lang] = await Promise.all([getPublishedDecksCached(), getViewableDeckIds(), getLang()]);
+  return decks.filter((d) => mine.has(d.id)).map((d) => localizeDeckRow(d, lang));
 }
 
-type DeckClient = ReturnType<typeof publicClient> | Awaited<ReturnType<typeof createSupabaseServerClient>>;
+type DeckClient = ReturnType<typeof contentClient> | Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
-async function loadDeckBySlug(supabase: DeckClient, slug: string): Promise<DeckWithContent | null> {
-  const { data: deck } = await supabase.from("decks").select("*").eq("slug", slug).maybeSingle();
+/**
+ * Kursen med kategorier och aktiva kort. `published`: bara en publicerad kurs och bara granskade
+ * kort (cachen, som läses med service role); annars avgör besökarens session (RLS) vad som syns.
+ */
+async function loadDeckBySlug(supabase: DeckClient, slug: string, published: boolean): Promise<DeckWithContent | null> {
+  let deckQuery = supabase.from("decks").select("*").eq("slug", slug);
+  if (published) deckQuery = deckQuery.eq("is_published", true);
+  const { data: deck } = await deckQuery.maybeSingle();
   if (!deck) return null;
+  let cardQuery = supabase.from("cards").select("*").eq("deck_id", deck.id).eq("is_active", true);
+  if (published) cardQuery = cardQuery.is("review_status", null);
   const [{ data: categories }, { data: cards }] = await Promise.all([
     supabase.from("categories").select("*").eq("deck_id", deck.id).order("sort_order").order("title"),
-    supabase
-      .from("cards")
-      .select("*")
-      .eq("deck_id", deck.id)
-      .eq("is_active", true)
-      .order("sort_order")
-      .order("created_at"),
+    cardQuery.order("sort_order").order("created_at"),
   ]);
   // Granskningens flaggor är redaktörernas anteckningar och hör inte hemma i studentvyerna.
   const studentCards = (cards ?? []).map((c) => ({ ...c, flag_note: null, flagged_at: null, flagged_by: null }));
   return { deck, categories: categories ?? [], cards: sortCardsByCategory(studentCards, categories ?? []) };
 }
 
-const getPublishedDeckBySlug = unstable_cache(async (slug: string) => loadDeckBySlug(publicClient(), slug), ["published-deck"], {
+const getPublishedDeckBySlug = unstable_cache(async (slug: string) => loadDeckBySlug(contentClient(), slug, true), ["published-deck"], {
   tags: [CONTENT_TAG],
   revalidate: CONTENT_TTL_SECONDS,
 });
@@ -79,13 +89,14 @@ const getPublishedDeckBySlug = unstable_cache(async (slug: string) => loadDeckBy
 /**
  * Ett deck via slug med kategorier och aktiva kort i sorteringsordning. Publicerade deck kommer ur
  * cachen; ett opublicerat deck hämtas med besökarens session (bara redaktörer får se det).
- * Null om det inte finns eller inte får visas.
+ * Null om det inte finns eller inte får visas. Åtkomsten till en publicerad kurs kontrollerar
+ * sidan med canViewDeck innan korten visas.
  */
 export async function getDeckBySlug(slug: string): Promise<DeckWithContent | null> {
   const [published, lang] = await Promise.all([getPublishedDeckBySlug(slug), getLang()]);
   if (published) return localize(published, lang);
   const supabase = await createSupabaseServerClient();
-  const data = await loadDeckBySlug(supabase, slug);
+  const data = await loadDeckBySlug(supabase, slug, false);
   return data ? localize(data, lang) : null;
 }
 
@@ -115,7 +126,7 @@ export function sortCardsByCategory<C extends { category_id: string | null; sort
 /** Publicerade deck för /om-sidan. Cachat. */
 export const getDecksForAbout = unstable_cache(
   async (): Promise<Pick<DeckRow, "id" | "title" | "course_code" | "source_credit" | "slug">[]> => {
-    const { data } = await publicClient()
+    const { data } = await contentClient()
       .from("decks")
       .select("id, title, course_code, source_credit, slug")
       .eq("is_published", true)

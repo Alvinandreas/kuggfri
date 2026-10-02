@@ -87,6 +87,10 @@ export async function removeE2eUsers(db: SupabaseClient = serviceClient()): Prom
     const { error } = await db.auth.admin.deleteUser(id);
     if (error) throw new Error(`Kunde inte ta bort en E2E-användare: ${error.message}`);
   }
+  // Deltagarlistans rader för testernas adresser (enrollTestEmail i helpers.ts).
+  const { data: rows } = await db.from("deck_enrollments").select("deck_id, email").like("email", "%@kuggfri.test");
+  const e2eRows = (rows ?? []).filter((r) => E2E_USER_EMAIL.test(r.email));
+  for (const r of e2eRows) await db.from("deck_enrollments").delete().eq("deck_id", r.deck_id).eq("email", r.email);
   return doomed.length;
 }
 

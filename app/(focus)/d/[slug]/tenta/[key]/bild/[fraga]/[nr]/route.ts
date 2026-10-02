@@ -8,7 +8,7 @@ const notFound = () => new Response("Hittades inte", { status: 404, headers: { "
 
 /**
  * En figur i en tenta (lib/tentor/images.ts). Samma åtkomst som tentan: redaktörer alltid,
- * studenter när kursen är publicerad, tentaläget öppet och tentan publicerad. Figurerna är
+ * kursens deltagare när kursen är publicerad, tentaläget öppet och tentan publicerad. Figurerna är
  * frågornas bilder, inget facit, så de får visas under skrivtiden.
  */
 export async function GET(_request: Request, { params }: { params: Params }) {

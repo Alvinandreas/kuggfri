@@ -140,7 +140,7 @@ Varje beslut har ett rekommenderat alternativ. De som kräver Alvins ja är mark
 | B9 | Cache | En tagg per kurs (`deck:<id>`) plus en listtagg; `revalidateDeck` rensar bara den kursen | En tagg för allt (i dag) |
 | B10 | Lanseringsspärren | Kontrolleras i `setDeckPublishedAction` och i en databasfunktion: publicering kräver 0 ogranskade kort och 0 flaggor, utom för plattformsadmin med uttrycklig överstyrning som loggas | Bara policy (i dag) |
 | B11 | Ta bort kurser | Arkivera (`decks.archived_at`), aldrig radera i gränssnittet; radering bara via CLI med säkerhetskopia | Radering i gränssnittet (i dag, kaskaderar bort progress) |
-| B12 | Studentens kurser | Senare: "Mina kurser" ur besök på kurslänken och historik, utan inskrivningstabell först | Inskrivningstabell direkt (behövs först vid många kurser) |
+| B12 | Studentens kurser | **Ändrat 2 okt 2026: byggt.** Deltagarlistor per kurs (`deck_enrollments`, fliken Deltagare). Bara den som står på listan kan registrera sig och läsa kursens kort; "Mina kurser" är kurserna man står på listan för (`my_deck_ids()`). Skälet var upphovsrätten till kurslitteraturens material, inte antalet kurser | "Mina kurser" ur besök på kurslänken (den ursprungliga planen, som lät alla registrerade se allt) |
 | B13 | Plattformsadmin kan bli fler | Ja, men aldrig färre än en: funktionen som tar bort rollen vägrar ta bort den sista. **Alvins ja behövs för vem.** | |
 | B14 | Organisationer och program | Inte nu. Om det behövs senare: `decks.program` som etikett för filtrering, inte en ny behörighetsnivå | En organisationsnivå med egna admins (för tidigt) |
 
@@ -393,7 +393,7 @@ Det mesta fungerar redan (kurslistan, statistik per kurs, studielägen per kurs)
 | Vad | Ändring | Fil |
 |---|---|---|
 | Hemsidan | Med flera kurser i gång: ett gemensamt "i dag" över kurserna (summa kort, en knapp per kurs) och radarn för den kurs man valt; i dag väljs en primär kurs | `components/home/HomeDashboard.tsx:128,170-240` |
-| Mina kurser | Kurser man öppnat via länk eller pluggat i visas först; övriga under "Fler kurser" | `app/(app)/kurser/page.tsx`, `lib/content/queries.ts` |
+| Mina kurser | Klart (2 okt 2026): listan är kurserna man står på deltagarlistan för (`getMyDecks`); kvar är bara ordningen, senast pluggade först | `app/(app)/kurser/page.tsx`, `lib/content/queries.ts` |
 | Sidomenyn | Kurssidan och Tentaläget pekar på senast använda kurs när det finns flera, i stället för att bara visas under `/d/<kurs>` | `components/layout/Sidebar.tsx:195-197` |
 | Om och Hjälp | Kontaktkort per kurs ur databasen (B8) | `lib/contact.ts`, `app/(info)/*` |
 | Integritetspolicyn | Nämner händelseloggen (personer med roll) och inbjudningsmejlet | `app/(info)/integritet/page.tsx`, `components/info/PrivacyEn.tsx` |

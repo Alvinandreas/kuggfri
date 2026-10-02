@@ -39,14 +39,14 @@ function pages(qr) {
   <h2>Kom igång på tre minuter</h2>
   ${T.steps([
     ["Öppna kurslänken", `Skanna QR-koden eller gå till <b>${LINK}</b>, i mobilen eller på datorn.`],
-    ["Skapa konto", "Välj <b>Fortsätt med Google</b>, eller fyll i namn, e-post och lösenord. Kursen öppnas direkt."],
+    ["Skapa konto", "Fyll i namn, <b>din Chalmersadress</b> och ett lösenord, och bekräfta adressen i mejlet. Kursen öppnas direkt."],
     ["Gör ditt första pass", "Tryck <b>Börja plugga</b> och sedan <b>Starta</b>. Första passet är 20 kort, några minuter."],
     ["Kom tillbaka varje dag", "Schemat väljer vilka kort du ska repetera. Ett pass om dagen räcker långt."],
   ])}
   <div class="row cols-2 start">
     <div class="card" style="display:grid;grid-template-columns:auto 1fr;gap:12pt;align-items:center">
       <div class="qr" style="width:32mm">${qr}</div>
-      <div><h3>Kurslänken</h3><p style="font-weight:750;color:var(--accent);margin-bottom:5pt">${LINK}</p><p class="small muted">Skanna med mobilkameran. Dela gärna länken med en kursare: den som saknar konto skapar ett och hamnar direkt i kursen.</p></div>
+      <div><h3>Kurslänken</h3><p style="font-weight:750;color:var(--accent);margin-bottom:5pt">${LINK}</p><p class="small muted">Skanna med mobilkameran. Kursen är öppen för alla som läser den: skapa kontot med adressen kursen har för dig, oftast din Chalmersadress.</p></div>
     </div>
     ${callout("Lägg Kuggfri på hemskärmen", "green", dots([
       "<b>iPhone:</b> öppna länken i Safari, tryck på Dela och välj Lägg till på hemskärmen.",
@@ -101,7 +101,7 @@ function pages(qr) {
   </table></div>
   <div class="row cols-2 start">
     ${callout("Plugga ett område", "green", `<p class="small">Klicka på ett område i radardiagrammet eller listan på hemsidan. Där pluggar du bara det området: schemalagt, kluriga kort, fritt eller som dugga. <b>Grönt betyder klart</b> för i dag.</p>`)}
-    ${callout("Dela kursen med en vän", "navy", `<p class="small">Längst ner på kurssidan kopierar du kurslänken eller visar en QR-kod. Den som saknar konto skapar ett på en halv minut och hamnar direkt i kursen.</p>`)}
+    ${callout("Dela kursen med en vän", "navy", `<p class="small">Längst ner på kurssidan kopierar du kurslänken eller visar en QR-kod. En kursare som saknar konto skapar ett med sin Chalmersadress och hamnar direkt i kursen.</p>`)}
   </div>
   ${f(p, n)}`,
 

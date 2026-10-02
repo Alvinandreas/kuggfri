@@ -26,6 +26,18 @@ export function googleClientId(env: Record<string, string | undefined> = { NEXT_
   return id && /^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$/.test(id) ? id : null;
 }
 
+/**
+ * Google-inloggningen är avstängd (beslut 2 okt 2026). Studenternas Chalmersadresser är inga
+ * Google-konton, och kontot ska höra till adressen på kursens deltagarlista. Flödet ligger kvar;
+ * sätt true för att slå på det igen (registreringen spärras ändå av deltagarlistorna).
+ */
+export const GOOGLE_LOGIN_ENABLED = false;
+
+/** Klient-id:t när Google-inloggningen är påslagen och konfigurerad, annars null. */
+export function googleLoginClientId(): string | null {
+  return GOOGLE_LOGIN_ENABLED ? googleClientId() : null;
+}
+
 /** Adressen till Googles inloggningssida. Kontoväljaren visas alltid (ingen tyst inloggning). */
 export function buildGoogleAuthUrl(input: { clientId: string; redirectUri: string; state: string; nonceHash: string }): string {
   const url = new URL(GOOGLE_AUTH_URL);

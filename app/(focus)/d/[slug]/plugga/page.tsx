@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDeckBySlug } from "@/lib/content/queries";
+import { canViewDeck } from "@/lib/enrollment/access";
+import { NoCourseAccess } from "@/components/study/NoCourseAccess";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { parsePassQuery } from "@/lib/study/session-queue";
 import { toCategoryOption, toStudyCard } from "@/lib/content/view-models";
@@ -21,6 +23,7 @@ export default async function StudyPage({ params, searchParams }: { params: Para
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const [data, user] = await Promise.all([getDeckBySlug(slug), getCurrentUser()]);
   if (!data) notFound();
+  if (!(await canViewDeck(data.deck.id))) return <NoCourseAccess deck={data.deck} />;
 
   // Läge, urval, inställningar och fortsättningar (nya=, vidare=, tak=, pass=) ur adressen.
   // Ett gammalt original=1 (det borttagna valet Bara originalkorten) ignoreras.

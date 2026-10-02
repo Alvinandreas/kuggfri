@@ -45,6 +45,7 @@ lämna en kontaktadress för svar.
 | 5b | Försök i tentaläget | `public.exam_attempts` | Svar, rättning och egna bedömningar av gamla tentor | Avtal 6.1 b | Vid kontoradering |
 | 6 | Felrapporter (text, valfri kontaktadress, ev. user_id) | `public.card_reports` | Rätta fel i kursmaterialet | Berättigat intresse 6.1 f | Kontakt nollställs efter 180 dagar; åtgärdade rapporter raderas efter 180 dagar (`purge_old_data()`) |
 | 7 | Examinatorsroll per kurs | `public.deck_examiners`, `deck_examiner_invites` | Behörighet till egen kurs | Berättigat intresse 6.1 f | Vid kontoradering eller när rollen tas bort |
+| 7b | E-postadresser på kursens deltagarlista (bara adressen, inget namn), och koppling till kontot när adressen har ett bekräftat konto | `public.deck_enrollments` | Bara de som läser kursen får skapa konto och läsa kursmaterialet (upphovsrätten till kurslitteraturens figurer och uppgifter). Listan kommer från kursens examinator (Ladok eller Canvas) | Berättigat intresse 6.1 f | När adressen tas bort från listan eller kursen tas bort. Vid kontoradering står adressen kvar (den är kursens) men kopplingen till kontot tas bort. Adresser utan konto rensas för hand när kursen inte längre ges (se 6. Att göra) |
 | 8 | Logg över skickade mejl (typ, ämne, tidpunkt) | `public.email_log` | Undvika dubbla utskick | Berättigat intresse 6.1 f | 90 dagar (`purge_old_data()`) |
 | 9 | Gästprogress och inställningar | Studentens webbläsare (`localStorage`) | Tjänsten utan konto | Ingen behandling hos oss | Studenten rensar själv |
 
@@ -54,7 +55,9 @@ Inga barn under 13 är målgrupp; tjänsten riktar sig till universitetsstudente
 ### Vad som aldrig lagras
 
 Namn (utöver frivilligt visningsnamn), personnummer, studentnummer, telefonnummer, adress,
-IP-adresser för profilering, betyg, tentaresultat, och inga uppgifter från tredje part.
+IP-adresser för profilering och betyg. Det enda som kommer från tredje part är e-postadresserna på
+kursernas deltagarlistor (från examinatorn); namn och personnummer i en uppladdad lista läses i
+webbläsaren och skickas aldrig till servern (`lib/enrollment/parse.ts`).
 
 ## 3. Gallring
 
@@ -124,3 +127,5 @@ Följ fyrapunktslistan överst i det här dokumentet. Kör `npm run verify` — 
       hänvisar policyn dit, men adressen behöver stå där).
 - [ ] Bekräfta att BitLocker är på på arbetsdatorn.
 - [ ] Efter lansering: granska `dormant_accounts()` en gång per termin.
+- [ ] Deltagarlistor: när en kurs inte längre ges, ta bort de adresser som aldrig fått något konto
+      (fliken Deltagare). Överväg automatisk gallring i `purge_old_data()` när fler kurser finns.

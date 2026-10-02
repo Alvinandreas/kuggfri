@@ -121,7 +121,7 @@ test.describe("examinator", () => {
 
   test.beforeAll(async () => {
     const db = serviceClient();
-    const { data, error } = await db.auth.admin.createUser({ email: examiner.email, password: examiner.password, email_confirm: true });
+    const { data, error } = await db.auth.admin.createUser({ email: examiner.email, password: examiner.password, email_confirm: true, app_metadata: { kuggfri_skapad_av: "skript" } });
     if (error) throw error;
     userId = data.user.id;
     const { data: deck } = await db.from("decks").select("id").eq("slug", DECK_SLUG).single();

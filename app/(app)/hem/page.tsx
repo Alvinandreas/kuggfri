@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getT } from "@/lib/i18n/server";
-import { getDeckBySlug, getPublishedDecks } from "@/lib/content/queries";
+import { getDeckBySlug, getMyDecks } from "@/lib/content/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { HomeDashboard, type HomeDeck } from "@/components/home/HomeDashboard";
 import { toHomeDeck } from "@/lib/content/view-models";
@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Hemsidan för inloggade: hur plugget går, dagens pass och kurserna. */
 export default async function HomePage() {
-  const [session, summaries] = await Promise.all([getCurrentProfile(), getPublishedDecks()]);
+  const [session, summaries] = await Promise.all([getCurrentProfile(), getMyDecks()]);
   const full = await Promise.all(summaries.map((d) => getDeckBySlug(d.slug)));
   const decks: HomeDeck[] = full.flatMap((d) => (d ? [toHomeDeck(d)] : []));
   const displayName = session?.profile?.display_name?.trim() ?? "";

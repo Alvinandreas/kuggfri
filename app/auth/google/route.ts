@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { safeNext } from "@/lib/auth/safe-next";
-import { buildGoogleAuthUrl, encodeFlow, GOOGLE_CALLBACK_PATH, GOOGLE_COOKIE, googleClientId, randomToken, sha256Hex } from "@/lib/auth/google";
+import { buildGoogleAuthUrl, encodeFlow, GOOGLE_CALLBACK_PATH, GOOGLE_COOKIE, googleLoginClientId, randomToken, sha256Hex } from "@/lib/auth/google";
 import { getRequestOrigin } from "@/lib/supabase/request-origin";
 import { routes } from "@/lib/routes";
 
@@ -9,7 +9,7 @@ import { routes } from "@/lib/routes";
  * inloggningssida. state skyddar mot förfalskade återkomster, engångskoden mot återuppspelade token.
  */
 export async function GET(request: NextRequest) {
-  const clientId = googleClientId();
+  const clientId = googleLoginClientId();
   if (!clientId || !process.env.GOOGLE_CLIENT_SECRET) {
     return NextResponse.redirect(new URL(routes.login({ fel: "google" }), request.url));
   }

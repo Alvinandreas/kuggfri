@@ -86,4 +86,8 @@ export const deck: Dict["deck"] = {
   examCatchUp: (perDay: number) =>
     `Catch-up mode: you need ${perDay === 1 ? "1 new card" : `${perDay} new cards`} a day to cover everything before the exam.`,
   perDayOption: (cards: string) => `${cards} per day`,
+  // Inloggad men inte på kursens deltagarlista (lib/enrollment).
+  noAccessTitle: "You don't have access to this course",
+  noAccessBody: "The course is open to the students taking it. The examiner adds the participants' email addresses, and everyone on the list gets the course automatically.",
+  noAccessEmail: (email: string) => `You are signed in as ${email}. Taking the course but listed under a different address? Contact the examiner.`,
 };

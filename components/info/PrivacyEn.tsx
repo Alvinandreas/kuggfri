@@ -55,7 +55,7 @@ export function PrivacyEn() {
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>We have no analytics, no ads and no tracking cookies. You sign in with email and password, or with Google if you prefer.</span>
+            <span>We have no analytics, no ads and no tracking cookies. You sign in with email and password.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
@@ -159,6 +159,12 @@ export function PrivacyEn() {
                   why="When a session started and ended, which course and how many cards. Gives you your statistics."
                   basis="Contract"
                   retention="Until you delete the account"
+                />
+                <Row
+                  what="Your email address on the course participant list"
+                  why="Courses are open only to the students taking them. The examiner adds the participants' email addresses, and only people on the list can create an account and see the course. Only the address is stored, never names or personal identity numbers."
+                  basis="Legitimate interest (the course material may only be accessed by the course participants)"
+                  retention="Until the address is removed from the list or the course is removed. If you delete your account, the address stays on the course list, but the link to your account is removed"
                 />
                 <Row
                   what="Error reports you send"
@@ -285,11 +291,10 @@ export function PrivacyEn() {
             </li>
           </ul>
           <p>
-            <strong>Sign-in with Google.</strong> If you choose &quot;Continue with Google&quot;, you sign in on
-            Google&apos;s own page. Google confirms who you are, and we receive your name and your email address. Google also sends a link to your profile picture; it
-            is stored in the sign-in system but is not displayed or used. Google learns that you are signing in to Kuggfri, but
-            nothing about what you study. Google&apos;s privacy policy applies to the sign-in itself at Google. You can
-            always choose email and password instead.
+            <strong>Sign-in with Google</strong> has been turned off since October 2026, because the account should
+            belong to the address on the course participant list. Accounts created with Google before then remain and
+            sign in with email (choose Forgot password). For them we received the name and email address from Google,
+            and a link to the profile picture that is stored in the sign-in system but neither displayed nor used.
           </p>
           <p>
             The providers are American companies with operations in the EU. Should a transfer to a third country take
@@ -389,11 +394,11 @@ export function PrivacyEn() {
             confirmation links).
           </p>
           <p>
-            <strong>Google sign-in.</strong> If you choose &quot;Continue with Google&quot;, we receive your name, email
-            address and a link to your profile picture from Google. We use the name and email address only to create
-            and identify your Kuggfri account; the picture link is stored by the sign-in system but not displayed or
-            used. We request no other Google data, do not use Google data for advertising, and do not transfer it to
-            anyone else. Kuggfri&apos;s use of information received from Google APIs adheres to the Google API
+            <strong>Google sign-in</strong> has been turned off since October 2026. For accounts created with Google
+            before then, we received the name, email address and a link to the profile picture from Google. We use
+            the name and email address only to identify the Kuggfri account; the picture link is stored by the
+            sign-in system but not displayed or used. We do not use Google data for advertising and do not transfer
+            it to anyone else. Kuggfri&apos;s use of information received from Google APIs adheres to the Google API
             Services User Data Policy, including the Limited Use requirements.
           </p>
           <p>

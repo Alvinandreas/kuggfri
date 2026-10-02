@@ -4,7 +4,8 @@ import { MAX_IMPORT_CARDS, LIMITS } from "@/lib/admin/limits";
 import { adminAction, editorAction, requireAdmin, requireEditor, runAction } from "@/lib/actions/guard";
 import { cleanIds, fail, isUuid, tooLong, type ActionResult } from "@/lib/actions/result";
 import { normalizeKindInput } from "@/lib/admin/card-form";
-import { revalidateDeck, revalidateDeckRemoved, revalidateExaminers, revalidateReports } from "@/lib/cache/revalidate";
+import { revalidateDeck, revalidateDeckRemoved, revalidateEnrollments, revalidateExaminers, revalidateReports } from "@/lib/cache/revalidate";
+import { MAX_ROSTER_ROWS } from "@/lib/enrollment/parse";
 import { getT } from "@/lib/i18n/server";
 import { diffImport } from "@/lib/import/diff";
 import type { ImportCard } from "@/lib/import/parse-import";
@@ -372,6 +373,37 @@ export async function deleteReportAction(id: string, deckId: string): Promise<Ac
     if (error) return fail(error);
     revalidateReports(deckId);
     return { ok: true, data: undefined };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Deltagarlistan (admin och kursens examinatorer)
+// ---------------------------------------------------------------------------
+
+/**
+ * Lägger till adresser på kursens deltagarlista. Webbläsaren läser filen (lib/enrollment/parse.ts)
+ * och skickar bara adresserna; databasen normaliserar, hoppar över ogiltiga och kopplar adresser
+ * som redan har ett bekräftat konto.
+ */
+export async function addEnrollmentsAction(deckId: string, emails: string[]): Promise<ActionResult<{ added: number; already: number; linked: number }>> {
+  return editorAction(deckId, async ({ supabase }) => {
+    const list = emails.filter((e) => typeof e === "string").map((e) => e.trim().toLowerCase()).filter((e) => e.length > 0 && e.length <= 254);
+    if (list.length === 0) return { ok: true, data: { added: 0, already: 0, linked: 0 } };
+    if (list.length > MAX_ROSTER_ROWS) return fail(new Error("too_many"));
+    const { data, error } = await supabase.rpc("add_deck_enrollments", { p_deck_id: deckId, p_emails: list });
+    if (error) return fail(error);
+    revalidateEnrollments(deckId);
+    return { ok: true, data: data?.[0] ?? { added: 0, already: 0, linked: 0 } };
+  });
+}
+
+/** Tar bort adresser från listan. Kontona finns kvar, men kursen försvinner för dem. */
+export async function removeEnrollmentsAction(deckId: string, emails: string[]): Promise<ActionResult<{ removed: number }>> {
+  return editorAction(deckId, async ({ supabase }) => {
+    const { data, error } = await supabase.rpc("remove_deck_enrollments", { p_deck_id: deckId, p_emails: emails.slice(0, MAX_ROSTER_ROWS) });
+    if (error) return fail(error);
+    revalidateEnrollments(deckId);
+    return { ok: true, data: { removed: data ?? 0 } };
   });
 }
 

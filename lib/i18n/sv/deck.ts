@@ -86,4 +86,8 @@ export const deck = {
   examFinalHelp: "Slutrepetition: alla kort i urvalet, svagast först.",
   examCatchUp: (perDay: number) => `Ikappläge: ${perDay} nya kort per dag behövs för att hinna alla före tentan.`,
   perDayOption: (cards: string) => `${cards} per dag`,
+  // Inloggad men inte på kursens deltagarlista (lib/enrollment).
+  noAccessTitle: "Du har inte tillgång till kursen",
+  noAccessBody: "Kursen är öppen för dem som läser den. Examinatorn lägger in deltagarnas e-postadresser, och den som står på listan får kursen automatiskt.",
+  noAccessEmail: (email: string) => `Du är inloggad som ${email}. Läser du kursen men står med en annan adress? Hör av dig till examinatorn.`,
 } as const;

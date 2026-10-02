@@ -32,6 +32,8 @@ export default async function globalSetup(config: FullConfig) {
     email: ADMIN_USER.email,
     password: ADMIN_USER.password,
     email_confirm: true,
+    // Skript och tester skapar konton förbi deltagarlistornas spärr (se migrationen deltagarlistor).
+    app_metadata: { kuggfri_skapad_av: "skript" },
   });
   let userId = created?.user?.id ?? null;
   if (error && !/already|exists|registered/i.test(error.message)) {

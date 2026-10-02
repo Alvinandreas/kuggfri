@@ -34,7 +34,7 @@ export default async function AdminExamKeyPage({ params }: { params: Params }) {
   const data = await getDeckForAdmin(id);
   if (!data) notFound();
   const { deck } = data;
-  const exam = await getExam(deck.id, key, { canEdit: true, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published });
+  const exam = await getExam(deck.id, key, { canEdit: true, enrolled: true, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published });
   if (!exam) notFound();
   const parts = partOf(exam.questions);
   const questions = withImageUrls(exam.questions, deck.slug, exam.key);

@@ -42,6 +42,15 @@ export async function openAdminCourse(page: Page): Promise<string> {
   return page.url();
 }
 
+/** Sätter adressen på Materialtekniks deltagarlista (som examinatorn gör i fliken Deltagare). */
+export async function enrollTestEmail(email: string, slug = DECK_SLUG) {
+  const db = serviceClient();
+  const { data: deck, error } = await db.from("decks").select("id").eq("slug", slug).single();
+  if (error || !deck) throw new Error(`Hittade inte kursen ${slug}: ${error?.message}`);
+  const { error: insertError } = await db.from("deck_enrollments").upsert({ deck_id: deck.id, email: email.toLowerCase() }, { onConflict: "deck_id,email", ignoreDuplicates: true });
+  if (insertError) throw new Error(`Kunde inte sätta ${email} på deltagarlistan: ${insertError.message}`);
+}
+
 export function uniqueEmail(prefix = "e2e"): string {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@kuggfri.test`;
 }
@@ -161,6 +170,8 @@ export async function confirmSignupFromMail(page: Page, email: string) {
  * bekräftelse krävs. Med bekräftelsen avstängd loggas man in direkt, och då hoppas mejlet över.
  */
 export async function submitRegistration(page: Page, email: string) {
+  // Registreringen kräver att adressen står på en deltagarlista, precis som för riktiga studenter.
+  await enrollTestEmail(email);
   const startPath = new URL(page.url()).pathname;
   await page.getByTestId("register-submit").click();
   const inbox = page.getByTestId("check-inbox");

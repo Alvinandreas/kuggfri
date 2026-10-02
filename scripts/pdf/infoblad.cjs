@@ -44,7 +44,7 @@ const PAGES = [
     ["Källor", "Varje kort", "kontrollerat mot kursens material", "violet"],
   ])}
   <div class="row cols-2 start">
-    <div class="card"><h3>Vad Kuggfri är</h3><p class="small">Studenten öppnar kurslänken i mobilen eller på datorn, skapar ett konto på en halv minut (eller loggar in med Google) och börjar plugga direkt. Varje kort har en fråga och ett svar, eller är en flervalsfråga som rättas automatiskt, som på tentan.</p><p class="small">Schemat väljer vilka kort studenten ser varje dag. Innehållet ägs av kursen, redigeras i webbläsaren och kan exporteras när som helst.</p></div>
+    <div class="card"><h3>Vad Kuggfri är</h3><p class="small">Studenten öppnar kurslänken i mobilen eller på datorn, skapar ett konto med sin Chalmersadress och börjar plugga direkt. Bara de som står på kursens deltagarlista kommer in. Varje kort har en fråga och ett svar, eller är en flervalsfråga som rättas automatiskt, som på tentan.</p><p class="small">Schemat väljer vilka kort studenten ser varje dag. Innehållet ägs av kursen, redigeras i webbläsaren och kan exporteras när som helst.</p></div>
     <div class="card"><h3>Bakgrund</h3><p class="small">Korten sammanställdes av en student under kursen och spreds i klassen och vidare till nästa kull. Den tidigare plattformen var en kommersiell app där varje student behövde godkännas manuellt och innehållet låg på ett privat konto.</p><p class="small">Kuggfri byggdes för att ta bort de hindren och för att kursen ska kunna äga och granska innehållet.</p></div>
   </div>
   <div class="card"><h3>Så maximerar den algoritmiska repetitionen inlärningen</h3>

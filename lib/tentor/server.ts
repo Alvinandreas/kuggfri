@@ -3,6 +3,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { isUuid } from "@/lib/actions/result";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
+import { canViewDeck } from "@/lib/enrollment/access";
 import { createSupabaseServerClient, getCurrentUser } from "@/lib/supabase/server";
 import type { ExamAttemptRow } from "@/lib/supabase/database.types";
 import { gradeExam, gradeFor, type ExamResult } from "./grade";
@@ -44,7 +45,13 @@ export const loadExamDeck = cache(async (slug: string): Promise<{ deck: ExamDeck
   const canEdit = canEditDeck(ctx, deck.id);
   return {
     deck,
-    access: { canEdit, examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published, studentView: await studentViewFor(deck.id, canEdit) },
+    access: {
+      canEdit,
+      enrolled: canEdit || (await canViewDeck(deck.id)),
+      examModeOpen: deck.exam_mode_open,
+      deckPublished: deck.is_published,
+      studentView: await studentViewFor(deck.id, canEdit),
+    },
   };
 });
 
@@ -53,7 +60,8 @@ async function deckAccess(deckId: string): Promise<{ slug: string; access: ExamA
   const { data: deck } = await supabase.from("decks").select("id, slug, is_published, exam_mode_open").eq("id", deckId).maybeSingle();
   if (!deck) return null;
   const ctx = await getAdminContext();
-  return { slug: deck.slug, access: { canEdit: canEditDeck(ctx, deck.id), examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published } };
+  const canEdit = canEditDeck(ctx, deck.id);
+  return { slug: deck.slug, access: { canEdit, enrolled: canEdit || (await canViewDeck(deck.id)), examModeOpen: deck.exam_mode_open, deckPublished: deck.is_published } };
 }
 
 const ATTEMPT_LIST = "id, exam_id, started_at, submitted_at, points, grade";

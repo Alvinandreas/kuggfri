@@ -94,7 +94,7 @@ export const meta: Dict["meta"] = {
   /** The word before the time of day: "today at 14:32". */
   at: "at",
   language: "Language",
-  languageHelp: "The whole service is shown in the chosen language, cards included, on all your devices. Students always see Swedish.",
+  languageHelp: "The whole service is shown in the chosen language, cards included, on all your devices. The cards are written and reviewed in Swedish; the English version is a translation.",
   pct: (n: number | string) => `${n}%`,
   pctSuffix: "%",
 };

@@ -228,7 +228,7 @@ function pages(qr) {
     ${callout("Tentaläget", "navy", `<p class="small">Kursens gamla tentor, en hel tenta i taget, med samma skrivtid, poäng och hjälpmedel som på riktigt. Efteråt rättas flerval och räkneuppgifter automatiskt, du bedömer dina skrivuppgifter mot lösningsförslagen och får poäng, betyg och facit. <b>Tentaläget öppnar senare under kursen</b>; till dess visar menyn ett lås.</p>`)}
     ${callout("Ditt konto", "green", dots([
       "<b>Pluggrytm:</b> 10, 20 eller 40 nya kort per dag, och om bara vardagar ska räknas i din streak.",
-      "<b>Färgtema:</b> ljust, mörkt eller som din enhet.",
+      "<b>Färgtema och språk:</b> ljust, mörkt eller som din enhet, och svenska eller engelska. Språket gäller hela tjänsten, också korten.",
       "<b>Nollställ</b> en kurs, bara schemat eller allt. <b>Ladda ner</b> dina data, eller <b>radera</b> kontot.",
     ]))}
   </div>

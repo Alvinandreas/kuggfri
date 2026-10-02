@@ -32,7 +32,7 @@ type Props = {
   /** Efter återställningslänk: lyft fram lösenordsbytet. */
   focusPassword?: boolean;
   digestEmail?: boolean;
-  /** Examinatorer och admin ser även veckobrevets reglage och språkvalet. */
+  /** Examinatorer och admin ser även veckobrevets reglage. */
   isExaminer?: boolean;
 };
 type Pending = { kind: "delete" } | { kind: "resetAll" } | { kind: "resetSchedule" } | { kind: "resetDeck"; deck: DeckRef };
@@ -218,28 +218,26 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         <ThemeSwitcher />
       </Card>
 
-      {/* Språket (admin och examinatorer): sparas på kontot och gäller hela tjänsten, också korten
-          och veckobrevet. Studenterna ser alltid svenska. Språknamnen står på sitt eget språk. */}
-      {isExaminer ? (
-        <Card padding="lg" className="anim-fade-up grid gap-3" style={{ ["--i" as string]: 4 }} role="region" aria-labelledby="sprak-rubrik" data-testid="language-setting">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 id="sprak-rubrik" className="text-lg font-bold tracking-tight">
-              {sv.meta.language}
-            </h2>
-            <SegmentedControl
-              label={sv.meta.language}
-              value={lang}
-              onChange={(next) => startLangTransition(() => setLang(next))}
-              segments={[
-                { value: "sv", label: "Svenska" },
-                { value: "en", label: "English" },
-              ]}
-              className={langPending ? "opacity-70" : undefined}
-            />
-          </div>
-          <p className="text-sm text-muted">{sv.meta.languageHelp}</p>
-        </Card>
-      ) : null}
+      {/* Språket (alla användare): sparas på kontot och gäller hela tjänsten, också korten och
+          veckobrevet. Språknamnen står på sitt eget språk. */}
+      <Card padding="lg" className="anim-fade-up grid gap-3" style={{ ["--i" as string]: 4 }} role="region" aria-labelledby="sprak-rubrik" data-testid="language-setting">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 id="sprak-rubrik" className="text-lg font-bold tracking-tight">
+            {sv.meta.language}
+          </h2>
+          <SegmentedControl
+            label={sv.meta.language}
+            value={lang}
+            onChange={(next) => startLangTransition(() => setLang(next))}
+            segments={[
+              { value: "sv", label: "Svenska" },
+              { value: "en", label: "English" },
+            ]}
+            className={langPending ? "opacity-70" : undefined}
+          />
+        </div>
+        <p className="text-sm text-muted">{sv.meta.languageHelp}</p>
+      </Card>
 
       <Card
         padding="lg"

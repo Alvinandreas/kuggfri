@@ -133,7 +133,7 @@ export const granskning: Dict["granskning"] = {
   undone: "Undone.",
   language: "English",
   languageHelp: "Show the cards and the review in English",
-  translationNote: "English translation. Students see the Swedish text.",
+  translationNote: "English translation. The Swedish text is what is reviewed, and what students using Swedish see.",
   translationStale: "The Swedish card has changed since this translation was made.",
   translationMissing: "This card has not been translated yet.",
   showSwedish: "Show Swedish",

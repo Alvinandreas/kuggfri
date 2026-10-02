@@ -1,6 +1,6 @@
 /**
  * Ordlistorna. Svenska är standard för alla; engelska visas bara för den som slagit på reglaget
- * English (admin och examinatorer), valt under Konto → Språk (profiles.lang).
+ * English, valt av var och en under Konto → Språk (profiles.lang).
  *
  * - Serverkomponenter, serveråtgärder och routes: `const sv = await getT()` (lib/i18n/server).
  * - Klientkomponenter: `const sv = useT()` (lib/i18n/client).

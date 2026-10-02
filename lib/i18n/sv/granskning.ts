@@ -134,7 +134,7 @@ export const granskning = {
   // Språket i granskningen
   language: "English",
   languageHelp: "Visa korten och granskningen på engelska",
-  translationNote: "Engelsk översättning. Studenterna ser den svenska texten.",
+  translationNote: "Engelsk översättning. Det är den svenska texten som granskas, och studenter med svenska ser den.",
   translationStale: "Det svenska kortet har ändrats sedan översättningen gjordes.",
   translationMissing: "Kortet är inte översatt ännu.",
   showSwedish: "Visa svenska",

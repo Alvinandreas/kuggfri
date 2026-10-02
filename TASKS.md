@@ -21,6 +21,60 @@ originalkorten. Alla kort är i rotation från början; ett kort som inte hålle
 **Lanseringsspärr: kursen öppnas för studenterna först när panelen Granskningen i Översikt visar
 0 kort kvar** (alla godkända eller tagna ur rotation, inga flaggade kvar).
 
+**Läget 3 okt 01:45:** mötet hölls 2 okt. Tentaläget kraschade i demon (service_role saknade rättigheter
+i produktionen; rättat, 9b2b070). Deltagarlistor per kurs och avstängd Google-inloggning ligger i
+produktionen (9928ee4). Johan och Roland börjar granska **måndag 5 okt**; lansering när granskningen
+visar 0 kort kvar, troligen tidigast torsdag 8 okt.
+
+### Lördag 3 okt: lanseringens skyddsnät (Claude bygger, Alvin verifierar på 3001 vid varje block)
+
+- [ ] **Block 1, förmiddag: felövervakning som överlever Vercels entimmesloggar.** `instrumentation.ts`
+      (`onRequestError`) skriver serverfel till en tabell `error_log` (sökväg, meddelande, digest, tid;
+      inga personuppgifter utöver användar-id), gallras efter 30 dagar. Sidan **Systemstatus** för admin:
+      fel senaste dygnet och veckan, senaste cron-körningen, skickade mejl, öppna felrapporter. Felen i
+      Alvins veckobrev. *Lärdomen från mötet: felet i tentaläget gick inte att läsa i efterhand.*
+- [ ] **Block 1: röktest mot produktionen**, `npm run rokprov`: Playwright mot kuggfri.com med
+      förhandsnyckeln och ett eget testkonto (Alvin skapar det och lägger uppgifterna i `.env.local`).
+      Öppnar varje vy som en student, en examinator och admin möter (hem, kurssida, pass, tentaläget med
+      en tenta, granskningen, deltagare, statistik) och fäller på felsida eller fel i konsolen. Körs efter
+      varje deploy och före varje demo.
+- [ ] **Block 2, mitt på dagen: "Kommer du inte in?"** Studenten som registrerar sig med en adress som
+      inte står på listan (till exempel cid@ i stället för förnamn.efternamn@) kan skicka en
+      åtkomstförfrågan: adress, kurs, valfritt meddelande. Förfrågningarna syns i fliken Deltagare och
+      godkänns med ett klick, och studenten får ett mejl om att registreringen är öppen. Minskar
+      supporten på lanseringsdagen.
+- [ ] **Block 2: utskicket.** Text till Canvas-meddelandet och mejlet på svenska och engelska, med länken,
+      QR-koden och Studentguide.pdf; vad studenten gör om hen inte kommer in.
+- [ ] **Block 3, eftermiddag: generalrepetition i produktionen** (Alvin, ca 1 h, gärna med 2–3 kursare):
+      deras adresser på listan, registrering från Outlook och mobilen med riktiga Chalmersadresser, ett
+      helt pass, felrapport, radera kontot. Claude läser loggen och `error_log` under tiden. Mäter hur
+      lång tid bekräftelsemejlet tar och om det hamnar i skräpposten.
+- [?] **Block 4, kväll: hela E2E-sviten och det visuella testet** mot den nya åtkomstmodellen (kräver
+      Alvins ja; deltagarlistorna ändrade åtkomsten på varje sida). Rätta det som fäller.
+- [ ] **Block 4: säkerhetskopior utanför datorn**: krypterad kopia av varje nattlig backup till en andra
+      plats (Alvins val: OneDrive, Google Drive eller en privat Supabase-bucket).
+
+### Söndag 4 okt: plattformens utformning (inget i produktionen)
+
+- [ ] Etapp 0 i `docs/UTBYGGNAD-FLERA-KURSER.md` (osynliga förberedelser: id för nya kurser, cache per
+      kurs, en andra testkurs i E2E, vakten på `decks`)
+- [ ] Prototyp av plattformsgränssnittet `/plattform` att reagera på: översikt över alla kurser
+      (studenter, aktivitet, granskning, fel), kurser, personer och inbjudningar, logg, inställningar
+- [?] Alvins svar på de sex besluten i avsnitt 16 i utbyggnadsplanen (Claude har förslag på varje)
+
+### Veckan 5–9 okt: granskningen pågår
+
+- [ ] **Måndag morgon:** kontrollera att Johan och Roland båda är examinatorer i produktionen (i dag en
+      examinator och en väntande inbjudan), att deras språk stämmer, och att veckobrevet går ut
+- [ ] **Varje dag:** gå igenom examinatorernas flaggor och ändringsönskemål samma dag (kortfilerna med
+      källkritik, engelskan, `apply --mal prod`), så att granskningen aldrig väntar på oss
+- [?] Från Johan: deltagarlistan med Chalmersadresser, tentadatumet, vilka gamla tentor som får
+      publiceras i tentaläget och när läget öppnas, bokfigurerna (ja eller nej)
+- [ ] Etapp 1 (roller och händelselogg) och etapp 2 (plattformsgränssnittet) lokalt, bakom en
+      inställning; ut i produktionen först efter lanseringen eller när de är verifierade på 3001
+- [ ] **När granskningen visar 0:** deltagarlistan inlagd, röktestet grönt, `UNDER_UTVECKLING=0`,
+      utskicket. Första dygnet enligt `docs/LANSERING.md`
+
 ### Torsdag 1 okt: inför mötet (lokalt, väntar på Alvins verifiering på 3001)
 
 - [x] Textputs (granskningslistan visar KaTeX läsbart, startsidan, kursbeskrivningen, skattningstexter)

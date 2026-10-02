@@ -17,6 +17,7 @@ const DOKUMENT = {
   motesunderlag: () => require("./motesunderlag.cjs"),
   infoblad: () => require("./infoblad.cjs"),
   "infor-motet": () => require("./infor-motet.cjs"),
+  framtidsplan: () => require("./framtidsplan.cjs"),
 };
 
 (async () => {

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="sv">
+<head><meta charset="utf-8"><title>Studentguide Kuggfri</title><style>
+@font-face { font-family: "Figtree"; font-weight: 300 900; font-style: normal; font-display: block;
+  src: url("../../node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-weight: 300 900; font-style: normal; font-display: block;
+  src: url("../../node_modules/@fontsource-variable/figtree/files/figtree-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+:root { --page: #ffffff; --bg: #f6f5f1; --sidebar: #efede8; --surface: #ffffff; --surface-2: #eeece6; --surface-3: #e4e1da; --fg: #1d1c19; --muted: #676259; --subtle: #6b665c; --line: #dedbd3; --line-strong: #c4c0b6; --accent: #1f7a4d; --accent-hover: #196540; --accent-fg: #ffffff; --accent-soft: #dcefe3; --accent-ink: #17613d; --danger: #a13d3d; --danger-soft: #f6e6e6; --inverse: #1d1c19; --inverse-fg: #ffffff; --chart-1: #1f7a4d; --chart-2: #3b6ea5; --chart-3: #c97a1f; --chart-4: #7657b3; --chart-grid: #e6e3dc; --rate-1: #b0523f; --rate-2: #b9773a; --rate-3: #a3953a; --rate-4: #6d9a4a; --rate-5: #3f8b5c; --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06); --tag-1: oklch(0.9 0.07 20); --tag-2: oklch(0.9 0.08 62); --tag-3: oklch(0.9 0.10 95); --tag-4: oklch(0.9 0.10 140); --tag-5: oklch(0.9 0.10 175); --tag-6: oklch(0.9 0.10 215); --tag-7: oklch(0.9 0.10 255); --tag-8: oklch(0.9 0.10 290); --tag-9: oklch(0.9 0.10 325); --tag-10: oklch(0.9 0.10 355); --radius-md: 12px; --radius-lg: 20px; --radius-tile: 14px; }
+.dark { --page: #101111; --bg: #101111; --sidebar: #161717; --surface: #1c1d1d; --surface-2: #252626; --surface-3: #2f3030; --fg: #f1f1ee; --muted: #a8a8a2; --subtle: #8a8a83; --line: #28292a; --line-strong: #3b3c3c; --accent: #3fb872; --accent-hover: #55c886; --accent-fg: #06140c; --accent-soft: #173121; --accent-ink: #5fcf8e; --danger: #e0827c; --danger-soft: #3a2322; --inverse: #f1f1ee; --inverse-fg: #121313; --chart-1: #3fb872; --chart-2: #4f86c9; --chart-3: #cf7f22; --chart-4: #a48ae0; --chart-grid: #2c2d2d; --rate-1: #c9705d; --rate-2: #cf9455; --rate-3: #bfb15a; --rate-4: #8ab56b; --rate-5: #62a97c; --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35); --tag-1: oklch(0.44 0.09 20); --tag-2: oklch(0.44 0.10 62); --tag-3: oklch(0.44 0.13 95); --tag-4: oklch(0.44 0.13 140); --tag-5: oklch(0.44 0.13 175); --tag-6: oklch(0.44 0.13 215); --tag-7: oklch(0.44 0.13 255); --tag-8: oklch(0.44 0.13 290); --tag-9: oklch(0.44 0.13 325); --tag-10: oklch(0.44 0.13 355); }
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--page); color: var(--fg); font-family: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  font-size: 9.6pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+.dark { color: var(--fg); }
+
+/* Sidmall: A4, 13/14/10 mm marginal, en kolumn med 4,2 mm mellanrum; sidfoten nederst. */
+.page { width: 210mm; height: 297mm; padding: 13mm 14mm 10mm; display: flex; flex-direction: column; gap: 4.2mm; background: var(--page); overflow: hidden; break-after: page; }
+.page:last-child { break-after: auto; }
+.page > * { flex: none; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 8mm; }
+header.top img { height: 11mm; width: auto; display: block; }
+header.top .meta { text-align: right; }
+.eyebrow { font-size: 7.6pt; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+header.top .meta .course { font-size: 9.5pt; font-weight: 600; color: var(--muted); margin-top: 1pt; }
+.foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 3mm; border-top: 1px solid var(--line); font-size: 8.6pt; color: var(--muted); }
+.foot img { height: 6.5mm; width: auto; }
+.foot .url { color: var(--accent); font-weight: 750; }
+
+/* Typografi */
+h1 { font-size: 25pt; line-height: 1.08; letter-spacing: -0.02em; margin: 0; font-weight: 800; }
+h2 { font-size: 14.5pt; line-height: 1.2; letter-spacing: -0.01em; margin: 0; font-weight: 800; }
+h3 { font-size: 10.6pt; margin: 0 0 2.5pt; font-weight: 750; }
+p { margin: 0 0 4pt; } p:last-child { margin-bottom: 0; }
+.lead { font-size: 11.2pt; line-height: 1.5; color: var(--muted); max-width: 165mm; }
+.lead strong { color: var(--fg); }
+.muted { color: var(--muted); }
+.small { font-size: 8.8pt; }
+.tiny { font-size: 7.8pt; }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 8pt; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 0.86em; background: var(--surface-2); border-radius: 4pt; padding: 0.5pt 3pt; }
+
+/* Rutnät */
+.row { display: grid; gap: 3.5mm; }
+.cols-2 { grid-template-columns: 1fr 1fr; } .cols-3 { grid-template-columns: repeat(3, 1fr); } .cols-4 { grid-template-columns: repeat(4, 1fr); }
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 6mm; align-items: start; }
+.start { align-items: start; }
+
+/* Nyckeltal som StatTile (components/stats/StatTile.tsx): grå yta, färgprick, stort värde. */
+.tile { background: var(--surface-2); border-radius: var(--radius-tile); padding: 10pt 12pt 11pt; }
+.tile .k { display: flex; align-items: center; gap: 5pt; font-size: 8pt; font-weight: 600; color: var(--muted); }
+.tile .v { margin-top: 7pt; font-size: 21pt; font-weight: 800; line-height: 1; letter-spacing: -0.02em; white-space: nowrap; }
+.tile .l { margin-top: 5pt; font-size: 8pt; line-height: 1.35; color: var(--muted); }
+.dot { width: 5.5pt; height: 5.5pt; border-radius: 50%; flex: none; display: inline-block; }
+.d-green { background: var(--chart-1); } .d-navy { background: var(--chart-2); } .d-teal { background: var(--chart-3); } .d-violet { background: var(--chart-4); }
+
+/* Block */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 10pt 12pt; }
+.dark .card { border-color: transparent; }
+.callout { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--surface-2); }
+.callout h3 { margin-bottom: 3pt; display: flex; align-items: center; gap: 5pt; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; margin: 0; padding: 0; list-style: none; }
+.steps li { background: var(--surface-2); border-radius: var(--radius-md); padding: 8pt 10pt; }
+.steps .num { margin-bottom: 3pt; }
+.steps p { font-size: 8.7pt; line-height: 1.42; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+.num { display: inline-flex; width: 17pt; height: 17pt; border-radius: 50%; background: var(--accent); color: var(--accent-fg); font-weight: 800; font-size: 9pt; align-items: center; justify-content: center; flex: none; }
+.decisions { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; }
+.decision { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--surface-2); }
+.decision .head { display: flex; align-items: center; gap: 6pt; margin-bottom: 3pt; }
+.decision p { font-size: 8.8pt; line-height: 1.42; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+
+/* Knappar och tangenter */
+.btn { display: inline-flex; align-items: center; gap: 5pt; border-radius: 999px; padding: 3pt 9pt; font-weight: 750; font-size: 9pt; background: var(--surface-3); color: var(--fg); white-space: nowrap; }
+.btn.primary { background: var(--accent); color: var(--accent-fg); }
+.btn.outline { background: var(--surface); border: 1px solid var(--line-strong); }
+kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 13pt; height: 13pt; padding: 0 3pt; border-radius: 4pt;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent); font: 700 7.2pt/1 ui-monospace, Consolas, monospace; }
+.btn kbd { opacity: 0.8; }
+
+/* Listor och tabeller */
+.legend { display: grid; gap: 3pt 6mm; margin: 0; padding: 0; list-style: none; }
+.legend.two { grid-template-columns: 1fr 1fr; }
+.legend li { display: flex; gap: 6pt; align-items: flex-start; font-size: 8.9pt; line-height: 1.4; }
+.legend .num { width: 14pt; height: 14pt; font-size: 7.6pt; margin-top: 0.5pt; }
+.legend b { font-weight: 750; }
+ul.dots { margin: 0; padding: 0; list-style: none; display: grid; gap: 3.2pt; }
+ul.dots li { position: relative; padding-left: 11pt; font-size: 9pt; line-height: 1.42; }
+ul.dots li::before { content: ""; position: absolute; left: 0; top: 0.52em; width: 5pt; height: 5pt; border-radius: 50%; background: var(--accent); }
+ul.dots.dont li::before { background: var(--danger); }
+ul.acts { margin: 0; padding: 0; list-style: none; }
+ul.acts li { display: grid; justify-items: start; gap: 3pt; padding: 6pt 0; border-bottom: 1px solid var(--line); font-size: 9pt; line-height: 1.42; }
+ul.acts li:last-child { border-bottom: 0; padding-bottom: 0; }
+ul.acts li:first-child { padding-top: 2pt; }
+table.t { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+table.t th { text-align: left; font-size: 7.4pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; padding: 0 8pt 4pt 0; border-bottom: 1px solid var(--line); }
+table.t td { padding: 4pt 8pt 4pt 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n { white-space: nowrap; font-weight: 750; }
+table.keys { width: 100%; border-collapse: collapse; font-size: 9pt; }
+table.keys td { padding: 3.6pt 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.keys tr:last-child td { border-bottom: 0; }
+table.keys td.k { width: 1%; white-space: nowrap; padding-right: 8pt; } table.keys td.k kbd { margin-right: 2pt; }
+
+/* Skärmbilder */
+.shot { border-radius: var(--radius-md); border: 1px solid var(--line); box-shadow: var(--shadow-card); overflow: hidden; background: var(--bg); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot.crop img, .shot.croptop img { height: 100%; object-fit: cover; object-position: top left; }
+.shot.croptop img { object-position: bottom left; }
+
+/* Mobilskärmbild: rundad ram som en telefon */
+.phone { border-radius: 16pt; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); overflow: hidden; background: var(--bg); }
+.phone img { display: block; width: 100%; height: auto; }
+.phonecap { text-align: center; font-size: 8pt; color: var(--muted); margin-top: 4pt; }
+
+/* Skattningsskalan: siffran i skalans färg */
+.rate { display: inline-flex; width: 17pt; height: 17pt; border-radius: 6pt; align-items: center; justify-content: center; font-weight: 800; font-size: 9pt; flex: none;
+  border: 1.5px solid currentColor; }
+.rate-1 { color: var(--rate-1); background: color-mix(in oklab, var(--rate-1) 14%, var(--surface)); }
+.rate-2 { color: var(--rate-2); background: color-mix(in oklab, var(--rate-2) 14%, var(--surface)); }
+.rate-3 { color: var(--rate-3); background: color-mix(in oklab, var(--rate-3) 14%, var(--surface)); }
+.rate-4 { color: var(--rate-4); background: color-mix(in oklab, var(--rate-4) 14%, var(--surface)); }
+.rate-5 { color: var(--rate-5); background: color-mix(in oklab, var(--rate-5) 14%, var(--surface)); }
+.qr { width: 100%; max-width: 34mm; display: block; }
+.qr svg { width: 100%; height: auto; display: block; }
+
+/* Diagram */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: "Figtree", sans-serif; font-variant-numeric: tabular-nums; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 3pt 10pt; font-size: 7.8pt; color: var(--muted); margin-top: 5pt; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 4pt; }
+.chart-legend b { color: var(--fg); font-weight: 700; }
+.swatch { width: 10pt; height: 3pt; border-radius: 2pt; display: inline-block; }
+.sharebar { display: flex; overflow: hidden; border-radius: 999px; background: var(--surface-3); }
+.sharebar > div { height: 100%; }
+.areabars { display: grid; gap: 4.5pt; font-size: 8.2pt; }
+.areabars .r { display: grid; grid-template-columns: 13pt minmax(0, 1fr) 24pt; gap: 3pt 6pt; align-items: center; }
+.areabars .n { width: 13pt; height: 13pt; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6.6pt; font-weight: 700; color: var(--fg); }
+.areabars .lbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.areabars .pct { text-align: right; color: var(--muted); }
+.areabars .bar { grid-column: 2 / 4; height: 4.5pt; border-radius: 999px; background: var(--surface-3); display: flex; overflow: hidden; }
+.radarlist { display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; gap: 2.5pt 8pt; margin: 0; padding: 0; list-style: none; font-size: 7.8pt; }
+.radarlist li { display: flex; align-items: center; gap: 4pt; min-width: 0; }
+.radarlist .n { width: 11pt; height: 11pt; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6pt; font-weight: 700; flex: none; }
+.radarlist .lbl { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radarlist .pct { color: var(--muted); }
+
+/* Prov i mörkt tema inne i en ljus sida */
+.panel { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--page); border: 1px solid var(--line); }
+.dark.panel { background: var(--bg); border-color: var(--bg); }
+.panel .cap { font-size: 7.2pt; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6pt; display: flex; justify-content: space-between; }
+.swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2.5mm; }
+.sw { border-radius: 9pt; overflow: hidden; border: 1px solid var(--line); font-size: 7pt; }
+.sw .c { height: 12mm; }
+.sw .t { padding: 3pt 5pt 4pt; background: var(--surface); }
+.sw .t b { display: block; font-size: 7.4pt; color: var(--fg); }
+.sw .t span { color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 6.6pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.progress { height: 6pt; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.progress > div { height: 100%; background: var(--chart-1); border-radius: 999px; }
+table.bars td { vertical-align: middle; }
+table.bars td.bar { width: 34%; }
+.chartblock h3 { margin-bottom: 0; }
+.chartblock .sub { font-size: 8pt; color: var(--muted); margin: 1pt 0 6pt; }
+.chartblock .src { font-size: 7.2pt; color: var(--muted); margin-top: 5pt; }
+td code, li code { white-space: nowrap; }
+</style></head>
+<body>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <h1>Så pluggar du med Kuggfri</h1>
+  <p class="lead">Kuggfri visar rätt kort på rätt dag, så att det du lär dig sitter kvar till tentan. Korten bygger på kursens eget material, har källa och granskas av kursens examinatorer. <strong>Gratis, utan reklam och utan spårning.</strong></p>
+  <div class="row cols-4"><div class="tile"><div class="k"><span class="dot d-green"></span>Kort</div><div class="v">405</div><div class="l">frågor, begrepp och tentauppgifter</div></div><div class="tile"><div class="k"><span class="dot d-navy"></span>Områden</div><div class="v">14</div><div class="l">som följer kursens upplägg</div></div><div class="tile"><div class="k"><span class="dot d-teal"></span>Nya kort per dag</div><div class="v">20</div><div class="l">plus de kort som ska repeteras</div></div><div class="tile"><div class="k"><span class="dot d-violet"></span>Kostnad</div><div class="v">0 kr</div><div class="l">för alla, hela kursen</div></div></div>
+  <h2>Kom igång på tre minuter</h2>
+  <ol class="steps"><li><span class="num">1</span><h3>Öppna kurslänken</h3><p>Skanna QR-koden eller gå till <b>kuggfri.com/d/materialteknik</b>, i mobilen eller på datorn.</p></li><li><span class="num">2</span><h3>Skapa konto</h3><p>Välj <b>Fortsätt med Google</b>, eller fyll i namn, e-post och lösenord. Kursen öppnas direkt.</p></li><li><span class="num">3</span><h3>Gör ditt första pass</h3><p>Tryck <b>Börja plugga</b> och sedan <b>Starta</b>. Första passet är 20 kort, några minuter.</p></li><li><span class="num">4</span><h3>Kom tillbaka varje dag</h3><p>Schemat väljer vilka kort du ska repetera. Ett pass om dagen räcker långt.</p></li></ol>
+  <div class="row cols-2 start">
+    <div class="card" style="display:grid;grid-template-columns:auto 1fr;gap:12pt;align-items:center">
+      <div class="qr" style="width:32mm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#1d1c19" d="M0 0.5h7m1 0h2m3 0h1m1 0h1m1 0h4m1 0h7M0 1.5h1m5 0h1m1 0h2m2 0h2m2 0h3m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m2 0h4m2 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m3 0h1m3 0h4m1 0h2m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m2 0h1m2 0h2m5 0h1m2 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h2m1 0h2m4 0h2M0 8.5h1m1 0h2m1 0h3m1 0h2m1 0h2m1 0h5m2 0h1m2 0h1m1 0h2M5 9.5h1m3 0h6m1 0h1m2 0h6m3 0h1M2 10.5h1m1 0h4m4 0h2m3 0h2m2 0h1m2 0h1m1 0h2M5 11.5h1m1 0h2m1 0h1m1 0h1m2 0h1m4 0h1m2 0h1m4 0h1M0 12.5h2m1 0h1m2 0h4m4 0h1m2 0h1m1 0h1m5 0h2M0 13.5h1m2 0h3m5 0h1m2 0h4m1 0h4m3 0h3M0 14.5h1m1 0h3m1 0h1m1 0h4m1 0h1m4 0h3m1 0h3m1 0h3M0 15.5h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m5 0h5m2 0h1M0 16.5h3m2 0h3m1 0h1m4 0h2m2 0h4m1 0h3m1 0h1M2 17.5h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h2m2 0h1m1 0h1m2 0h1m1 0h3M0 18.5h1m4 0h2m5 0h7m1 0h5m1 0h1M3 19.5h1m1 0h1m1 0h2m1 0h1m2 0h2m1 0h2m1 0h1m1 0h1m4 0h1M1 20.5h4m1 0h2m1 0h1m1 0h1m1 0h2m1 0h3m1 0h7M8 21.5h1m2 0h1m4 0h3m1 0h1m3 0h5M0 22.5h7m1 0h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h1m1 0h2m1 0h1M0 23.5h1m5 0h1m1 0h2m1 0h1m1 0h2m3 0h1m1 0h1m3 0h2m2 0h1M0 24.5h1m1 0h3m1 0h1m2 0h2m4 0h3m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h2m3 0h3m1 0h1m4 0h2m2 0h1M0 26.5h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m2 0h1m3 0h1m2 0h1m1 0h1M0 27.5h1m5 0h1m3 0h1m1 0h1m1 0h3m3 0h1m1 0h2m1 0h1m1 0h1M0 28.5h7m1 0h3m1 0h1m2 0h1m2 0h3m1 0h3m2 0h1"/></svg>
+</div>
+      <div><h3>Kurslänken</h3><p style="font-weight:750;color:var(--accent);margin-bottom:5pt">kuggfri.com/d/materialteknik</p><p class="small muted">Skanna med mobilkameran. Dela gärna länken med en kursare: den som saknar konto skapar ett och hamnar direkt i kursen.</p></div>
+    </div>
+    <div class="callout"><h3><span class="dot d-green"></span>Lägg Kuggfri på hemskärmen</h3><ul class="dots "><li><b>iPhone:</b> öppna länken i Safari, tryck på Dela och välj Lägg till på hemskärmen.</li><li><b>Android:</b> öppna länken i Chrome, tryck på menyn och välj Lägg till på startskärmen.</li><li>Då öppnas Kuggfri som en app, utan adressfält.</li></ul></div>
+  </div>
+  <h2>Varför det fungerar</h2>
+  <div class="row cols-3"><div class="decision"><div class="head"><span class="num">1</span><h3 style="margin:0">Plocka fram, läs inte om</h3></div><p>Att försöka minnas svaret innan du vänder kortet ger mer än att läsa om. Det är själva framplockningen som lär dig.</p></div><div class="decision"><div class="head"><span class="num">2</span><h3 style="margin:0">Utspritt över tid</h3></div><p>Repetition utspridd över dagar slår plugg i klump. Schemat sprider ut korten åt dig.</p></div><div class="decision"><div class="head"><span class="num">3</span><h3 style="margin:0">Tiden där den behövs</h3></div><p>Kort du kan dröjer länge, kort du inte kan kommer snart. Du lägger tiden på det du inte kan än.</p></div></div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 1 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Hemsidan</h2><p class="lead" style="margin-top:3pt">Här landar du varje gång du loggar in. Allt du behöver för dagen finns på en skärm.</p></div>
+  <div class="shot"><img src="bilder/hem.png" alt=""></div>
+  <ol class="legend two"><li><span class="num">1</span><span><b>Hälsningen</b> säger hur många kort som väntar på dig i dag.</span></li><li><span class="num">2</span><span><b>Streaken</b>: hur många dagar i rad du har pluggat.</span></li><li><span class="num">3</span><span><b>Kursblocket</b>: din inlärda kunskap, hur många kort du har sett och fyra nyckeltal.</span></li><li><span class="num">4</span><span><b>Fortsätt plugga</b> tar dig till kurssidan, där du startar dagens pass.</span></li><li><span class="num">5</span><span><b>Kluriga kort</b> och <b>Dugga</b>: genvägar där du ser vad som ingår och startar direkt.</span></li><li><span class="num">6</span><span><b>Kunskap per område</b>: hur mycket du kan i varje del av kursen. Klicka på ett område för att plugga just det.</span></li><li><span class="num">7</span><span><b>Menyn</b>: Hem, Min statistik, Kurssidan och Tentaläget. Längst ner finns Hjälp och ditt konto.</span></li></ol>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 2 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Kurssidan och lägena</h2><p class="lead" style="margin-top:3pt">Här väljer du hur du vill plugga. Valen sparas till nästa gång, och varje skattning räknas i schemat, oavsett läge.</p></div>
+  <div class="split" style="grid-template-columns:1.75fr 1fr">
+    <div class="shot"><img src="bilder/kurssida.png" alt=""></div>
+    <ol class="legend"><li><span class="num">1</span><span><b>Välj läge</b>: sex sätt att plugga, se tabellen nedan.</span></li><li><span class="num">2</span><span><b>Ditt urval</b>: hela kursen, eller de områden du kryssat i.</span></li><li><span class="num">3</span><span><b>Inställningar</b> för passet: antal kort, nya kort och ett område i taget. De ändras efter läget.</span></li><li><span class="num">4</span><span><b>Starta</b> passet. Under knappen står hur många kort det blir och ungefär hur lång tid det tar.</span></li><li><span class="num">5</span><span><b>Områden</b>: kryssa i för att plugga just dem. Klicka på ett namn för att välja bara det.</span></li></ol>
+  </div>
+  <div class="card"><table class="t">
+    <tr><th style="width:26%">Läge</th><th style="width:42%">Vad du får</th><th>Bra när</th></tr>
+    <tr><td class="n">Schemalagd repetition</td><td>Nya och förfallna kort. Kort du skattar 1 eller 2 kommer igen i samma pass.</td><td class="muted">Varje dag. Det vanliga valet.</td></tr>
+    <tr><td class="n">Kluriga kort</td><td>Kort du skattat 1 eller 2, och kort du inte sett än. Svagast först.</td><td class="muted">Du vill jobba på det som tar emot.</td></tr>
+    <tr><td class="n">Fri repetition</td><td>Bläddra fritt genom ett urval, så många gånger du vill.</td><td class="muted">Du läser in ett nytt område.</td></tr>
+    <tr><td class="n">Slumpad genomkörning</td><td>Hela kursen, eller dina områden, i slumpad ordning.</td><td class="muted">Du vill se att du kan korten utan att ordningen hjälper.</td></tr>
+    <tr><td class="n">Dugga</td><td>10, 20, 30 eller alla frågor, med eller utan ledtrådar och timer.</td><td class="muted">Du vill testa dig som på tentan.</td></tr>
+    <tr><td class="n">Stjärnmärkta</td><td>Korten du har markerat med stjärnan.</td><td class="muted">Du har sparat kort att återkomma till.</td></tr>
+  </table></div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-green"></span>Plugga ett område</h3><p class="small">Klicka på ett område i radardiagrammet eller listan på hemsidan. Där pluggar du bara det området: schemalagt, kluriga kort, fritt eller som dugga. <b>Grönt betyder klart</b> för i dag.</p></div>
+    <div class="callout"><h3><span class="dot d-navy"></span>Dela kursen med en vän</h3><p class="small">Längst ner på kurssidan kopierar du kurslänken eller visar en QR-kod. Den som saknar konto skapar ett på en halv minut och hamnar direkt i kursen.</p></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 3 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Ett kort i taget</h2><p class="lead" style="margin-top:3pt">Försök svara i huvudet först, vänd sedan kortet och skatta hur väl du kunde det. Det är själva framplockningen som gör att du minns.</p></div>
+  <div class="row start" style="grid-template-columns:1fr 1fr 1.25fr;gap:5mm">
+    <div><div class="phone"><img src="bilder/mobil-fram.png" alt=""></div><div class="phonecap">Framsidan. Tryck <b>Vänd kortet</b>.</div></div>
+    <div><div class="phone"><img src="bilder/mobil-bak.png" alt=""></div><div class="phonecap">Baksidan. Skatta 1 till 5.</div></div>
+    <div style="display:grid;gap:3.5mm">
+      <div class="card"><h3>Skattningsskalan</h3>
+        <table class="t" style="margin-top:2pt"><tr><td style="width:1%;padding-right:7pt"><span class="rate rate-1">1</span></td><td><b>Inte alls</b><br><span class="small muted">Du kom inte på svaret. Kortet kommer igen i samma pass.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="rate rate-2">2</span></td><td><b>Nästan</b><br><span class="small muted">Nära, men inte rätt. Räknas som en miss.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="rate rate-3">3</span></td><td><b>Delvis</b><br><span class="small muted">Rätt, men det tog emot. Kommer tillbaka ganska snart.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="rate rate-4">4</span></td><td><b>Bra</b><br><span class="small muted">Rätt efter en kort tanke. Vanligt intervall.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="rate rate-5">5</span></td><td><b>Klockrent</b><br><span class="small muted">Satt direkt. Längst intervall, och kortet räknas som inlärt.</span></td></tr></table>
+      </div>
+      <div class="callout"><h3><span class="dot d-green"></span>Skatta ärligt</h3><p class="small">Schemat lär sig av dina skattningar. För höga skjuter upp kort du inte kan; för låga ger repetitioner du inte behöver.</p></div>
+    </div>
+  </div>
+  <div class="row cols-3 start">
+    <div class="callout"><h3><span class="dot d-navy"></span>I mobilen</h3><ul class="dots "><li>Tryck på kortet eller på Vänd kortet.</li><li>Svep vänster för 1 och höger för 5.</li></ul></div>
+    <div class="callout"><h3><span class="dot d-teal"></span>På datorn</h3><ul class="dots "><li><kbd>Mellanslag</kbd> vänder kortet.</li><li><kbd>1</kbd> till <kbd>5</kbd> skattar.</li></ul></div>
+    <div class="callout"><h3><span class="dot d-violet"></span>Avbryt när du vill</h3><ul class="dots "><li>Krysset uppe till vänster avslutar passet.</li><li>Allt du hunnit skatta är sparat.</li></ul></div>
+  </div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-green"></span>Ledtrådar</h3><p class="small">Vissa kort har en ledtråd. Tryck <b>Visa ledtråd</b> (eller <kbd>H</kbd>) om du kör fast, innan du vänder kortet.</p></div>
+    <div class="callout"><h3><span class="dot d-navy"></span>Tappar du anslutningen</h3><p class="small">Fortsätt plugga. Skattningarna väntar och skickas automatiskt när du är uppkopplad igen.</p></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 4 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Flervalsfrågor rättas direkt</h2><p class="lead" style="margin-top:3pt">Sant eller falskt och frågor med alternativ, som på tentan. Du väljer, trycker Svara och ser direkt vad som var rätt, med en förklaring.</p></div>
+  <div class="row cols-2 start">
+    <div><div class="shot"><img src="bilder/quiz-fore.png" alt=""></div><div class="phonecap">Före: välj alla rätta alternativ och tryck <b>Svara</b>.</div></div>
+    <div><div class="shot crop" style="aspect-ratio:1864/1180"><img src="bilder/quiz-efter.png" alt=""></div><div class="phonecap">Efter: rätt svar markerat, och förklaringen under.</div></div>
+  </div>
+  <div class="row cols-2 start">
+    <div class="card"><h3>Fyra sorters kort</h3><table class="t">
+      <tr><td class="n">Självskattning</td><td>Fråga och svar. Du vänder och skattar dig själv.</td></tr>
+      <tr><td class="n">Förklara begreppet</td><td>Ett begrepp att förklara. Du vänder och skattar.</td></tr>
+      <tr><td class="n">Sant eller falskt</td><td>Ett påstående. Rättas automatiskt.</td></tr>
+      <tr><td class="n">Välj rätt alternativ</td><td>Ett eller flera rätta svar. Rättas automatiskt.</td></tr>
+    </table><p class="tiny muted" style="margin-top:4pt">Flervalsfrågor du kan tre gånger i rad räknas som inlärda.</p></div>
+    <div class="card"><h3>Verktygen under passet</h3><ul class="acts">
+      <li><span class="btn ">Stjärnan</span><span>Markerar kortet. Läget Stjärnmärkta pluggar bara dem.</span></li>
+      <li><span class="btn ">Flaggan</span><span>Rapportera fel på kortet. Rapporten går till kursens examinator.</span></li>
+      <li><span class="btn ">Info och ljud</span><span>Hur passet fungerar, och ljudet av eller på.</span></li>
+    </ul></div>
+  </div>
+  <div class="card"><h3>Tangentbordet</h3><table class="keys">
+    <tr><td class="k"><kbd>Mellanslag</kbd></td><td>Vänd kortet</td><td class="k" style="padding-left:8mm"><kbd>1</kbd> till <kbd>9</kbd></td><td>Välj svar på en flervalsfråga</td></tr>
+    <tr><td class="k"><kbd>1</kbd> till <kbd>5</kbd></td><td>Skatta kortet</td><td class="k" style="padding-left:8mm"><kbd>Enter</kbd></td><td>Svara, och gå vidare efter svaret</td></tr>
+    <tr><td class="k"><kbd>←</kbd> <kbd>→</kbd></td><td>Föregående och nästa kort</td><td class="k" style="padding-left:8mm"><kbd>H</kbd></td><td>Visa ledtråd, om kortet har en</td></tr>
+  </table></div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-teal"></span>Dugga: testa dig som på tentan</h3><ul class="dots "><li>Slumpade frågor ur hela kursen eller ett område, en i taget och utan att gå tillbaka.</li><li>Välj 10, 20, 30 eller alla frågor, och om ledtrådar och tidtagning ska vara med.</li><li>Efteråt ser du hur många du kunde bra eller direkt. Svaren räknas in i schemat.</li></ul></div>
+    <div class="callout"><h3><span class="dot d-violet"></span>Kluriga kort: jobba på det svåra</h3><ul class="dots "><li>Kort du skattat 1 eller 2, och kort du inte sett än, svagast först.</li><li>Ett kort du nu kan slutar räknas som klurigt.</li><li>Öppna ett område på hemsidan för att ta bara dess kluriga kort.</li></ul></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 5 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Så fungerar schemat</h2><p class="lead" style="margin-top:3pt">Kuggfri använder FSRS, en algoritm för spaced repetition. Du behöver inte planera något själv: schemat väljer vilka kort du ser varje dag.</p></div>
+  <div class="split" style="grid-template-columns:1fr 1fr">
+    <div style="display:grid;gap:3mm"><div class="decision"><div class="head"><span class="num">1</span><h3 style="margin:0">Rätt kort på rätt dag</h3></div><p>Ett kort kommer tillbaka ungefär när du annars skulle ha börjat glömma det. Varje gång du kan det blir intervallet längre.</p></div><div class="decision"><div class="head"><span class="num">2</span><h3 style="margin:0">Nya kort per dag</h3></div><p>20 nya kort per dag, eller 10 eller 40 om du väljer det under Konto. Kort som ska repeteras kommer alltid med.</p></div><div class="decision"><div class="head"><span class="num">3</span><h3 style="margin:0">Plugga så mycket du vill</h3></div><p>Dagens pass är golvet, inte taket. <b>Plugga vidare</b> ger 20 kort till: först de som snart ska repeteras, sedan nya. Allt räknas.</p></div><div class="decision"><div class="head"><span class="num">4</span><h3 style="margin:0">Missar du en dag</h3></div><p>Går inget förlorat. Korten väntar, så nästa pass blir lite längre.</p></div><div class="decision"><div class="head"><span class="num">5</span><h3 style="margin:0">Streak och frysningar</h3></div><p>Streaken räknar dagar i rad med minst en repetition. Två frysningar täcker enstaka missade dagar, och du får en ny var sjunde aktiva dag.</p></div></div>
+    <div><div class="shot crop" style="aspect-ratio:1480/2000"><img src="bilder/sammanfattning.png" alt=""></div><div class="phonecap">Efter passet: dina siffror, Plugga vidare och korten som behöver mest arbete.</div></div>
+  </div>
+  <div class="card"><h3>Efter passet</h3><table class="t">
+    <tr><td class="n" style="width:28%">Dina siffror</td><td>Repetitioner i dag, dagar i rad och hur många kort du kan just nu.</td></tr>
+    <tr><td class="n">Plugga vidare</td><td>20 kort till, eller bara nya kort utöver dagsmålet. Helt frivilligt.</td></tr>
+    <tr><td class="n">Fördelningen</td><td>Hur du skattade korten i passet, från Inte alls till Klockrent.</td></tr>
+    <tr><td class="n">Behöver mest arbete</td><td>Korten du skattade lägst, med område. Bra att titta på en gång till.</td></tr>
+      </table></div>
+  <div class="callout"><h3><span class="dot d-teal"></span>När kursen har ett tentadatum</h3><p class="small">Planerar schemat mot tentan: alla kort introduceras i god tid, inget kort skjuts förbi tentan, och de sista dagarna blir en slutrepetition av allt, svagast först. Ligger du efter höjs dagsmålet öppet, i ett ikappläge. Efter tentan fortsätter schemat långsiktigt.</p></div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 6 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Min statistik</h2><p class="lead" style="margin-top:3pt">Din egen studiestatistik på ett ställe. Den bygger bara på dina repetitioner och syns bara för dig.</p></div>
+  <div class="shot crop" style="aspect-ratio:2560/1960"><img src="bilder/statistik.png" alt=""></div>
+  <ol class="legend two"><li><span class="num">1</span><span><b>Nyckeltalen</b>: dagar i rad, repetitioner, inlärda kort och inlärd kunskap.</span></li><li><span class="num">2</span><span><b>Aktiviteten</b>: en ruta per dag, ju grönare desto mer pluggat. Bredvid dina rekord.</span></li><li><span class="num">3</span><span><b>Utvecklingen</b>: hur sedda och inlärda kort växer, och repetitioner per dag eller vecka.</span></li></ol>
+  <div class="row cols-2 start">
+    <div class="card"><h3>Längre ner på sidan</h3><ul class="dots "><li><b>Din pluggrytm</b>: vilka veckodagar och tider på dygnet du pluggar mest.</li><li><b>Så skattar du</b>: fördelningen av dina skattningar och dina vändningar, kort från 1 eller 2 hela vägen till 5.</li><li><b>Starkast</b> och <b>Att jobba på</b>: dina bästa och svagaste områden.</li><li><b>Milstolpar</b> att låsa upp, från första kortet till Tusenklubben.</li></ul></div>
+    <div class="card"><h3>Vad siffrorna betyder</h3><table class="t">
+      <tr><td class="n">Inlärda kort</td><td>Kort vars senaste skattning är 5.</td></tr>
+      <tr><td class="n">Inlärd kunskap</td><td>Schemats uppskattning av hur stor del av kursen du minns just nu.</td></tr>
+      <tr><td class="n">Snittskattning</td><td>Ditt snitt av 5, den senaste veckan.</td></tr>
+      <tr><td class="n">Kluriga kort</td><td>Kort du skattat 1 eller 2, tills du skattar dem högre.</td></tr>
+    </table></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 7 av 8</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Studentguide</div><div class="course">Materialteknik MTT085</div></div></header>
+  <div><h2>Tentaläget, ditt konto och vanliga frågor</h2></div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-navy"></span>Tentaläget</h3><p class="small">Kursens gamla tentor, en hel tenta i taget, med samma skrivtid, poäng och hjälpmedel som på riktigt. Efteråt rättas flerval och räkneuppgifter automatiskt, du bedömer dina skrivuppgifter mot lösningsförslagen och får poäng, betyg och facit. <b>Tentaläget öppnar senare under kursen</b>; till dess visar menyn ett lås.</p></div>
+    <div class="callout"><h3><span class="dot d-green"></span>Ditt konto</h3><ul class="dots "><li><b>Pluggrytm:</b> 10, 20 eller 40 nya kort per dag, och om bara vardagar ska räknas i din streak.</li><li><b>Färgtema:</b> ljust, mörkt eller som din enhet.</li><li><b>Nollställ</b> en kurs, bara schemat eller allt. <b>Ladda ner</b> dina data, eller <b>radera</b> kontot.</li></ul></div>
+  </div>
+  <div class="card"><h3>Vanliga frågor</h3><table class="t"><tr><td class="n" style="width:36%">Varför kom kortet tillbaka redan i dag?</td><td>Skattar du 1 eller 2 läggs kortet sist i kön och kommer igen i samma pass. Nya kort har korta intervall de första gångerna.</td></tr><tr><td class="n" style="width:36%">Påverkar en dugga eller fri repetition schemat?</td><td>Ja. Varje skattning räknas, i alla lägen. Repeterar du ett kort innan det är dags växer intervallet lite mindre.</td></tr><tr><td class="n" style="width:36%">Dagens pass är klart men jag vill plugga mer?</td><td>Välj Plugga vidare på kurssidan eller efter passet. Fortsätt så länge du vill, allt räknas.</td></tr><tr><td class="n" style="width:36%">Hittade du ett fel på ett kort?</td><td>Tryck på flaggan under passet och beskriv felet. Rapporten går till kursens examinator.</td></tr><tr><td class="n" style="width:36%">Kan jag börja om?</td><td>Ja, under Konto. Nollställer du bara schemat blir korten nya igen men dina skattningar sparas. Det går inte att ångra.</td></tr><tr><td class="n" style="width:36%">Vad sparas om mig?</td><td>Bara ditt namn, din e-post och din studieprogress, inom EU. Ingen reklam, ingen spårning, och inga mejl du inte själv har bett om.</td></tr></table></div>
+  <div class="row cols-3 start">
+    <div class="callout"><h3><span class="dot d-teal"></span>Fel på ett kort</h3><p class="small">Flaggan under passet. Den går direkt till examinatorn, med kortet bifogat.</p></div>
+    <div class="callout"><h3><span class="dot d-navy"></span>Frågor om kursens innehåll</h3><p class="small">Examinatorn Johan Ahlström, <b>johan.ahlstrom@chalmers.se</b></p></div>
+    <div class="callout"><h3><span class="dot d-green"></span>Konto och teknik</h3><p class="small">Alvin, som driver Kuggfri: <b>alvinan@chalmers.se</b></p></div>
+  </div>
+  <div class="card"><h3>Fem tips för att få ut mest av Kuggfri</h3><ol class="legend two" style="margin-top:4pt"><li><span class="num">1</span><span><b>Lite varje dag</b> slår mycket ibland. Ett pass om dagen håller schemat i takt.</span></li><li><span class="num">2</span><span><b>Skatta ärligt</b>, även när det svider. Det är så schemat hittar dina luckor.</span></li><li><span class="num">3</span><span><b>Öppna ett område</b> på hemsidan när en föreläsning är färsk, och plugga just det.</span></li><li><span class="num">4</span><span><b>Ta kluriga kort</b> en gång i veckan, så blir de svåra korten lätta.</span></li><li><span class="num">5</span><span><b>Gör en dugga</b> inför tentan för att se att du kan korten i blandad ordning.</span></li></ol></div>
+  <p class="small muted" style="text-align:center">Mer hjälp finns under <b>Hjälp</b> i menyn på kuggfri.com. Lycka till med pluggandet!</p>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Frågor? alvinan@chalmers.se &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 8 av 8</span></div></section>
+</body>
+</html>

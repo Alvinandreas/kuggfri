@@ -6,7 +6,8 @@ ingår i bygget, testerna eller innehållspipelinen. De körs från **repots rot
 **Materialteknik** (decket `materialteknik`) och behöver anpassas för andra kurser.
 
 Det dagliga verktyget är `npm run kuggfri` (`scripts/kuggfri.ts`); säkerhetskopior och deploy-SQL
-ligger kvar direkt i `scripts/`.
+ligger kvar direkt i `scripts/`. PDF:er (granskningsguiderna, designsystemet) byggs med `npm run pdf`
+från `scripts/pdf/`; hur, och designen de följer, står i `docs/Designsystem.pdf`.
 
 | Verktyg | Vad det gör | Körs med |
 |---|---|---|

@@ -21,6 +21,7 @@
     "db:reset": "npm run seed:build && supabase db reset",
     "deploy:sql": "tsx scripts/build-deploy-sql.ts",
     "kuggfri": "tsx scripts/kuggfri.ts",
+    "pdf": "node scripts/pdf/bygg.cjs",
     "db:types:raw": "supabase gen types typescript --local > lib/supabase/database.types.generated.ts"
   },
   "dependencies": {

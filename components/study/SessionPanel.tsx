@@ -84,7 +84,7 @@ export function SessionPanel({
   const showSelection = mode !== "random" || settings.followAreas;
 
   return (
-    <Card padding="lg" className="order-2 grid gap-5 lg:order-none" aria-labelledby="pass-rubrik" role="region">
+    <Card padding="lg" className="grid gap-5" aria-labelledby="pass-rubrik" role="region">
       <CardHeader id="pass-rubrik" title={sv.deck.yourSession} action={<Badge tone="accent">{MODE_TITLES[pick]}</Badge>} spacing="none" />
 
       {firstVisit && mode === "fsrs" ? (

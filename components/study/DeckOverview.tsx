@@ -223,29 +223,15 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
         ) : null}
       </header>
 
+      {/* Källordningen är läsordningen: läge, passet (Starta), områden, delning. Fokus med Tab går
+          därför till Starta direkt efter lägena. På datorn står passet i en egen kolumn till höger
+          (rutnätets placering), på mobilen i samma ordning som källan. */}
       <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
-        {/* Vänster: läge, områden och delning. På mobil kommer passet (Starta) direkt efter lägena. */}
-        <div className="contents lg:grid lg:gap-8">
-          <div className="order-1 lg:order-none">
-            <ModePicker mode={pick} onMode={setPick} plans={plans} progressReady={progress !== null} totalCards={cards.length} />
-          </div>
-          <CategoryTable
-            rows={categoryRows}
-            colorIndex={colorIndex}
-            selected={selectedSet}
-            mode={mode}
-            sortMode={sortMode}
-            onSortMode={setSortMode}
-            onToggle={toggleCategory}
-            onOnly={selectOnly}
-            onSelectAll={selectAll}
-          />
-          <div className="order-4 lg:order-none">
-            <ShareDeck slug={deck.slug} />
-          </div>
+        <div className="lg:col-start-1 lg:row-start-1">
+          <ModePicker mode={pick} onMode={setPick} plans={plans} progressReady={progress !== null} totalCards={cards.length} />
         </div>
 
-        <div className="contents lg:sticky lg:top-6 lg:grid lg:gap-6">
+        <div className="grid gap-6 lg:sticky lg:top-6 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start">
           <SessionPanel
             pick={pick}
             mode={mode}
@@ -264,6 +250,24 @@ export function DeckOverview({ deck, categories, cards, userId, initialMode = "f
             onShowStarred={() => setStarredOpen(true)}
           />
           <StarredDialog open={starredOpen} onClose={() => setStarredOpen(false)} cards={cards} categories={tableCategories} colorIndex={colorIndex} />
+        </div>
+
+        <div className="lg:col-start-1 lg:row-start-2">
+          <CategoryTable
+            rows={categoryRows}
+            colorIndex={colorIndex}
+            selected={selectedSet}
+            mode={mode}
+            sortMode={sortMode}
+            onSortMode={setSortMode}
+            onToggle={toggleCategory}
+            onOnly={selectOnly}
+            onSelectAll={selectAll}
+          />
+        </div>
+
+        <div className="lg:col-start-1 lg:row-start-3">
+          <ShareDeck slug={deck.slug} />
         </div>
       </div>
     </div>

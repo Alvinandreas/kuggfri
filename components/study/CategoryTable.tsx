@@ -37,7 +37,7 @@ export function CategoryTable({ rows, colorIndex, selected, mode, sortMode, onSo
   const allSelected = filled.length > 0 && filled.every((r) => selected.has(r.id));
 
   return (
-    <Card padding="lg" role="region" aria-labelledby="kategorier-rubrik" className="anim-fade-up order-3 lg:order-none" style={{ ["--i" as string]: 2 }}>
+    <Card padding="lg" role="region" aria-labelledby="kategorier-rubrik" className="anim-fade-up" style={{ ["--i" as string]: 2 }}>
       <CardHeader
         id="kategorier-rubrik"
         className="max-sm:flex-col max-sm:gap-3"

@@ -12,7 +12,7 @@ import { routes } from "@/lib/routes";
  * Rule: every change to the Swedish policy must be made here too, in the same place.
  */
 
-const UPDATED = "27 September 2026";
+const UPDATED = "2 October 2026";
 
 /** Link in the summary, which sits outside .prose-body and is therefore styled here. */
 const summaryLink = "font-medium text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent";
@@ -55,11 +55,11 @@ export function PrivacyEn() {
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>We have no analytics, no ads, no tracking cookies and no third-party sign-ins.</span>
+            <span>We have no analytics, no ads and no tracking cookies. You sign in with email and password, or with Google if you prefer.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>We only send emails you ask for yourself, such as a sign-in link or a new password. No reminders, no newsletters.</span>
+            <span>We only send emails you ask for yourself, such as a sign-in link or a new password. No reminders, no newsletters. Examiners of a course get a weekly summary of the course, which can be turned off.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
@@ -173,6 +173,12 @@ export function PrivacyEn() {
                   retention="Until you change the setting or delete the account"
                 />
                 <Row
+                  what="Language"
+                  why="Whether the service is shown in Swedish or English, so that the same language applies on all your devices and in emails we send."
+                  basis="Contract"
+                  retention="Until you change the setting or delete the account"
+                />
+                <Row
                   what="Log of sent emails"
                   why="Subject line and time, so that we do not send the same email twice. Does not contain the text of the email."
                   basis="Legitimate interest (avoiding duplicate emails)"
@@ -231,8 +237,8 @@ export function PrivacyEn() {
           <h2>Emails we send</h2>
           <ul>
             <li>
-              <strong>Sign-in and reset.</strong> Confirmation links and a link for a new password, when you
-              ask for them yourself.
+              <strong>Sign-in and reset.</strong> Confirmation links, a link for a new password and confirmation
+              of a new email address, when you ask for them yourself.
             </li>
             <li>
               <strong>Weekly digest for examiners.</strong> Only for those who are examiners for a course, with the

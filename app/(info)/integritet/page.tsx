@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * (app/api/konto/export/route.ts). Testet i tests/unit/privacy hjälper till att påminna.
  */
 
-const UPDATED = "27 september 2026";
+const UPDATED = "2 oktober 2026";
 
 /** Länk i sammanfattningen, som ligger utanför .prose-body och därför stylas här. */
 const summaryLink = "font-medium text-accent underline underline-offset-2 decoration-accent/50 hover:decoration-accent";
@@ -65,11 +65,11 @@ export default async function PrivacyPage() {
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>Vi har ingen analys, inga annonser, inga spårningskakor och inga tredjepartsinloggningar.</span>
+            <span>Vi har ingen analys, inga annonser och inga spårningskakor. Du loggar in med e-post och lösenord, eller med Google om du vill.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
-            <span>Vi skickar bara mejl som du själv begär, till exempel en inloggningslänk eller ett nytt lösenord. Inga påminnelser, inga nyhetsbrev.</span>
+            <span>Vi skickar bara mejl som du själv begär, till exempel en inloggningslänk eller ett nytt lösenord. Inga påminnelser, inga nyhetsbrev. Den som är examinator för en kurs får ett veckobrev om kursen, som går att stänga av.</span>
           </li>
           <li className="flex gap-3">
             <span aria-hidden="true" className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" />
@@ -183,6 +183,12 @@ export default async function PrivacyPage() {
                   retention="Tills du ändrar valet eller raderar kontot"
                 />
                 <Row
+                  what="Språkval"
+                  why="Om tjänsten ska visas på svenska eller engelska, så att samma språk gäller på alla dina enheter och i mejl vi skickar."
+                  basis="Avtal"
+                  retention="Tills du ändrar valet eller raderar kontot"
+                />
+                <Row
                   what="Logg över skickade mejl"
                   why="Ämnesrad och tidpunkt, så att vi inte skickar samma mejl två gånger. Innehåller inte mejlets text."
                   basis="Berättigat intresse (undvika dubbla utskick)"
@@ -241,8 +247,8 @@ export default async function PrivacyPage() {
           <h2>Mejl vi skickar</h2>
           <ul>
             <li>
-              <strong>Inloggning och återställning.</strong> Bekräftelselänkar och länk för nytt lösenord, när du
-              själv begär dem.
+              <strong>Inloggning och återställning.</strong> Bekräftelselänkar, länk för nytt lösenord och
+              bekräftelse av en ny e-postadress, när du själv begär dem.
             </li>
             <li>
               <strong>Veckobrev till examinatorer.</strong> Bara för den som är examinator för en kurs, med kursens

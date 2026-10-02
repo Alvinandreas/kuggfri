@@ -38,7 +38,7 @@ lämna en kontaktadress för svar.
 | # | Kategori | Var | Ändamål | Rättslig grund | Gallring |
 |---|---|---|---|---|---|
 | 1 | E-postadress, lösenordshash, tidpunkter för inloggning | `auth.users` (Supabase Auth) | Inloggning och kontoåterställning | Avtal 6.1 b | Vid kontoradering |
-| 2 | Visningsnamn, adminflagga, mejlinställningar | `public.profiles` | Personalisering, behörighet, utskicksval | Avtal 6.1 b, samtycke 6.1 a för utskicken | Vid kontoradering |
+| 2 | Visningsnamn, adminflagga, mejlinställningar, språkval | `public.profiles` | Personalisering, behörighet, utskicksval, språket i tjänsten och veckobrevet | Avtal 6.1 b, samtycke 6.1 a för utskicken | Vid kontoradering |
 | 3 | Progress per kort (FSRS-tillstånd, senaste skattning) | `public.card_progress` | Schemalägga repetitioner | Avtal 6.1 b | Vid kontoradering eller nollställning |
 | 4 | Repetitionshistorik (kort, skattning, läge, tidpunkt) | `public.review_log` | Studentens egna diagram, underlag för anonym kursstatistik | Avtal 6.1 b | Vid kontoradering eller nollställning |
 | 5 | Studiesessioner | `public.study_sessions` | Statistik på kontosidan | Avtal 6.1 b | Vid kontoradering |

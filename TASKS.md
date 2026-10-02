@@ -109,6 +109,8 @@ originalkorten. Alla kort är i rotation från början; ett kort som inte hålle
 - [ ] DMARC med rapportadress hos Hostinger, efter ett par veckor `p=quarantine`
 - [ ] Dela upp `lib/content/plan.ts` och `scripts/kuggfri.ts` i moduler; beslut om komponenttester
 - [ ] Återställningsövning i Vercel tillsammans (fram och tillbaka) och `docs/DRIFT.md`
+- [ ] Utbyggnad för flera kurser och examinatorer enligt `docs/UTBYGGNAD-FLERA-KURSER.md`: etapp 0
+      (förberedelser utan synliga ändringar) kan göras när som helst; beslut i avsnitt 16 behövs före etapp 1
 - [ ] Fler kurser och deck: Johans material, Alvins övriga Brainscape-set, fler Canvaskurser (kräver den
       examinatorns tillstånd och en rad i tillåtelselistan i `scripts/canvas.ts`)
 

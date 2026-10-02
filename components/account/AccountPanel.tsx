@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
 import { Download } from "lucide-react";
 import type { Dict } from "@/lib/i18n";
-import { useT } from "@/lib/i18n/client";
+import { useLang, useT } from "@/lib/i18n/client";
 import { deleteAccountAction, updateDisplayNameAction, updateEmailPrefsAction, updatePasswordAction, type AuthResult } from "@/lib/auth/actions";
 import { useProgressStore } from "@/lib/progress/use-progress-store";
 import { DEFAULT_PREFS, readPrefs, writePrefs, type StudyPrefs } from "@/lib/progress/prefs";
@@ -13,6 +13,7 @@ import { Button, buttonClass } from "@/components/ui/Button";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { FormMessage } from "@/components/ui/FormMessage";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Select } from "@/components/ui/Select";
 import { inputClass } from "@/components/ui/TextField";
 import { ThemeSwitcher } from "@/components/ui/ThemeToggle";
@@ -31,7 +32,7 @@ type Props = {
   /** Efter återställningslänk: lyft fram lösenordsbytet. */
   focusPassword?: boolean;
   digestEmail?: boolean;
-  /** Examinatorer och admin ser även veckobrevets reglage. */
+  /** Examinatorer och admin ser även veckobrevets reglage och språkvalet. */
   isExaminer?: boolean;
 };
 type Pending = { kind: "delete" } | { kind: "resetAll" } | { kind: "resetSchedule" } | { kind: "resetDeck"; deck: DeckRef };
@@ -63,6 +64,8 @@ function ResetRow({ title, help, children }: { title: string; help: string; chil
 
 export function AccountPanel({ userId, email, displayName, decks, focusPassword = false, digestEmail = true, isExaminer = false }: Props) {
   const sv = useT();
+  const [lang, setLang] = useLang();
+  const [langPending, startLangTransition] = useTransition();
   const [nameState, nameAction, namePending] = useActionState(
     async (_prev: AuthResult | null, fd: FormData) => updateDisplayNameAction(fd),
     null,
@@ -214,6 +217,29 @@ export function AccountPanel({ userId, email, displayName, decks, focusPassword 
         </h2>
         <ThemeSwitcher />
       </Card>
+
+      {/* Språket (admin och examinatorer): sparas på kontot och gäller hela tjänsten, också korten
+          och veckobrevet. Studenterna ser alltid svenska. Språknamnen står på sitt eget språk. */}
+      {isExaminer ? (
+        <Card padding="lg" className="anim-fade-up grid gap-3" style={{ ["--i" as string]: 4 }} role="region" aria-labelledby="sprak-rubrik" data-testid="language-setting">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 id="sprak-rubrik" className="text-lg font-bold tracking-tight">
+              {sv.meta.language}
+            </h2>
+            <SegmentedControl
+              label={sv.meta.language}
+              value={lang}
+              onChange={(next) => startLangTransition(() => setLang(next))}
+              segments={[
+                { value: "sv", label: "Svenska" },
+                { value: "en", label: "English" },
+              ]}
+              className={langPending ? "opacity-70" : undefined}
+            />
+          </div>
+          <p className="text-sm text-muted">{sv.meta.languageHelp}</p>
+        </Card>
+      ) : null}
 
       <Card
         padding="lg"

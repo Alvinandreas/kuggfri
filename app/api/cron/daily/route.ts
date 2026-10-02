@@ -66,7 +66,7 @@ export async function GET(request: Request) {
           summary.skipped++;
           continue;
         }
-        const email = buildDigestEmail({ name: r.display_name, deckTitle: r.deck_title, deckId: r.deck_id, data, minStudents: MIN_STUDENTS, siteUrl, now });
+        const email = buildDigestEmail({ name: r.display_name, deckTitle: r.deck_title, deckId: r.deck_id, data, minStudents: MIN_STUDENTS, siteUrl, now, lang: r.lang === "en" ? "en" : "sv" });
         if (mailer) {
           await mailer.send({ to: r.email, ...email });
           await supabase.from("email_log").insert({ kind: "digest", user_id: r.user_id, deck_id: r.deck_id, subject: email.subject });

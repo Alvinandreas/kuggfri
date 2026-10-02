@@ -43,7 +43,7 @@ const PAGES = [
   <div class="card"><table class="t">
     ${agendaRow(1, "Where we are", 5, "The course content since the first version: 144 cards became 405, every card checked against the course material, with sources.")}
     ${agendaRow(2, "Demo: the student’s view", 10, "Home page, today’s session, a card, the summary and My statistics.")}
-    ${agendaRow(3, "Demo: the review", 10, "The review page, one card at a time, the four decisions, flags and the English switch.")}
+    ${agendaRow(3, "Demo: the review", 10, "The review page, one card at a time, the four decisions, flags, and English as a setting on the account.")}
     ${agendaRow(4, "Review plan and launch date", 15, "Who reviews which topics, by when, and the date the course opens to students.")}
     ${agendaRow(5, "Decisions and open questions", 15, "The exam date, values that differ between sources, and the questions on page 3.")}
     ${agendaRow(6, "Next steps", 5, "Who does what after the meeting.")}
@@ -91,13 +91,13 @@ const PAGES = [
   (p, n) => `${h()}
   <div><h2>Decisions and open questions</h2><p class="lead" style="margin-top:3pt">The answers settle many flags at once and let the review go faster.</p></div>
   <div class="card"><table class="t">
-    <tr><th style="width:4%"></th><th style="width:42%">Question</th><th>Why it matters</th></tr>
+    <tr><th style="width:4%"></th><th style="width:36%">Question</th><th>Why it matters</th></tr>
     <tr><td>${num(1)}</td><td class="n">The exam date for MTT085</td><td>The schedule plans towards it: every card in time, nothing pushed past the exam, a final review the last days.</td></tr>
     <tr><td>${num(2)}</td><td class="n">Which values should the course use?</td><td>The sources differ: 723 or 727 °C, 0.8 or 0.77 % C for the eutectoid point, and 910, 912 or 913 °C. One decision settles 6 flags and all Fe–C cards.</td></tr>
     <tr><td>${num(3)}</td><td class="n">Cards that follow old exam questions closely: keep or rewrite?</td><td>6 flags ask whether a card is too close to an exam question or its suggested solution.</td></tr>
     <tr><td>${num(4)}</td><td class="n">Is the Boltzmann superposition principle part of this year’s course? <span class="muted" style="font-weight:400">(Roland)</span></td><td>It is not in the reading instructions for PM 6 in 2024 and 2025. Two cards depend on it.</td></tr>
     <tr><td>${num(5)}</td><td class="n">May figures from the course books (Ashby, Osswald) be used in cards?</td><td>Otherwise only our own redrawn diagrams.</td></tr>
-    <tr><td>${num(6)}</td><td class="n">Weekly summary by email? <span class="muted" style="font-weight:400">(Johan)</span></td><td>Monday mornings: active students, hardest topics, tricky questions and error reports. Anonymous.</td></tr>
+    <tr><td>${num(6)}</td><td class="n">The weekly summary by email is on by default: keep it?</td><td>Monday mornings to both examiners: active students, hardest topics, tricky questions and error reports. Anonymous, in each examiner’s chosen language. Can be turned off under Account.</td></tr>
   </table></div>
   <div class="row cols-2 start">
     ${callout("Found in the 2025 material on Canvas", "teal", `<p class="small" style="margin-bottom:4pt">The same errors were corrected in the cards. Should the slides be updated too?</p>${dots([

@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { maintenanceGate } from "@/lib/maintenance";
 import { updateSession } from "@/lib/supabase/middleware";
 import { forbiddenHtml } from "@/lib/auth/forbidden-html";
-import { dictionary, LANG_COOKIE } from "@/lib/i18n";
+import { dictionary } from "@/lib/i18n";
 import { decideAdminAccess, loadAdminFacts, withCsp } from "@/lib/auth/admin-gate";
 import { inviteRewriteTarget, isPublicPath, loginRedirectTarget } from "@/lib/auth/route-gate";
 import { buildCsp, createNonce, NONCE_HEADER } from "@/lib/security/headers";
@@ -70,7 +70,7 @@ export async function middleware(request: NextRequest) {
       return withCsp(NextResponse.redirect(loginUrl), csp);
     }
     if (decision.kind === "forbidden") {
-      return withCsp(new NextResponse(forbiddenHtml(dictionary(request.cookies.get(LANG_COOKIE)?.value === "en" ? "en" : "sv")), { status: 403, headers: { "content-type": "text/html; charset=utf-8" } }), csp);
+      return withCsp(new NextResponse(forbiddenHtml(dictionary("sv")), { status: 403, headers: { "content-type": "text/html; charset=utf-8" } }), csp);
     }
   }
 

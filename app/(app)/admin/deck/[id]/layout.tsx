@@ -3,7 +3,6 @@ import { getT } from "@/lib/i18n/server";
 import { canEditDeck, getAdminContext } from "@/lib/admin/access";
 import { getDeckForAdmin } from "@/lib/admin/queries";
 import { Badge } from "@/components/ui/Badge";
-import { LanguageToggle } from "@/components/admin/review/ReviewLanguage";
 
 type Params = Promise<{ id: string }>;
 
@@ -43,8 +42,6 @@ export default async function DeckLayout({ children, params }: { children: React
             </Badge>
           </p>
         </div>
-        {/* Språkreglaget (English) för examinatorer som inte läser svenska; studenternas kurssida nås från sidomenyn. */}
-        <LanguageToggle />
       </div>
       <div className="min-w-0">{children}</div>
     </div>

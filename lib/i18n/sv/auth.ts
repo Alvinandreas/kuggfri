@@ -83,7 +83,7 @@ export const account = {
   remindersTitle: "Mejl",
   remindersHelp: "För dig som är examinator. Studenter får inga utskick utöver det de själva begär.",
   digestEmail: "Veckobrev om kursen (examinator)",
-  digestEmailHelp: "Måndag morgon: aktiva studenter, svåraste områdena, kluriga frågor och felrapporter. Sammanställt och anonymt.",
+  digestEmailHelp: "Måndag morgon: aktiva studenter, svåraste områdena, kluriga frågor och felrapporter. Sammanställt och anonymt, på det språk du valt under Språk.",
   resetTitle: "Nollställ progress",
   resetHelp: "Nollställ en kurs, bara schemat eller allt. Det går inte att ångra.",
   resetDeckNamed: (title: string) => `Nollställ ”${title}”`,

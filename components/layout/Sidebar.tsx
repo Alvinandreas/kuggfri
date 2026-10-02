@@ -235,7 +235,7 @@ function SidebarContent({ user, adminDeck, adminDeckIds, isAdmin, courses, hidde
         {info.map((l) => (
           <NavItem key={l.href} link={l} pathname={pathname} drawer={drawer} />
         ))}
-        <ProfileMenu user={user} placement="right-end" showLanguage={isAdmin || adminDeck !== null || adminDeckIds.length > 0} showAdminSettings={isAdmin} />
+        <ProfileMenu user={user} placement="right-end" showAdminSettings={isAdmin} />
       </div>
     </>
   );
@@ -358,7 +358,7 @@ export function Sidebar(props: SidebarProps) {
         <Link href={routes.home()} aria-label={sv.shell.home} className="inline-flex items-center rounded-md">
           <Logo variant="menu" height={30} decorative />
         </Link>
-        <ProfileMenu user={props.user} placement="bottom-end" compact showLanguage={props.isAdmin || props.adminDeck !== null || props.adminDeckIds.length > 0} showAdminSettings={props.isAdmin} />
+        <ProfileMenu user={props.user} placement="bottom-end" compact showAdminSettings={props.isAdmin} />
       </header>
 
       {drawerOpen ? (

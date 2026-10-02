@@ -49,7 +49,11 @@ async function prepare() {
   if (error) throw error;
   const { data: cards } = await db.from("cards").select("id, key, category_id").eq("deck_id", deck.id).in("key", [CARD.sv, CARD.en, FLAGGED]);
   const byKey = Object.fromEntries(cards.map((c) => [c.key, c]));
-  return { deckId: deck.id, card: { sv: byKey[CARD.sv], en: byKey[CARD.en] }, flagged: byKey[FLAGGED] };
+  const setLang = async (lang) => {
+    const { error: e } = await db.from("profiles").update({ lang }).eq("id", user.id);
+    if (e) throw e;
+  };
+  return { deckId: deck.id, card: { sv: byKey[CARD.sv], en: byKey[CARD.en] }, flagged: byKey[FLAGGED], setLang };
 }
 
 /** Lägger en numrerad markering vid elementet. pos: l (vänster), ri (inne till höger), g/gt (i marginalen), tl (övre hörnet). */
@@ -86,7 +90,7 @@ async function shotEl(page, selector, file, pad = 18, padTop = pad) {
 }
 
 (async () => {
-  const { deckId, card, flagged } = await prepare();
+  const { deckId, card, flagged, setLang } = await prepare();
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
 
@@ -104,7 +108,8 @@ async function shotEl(page, selector, file, pad = 18, padTop = pad) {
   for (const lang of ["sv", "en"]) {
     const ctx = await browser.newContext({ baseURL: BASE, storageState, viewport: { width: 1280, height: 860 }, deviceScaleFactor: 2, colorScheme: "light", locale: lang === "en" ? "en-GB" : "sv-SE" });
     await ctx.addInitScript(() => { try { localStorage.setItem("kuggfri:theme", "light"); localStorage.removeItem("kuggfri:sidebar"); } catch {} });
-    if (lang === "en") await ctx.addCookies([{ name: "kuggfri-sprak", value: "en", domain: new URL(BASE).hostname, path: "/" }]);
+    // Språket är kontots (Konto → Språk): engelska för den engelska guiden, sedan tillbaka.
+    await setLang(lang);
     const page = await ctx.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
@@ -116,7 +121,6 @@ async function shotEl(page, selector, file, pad = 18, padTop = pad) {
     await go(`/admin/deck/${deckId}/granskning`);
     await mark(page, 'aside a[href$="/granskning"]', 1, "ri", -46);
     let n = 2;
-    if (lang === "en") await mark(page, 'main [role="switch"]', n++, "l", -112);
     await mark(page, '[data-testid="review-overview"]', n++, "gt");
     await mark(page, tabs, n++, "g");
     await mark(page, '[data-testid="review-area-filter"]', n++, "g");
@@ -155,6 +159,7 @@ async function shotEl(page, selector, file, pad = 18, padTop = pad) {
     console.log(lang, errors.length ? `SIDFEL ${errors.join(" | ")}` : "klart, inga sidfel");
     await ctx.close();
   }
+  await setLang("sv");
   await browser.close();
 })().catch((e) => {
   console.error(e.message);

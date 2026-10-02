@@ -140,7 +140,7 @@ const sv = {
       </div>
     </div>
   </div>`,
-  footer: "Frågor? Alvin, alvinandreas.cth@gmail.com",
+  footer: "Frågor? Alvin, alvinan@chalmers.se",
 };
 
 // ---------------------------------------------------------------- English (Roland, topics 12–14)
@@ -161,13 +161,12 @@ const en = {
   steps: [
     ["Open the link", "Open the link from Alvin in your browser. It lets you in for a week while the service is closed to students."],
     ["Create an account", "Sign-in is in Swedish: choose <b>Skapa konto</b> (Create account) with the address Alvin registered, and confirm by email."],
-    ["Switch to English", "Turn on <b>English</b> at the top right of the review page. It applies to you only; students see Swedish."],
+    ["Switch to English", "Click your name at the bottom left, choose <b>Konto</b> (Account) and pick <b>English</b> under <b>Språk</b>. It applies everywhere you sign in."],
     ["Open Review", "In the sidebar, under Administration, choose <b>Review</b>. Pick a topic under <b>Topic</b> and press <b>Start reviewing</b>."],
   ],
   windowTitle: "The review page",
   windowLegend: [
     "<b>Review</b> in the sidebar, with the number of cards left.",
-    "<b>English</b> switches the whole service and every card to English, for you only.",
     "<b>Review overview</b>: how much of the course has been reviewed, and how many cards are flagged.",
     "<b>The tabs</b> To review, Reviewed, Flagged and Removed. A flagged card appears under both To review and Flagged.",
     "<b>Filters</b>: choose your topic under Topic. The search box searches question, answer and source.",
@@ -254,7 +253,7 @@ const en = {
       </ul>
     </div>
   </div>`,
-  footer: "Questions? Alvin, alvinandreas.cth@gmail.com",
+  footer: "Questions? Alvin, alvinan@chalmers.se",
 };
 
 const DOCS = [

@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { headers } from "next/headers";
 import { getLang, getT } from "@/lib/i18n/server";
 import { LangProvider } from "@/lib/i18n/client";
+import { saveLanguageAction } from "@/lib/i18n/actions";
 import { NONCE_HEADER } from "@/lib/security/headers";
 import { getSiteUrl } from "@/lib/supabase/env";
 
@@ -94,7 +95,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         >
           {sv.app.skipToContent}
         </a>
-        <LangProvider lang={lang}>{children}</LangProvider>
+        <LangProvider lang={lang} save={saveLanguageAction}>
+          {children}
+        </LangProvider>
       </body>
     </html>
   );

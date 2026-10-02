@@ -93,8 +93,8 @@ export const meta: Dict["meta"] = {
   ogLocale: "en_GB",
   /** The word before the time of day: "today at 14:32". */
   at: "at",
-  language: "English",
-  languageHelp: "Show the service in English",
+  language: "Language",
+  languageHelp: "The whole service is shown in the chosen language, cards included, on all your devices. Students always see Swedish.",
   pct: (n: number | string) => `${n}%`,
   pctSuffix: "%",
 };

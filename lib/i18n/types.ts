@@ -22,9 +22,6 @@ export type Lang = "sv" | "en";
 
 export const LANGS: readonly Lang[] = ["sv", "en"];
 
-/** Cookien som bär språkvalet. Sätts bara av reglaget English (admin och examinatorer). */
-export const LANG_COOKIE = "kuggfri-sprak";
-
 export function isLang(value: unknown): value is Lang {
   return value === "sv" || value === "en";
 }

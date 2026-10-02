@@ -58,7 +58,7 @@ export const getCurrentProfile = cache(async () => {
     // Bara det appen faktiskt läser: körs på varje sidvisning för inloggade.
     const { data: profile } = await supabase
       .from("profiles")
-      .select("id, display_name, is_admin, reminder_email, digest_email, created_at")
+      .select("id, display_name, is_admin, reminder_email, digest_email, lang, created_at")
       .eq("id", user.id)
       .maybeSingle();
     return { user, profile };

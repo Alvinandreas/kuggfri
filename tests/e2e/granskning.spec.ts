@@ -108,11 +108,19 @@ test.describe("granskning", { tag: "@desktop" }, () => {
     if ((await page.getByTestId("review-back").count()) > 0) await page.getByTestId("review-back").click();
     await expect(page.getByTestId("review-overview")).toBeVisible();
 
-    // Reglaget English: flikar och knappar på engelska, och tillbaka.
-    const toggle = page.getByTestId("review-language").getByRole("switch");
-    await toggle.click();
+    // Språket väljs under Konto och gäller hela tjänsten: granskningen på engelska, och tillbaka.
+    const review = page.url();
+    const setLanguage = async (label: "English" | "Svenska") => {
+      await page.goto("/konto");
+      await page.getByTestId("language-setting").getByRole("button", { name: label }).click();
+      await expect(page.getByTestId("language-setting").getByRole("button", { name: label })).toHaveAttribute("aria-pressed", "true");
+      await expect(page.locator("html")).toHaveAttribute("lang", label === "English" ? "en" : "sv");
+      await page.waitForLoadState("networkidle");
+      await page.goto(review);
+    };
+    await setLanguage("English");
     await expect(page.getByTestId("review-tab-att-granska")).toContainText("To review");
-    await toggle.click();
+    await setLanguage("Svenska");
     await expect(page.getByTestId("review-tab-att-granska")).toContainText("Att granska");
   });
 });

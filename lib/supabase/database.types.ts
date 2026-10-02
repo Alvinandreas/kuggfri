@@ -18,6 +18,8 @@ export type ProfileRow = {
   reminder_email: boolean;
   /** Examinator: veckobrev på måndagar. */
   digest_email: boolean;
+  /** Språket kontot valt med reglaget English; styr veckobrevets språk. */
+  lang: "sv" | "en";
   created_at: string;
 };
 
@@ -39,10 +41,11 @@ export type DeckDigest = {
   active_7d: number;
   reviews_7d: number;
   avg_rating_7d: number | null;
-  hardest: { title: string; avg: number; students: number }[];
-  tricky: { front: string; low_share: number; ratings: number }[];
+  /** title_en och front_en: de engelska namnen (null utan översättning), för veckobrevet på engelska. */
+  hardest: { title: string; title_en?: string | null; avg: number; students: number }[];
+  tricky: { front: string; front_en?: string | null; low_share: number; ratings: number }[];
   open_reports: number;
-  latest_reports: { front: string; message: string; created_at: string }[];
+  latest_reports: { front: string; front_en?: string | null; message: string; created_at: string }[];
 };
 
 export type DeckRow = {
@@ -442,7 +445,7 @@ export type Database = {
       };
       digest_recipients: {
         Args: Record<string, never>;
-        Returns: { deck_id: string; deck_slug: string; deck_title: string; user_id: string; email: string; display_name: string | null }[];
+        Returns: { deck_id: string; deck_slug: string; deck_title: string; user_id: string; email: string; display_name: string | null; lang: "sv" | "en" }[];
       };
       is_service_role: { Args: Record<string, never>; Returns: boolean };
       purge_old_data: { Args: Record<string, never>; Returns: { email_log_deleted: number; reports_deleted: number; contacts_cleared: number } };

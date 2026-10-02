@@ -92,8 +92,8 @@ export const meta = {
   ogLocale: "sv_SE",
   /** Ordet före klockslaget: "i dag kl. 14:32". */
   at: "kl.",
-  language: "English",
-  languageHelp: "Visa tjänsten på engelska",
+  language: "Språk",
+  languageHelp: "Hela tjänsten visas på det valda språket, också korten, på alla dina enheter. Studenterna ser alltid svenska.",
   /** Procent: "42 %". */
   pct: (n: number | string) => `${n} %`,
   /** Procenttecknet för sig, efter ett stort tal: " %". */

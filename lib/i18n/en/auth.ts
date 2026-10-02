@@ -85,7 +85,7 @@ export const account: Dict["account"] = {
   remindersTitle: "Email",
   remindersHelp: "For examiners. Students get no emails beyond what they ask for themselves.",
   digestEmail: "Weekly course digest (examiner)",
-  digestEmailHelp: "Monday morning: active students, the hardest topics, tricky questions and error reports. Aggregated and anonymous.",
+  digestEmailHelp: "Monday morning: active students, the hardest topics, tricky questions and error reports. Aggregated and anonymous, in the language chosen under Language.",
   resetTitle: "Reset progress",
   resetHelp: "Reset a course, just the schedule or everything. This can't be undone.",
   resetDeckNamed: (title: string) => `Reset “${title}”`,

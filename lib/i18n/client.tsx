@@ -3,30 +3,30 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { dictionary } from "./index";
-import { LANG_COOKIE, type Dict, type Lang } from "./types";
+import type { Dict, Lang } from "./types";
 
 type LangState = { lang: Lang; setLang: (lang: Lang) => void };
 
 const LangContext = createContext<LangState>({ lang: "sv", setLang: () => {} });
 
 /**
- * Språket i klienten. Rotlayouten läser cookien och skickar in språket, så att servern och
- * klienten renderar samma text. Byte: cookien skrivs (ett år, bara den här webbläsaren), klienten
- * byter direkt och servern renderar om sidan med router.refresh().
+ * Språket i klienten. Rotlayouten läser kontots språk och skickar in det, så att servern och
+ * klienten renderar samma text. Byte (Konto → Språk): klienten byter direkt, valet sparas på
+ * kontot (profiles.lang, med serveråtgärden save från rotlayouten) och servern renderar sedan om
+ * sidan med router.refresh().
  */
-export function LangProvider({ lang: initial, children }: { lang: Lang; children: ReactNode }) {
+export function LangProvider({ lang: initial, save, children }: { lang: Lang; save: (lang: Lang) => Promise<void>; children: ReactNode }) {
   const router = useRouter();
   const [lang, setLangState] = useState<Lang>(initial);
   useEffect(() => setLangState(initial), [initial]);
 
   const setLang = useCallback(
     (next: Lang) => {
-      document.cookie = next === "en" ? `${LANG_COOKIE}=en; path=/; max-age=31536000; samesite=lax` : `${LANG_COOKIE}=; path=/; max-age=0; samesite=lax`;
       document.documentElement.lang = next;
       setLangState(next);
-      router.refresh();
+      void save(next).then(() => router.refresh());
     },
-    [router],
+    [router, save],
   );
 
   // Utan JSX-syntax, så att enhetstesterna (som inte transformerar JSX) kan importera filen.

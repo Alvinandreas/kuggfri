@@ -16,6 +16,7 @@ const DOKUMENT = {
   studentguide: () => require("./studentguide.cjs"),
   motesunderlag: () => require("./motesunderlag.cjs"),
   infoblad: () => require("./infoblad.cjs"),
+  "infor-motet": () => require("./infor-motet.cjs"),
 };
 
 (async () => {

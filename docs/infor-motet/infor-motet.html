@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="sv">
+<head><meta charset="utf-8"><title>Inför mötet 2 oktober</title><style>
+@font-face { font-family: "Figtree"; font-weight: 300 900; font-style: normal; font-display: block;
+  src: url("../../node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-weight: 300 900; font-style: normal; font-display: block;
+  src: url("../../node_modules/@fontsource-variable/figtree/files/figtree-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+:root { --page: #ffffff; --bg: #f6f5f1; --sidebar: #efede8; --surface: #ffffff; --surface-2: #eeece6; --surface-3: #e4e1da; --fg: #1d1c19; --muted: #676259; --subtle: #68635a; --line: #dedbd3; --line-strong: #c4c0b6; --accent: #1f7a4d; --accent-hover: #196540; --accent-fg: #ffffff; --accent-soft: #dcefe3; --accent-ink: #17613d; --danger: #a13d3d; --danger-soft: #f6e6e6; --inverse: #1d1c19; --inverse-fg: #ffffff; --chart-1: #1f7a4d; --chart-2: #3b6ea5; --chart-3: #c97a1f; --chart-4: #7657b3; --chart-grid: #e6e3dc; --rate-1: #b0523f; --rate-2: #b9773a; --rate-3: #a3953a; --rate-4: #6d9a4a; --rate-5: #3f8b5c; --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06); --tag-1: oklch(0.9 0.07 20); --tag-2: oklch(0.9 0.08 62); --tag-3: oklch(0.9 0.10 95); --tag-4: oklch(0.9 0.10 140); --tag-5: oklch(0.9 0.10 175); --tag-6: oklch(0.9 0.10 215); --tag-7: oklch(0.9 0.10 255); --tag-8: oklch(0.9 0.10 290); --tag-9: oklch(0.9 0.10 325); --tag-10: oklch(0.9 0.10 355); --radius-md: 12px; --radius-lg: 20px; --radius-tile: 14px; }
+.dark { --page: #101111; --bg: #101111; --sidebar: #161717; --surface: #1c1d1d; --surface-2: #252626; --surface-3: #2f3030; --fg: #f1f1ee; --muted: #a8a8a2; --subtle: #98988f; --line: #28292a; --line-strong: #3b3c3c; --accent: #3fb872; --accent-hover: #55c886; --accent-fg: #06140c; --accent-soft: #173121; --accent-ink: #5fcf8e; --danger: #e0827c; --danger-soft: #3a2322; --inverse: #f1f1ee; --inverse-fg: #121313; --chart-1: #3fb872; --chart-2: #4f86c9; --chart-3: #cf7f22; --chart-4: #a48ae0; --chart-grid: #2c2d2d; --rate-1: #c9705d; --rate-2: #cf9455; --rate-3: #bfb15a; --rate-4: #8ab56b; --rate-5: #62a97c; --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35); --tag-1: oklch(0.44 0.09 20); --tag-2: oklch(0.44 0.10 62); --tag-3: oklch(0.44 0.13 95); --tag-4: oklch(0.44 0.13 140); --tag-5: oklch(0.44 0.13 175); --tag-6: oklch(0.44 0.13 215); --tag-7: oklch(0.44 0.13 255); --tag-8: oklch(0.44 0.13 290); --tag-9: oklch(0.44 0.13 325); --tag-10: oklch(0.44 0.13 355); }
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--page); color: var(--fg); font-family: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  font-size: 9.6pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+.dark { color: var(--fg); }
+
+/* Sidmall: A4, 13/14/10 mm marginal, en kolumn med 4,2 mm mellanrum; sidfoten nederst. */
+.page { width: 210mm; height: 297mm; padding: 13mm 14mm 10mm; display: flex; flex-direction: column; gap: 4.2mm; background: var(--page); overflow: hidden; break-after: page; }
+.page:last-child { break-after: auto; }
+.page > * { flex: none; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 8mm; }
+header.top img { height: 11mm; width: auto; display: block; }
+header.top .meta { text-align: right; }
+.eyebrow { font-size: 7.6pt; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+header.top .meta .course { font-size: 9.5pt; font-weight: 600; color: var(--muted); margin-top: 1pt; }
+.foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 3mm; border-top: 1px solid var(--line); font-size: 8.6pt; color: var(--muted); }
+.foot img { height: 6.5mm; width: auto; }
+.foot .url { color: var(--accent); font-weight: 750; }
+
+/* Typografi */
+h1 { font-size: 25pt; line-height: 1.08; letter-spacing: -0.02em; margin: 0; font-weight: 800; }
+h2 { font-size: 14.5pt; line-height: 1.2; letter-spacing: -0.01em; margin: 0; font-weight: 800; }
+h3 { font-size: 10.6pt; margin: 0 0 2.5pt; font-weight: 750; }
+p { margin: 0 0 4pt; } p:last-child { margin-bottom: 0; }
+.lead { font-size: 11.2pt; line-height: 1.5; color: var(--muted); max-width: 165mm; }
+.lead strong { color: var(--fg); }
+.muted { color: var(--muted); }
+.small { font-size: 8.8pt; }
+.tiny { font-size: 7.8pt; }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 8pt; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 0.86em; background: var(--surface-2); border-radius: 4pt; padding: 0.5pt 3pt; }
+
+/* Rutnät */
+.row { display: grid; gap: 3.5mm; }
+.cols-2 { grid-template-columns: 1fr 1fr; } .cols-3 { grid-template-columns: repeat(3, 1fr); } .cols-4 { grid-template-columns: repeat(4, 1fr); }
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 6mm; align-items: start; }
+.start { align-items: start; }
+
+/* Nyckeltal som StatTile (components/stats/StatTile.tsx): grå yta, färgprick, stort värde. */
+.tile { background: var(--surface-2); border-radius: var(--radius-tile); padding: 10pt 12pt 11pt; }
+.tile .k { display: flex; align-items: center; gap: 5pt; font-size: 8pt; font-weight: 600; color: var(--muted); }
+.tile .v { margin-top: 7pt; font-size: 21pt; font-weight: 800; line-height: 1; letter-spacing: -0.02em; white-space: nowrap; }
+.tile .l { margin-top: 5pt; font-size: 8pt; line-height: 1.35; color: var(--muted); }
+.dot { width: 5.5pt; height: 5.5pt; border-radius: 50%; flex: none; display: inline-block; }
+.d-green { background: var(--chart-1); } .d-navy { background: var(--chart-2); } .d-teal { background: var(--chart-3); } .d-violet { background: var(--chart-4); }
+
+/* Block */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 10pt 12pt; }
+.dark .card { border-color: transparent; }
+.callout { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--surface-2); }
+.callout h3 { margin-bottom: 3pt; display: flex; align-items: center; gap: 5pt; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; margin: 0; padding: 0; list-style: none; }
+.steps li { background: var(--surface-2); border-radius: var(--radius-md); padding: 8pt 10pt; }
+.steps .num { margin-bottom: 3pt; }
+.steps p { font-size: 8.7pt; line-height: 1.42; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+.num { display: inline-flex; width: 17pt; height: 17pt; border-radius: 50%; background: var(--accent); color: var(--accent-fg); font-weight: 800; font-size: 9pt; align-items: center; justify-content: center; flex: none; }
+.decisions { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; }
+.decision { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--surface-2); }
+.decision .head { display: flex; align-items: center; gap: 6pt; margin-bottom: 3pt; }
+.decision p { font-size: 8.8pt; line-height: 1.42; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+
+/* Knappar och tangenter */
+.btn { display: inline-flex; align-items: center; gap: 5pt; border-radius: 999px; padding: 3pt 9pt; font-weight: 750; font-size: 9pt; background: var(--surface-3); color: var(--fg); white-space: nowrap; }
+.btn.primary { background: var(--accent); color: var(--accent-fg); }
+.btn.outline { background: var(--surface); border: 1px solid var(--line-strong); }
+kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 13pt; height: 13pt; padding: 0 3pt; border-radius: 4pt;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent); font: 700 7.2pt/1 ui-monospace, Consolas, monospace; }
+.btn kbd { opacity: 0.8; }
+
+/* Listor och tabeller */
+.legend { display: grid; gap: 3pt 6mm; margin: 0; padding: 0; list-style: none; }
+.legend.two { grid-template-columns: 1fr 1fr; }
+.legend li { display: flex; gap: 6pt; align-items: flex-start; font-size: 8.9pt; line-height: 1.4; }
+.legend .num { width: 14pt; height: 14pt; font-size: 7.6pt; margin-top: 0.5pt; }
+.legend b { font-weight: 750; }
+ul.dots { margin: 0; padding: 0; list-style: none; display: grid; gap: 3.2pt; }
+ul.dots li { position: relative; padding-left: 11pt; font-size: 9pt; line-height: 1.42; }
+ul.dots li::before { content: ""; position: absolute; left: 0; top: 0.52em; width: 5pt; height: 5pt; border-radius: 50%; background: var(--accent); }
+ul.dots.dont li::before { background: var(--danger); }
+ul.acts { margin: 0; padding: 0; list-style: none; }
+ul.acts li { display: grid; justify-items: start; gap: 3pt; padding: 6pt 0; border-bottom: 1px solid var(--line); font-size: 9pt; line-height: 1.42; }
+ul.acts li:last-child { border-bottom: 0; padding-bottom: 0; }
+ul.acts li:first-child { padding-top: 2pt; }
+table.t { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+table.t th { text-align: left; font-size: 7.4pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; padding: 0 8pt 4pt 0; border-bottom: 1px solid var(--line); }
+table.t td { padding: 4pt 8pt 4pt 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n { white-space: nowrap; font-weight: 750; }
+table.keys { width: 100%; border-collapse: collapse; font-size: 9pt; }
+table.keys td { padding: 3.6pt 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.keys tr:last-child td { border-bottom: 0; }
+table.keys td.k { width: 1%; white-space: nowrap; padding-right: 8pt; } table.keys td.k kbd { margin-right: 2pt; }
+
+/* Skärmbilder */
+.shot { border-radius: var(--radius-md); border: 1px solid var(--line); box-shadow: var(--shadow-card); overflow: hidden; background: var(--bg); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot.crop img, .shot.croptop img { height: 100%; object-fit: cover; object-position: top left; }
+.shot.croptop img { object-position: bottom left; }
+
+/* Mobilskärmbild: rundad ram som en telefon */
+.phone { border-radius: 16pt; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); overflow: hidden; background: var(--bg); }
+.phone img { display: block; width: 100%; height: auto; }
+.phonecap { text-align: center; font-size: 8pt; color: var(--muted); margin-top: 4pt; }
+
+/* Skattningsskalan: siffran i skalans färg */
+.rate { display: inline-flex; width: 17pt; height: 17pt; border-radius: 6pt; align-items: center; justify-content: center; font-weight: 800; font-size: 9pt; flex: none;
+  border: 1.5px solid currentColor; }
+.rate-1 { color: var(--rate-1); background: color-mix(in oklab, var(--rate-1) 14%, var(--surface)); }
+.rate-2 { color: var(--rate-2); background: color-mix(in oklab, var(--rate-2) 14%, var(--surface)); }
+.rate-3 { color: var(--rate-3); background: color-mix(in oklab, var(--rate-3) 14%, var(--surface)); }
+.rate-4 { color: var(--rate-4); background: color-mix(in oklab, var(--rate-4) 14%, var(--surface)); }
+.rate-5 { color: var(--rate-5); background: color-mix(in oklab, var(--rate-5) 14%, var(--surface)); }
+.qr { width: 100%; max-width: 34mm; display: block; }
+.qr svg { width: 100%; height: auto; display: block; }
+
+/* Diagram */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: "Figtree", sans-serif; font-variant-numeric: tabular-nums; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 3pt 10pt; font-size: 7.8pt; color: var(--muted); margin-top: 5pt; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 4pt; }
+.chart-legend b { color: var(--fg); font-weight: 700; }
+.swatch { width: 10pt; height: 3pt; border-radius: 2pt; display: inline-block; }
+.sharebar { display: flex; overflow: hidden; border-radius: 999px; background: var(--surface-3); }
+.sharebar > div { height: 100%; }
+.areabars { display: grid; gap: 4.5pt; font-size: 8.2pt; }
+.areabars .r { display: grid; grid-template-columns: 13pt minmax(0, 1fr) 24pt; gap: 3pt 6pt; align-items: center; }
+.areabars .n { width: 13pt; height: 13pt; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6.6pt; font-weight: 700; color: var(--fg); }
+.areabars .lbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.areabars .pct { text-align: right; color: var(--muted); }
+.areabars .bar { grid-column: 2 / 4; height: 4.5pt; border-radius: 999px; background: var(--surface-3); display: flex; overflow: hidden; }
+.radarlist { display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; gap: 2.5pt 8pt; margin: 0; padding: 0; list-style: none; font-size: 7.8pt; }
+.radarlist li { display: flex; align-items: center; gap: 4pt; min-width: 0; }
+.radarlist .n { width: 11pt; height: 11pt; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6pt; font-weight: 700; flex: none; }
+.radarlist .lbl { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radarlist .pct { color: var(--muted); }
+
+/* Prov i mörkt tema inne i en ljus sida */
+.panel { border-radius: var(--radius-md); padding: 9pt 11pt; background: var(--page); border: 1px solid var(--line); }
+.dark.panel { background: var(--bg); border-color: var(--bg); }
+.panel .cap { font-size: 7.2pt; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6pt; display: flex; justify-content: space-between; }
+.swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2.5mm; }
+.sw { border-radius: 9pt; overflow: hidden; border: 1px solid var(--line); font-size: 7pt; }
+.sw .c { height: 12mm; }
+.sw .t { padding: 3pt 5pt 4pt; background: var(--surface); }
+.sw .t b { display: block; font-size: 7.4pt; color: var(--fg); }
+.sw .t span { color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 6.6pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.progress { height: 6pt; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.progress > div { height: 100%; background: var(--chart-1); border-radius: 999px; }
+table.bars td { vertical-align: middle; }
+table.bars td.bar { width: 34%; }
+.chartblock h3 { margin-bottom: 0; }
+.chartblock .sub { font-size: 8pt; color: var(--muted); margin: 1pt 0 6pt; }
+.chartblock .src { font-size: 7.2pt; color: var(--muted); margin-top: 5pt; }
+td code, li code { white-space: nowrap; }
+</style></head>
+<body>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Inför mötet 2 oktober</div><div class="course">Ditt eget underlag, inte för utdelning</div></div></header>
+  <h1>Inför mötet</h1>
+  <p class="lead">Läget i produktionen klockan 04 i natt: <strong>405 kort i rotation, alla översatta, 103 flaggor med engelska anteckningar, 0 granskade.</strong> Tjänsten är stängd för utomstående bakom grinden.</p>
+  <div class="row start" style="grid-template-columns:1fr 1.25fr">
+    <div class="card"><h3>Checklista i morgon bitti</h3>
+      <ol class="legend" style="margin-top:3pt"><li><span class="num">1</span><span><b>Byt språk till Svenska</b> under Konto på ditt eget konto. Det står på engelska sedan du provade språkvalet.</span></li><li><span class="num">2</span><span><b>Öppna länken med förhandsnyckeln</b> i webbläsaren du demar i, och logga in.</span></li><li><span class="num">3</span><span><b>Examinatorer:</b> kontrollera att både Johan och Roland står under Inställningar. Just nu finns en examinator och en väntande inbjudan.</span></li><li><span class="num">4</span><span><b>3001 för översikten:</b> Docker och lokala Supabase igång, starta förhandsvisningen kuggfri-3001 (eller be Claude).</span></li><li><span class="num">5</span><span><b>PDF:erna öppna</b> lokalt ifall nätet strular: guiderna, studentguiden och mötesunderlaget i docs/.</span></li><li><span class="num">6</span><span><b>Mejlet till Johan och Roland</b> förberett: länken, deras guide och mötesunderlaget.</span></li></ol>
+    </div>
+    <div class="card"><h3>Demon, cirka 10 minuter</h3>
+      <table class="t"><tr><td style="width:1%;padding-right:7pt"><span class="num">1</span></td><td><b>Hem</b><br><span class="small muted">Logga in på kuggfri.com. Hälsningen, dagens pass, inlärd kunskap och radarn. Säg: schemat väljer korten, studenten behöver inte planera.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">2</span></td><td><b>Ett pass</b><br><span class="small muted">Fortsätt plugga och Starta. Ett vändkort: svara i huvudet, vänd, skatta. En flervalsfråga: rättas direkt, med förklaring.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">3</span></td><td><b>Efter passet</b><br><span class="small muted">Sammanfattningen: siffrorna, Plugga vidare och korten som behöver mest arbete. Avsluta med krysset.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">4</span></td><td><b>Ett område</b><br><span class="small muted">Klicka på ett område i radarn: plugga bara det, schemalagt, kluriga kort eller dugga.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">5</span></td><td><b>Min statistik</b><br><span class="small muted">Aktivitetskartan, utvecklingen och milstolparna. Bara studentens egna siffror.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">6</span></td><td><b>Granskningen</b><br><span class="small muted">Granskning: välj ett område, Börja granska. Ett vanligt kort och ett flaggat från källgranskningen. Visa knapparna, men tryck inte G (se nedan).</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">7</span></td><td><b>Engelska</b><br><span class="small muted">Konto, Språk, English: granskningen och flaggan på engelska. För Roland. Byt tillbaka efteråt.</span></td></tr><tr><td style="width:1%;padding-right:7pt"><span class="num">8</span></td><td><b>Kursöversikten</b><br><span class="small muted">Lokalt på 3001 med de simulerade studenterna. Säg tydligt att siffrorna är simulerade.</span></td></tr></table>
+    </div>
+  </div>
+  <div class="row cols-2 start">
+    <div class="callout"><h3><span class="dot d-teal"></span>Granskningen är skarp</h3><ul class="dots dont"><li>Det du godkänner, flaggar eller tar ur rotation i demon sparas på riktigt.</li><li>Visa knapparna utan att trycka, eller ångra direkt med Ctrl+Z.</li><li>Bäst: låt Johan eller Roland själva godkänna sitt första kort.</li></ul></div>
+    <div class="callout"><h3><span class="dot d-green"></span>Bra att säga högt</h3><ul class="dots "><li>Kursen öppnar först när granskningen visar 0 kort kvar.</li><li>Statistiken i översikten är simulerad; riktiga siffror kommer när studenterna börjar.</li><li>Allt de ser i dag finns beskrivet i deras guide.</li></ul></div>
+  </div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Kuggfri &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 1 av 3</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Inför mötet 2 oktober</div><div class="course">Ditt eget underlag, inte för utdelning</div></div></header>
+  <div><h2>Troliga frågor, med svar</h2><p class="lead" style="margin-top:3pt">Korta svar som stämmer med hur tjänsten fungerar i dag. Är du osäker på något: säg att du återkommer, hellre än att lova.</p></div>
+  <div class="card"><table class="t"><tr><td class="n" style="width:33%">Vem äger innehållet?</td><td>Kursen. Allt kan exporteras som en fil när som helst (Innehåll, Exportera JSON), och korten versionshanteras.</td></tr><tr><td class="n" style="width:33%">Vad kostar det kursen?</td><td>Ingenting. Drift och underhåll står Kuggfri för. Studenterna betalar inget och ser ingen reklam.</td></tr><tr><td class="n" style="width:33%">Hur är det med GDPR?</td><td>Bara namn, e-post och studieprogress, inom EU. Ingen spårning. Studenten laddar ner och raderar allt själv. Integritetspolicyn på sajten beskriver exakt vad som sparas.</td></tr><tr><td class="n" style="width:33%">Vad ser examinatorn om enskilda studenter?</td><td>Inget. Bara sammanställd statistik, och per område eller kort först när minst fem studenter skattat.</td></tr><tr><td class="n" style="width:33%">Hur vet vi att korten stämmer?</td><td>Varje kort är kontrollerat mot kursens material och har källa. 103 kort flaggades där källorna skiljer sig åt. Examinatorerna granskar allt innan kursen öppnar.</td></tr><tr><td class="n" style="width:33%">Hittar en student ett fel?</td><td>Flaggan i passet skickar en felrapport till examinatorn, med kortet bifogat. Rättelser syns direkt.</td></tr><tr><td class="n" style="width:33%">Hur lång tid tar granskningen?</td><td>Ungefär en minut per kort: cirka 5 timmar för Johan och 2 för Roland, i så många pass de vill.</td></tr><tr><td class="n" style="width:33%">Ersätter det något i kursen?</td><td>Nej, det är ett komplement: repetition av det som tas upp i föreläsningarna, med kursens egna begrepp.</td></tr><tr><td class="n" style="width:33%">Hjälper det verkligen?</td><td>Framplockning och utspridd repetition är de två studieteknikerna med starkast stöd i forskningen (Dunlosky m.fl. 2013). Effekten på just den här kursen vet vi först efter en kursomgång; föreslå en fråga i kursutvärderingen.</td></tr><tr><td class="n" style="width:33%">Kan studenterna plugga på engelska?</td><td>Ja, under Konto. Den granskade texten är den svenska; engelskan är en översättning som kontrollerats mot kursens terminologi.</td></tr><tr><td class="n" style="width:33%">Gamla tentor?</td><td>Tentaläget har kursens gamla tentor med skrivtid, poäng och facit. Det är låst tills examinatorn vill öppna det.</td></tr><tr><td class="n" style="width:33%">Vad händer när du tar examen?</td><td>Se sidan 3. Ha ett ärligt svar: allt är dokumenterat och exporterbart, och du vill hitta en långsiktig hemvist.</td></tr></table></div>
+  <div class="callout"><h3><span class="dot d-green"></span>Det du vill gå därifrån med</h3><ul class="dots "><li>Granskningsplanen: vem tar vilka områden, och klart senast vilket datum.</li><li>Ett lanseringsdatum, eller åtminstone en vecka.</li><li>Tentadatumet, och beslut om värdena som skiljer sig mellan källorna (723 eller 727 °C, 0,8 eller 0,77 % C).</li><li>Ett ja till att länken läggs i Canvas och nämns i en föreläsning.</li></ul></div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Kuggfri &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 2 av 3</span></div></section>
+<section class="page"><header class="top"><img src="../../public/logo-light.png" alt="Kuggfri"><div class="meta"><div class="eyebrow">Inför mötet 2 oktober</div><div class="course">Ditt eget underlag, inte för utdelning</div></div></header>
+  <div><h2>Det som avgör om Kuggfri lever vidare</h2><p class="lead" style="margin-top:3pt">Tjänsten är i gott skick. Det som hotar den på sikt är inte tekniken utan att den hänger på en person. Mötet är ett bra tillfälle att börja lösa det.</p></div>
+  <div class="row cols-2 start">
+    <div class="card"><h3>Risker att ta på allvar</h3><ul class="acts">
+      <li><b>En person bär allt.</b><span class="small">Drift, innehåll och kod hänger på dig. Dokumentationen finns (deploy, återställning, innehåll), men ingen annan har övat den.</span></li>
+      <li><b>Säkerhetskopiorna ligger på din dator.</b><span class="small">De körs varje natt men bara när datorn är på, och finns bara där. En kopia på ett andra ställe behövs.</span></li>
+      <li><b>Gratisplanerna har villkor.</b><span class="small">Vercels Hobby-plan gäller icke-kommersiell användning. Ligger Supabase på gratisplanen pausas projekt utan aktivitet; det dagliga jobbet håller det vid liv, men det är värt att veta.</span></li>
+      <li><b>Innehållet åldras.</b><span class="small">Kursen ändras mellan åren. Utan en rutin efter varje tentaperiod blir korten gradvis fel.</span></li>
+    </ul></div>
+    <div class="card"><h3>Det som stärker framtidsutsikterna</h3><ul class="acts">
+      <li><b>En hemvist.</b><span class="small">Fråga om institutionen, programmet eller Chalmers pedagogiska stöd kan stå bakom tjänsten, så att den inte försvinner med dig.</span></li>
+      <li><b>Belägg för att det hjälper.</b><span class="small">En fråga i kursutvärderingen och anonym användningsstatistik efter tentan. Det är det som övertygar nästa kurs.</span></li>
+      <li><b>Fler kurser.</b><span class="small">Examinatorer rekommenderar till kollegor. Infobladet och självbetjäningen gör nästa kurs billig att starta.</span></li>
+      <li><b>En medförvaltare.</b><span class="small">En student från nästa årskull som lär sig driften med dig under ett år.</span></li>
+    </ul></div>
+  </div>
+  <div class="card"><h3>Att be om på mötet, om stämningen är rätt</h3>
+    <ol class="legend two" style="margin-top:3pt"><li><span class="num">1</span><span>En fråga om Kuggfri i årets kursutvärdering.</span></li><li><span class="num">2</span><span>Att få nämna eller länka Kuggfri i kurs-PM och på Canvas inför nästa år.</span></li><li><span class="num">3</span><span>Namn på en eller två kollegor med kurser där det skulle passa.</span></li><li><span class="num">4</span><span>Vem på institutionen som är rätt person att prata långsiktig hemvist med.</span></li><li><span class="num">5</span><span>En kort genomgång efter tentan: kluriga kort och felrapporter, som underlag för nästa år.</span></li><li><span class="num">6</span><span>Om de vill stå som examinatorer för innehållet även nästa läsår.</span></li></ol>
+  </div>
+  <div class="callout"><h3><span class="dot d-navy"></span>Efter lanseringen, på tekniksidan</h3><ul class="dots "><li>Säkerhetskopior även utanför din dator, till exempel en krypterad kopia i molnet.</li><li>Återställningsövningen i Vercel och docs/DRIFT.md, så att någon annan kan ta över driften.</li><li>DMARC för mejlen och Googles varumärkesverifiering, enligt TASKS.md.</li></ul></div>
+  <div class="foot"><img src="../../public/logo-menu-light.png" alt=""><span>Kuggfri &nbsp; <span class="url">kuggfri.com</span> &nbsp; Sida 3 av 3</span></div></section>
+</body>
+</html>

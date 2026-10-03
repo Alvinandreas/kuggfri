@@ -7,6 +7,7 @@ import { useT } from "@/lib/i18n/client";
 import { addEnrollmentsAction, removeEnrollmentsAction } from "@/lib/admin/actions";
 import type { DeckEnrollment } from "@/lib/admin/queries";
 import { parseRoster } from "@/lib/enrollment/parse";
+import { isXlsx, xlsxToText } from "@/lib/enrollment/xlsx";
 import { formatDateTime } from "@/lib/time/format";
 import { Badge } from "@/components/ui/Badge";
 import { Button, buttonClass } from "@/components/ui/Button";
@@ -23,8 +24,8 @@ import { StatBlock } from "./StatBlock";
 const SHOWN = 200;
 
 /**
- * Kursens deltagarlista: lägg till i klump (fil eller inklistrat, läst i webbläsaren av
- * lib/enrollment/parse.ts), se listan och ta bort enstaka adresser. Bara adresserna skickas
+ * Kursens deltagarlista: lägg till i klump (Excel- eller CSV-fil eller inklistrat, läst i
+ * webbläsaren av lib/enrollment/xlsx.ts och parse.ts), se listan och ta bort enstaka adresser. Bara adresserna skickas
  * till servern; namnen i filen visas i förhandsvisningen men sparas aldrig.
  */
 export function EnrollmentManager({ deckId, entries }: { deckId: string; entries: DeckEnrollment[] }) {
@@ -49,11 +50,18 @@ export function EnrollmentManager({ deckId, entries }: { deckId: string; entries
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
-    setFileName(file.name);
-    setText(await file.text());
-    setMessage(null);
     e.target.value = "";
+    if (!file) return;
+    setMessage(null);
+    try {
+      // En Excel-fil blir tabbseparerad text, som om cellerna klistrats in.
+      const content = isXlsx(file) ? await xlsxToText(new Uint8Array(await file.arrayBuffer())) : await file.text();
+      setFileName(file.name);
+      setText(content);
+    } catch {
+      setFileName(null);
+      setMessage({ ok: false, text: sv.admin.enrollFileError });
+    }
   }
 
   function onAdd() {
@@ -94,7 +102,7 @@ export function EnrollmentManager({ deckId, entries }: { deckId: string; entries
               <label className={cx(buttonClass("secondary", "sm"), "cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent")}>
                 <Upload size={15} aria-hidden />
                 {sv.admin.enrollChooseFile}
-                <input type="file" accept=".csv,.txt,.tsv,text/csv,text/plain" onChange={onFile} data-testid="enroll-file" className="sr-only" />
+                <input type="file" accept=".xlsx,.csv,.txt,.tsv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain" onChange={onFile} data-testid="enroll-file" className="sr-only" />
               </label>
               <span className="min-w-0 truncate text-muted">{fileName ?? sv.admin.enrollNoFile}</span>
             </div>

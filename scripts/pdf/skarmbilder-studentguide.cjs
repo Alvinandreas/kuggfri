@@ -36,15 +36,17 @@ async function prepare() {
   const db = localDb();
   const { data: list } = await db.auth.admin.listUsers({ perPage: 1000 });
   let user = list.users.find((u) => u.email === STUDENT.email);
+  // Demostudenten står på Materialtekniks deltagarlista, som riktiga studenter (och innan kontot
+  // skapas, annars stoppar registreringsspärren det).
+  const { data: deck } = await db.from("decks").select("id").eq("slug", "materialteknik").single();
+  await db.from("deck_enrollments").upsert({ deck_id: deck.id, email: STUDENT.email }, { onConflict: "deck_id,email", ignoreDuplicates: true });
   if (!user) {
-    const { data, error } = await db.auth.admin.createUser({ email: STUDENT.email, password: STUDENT.password, email_confirm: true, user_metadata: { display_name: STUDENT.name }, app_metadata: { kuggfri_skapad_av: "skript" } });
+    const { data, error } = await db.auth.admin.createUser({ email: STUDENT.email, password: STUDENT.password, email_confirm: true, user_metadata: { display_name: STUDENT.name } });
     if (error) throw error;
     user = data.user;
   }
   await db.from("profiles").update({ display_name: STUDENT.name }).eq("id", user.id);
-  // Demostudenten står på Materialtekniks deltagarlista, som riktiga studenter.
-  const { data: deck } = await db.from("decks").select("id").eq("slug", "materialteknik").single();
-  await db.from("deck_enrollments").upsert({ deck_id: deck.id, email: STUDENT.email, user_id: user.id }, { onConflict: "deck_id,email" });
+  await db.from("deck_enrollments").update({ user_id: user.id }).eq("deck_id", deck.id).eq("email", STUDENT.email);
   const { count } = await db.from("card_progress").select("*", { count: "exact", head: true }).eq("user_id", user.id);
   if (!count || process.argv.includes("--ny-historik")) {
     console.log("lägger in demohistorik …");

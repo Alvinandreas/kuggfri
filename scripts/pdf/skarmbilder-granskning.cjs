@@ -40,7 +40,9 @@ async function prepare() {
   const { data: list } = await db.auth.admin.listUsers({ perPage: 1000 });
   let user = list.users.find((u) => u.email === EXAMINER.email);
   if (!user) {
-    const { data, error } = await db.auth.admin.createUser({ email: EXAMINER.email, password: EXAMINER.password, email_confirm: true, user_metadata: { display_name: EXAMINER.name }, app_metadata: { kuggfri_skapad_av: "skript" } });
+    // Inbjudan först, som i Inställningar; utan den stoppar registreringsspärren kontot.
+    await db.from("deck_examiner_invites").upsert({ deck_id: deck.id, email: EXAMINER.email }, { onConflict: "deck_id,email", ignoreDuplicates: true });
+    const { data, error } = await db.auth.admin.createUser({ email: EXAMINER.email, password: EXAMINER.password, email_confirm: true, user_metadata: { display_name: EXAMINER.name } });
     if (error) throw error;
     user = data.user;
   }

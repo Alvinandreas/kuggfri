@@ -144,8 +144,10 @@ export async function createUser(
 ): Promise<string> {
   const meta = JSON.stringify(opts.displayName ? { display_name: opts.displayName } : {});
   const confirmed = opts.confirmed ?? true;
-  // Som standard skapas kontot som av ett skript (admin-API:t) och går förbi deltagarlistornas
-  // spärr; selfSignup: true är en vanlig registrering, som spärren prövar.
+  // Som standard skapas kontot med en direkt SQL-insättning märkt kuggfri_skapad_av, som går förbi
+  // deltagarlistornas spärr; selfSignup: true är en vanlig registrering, som spärren prövar.
+  // (Supabases admin-API sätter app_metadata först efter insättningen, så skript som skapar konton
+  // den vägen sätter i stället adressen på en lista eller en examinatorinbjudan först.)
   const appMeta = JSON.stringify(opts.selfSignup ? { provider: "email" } : { provider: "email", kuggfri_skapad_av: "skript" });
   const rows = await db.query<{ id: string }>(
     `insert into auth.users (email, raw_user_meta_data, raw_app_meta_data, email_confirmed_at) values ($1, $2::jsonb, $3::jsonb, case when $4 then now() else null end) returning id`,

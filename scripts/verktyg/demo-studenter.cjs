@@ -117,20 +117,20 @@ async function removeDemo(db, pg) {
   for (let i = 0; i < n; i++) {
     const profile = profileFor(i, n);
     const email = `demo-${stamp}-${i + 1}@kuggfri.test`;
+    // Demostudenterna står på kursens deltagarlista, som riktiga studenter; utan den stoppar
+    // registreringsspärren kontot. Kontot kopplas till raden när det skapas.
+    await pg.query(
+      `insert into public.deck_enrollments (deck_id, email) select id, $2 from public.decks where slug = $1 on conflict do nothing`,
+      [DECK_SLUG, email],
+    );
     const { data, error } = await db.auth.admin.createUser({
       email,
       password: `demo-${stamp}-${Math.floor(rnd() * 1e9)}`,
       email_confirm: true,
       user_metadata: { display_name: `Demostudent ${i + 1}` },
-      app_metadata: { kuggfri_skapad_av: "skript" },
     });
     if (error) throw new Error(`Kunde inte skapa ${email}: ${error.message}`);
     const userId = data.user.id;
-    // Demostudenterna står på kursens deltagarlista, som riktiga studenter.
-    await pg.query(
-      `insert into public.deck_enrollments (deck_id, email, user_id) select id, $2, $3 from public.decks where slug = $1 on conflict do nothing`,
-      [DECK_SLUG, email, userId],
-    );
 
     const skill = between(-0.12, 0.12);
     const startDay = Math.floor(between(0, days * 0.4)); // dagar efter periodens början

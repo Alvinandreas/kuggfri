@@ -42,7 +42,11 @@ export async function openAdminCourse(page: Page): Promise<string> {
   return page.url();
 }
 
-/** Sätter adressen på Materialtekniks deltagarlista (som examinatorn gör i fliken Deltagare). */
+/**
+ * Sätter adressen på Materialtekniks deltagarlista (som examinatorn gör i fliken Deltagare).
+ * Krävs också innan ett konto skapas via admin-API:t: registreringsspärren i databasen gäller
+ * alla nya konton (supabase/migrations/20261002000300_deltagarlistor.sql).
+ */
 export async function enrollTestEmail(email: string, slug = DECK_SLUG) {
   const db = serviceClient();
   const { data: deck, error } = await db.from("decks").select("id").eq("slug", slug).single();
@@ -161,8 +165,18 @@ export async function confirmSignupFromMail(page: Page, email: string) {
   const mail = await latestMailText(email, 20_000, "type=signup");
   const match = /href="([^"]*token_hash=[^"]*type=signup[^"]*)"/.exec(mail);
   if (!match?.[1]) throw new Error(`Ingen bekräftelselänk i mejlet till ${email}`);
-  const link = new URL(match[1].replace(/&amp;/g, "&"));
+  await openMailLink(page, match[1]);
+}
+
+/**
+ * Öppnar en länk ur ett mejl som en student gör: länken leder till mellansidan /bekrafta, där
+ * knappen förbrukar den (så att Outlooks länkskanner inte gör det). Länken har site_url som värd;
+ * bara sökväg och query används, så att testerna fungerar mot vilken baseURL som helst.
+ */
+export async function openMailLink(page: Page, href: string) {
+  const link = new URL(href.replace(/&amp;/g, "&"));
   await page.goto(`${link.pathname}${link.search}`);
+  if (new URL(page.url()).pathname === "/bekrafta") await page.getByTestId("confirm-link-submit").click();
 }
 
 /**

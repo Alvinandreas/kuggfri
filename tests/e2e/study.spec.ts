@@ -272,7 +272,8 @@ test.describe("dosering", () => {
 
     // Vänt kort visar intervall per skattning i schemalagt läge. Automaträttade kort först i kön
     // besvaras tills ett vändkort kommer.
-    for (let i = 0; i < 5 && (await page.getByTestId("quizcard").isVisible()); i++) await rateCurrentCard(page, 4);
+    // Flera automaträttade kort kan komma i rad (ordningen blandas); passet har 20 kort.
+    for (let i = 0; i < 19 && (await page.getByTestId("quizcard").isVisible()); i++) await rateCurrentCard(page, 4);
     await page.getByTestId("flip").click();
     await expect(page.getByTestId("rate-4")).toHaveAttribute("aria-label", /om \d+ dagar|i morgon/);
     // Tillbaka till framsidan så att hjälpfunktionen kan vända själv.

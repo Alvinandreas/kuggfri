@@ -121,11 +121,14 @@ test.describe("examinator", () => {
 
   test.beforeAll(async () => {
     const db = serviceClient();
-    const { data, error } = await db.auth.admin.createUser({ email: examiner.email, password: examiner.password, email_confirm: true, app_metadata: { kuggfri_skapad_av: "skript" } });
+    // Som i Inställningar: inbjudan först, så kopplas rollen när kontot skapas.
+    const { data: deck } = await db.from("decks").select("id").eq("slug", DECK_SLUG).single();
+    const { error: inviteError } = await db.from("deck_examiner_invites").upsert({ deck_id: deck!.id, email: examiner.email.toLowerCase() } as never);
+    if (inviteError) throw inviteError;
+    const { data, error } = await db.auth.admin.createUser({ email: examiner.email, password: examiner.password, email_confirm: true });
     if (error) throw error;
     userId = data.user.id;
-    const { data: deck } = await db.from("decks").select("id").eq("slug", DECK_SLUG).single();
-    const { error: linkError } = await db.from("deck_examiners").insert({ deck_id: deck!.id, user_id: userId } as never);
+    const { error: linkError } = await db.from("deck_examiners").upsert({ deck_id: deck!.id, user_id: userId } as never, { onConflict: "deck_id,user_id" });
     if (linkError) throw linkError;
   });
 
